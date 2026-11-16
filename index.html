@@ -113,7 +113,13 @@ tr:last-child td{border-bottom:0}
 .bar{position:fixed;left:0;top:0;height:4px;background:var(--stamp);transition:width .25s ease}
 .hint{position:fixed;right:14px;bottom:10px;font-size:13px;color:var(--muted);user-select:none}
 .hint button{font:inherit;color:inherit;background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:3px 9px;margin-left:4px;cursor:pointer}
-.hint button:focus-visible{outline:2px solid var(--stamp);outline-offset:2px}
+.hint button:focus-visible,.hint a:focus-visible{outline:2px solid var(--stamp);outline-offset:2px}
+.hint a{color:inherit;background:var(--sheet);border:1px solid var(--rule);border-radius:6px;padding:3px 9px;margin-left:4px;text-decoration:none}
+.hint a:hover,.hint button:hover{border-color:var(--stamp);color:var(--stamp)}
+.slide a{color:var(--stamp);font-weight:600;text-underline-offset:3px}
+.slide a:focus-visible{outline:2px solid var(--stamp);outline-offset:2px;border-radius:3px}
+.doc-links{display:flex;gap:14px;margin-top:30px;font-size:19px}
+.doc-links a{border:2px solid var(--stamp);border-radius:8px;padding:8px 16px;text-decoration:none}
 .notes{position:fixed;left:50%;bottom:44px;transform:translateX(-50%);width:min(900px,calc(100vw - 32px));max-height:38vh;overflow:auto;background:var(--sheet);border:1.5px solid var(--stamp);border-radius:12px;padding:16px 20px;font-size:17px;line-height:1.55;box-shadow:0 18px 40px -20px rgba(0,0,0,.45);display:none}
 .notes.show{display:block}
 .notes .label{color:var(--stamp)}
@@ -180,7 +186,7 @@ tr:last-child td{border-bottom:0}
   <h2>Đang ở đâu</h2>
   <div class="steps">
     <div class="step"><h3>Phân tích V4</h3><p>Đọc mã nguồn kiểm kê V4 và đo trên dữ liệu thật: 4 bảng, khoảng 529.000 dòng.</p></div>
-    <div class="step"><h3>Thiết kế v3</h3><p>Database 5 bảng, 7 API mobile, API web, phân quyền, kế hoạch triển khai.</p></div>
+    <div class="step"><h3><a href="kiem-ke-tai-san-v3.html" target="_blank" rel="noopener">Thiết kế v3</a></h3><p>Database 5 bảng, 7 API mobile, API web, phân quyền, kế hoạch triển khai.</p></div>
     <div class="step"><h3>Chạy thử DDL</h3><p>Trên MySQL 8.0 sạch, không chạm DB dùng chung: 30/30 ca cho kết quả đúng.</p></div>
     <div class="step todo"><h3>Code GĐ1</h3><p>Chưa bắt đầu. Chờ duyệt thiết kế.</p></div>
   </div>
@@ -304,7 +310,7 @@ tr:last-child td{border-bottom:0}
     <tr><td>Kết thúc</td><td class="v4">Không có bước chốt</td><td>Gọi chốt phiên; chốt rồi không sửa được</td></tr>
     <tr><td>Đợt đã đóng</td><td class="v4">Vẫn ghi được</td><td>Server từ chối, app báo người dùng</td></tr>
   </table></div>
-  <p class="small" style="margin-top:14px">Bảng đủ 14 điểm và 7 API mobile có trong thiết kế v3, mục 08. Đã gửi cho bên làm app.</p>
+  <p class="small" style="margin-top:14px">Bảng đủ 14 điểm và 7 API mobile có trong <a href="kiem-ke-tai-san-v3.html#api" target="_blank" rel="noopener">thiết kế v3, mục 08</a>. Đã gửi cho bên làm app.</p>
   <aside>Đã chốt 15/11: app viết lại theo V5, không giữ cách gọi command. Em đã có người làm app và gửi họ bảng thay đổi cùng hợp đồng API.</aside>
 </section>
 
@@ -364,7 +370,7 @@ tr:last-child td{border-bottom:0}
     <tr><th style="width:48%">Rủi ro</th><th>Cách xử lý</th></tr>
     <tr><td>App mobile chưa sửa xong thì GĐ1 chưa lên production được</td><td>Đã gửi bên app tài liệu từ GĐ0; API và web làm song song</td></tr>
     <tr><td>DB dev có bảng kiểm kê cũ (rỗng); chạy thẳng DDL mới thì bảng cũ giữ nguyên, không báo lỗi</td><td>Chạy script chuyển trước; script tự dừng nếu bảng cũ có dữ liệu</td></tr>
-    <tr><td>Một số chi tiết kỹ thuật V5 chưa xác minh</td><td>Đã liệt kê kèm cách kiểm trong v3 mục 16</td></tr>
+    <tr><td>Một số chi tiết kỹ thuật V5 chưa xác minh</td><td>Đã liệt kê kèm cách kiểm trong <a href="kiem-ke-tai-san-v3.html#chua-kiem" target="_blank" rel="noopener">v3 mục 16</a></td></tr>
     <tr><td>DDL mới chỉ chạy thử trên MySQL 8.0 sạch</td><td>Xem phiên bản ở dev và production trước khi áp</td></tr>
     <tr><td>V4 vẫn chạy song song trong thời gian chuyển</td><td>Kiểm thử V5 trên một vùng thật rồi mới tắt đường cũ</td></tr>
   </table></div>
@@ -380,13 +386,14 @@ tr:last-child td{border-bottom:0}
     <li class="done">App mobile: em đã trao đổi với bên làm app</li>
     <li>Câu GĐ2 trả lời sau cũng được, GĐ1 không phụ thuộc vào nó</li>
   </ul>
+  <div class="doc-links"><a href="kiem-ke-tai-san-v3.html" target="_blank" rel="noopener">Mở thiết kế v3</a><a href="kiem-ke-tai-san-v2.html" target="_blank" rel="noopener">Mở thiết kế v2 (bản trước)</a></div>
   <aside>Câu chốt: "Tóm lại em cần anh chị duyệt thiết kế. Quyền trên dev em đã cấp, phần app em đã trao đổi với bên làm app. Câu giai đoạn 2 anh chị trả lời sau cũng được, vì giai đoạn 1 không phụ thuộc vào nó."</aside>
 </section>
 
 </div></div>
 
 <div class="notes" id="notes" role="region" aria-label="Ghi chú người trình bày"><div class="label">Ghi chú</div><div id="notesText"></div></div>
-<div class="hint"><span id="count"></span><button type="button" id="btnNotes" title="Ghi chú (N)">Ghi chú</button><button type="button" id="btnFull" title="Toàn màn hình (F)">Toàn màn hình</button></div>
+<div class="hint"><span id="count"></span><a href="kiem-ke-tai-san-v3.html" target="_blank" rel="noopener">Thiết kế v3</a><a href="kiem-ke-tai-san-v2.html" target="_blank" rel="noopener">Thiết kế v2</a><button type="button" id="btnNotes" title="Ghi chú (N)">Ghi chú</button><button type="button" id="btnFull" title="Toàn màn hình (F)">Toàn màn hình</button></div>
 
 <script>
 (function(){
@@ -427,7 +434,7 @@ tr:last-child td{border-bottom:0}
     else if(k==='f'||k==='F'){full();}
   });
   stage.addEventListener('click',function(e){
-    if(narrow.matches)return;
+    if(narrow.matches||e.target.closest('a'))return;
     var r=stage.getBoundingClientRect();
     show(e.clientX<r.left+r.width/3?i-1:i+1);
   });
