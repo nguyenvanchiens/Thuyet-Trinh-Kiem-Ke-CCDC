@@ -108,7 +108,7 @@ Ràng buộc đã chốt: kiểm kê **không sinh phiếu** và **không sửa*
   1. Ai xác nhận Kho MB, Kho MN; món ở kho mà thiếu mã vùng thì ai ký.
   2. Nhân viên công ty này cầm tài sản công ty kia.
   3. Đồ chung ở các tầng đứng tên ai.
-  4. Kho MB thuộc VN01, Kho MN thuộc VN02.
+  4. Kho MB thuộc VN01, Kho MN thuộc VN02. Tài sản không có mã công ty thì tính vào đợt VN01 như V4 (đề xuất: có, và liệt kê ở báo cáo ngoại lệ "thiếu mã công ty").
   5. Ba luật xác nhận.
   6. Đóng đợt có ghi ngày kiểm cuối lên tài sản không.
   7. Món chờ thanh lý nhưng đang dùng có kiểm không.
