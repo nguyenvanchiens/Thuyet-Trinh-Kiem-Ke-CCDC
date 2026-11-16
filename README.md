@@ -13,5 +13,5 @@ Phím tắt:
 
 Tài liệu kèm theo:
 
-- `kiem-ke-tai-san-v3.html`: thiết kế v3 (database, API, luật nghiệp vụ, phân quyền, kế hoạch). Bản đang dùng.
+- `kiem-ke-tai-san-v3.html`: thiết kế v3.1 (database, API, luật nghiệp vụ, phân quyền, kế hoạch). Bản đang dùng; 16/11/2026 bỏ phần sinh phiếu điều chuyển.
 - `kiem-ke-tai-san-v2.html`: thiết kế v2, bản trước, giữ để đối chiếu.

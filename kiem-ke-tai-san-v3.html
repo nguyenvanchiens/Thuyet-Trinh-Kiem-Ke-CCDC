@@ -116,7 +116,7 @@ html { scroll-behavior: smooth; }
     <li><a href="#nghiep-vu">Quy tắc nghiệp vụ</a></li>
     <li><a href="#api-quy-uoc">API — quy ước</a></li>
     <li><a href="#api">API — danh sách và hợp đồng</a></li>
-    <li><a href="#dieu-chuyen">GĐ2 — sinh phiếu điều chuyển</a></li>
+    <li><a href="#dieu-chuyen">Phiếu điều chuyển (đã bỏ)</a></li>
     <li><a href="#bao-cao">Báo cáo</a></li>
     <li><a href="#quyen">Quyền</a></li>
     <li><a href="#lich-su">Dữ liệu V4</a></li>
@@ -129,9 +129,9 @@ html { scroll-behavior: smooth; }
 
 <main>
 <header class="hero">
-  <div class="eyebrow">AssetManagement · Stocktake · thiết kế chuyển đổi V4 → V5 · v3</div>
+  <div class="eyebrow">AssetManagement · Stocktake · thiết kế chuyển đổi V4 → V5 · v3.1</div>
   <h1>Kiểm kê tài sản CCDC trên FastLink V5 — thiết kế database và API</h1>
-  <p class="lede">Bản v3 biến thiết kế v2 thành thứ dev cầm lên làm được: DDL đầy đủ đã chạy thử trên MySQL 8.0, hợp đồng API theo đúng quy ước đang chạy của <code>fastlink-erp-api</code>, và kế hoạch chia hai giai đoạn để phần ghi nhận kiểm kê không phải chờ các quyết định nghiệp vụ còn treo.</p>
+  <p class="lede">Bản v3 biến thiết kế v2 thành thứ dev cầm lên làm được: DDL đầy đủ đã chạy thử trên MySQL 8.0, hợp đồng API theo đúng quy ước đang chạy của <code>fastlink-erp-api</code>, và kế hoạch triển khai. Bản v3.1 (16/11/2026) bỏ giai đoạn sinh phiếu điều chuyển: kiểm kê chỉ ghi nhận và báo cáo, không sửa tài sản.</p>
   <div class="legend">
     <span><span class="chip c-ok">ĐO</span> số đo trên dữ liệu thật hoặc đã chạy thử</span>
     <span><span class="chip c-warn">CHỐT</span> quyết định của tài liệu, bác được</span>
@@ -154,11 +154,24 @@ html { scroll-behavior: smooth; }
 <tr><td>Lên kế hoạch, chia việc</td><td>Mục 03, 14, 15</td></tr>
 </table></div>
 
+<h3>v3.1 khác v3 ở đâu (16/11/2026)</h3>
+<p><b>Quyết định của anh Đạt:</b> kiểm kê không liên quan tới phiếu điều chuyển. Kết quả kiểm chỉ để xem báo cáo; hành chính muốn sửa tài sản thì tự lập phiếu tay như V4. Vì vậy:</p>
+<div class="tbl"><table>
+<tr><th>Bỏ / đổi</th><th>Chỗ</th></tr>
+<tr><td>Bỏ bảng <code>AssetStocktakeTransfer</code>, cột <code>MovementRequestedAt</code> (phiên), <code>TransferInstanceId</code> (dòng)</td><td>Mục 05, file DDL</td></tr>
+<tr><td>Cột <code>IsMovementRequired</code> đổi tên <code>HasDiscrepancy</code> (phiên có dòng lệch), chỉ để lọc báo cáo. Trường trả về của M6 đổi theo: <code>isMovementRequired</code> → <code>hasDiscrepancy</code></td><td>Mục 05, 08 — <b>báo bên app</b></td></tr>
+<tr><td>Bỏ 3 API <code>/movement/*</code> (W6), bỏ mục sinh phiếu</td><td>Mục 08, 09</td></tr>
+<tr><td>Mở lại phiên đã chốt: luôn được khi đợt còn mở (trước đây chặn khi đã sinh phiếu)</td><td>Mục 04, 08</td></tr>
+<tr><td>Chạy thử lại DDL: 28/28 ca đúng (bỏ 3 ca của bảng phiếu, thêm 1 ca)</td><td>Mục 05</td></tr>
+<tr><td>Câu 12 (nhân viên chuyên môn xác nhận hỏng) và câu 15 (ngày kiểm cuối) viết lại; thêm câu 16 (báo cáo lệch cho hành chính)</td><td>Mục 15</td></tr>
+</table></div>
+<p>API mobile M1–M7 không đổi gì ngoài tên một trường trả về ở M6.</p>
+
 <h3>v3 khác v2 ở đâu</h3>
 <div class="tbl"><table>
 <tr><th>#</th><th>Thay đổi</th><th>Vì sao</th></tr>
-<tr><td>1</td><td><b>Chốt phiên tách khỏi sinh phiếu.</b> Mobile chốt chỉ ghi kết quả. Sinh phiếu điều chuyển là thao tác riêng trên web, chạy nền, làm lại được.</td><td>Một phiên có thể cần ≥21 phiếu (v2 Chặn 1). Gọi từ điện thoại dễ hết giờ hoặc tạo được một nửa số phiếu. Luật ánh xạ còn chờ quyết, tách ra thì đổi luật không chạm app.</td></tr>
-<tr><td>2</td><td><b>Hai giai đoạn.</b> GĐ1 = ghi nhận + báo cáo, tương đương V4 đang chạy nhưng đã sửa lỗi. GĐ2 = hệ quả lên tài sản.</td><td>GĐ1 không phụ thuộc câu hỏi nghiệp vụ nào. Câu "mobile gọi API nào" đã chốt ở Q6.</td></tr>
+<tr><td>1</td><td><i>v3.1: bỏ hẳn sinh phiếu.</i> <b>Chốt phiên tách khỏi sinh phiếu.</b> Mobile chốt chỉ ghi kết quả. Sinh phiếu điều chuyển là thao tác riêng trên web, chạy nền, làm lại được.</td><td>Một phiên có thể cần ≥21 phiếu (v2 Chặn 1). Gọi từ điện thoại dễ hết giờ hoặc tạo được một nửa số phiếu. Luật ánh xạ còn chờ quyết, tách ra thì đổi luật không chạm app.</td></tr>
+<tr><td>2</td><td><i>v3.1: còn một giai đoạn.</i> <b>Hai giai đoạn.</b> GĐ1 = ghi nhận + báo cáo, tương đương V4 đang chạy nhưng đã sửa lỗi. GĐ2 = hệ quả lên tài sản.</td><td>GĐ1 không phụ thuộc câu hỏi nghiệp vụ nào. Câu "mobile gọi API nào" đã chốt ở Q6.</td></tr>
 <tr><td>3</td><td><b>DDL đầy đủ, đã chạy thử</b>, kèm script đưa DB đã có vỏ cũ về DDL mới.</td><td>v2 chỉ mô tả thay đổi trên vỏ; DDL hiện tại (HEAD <code>6fce8bf1</code>) chưa áp thay đổi nào.</td></tr>
 <tr><td>4</td><td><b>Trạng thái phiên tường minh</b> (<code>DANG_KIEM / DA_CHOT / DA_HUY</code>) thay cho "CheckedAt NULL = chưa chốt".</td><td>v2 cần "huỷ phiên" để đóng đợt nhưng không có chỗ ghi trạng thái huỷ.</td></tr>
 <tr><td>5</td><td><b>Chặn hai phiên đang kiểm trùng nhau bằng UNIQUE</b> trên cột sinh <code>OpenKey</code>.</td><td>V4 có 25 phiên bị nhân bản, cao nhất ×43 <span class="chip c-ok">ĐO</span>. Chặn bằng code thì hai lời gọi đồng thời vẫn lọt.</td></tr>
@@ -201,10 +214,10 @@ html { scroll-behavior: smooth; }
 <div class="tbl"><table>
 <tr><th>#</th><th>Quyết định</th><th>Trạng thái</th></tr>
 <tr><td>Q1</td><td><b>Kiểm kê là ghi thẳng, không phải quy trình duyệt.</b> Không port cơ chế B (<code>ASSET_CHECK</code>): 1.529/1.530 phiếu bị huỷ bằng tay, bảng dữ liệu 0 dòng.</td><td><span class="chip c-warn">CHỐT</span> (từ v2)</td></tr>
-<tr><td>Q2</td><td><b>Hệ quả lên tài sản đi qua phiếu <code>ASSET_TRANSFER</code></b>, có duyệt. Bốn loại kết quả chưa có kiểu phiếu chở được.</td><td><span class="chip c-bad">CHỜ QUYẾT</span> — GĐ2</td></tr>
+<tr><td>Q2</td><td><b>Kiểm kê không liên quan tới phiếu điều chuyển.</b> Không sinh phiếu, không sửa nghiệp vụ của tài sản (người giữ, vị trí, tình trạng, nhóm). Hành chính muốn sửa thì tự lập phiếu tay như V4.</td><td><span class="chip c-warn">CHỐT</span> 16/11/2026 (anh Đạt)</td></tr>
 <tr><td>Q3</td><td><b>Engine giữ quy trình, bảng nghiệp vụ giữ dữ liệu.</b> Bảng kiểm kê không có cột "người duyệt / trạng thái duyệt". Cờ NVCM chỉ là dữ liệu phân công.</td><td><span class="chip c-warn">CHỐT</span> (từ v2)</td></tr>
-<tr><td>Q4</td><td><b>Ghi nhận tách khỏi hệ quả.</b> Không API nào của mobile tạo phiếu điều chuyển hay sửa nghiệp vụ của tài sản. Chốt phiên chỉ đổi trạng thái phiên và ghi ngày kiểm cuối lên tài sản.</td><td><span class="chip c-warn">CHỐT</span> (mới)</td></tr>
-<tr><td>Q5</td><td><b>Hai giai đoạn.</b> GĐ1 ra production trước. GĐ2 chỉ thêm bảng, thêm API web, không đổi API mobile.</td><td><span class="chip c-warn">CHỐT</span> (mới)</td></tr>
+<tr><td>Q4</td><td><b>Ghi nhận tách khỏi tài sản.</b> Không API nào tạo phiếu điều chuyển hay sửa nghiệp vụ của tài sản. Chốt phiên chỉ đổi trạng thái phiên và ghi ngày kiểm cuối lên tài sản (câu 15).</td><td><span class="chip c-warn">CHỐT</span> (mới)</td></tr>
+<tr><td>Q5</td><td><b>Một giai đoạn: ghi nhận + báo cáo.</b> Bản v3 có GĐ2 sinh phiếu điều chuyển; bỏ theo Q2.</td><td><span class="chip c-warn">CHỐT</span> 16/11/2026</td></tr>
 <tr><td>Q6</td><td><b>Mobile viết lại theo cơ chế V5, gọi thẳng API V5</b> theo mục 08 (lưu phần thay đổi, version, requestId, chốt phiên). Không viết lớp nhận 5 command V4, không đi qua cầu nối <code>LegacyGateway</code> (cầu nối đó ghi vào bảng V4).</td><td><span class="chip c-warn">CHỐT</span> 15/11/2026</td></tr>
 </table></div>
 </section>
@@ -221,10 +234,8 @@ flowchart TD
   D -- "rồi" --> E["Mobile · complete<br/>Status = DA_CHOT<br/>ghi AssetItem.LastCheckedAt"]
   E --> F{"Có dòng lệch?"}
   F -- "không" --> H
-  F -- "có · GĐ1" --> G1["Hiện trong báo cáo<br/>IsMovementRequired = 1"]
-  F -- "có · GĐ2" --> G2["Web · HC xem trước → sinh phiếu<br/>chạy nền, mỗi nhóm một phiếu"]
+  F -- "có" --> G1["Hiện trong báo cáo<br/>HasDiscrepancy = 1<br/>HC muốn sửa tài sản thì tự lập phiếu"]
   G1 --> H["Web · HC đóng ĐỢT<br/>chỉ khi mọi phiên DA_CHOT hoặc DA_HUY"]
-  G2 --> H
 </pre></div>
 
 <h3>Trạng thái đợt — <code>AssetStocktakeEvent.Status</code></h3>
@@ -243,13 +254,13 @@ stateDiagram-v2
   DANG_KIEM --> DANG_KIEM : save
   DANG_KIEM --> DA_CHOT : complete (người kiểm)
   DANG_KIEM --> DA_HUY : cancel (HC, hoặc người kiểm với phiên của mình)
-  DA_CHOT --> DANG_KIEM : reopen (HC) — chỉ khi chưa sinh phiếu nào
+  DA_CHOT --> DANG_KIEM : reopen (HC, đợt còn mở)
 </pre></div>
 <div class="tbl"><table>
 <tr><th>Câu hỏi</th><th>Trả lời</th></tr>
 <tr><td>Phiên không ai chốt?</td><td>Nằm ở <code>DANG_KIEM</code>. Không ghi gì lên tài sản. Vẫn vào báo cáo khi bật "gồm phiên đang kiểm" (mục 10). Chặn đóng đợt cho tới khi được chốt hoặc huỷ.</td></tr>
 <tr><td>Chốt có cần kiểm hết?</td><td>Không. Dòng chưa kiểm (<code>ActionType</code> NULL) bỏ qua, không chặn chốt. V4 có 49,6% dòng chưa kiểm <span class="chip c-ok">ĐO</span> — đó là cách làm việc thật.</td></tr>
-<tr><td>Mở lại phiên đã chốt?</td><td>Được, do HC, khi phiên chưa có dòng nào ở <code>AssetStocktakeTransfer</code>. GĐ1 không sinh phiếu nên luôn mở lại được. Mở lại xoá <code>CheckedAt</code>; <code>AssetItem.LastCheckedAt</code> đã ghi thì giữ.</td></tr>
+<tr><td>Mở lại phiên đã chốt?</td><td>Được, do HC, khi đợt còn mở. Kiểm kê không sinh phiếu nên không có gì chặn. Mở lại xoá <code>CheckedAt</code>; <code>AssetItem.LastCheckedAt</code> đã ghi thì giữ.</td></tr>
 <tr><td>Hai người cùng kiểm một đối tượng?</td><td>Mỗi người một phiên riêng (khoá <code>OpenKey</code> gồm cả người kiểm). <code>start</code> trả kèm danh sách phiên đang kiểm khác của cùng đối tượng để app cảnh báo. Báo cáo lấy "phiên cuối" theo <code>CheckedAt</code>.</td></tr>
 <tr><td>Một người mở hai phiên cùng đối tượng?</td><td>Không được. <code>start</code> lần hai trả lại phiên đang dở. DB chặn bằng <code>UX_AssetStocktake_Open</code>, cả khi hai lời gọi đến cùng lúc.</td></tr>
 <tr><td>Chốt ghi gì lên tài sản?</td><td>Với dòng có mã và <code>ActionType</code> ∈ {<code>CO</code>, <code>CO_HONG</code>, <code>THEM_CO_TON_TAI</code>}: <code>AssetItem.LastCheckedAt = CheckedAt</code>, <code>LastVerifiedByStaffCode = CheckStaffCode</code>. Không lấy khoá <code>ASSET:&lt;code&gt;</code> của phiếu điều chuyển — đây là dữ liệu tham khảo, không phải chuyển động. <span class="chip c-warn">CHỐT</span></td></tr>
@@ -264,7 +275,6 @@ erDiagram
   AssetStocktakeEvent ||--o{ AssetStocktake : "EventCode (FK)"
   AssetStocktake ||--o{ AssetStocktakeItem : "StocktakeId (FK, cascade)"
   AssetStocktakeItem ||--o{ AssetStocktakeItemLog : "StocktakeItemId (FK, cascade)"
-  AssetStocktake ||--o{ AssetStocktakeTransfer : "StocktakeId — GĐ2"
   AssetItem |o..o{ AssetStocktakeItem : "ItemCode — không FK"
   AssetGroup ||--o{ AssetStocktakeItem : "NewGroupCode (FK)"
   AssetUsageStatus ||--o{ AssetStocktakeItem : "UsageStatus, NewUsageStatus (FK)"
@@ -276,17 +286,16 @@ erDiagram
 <tr><td><code>AssetStocktakeEvent</code></td><td><code>Status</code> NOT NULL + CHECK; thêm <code>ClosedAt</code>, <code>ClosedUser</code>; CHECK "đã đóng ⇔ có ClosedAt"</td><td>Một cột duy nhất trả lời "đợt còn mở không", backend đọc chính nó</td></tr>
 <tr><td rowspan="4"><code>AssetStocktake</code></td><td>Bỏ <code>StocktakeType</code>, <code>IsCheckByManager</code>, <code>ManagerStaffCode</code>, <code>EventType</code>, <code>DbFiles</code>, <code>Status INT</code></td><td>Di sản cơ chế B; EventType ở V4 luôn <code>THEO_DOT</code>; phiên không có ảnh; Status INT trùng nghĩa IsDeleted</td></tr>
 <tr><td><code>DocNo</code>, <code>EventCode</code>, <code>CheckType</code>, <code>CheckStaffCode</code> NOT NULL; FK tới đợt; CHECK đối tượng khớp kiểu kiểm</td><td>Vỏ để NULL hết, không gì chặn phiên mồ côi</td></tr>
-<tr><td>Thêm <code>Status</code> (chuỗi), <code>StartedAt</code>, <code>CancelledAt</code>, <code>CancelReason</code>, <code>Version</code>, <code>LastSaveRequestId</code></td><td>Mục 04; chống ghi đè và ghi hai lần</td></tr>
+<tr><td>Thêm <code>Status</code> (chuỗi), <code>StartedAt</code>, <code>CancelledAt</code>, <code>CancelReason</code>, <code>Version</code>, <code>LastSaveRequestId</code>, <code>HasDiscrepancy</code></td><td>Mục 04; chống ghi đè và ghi hai lần</td></tr>
 <tr><td>Thêm cột sinh <code>OpenKey</code> + UNIQUE</td><td>Chặn hai phiên đang kiểm trùng ở tầng DB</td></tr>
 <tr><td rowspan="5"><code>AssetStocktakeItem</code></td><td>Bỏ 10 cột lặp bảng cha (CheckType, EventType, EventCode, CompanyCode, StationCode, StaffCode, StationZoneCode, CheckStaffCode, CheckCount, DocNo) và <code>IsCheckByManager</code>, <code>MovementRequestedAt</code>, <code>VerifierActionType</code>, <code>VerifierNote</code>, <code>Content</code></td><td>v2 Thay đổi 2, 3, 7</td></tr>
-<tr><td>Gộp ảnh chụp sổ về một bộ <code>Current*</code> (+ <code>CurrentStationZoneCode</code> mới); bỏ <code>ManagerStaffCode</code>/<code>PositionCode</code> trùng nghĩa</td><td>Vỏ có hai bộ cột cùng nghĩa "sổ đang ghi"; vùng cần cho phiếu <code>INTO_AREA</code> ở GĐ2</td></tr>
+<tr><td>Gộp ảnh chụp sổ về một bộ <code>Current*</code> (+ <code>CurrentStationZoneCode</code> mới); bỏ <code>ManagerStaffCode</code>/<code>PositionCode</code> trùng nghĩa</td><td>Vỏ có hai bộ cột cùng nghĩa "sổ đang ghi"; vùng cần để biết tài sản "thấy ở vùng khác"</td></tr>
 <tr><td>Quyết định thành cột: <code>NewGroupCode</code> (FK), <code>NewDescription</code>, <code>NewUsageStatus</code> (FK), <code>IsNeedReprintLabel</code>, <code>OldItemCode</code></td><td>v2 Thay đổi 2</td></tr>
-<tr><td>Thêm <code>Source</code>, <code>IsDiscrepant</code>, <code>CheckedByStaffCode</code>, <code>TransferInstanceId</code>; <code>ItemCode</code>, <code>UsageStatus</code> cho phép NULL</td><td>Mẫu số báo cáo = dòng <code>DANH_SACH</code>; "lệch" tính một lần ở server; dòng chưa có tài sản</td></tr>
+<tr><td>Thêm <code>Source</code>, <code>IsDiscrepant</code>, <code>CheckedByStaffCode</code>; <code>ItemCode</code>, <code>UsageStatus</code> cho phép NULL</td><td>Mẫu số báo cáo = dòng <code>DANH_SACH</code>; "lệch" tính một lần ở server; dòng chưa có tài sản</td></tr>
 <tr><td>UNIQUE <code>(StocktakeId, ActiveItemCode)</code> + 4 CHECK</td><td>Chống trùng mã bằng DB; dòng xoá mềm không chặn thêm lại; mã <code>''</code> bị cấm (V4 dùng <code>''</code> cho 1.970 dòng)</td></tr>
 <tr><td><code>AssetStocktakeItemLog</code></td><td>Thêm <code>StocktakeId</code>, <code>SaveRequestId</code>; CHECK <code>LogType</code>; bỏ cột Updated*/IsDeleted</td><td>Log chỉ thêm, không sửa, không xoá</td></tr>
 <tr><td><code>AssetStocktakeAttribute</code></td><td><b>Bỏ bảng</b></td><td>V4: 6 dòng seed 2019, không UI, 7 năm không đổi — là hằng số</td></tr>
 <tr><td><code>AssetItem</code></td><td>Thêm <code>KEY IX_AssetItem_Zone (StationZoneCode, Status)</code></td><td>Câu nạp danh sách theo vùng hiện không có index; đã có <code>IX_AssetItem_Staff</code></td></tr>
-<tr><td><code>AssetStocktakeTransfer</code> (GĐ2)</td><td>Bảng mới, UNIQUE <code>(StocktakeId, GroupKey)</code></td><td>Một phiên nhiều phiếu; sinh lại sau lỗi chỉ tạo nhóm còn thiếu</td></tr>
 </table></div>
 
 <h3>DDL</h3>
@@ -294,24 +303,25 @@ erDiagram
 <div class="warnbox"><b>Bẫy:</b> mọi câu trong file là <code>CREATE TABLE IF NOT EXISTS</code>. Trên <code>fl_asset_v5</code> dev (đã có vỏ cũ, 0 dòng theo v2), chạy thẳng file DDL sẽ <b>im lặng giữ vỏ cũ</b>. Phải chạy file áp-lên-DB-đã-có trước.</div>
 <details open><summary>kiem-ke-tai-san-v3-ddl.sql</summary>
 <pre class="sql">-- =============================================================================================
--- Kiểm kê CCDC V5 — DDL thiết kế v3 (15/11/2026)
+-- Kiểm kê CCDC V5 — DDL thiết kế v3.1 (15/11/2026; 16/11/2026 bỏ GĐ2)
 -- Đặc tả: coordination/kiem-ke-tai-san-v3.html, mục 05.
 --
 -- Dùng thế nào:
 --   * Thay NGUYÊN khối AssetStocktakeEvent / AssetStocktakeAttribute / AssetStocktake /
 --     AssetStocktakeItem / AssetStocktakeItemLog trong scripts/sql/asset/fl-asset-v5.sql bằng
---     khối GĐ1 dưới đây. AssetStocktakeAttribute bị bỏ hẳn.
+--     khối bảng kiểm kê dưới đây. AssetStocktakeAttribute bị bỏ hẳn.
 --   * Thêm dòng  KEY IX_AssetItem_Zone (StationZoneCode, Status),  vào CREATE TABLE AssetItem.
 --   * DB ĐÃ có vỏ cũ (fl_asset_v5 dev): CREATE TABLE IF NOT EXISTS sẽ IM LẶNG bỏ qua và giữ vỏ
 --     cũ. Phải chạy kiem-ke-tai-san-v3-ap-len-db-da-co.sql trước.
---   * Khối GĐ2 (AssetStocktakeTransfer) chỉ tạo khi làm phần sinh phiếu điều chuyển.
+--   * Không có bảng sinh phiếu điều chuyển: kiểm kê chỉ ghi nhận và báo cáo, không tạo phiếu
+--     (chốt 16/11/2026). Bản 15/11 có AssetStocktakeTransfer cho GĐ2 — đã bỏ.
 --
 -- Đã chạy thử trên MySQL 8.0 sạch (container dùng một lần), sau khi chạy fl-asset-v5.sql của
 -- fastlink-erp-api HEAD 6fce8bf1 — kết quả và các phép thử ràng buộc ở mục 05 của đặc tả.
 -- =============================================================================================
 
 -- ---------------------------------------------------------------------------------------------
--- GĐ1
+-- Bảng kiểm kê
 -- ---------------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS AssetStocktakeEvent (
@@ -353,8 +363,7 @@ CREATE TABLE IF NOT EXISTS AssetStocktake (
   CancelReason                  VARCHAR(512)  NULL,
   Version                       INT           NOT NULL DEFAULT 0 COMMENT 'Tăng 1 mỗi lần lưu thành công; client gửi kèm để không ghi đè lẫn nhau',
   LastSaveRequestId             VARCHAR(64)   NULL COMMENT 'RequestId của lần lưu gần nhất; gửi lại đúng Id đó thì trả lại kết quả, không ghi lần hai',
-  IsMovementRequired            BIT           NOT NULL DEFAULT 0 COMMENT 'Tính lúc chốt: có ít nhất một dòng IsDiscrepant = 1',
-  MovementRequestedAt           DATETIME(6)   NULL COMMENT 'GĐ2: lúc bắt đầu sinh phiếu điều chuyển',
+  HasDiscrepancy                BIT           NOT NULL DEFAULT 0 COMMENT 'Tính lúc chốt: có ít nhất một dòng IsDiscrepant = 1. Để lọc báo cáo',
   Note                          VARCHAR(1024) NULL,
   CreatedTime                   DATETIME(6)   NOT NULL,
   CreatedUser                   VARCHAR(64)   NULL,
@@ -413,7 +422,6 @@ CREATE TABLE IF NOT EXISTS AssetStocktakeItem (
   CheckedByStaffCode            VARCHAR(64)   NULL,
   CheckedAt                     DATETIME(6)   NULL COMMENT 'Lần cuối dòng này đổi kết quả',
   SortOrder                     INT           NOT NULL DEFAULT 0,
-  TransferInstanceId            VARCHAR(64)   NULL COMMENT 'GĐ2: phiếu điều chuyển dòng này đã đi vào',
   CreatedTime                   DATETIME(6)   NOT NULL,
   CreatedUser                   VARCHAR(64)   NULL,
   UpdatedTime                   DATETIME(6)   NULL,
@@ -457,37 +465,12 @@ CREATE TABLE IF NOT EXISTS AssetStocktakeItemLog (
   KEY IX_AssetStocktakeItemLog_Stocktake (StocktakeId, LoggedAt),
   CONSTRAINT FK_AssetStocktakeItemLog_Item FOREIGN KEY (StocktakeItemId) REFERENCES AssetStocktakeItem (Id) ON DELETE CASCADE,
   CONSTRAINT CK_AssetStocktakeItemLog_Type CHECK (LogType IN ('TAO', 'SUA', 'XOA'))
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_as_ci;
-
--- ---------------------------------------------------------------------------------------------
--- GĐ2 — chỉ tạo khi làm phần sinh phiếu điều chuyển (sau khi nghiệp vụ trả lời câu 2)
--- ---------------------------------------------------------------------------------------------
-
-CREATE TABLE IF NOT EXISTS AssetStocktakeTransfer (
-  Id                            VARCHAR(64)   NOT NULL,
-  StocktakeId                   VARCHAR(64)   NOT NULL,
-  GroupKey                      VARCHAR(512)  NOT NULL COMMENT 'Khoá tách phiếu: kiểu|nhóm|công ty|người quản lý|vị trí|người giữ',
-  ChangeType                    VARCHAR(64)   NOT NULL COMMENT 'AssetPositionChangeType',
-  Status                        VARCHAR(16)   NOT NULL DEFAULT 'DANG_TAO' COMMENT 'DANG_TAO | DA_TAO | LOI',
-  InstanceId                    VARCHAR(64)   NULL COMMENT 'WorkflowInstance của phiếu; NULL khi chưa tạo được',
-  ItemCount                     INT           NOT NULL,
-  ErrorMessage                  VARCHAR(1024) NULL,
-  CreatedTime                   DATETIME(6)   NOT NULL,
-  CreatedUser                   VARCHAR(64)   NULL,
-  UpdatedTime                   DATETIME(6)   NULL,
-  UpdatedUser                   VARCHAR(64)   NULL,
-  PRIMARY KEY (Id),
-  UNIQUE KEY UX_AssetStocktakeTransfer_Group (StocktakeId, GroupKey),
-  UNIQUE KEY UX_AssetStocktakeTransfer_Instance (InstanceId),
-  CONSTRAINT FK_AssetStocktakeTransfer_Stocktake FOREIGN KEY (StocktakeId) REFERENCES AssetStocktake (Id),
-  CONSTRAINT CK_AssetStocktakeTransfer_Status CHECK (Status IN ('DANG_TAO', 'DA_TAO', 'LOI')),
-  CONSTRAINT CK_AssetStocktakeTransfer_Instance CHECK ((Status = 'DA_TAO') = (InstanceId IS NOT NULL))
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_as_ci;</pre>
 </details>
 
 <h3>Đã chạy thử</h3>
-<p><span class="chip c-ok">ĐO</span> 15/11/2026, MySQL <code>8.0.46</code> sạch trong container dùng một lần (image <code>mysql:8.0</code> có sẵn trên máy, không mở cổng, xoá sau khi chạy). Trình tự: chạy <code>fl-asset-v5.sql</code> của HEAD <code>6fce8bf1</code> → chèn một dòng vào vỏ cũ → file áp-lên-DB-đã-có <b>dừng ở chốt chặn</b> (<code>ERROR 1242</code>, 5 bảng vỏ còn nguyên) → xoá dòng → chạy lại: xoá vỏ, thêm index → chạy DDL v3 (và chạy lần hai: không lỗi) → 30 ca ghi thử. Kết quả: <b>30/30 ca đúng mong đợi</b>, 13 CHECK được tạo. Script và output: <code>ket-qua/2026-11-15-kiem-ke-v3-chay-thu-ddl/</code>.</p>
-<details><summary>30 ca ghi thử</summary>
+<p><span class="chip c-ok">ĐO</span> 16/11/2026 (chạy lại sau khi bỏ GĐ2; lần đầu 15/11/2026), MySQL <code>8.0.46</code> sạch trong container dùng một lần (image <code>mysql:8.0</code> có sẵn trên máy, không mở cổng, xoá sau khi chạy). Trình tự: chạy <code>fl-asset-v5.sql</code> của HEAD <code>6fce8bf1</code> → chèn một dòng vào vỏ cũ → file áp-lên-DB-đã-có <b>dừng ở chốt chặn</b> (<code>ERROR 1242</code>, 5 bảng vỏ còn nguyên) → xoá dòng → chạy lại: xoá vỏ, thêm index → chạy DDL v3.1 (và chạy lần hai: không lỗi) → kiểm không còn bảng/cột của GĐ2 → 28 ca ghi thử. Kết quả: <b>28/28 ca đúng mong đợi</b>, 11 CHECK được tạo. Script và output: <code>ket-qua/2026-11-16-bo-gd2/</code> (lần 15/11 với 30 ca: <code>ket-qua/2026-11-15-kiem-ke-v3-chay-thu-ddl/</code>).</p>
+<details><summary>28 ca ghi thử</summary>
 <div class="tbl" style="margin:0 12px 12px"><table>
 <tr><th>Ca</th><th>Mong đợi</th><th>Kết quả</th></tr>
 <tr><td>đợt hợp lệ</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
@@ -517,9 +500,7 @@ CREATE TABLE IF NOT EXISTS AssetStocktakeTransfer (
 <tr><td>NewGroupCode không tồn tại</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>foreign key constraint fails</code></td></tr>
 <tr><td>log hợp lệ</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
 <tr><td>log LogType lạ</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Check constraint &#x27;CK_AssetStocktakeItemLog_Type&#x27;</code></td></tr>
-<tr><td>GĐ2 nhóm phiếu đang tạo</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
-<tr><td>GĐ2 trùng GroupKey trong phiên</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Duplicate entry</code></td></tr>
-<tr><td>GĐ2 DA_TAO thiếu InstanceId</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Check constraint &#x27;CK_AssetStocktakeTransfer_Instance&#x27;</code></td></tr>
+<tr><td>phiên chốt có lệch (HasDiscrepancy)</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
 </table></div>
 </details>
 
@@ -554,7 +535,7 @@ ORDER BY GroupCode, Code;</pre>
 <tr><th>ActionType</th><th>NewGroupCode</th><th>NewDescription</th><th>NewUsageStatus</th></tr>
 <tr><td><code>CO</code></td><td>= GroupCode</td><td>= ItemDescription</td><td>= UsageStatus</td></tr>
 <tr><td><code>CO_HONG</code></td><td>= GroupCode</td><td>= ItemDescription</td><td><b>ép 0 (Hỏng)</b></td></tr>
-<tr><td><code>KHONG_CO</code></td><td>= GroupCode</td><td>= ItemDescription</td><td>= UsageStatus (đổi sang Mất là việc của GĐ2)</td></tr>
+<tr><td><code>KHONG_CO</code></td><td>= GroupCode</td><td>= ItemDescription</td><td>= UsageStatus (kiểm kê không đổi tài sản sang Mất)</td></tr>
 <tr><td><code>THEM_CO_TON_TAI</code></td><td>= GroupCode (chụp lúc lưu)</td><td>= ItemDescription</td><td>= UsageStatus</td></tr>
 <tr><td><code>THEM_KHONG_TON_TAI</code></td><td colspan="3"><b>Bắt buộc client gửi cả ba</b> — không có gì để chụp</td></tr>
 </table></div>
@@ -619,22 +600,21 @@ ORDER BY GroupCode, Code;</pre>
 
 <h3>Danh sách</h3>
 <div class="tbl"><table>
-<tr><th>#</th><th>Route</th><th>Việc</th><th>Ai gọi</th><th>Quyền</th><th>GĐ</th><th>Thay cho V4</th></tr>
-<tr><td>M1</td><td><code>/event/open</code></td><td>Đợt đang <code>DANG_KIEM_KE</code></td><td>Mobile</td><td>phien:thuc_hien</td><td>1</td><td><code>AsCheckAssetGetNotCompleteEvent</code></td></tr>
-<tr><td>M2</td><td><code>/start</code></td><td>Mở phiên hoặc lấy lại phiên dở của mình; trả danh sách</td><td>Mobile</td><td>phien:thuc_hien</td><td>1</td><td><code>AsAdminCheckGetCheckAssetByStaffCode</code></td></tr>
-<tr><td>M3</td><td><code>/mine</code></td><td>Các phiên <code>DANG_KIEM</code> của chính người gọi (đổi máy vẫn làm tiếp được)</td><td>Mobile</td><td>phien:thuc_hien</td><td>1</td><td>—</td></tr>
-<tr><td>M4</td><td><code>/get</code></td><td>Một phiên kèm mọi dòng</td><td>Mobile, Web</td><td>chủ phiên, hoặc bao_cao:xem</td><td>1</td><td>—</td></tr>
-<tr><td>M5</td><td><code>/save</code></td><td>Lưu các dòng đã đổi</td><td>Mobile</td><td>chủ phiên</td><td>1</td><td><code>AsAdminCheckCustomCreateCommand</code></td></tr>
-<tr><td>M6</td><td><code>/complete</code></td><td>Chốt phiên</td><td>Mobile</td><td>chủ phiên</td><td>1</td><td>—</td></tr>
-<tr><td>M7</td><td>GET <code>/lookup-item/{code}?stocktakeId=</code></td><td>Tra một mã khi quét ngoài danh sách</td><td>Mobile</td><td>phien:thuc_hien</td><td>1</td><td><code>AsAdminCheckDetailGetAssetInfo</code></td></tr>
-<tr><td>—</td><td><code>/asset-item/files/upload</code> (có sẵn)</td><td>Tải ảnh</td><td>Mobile</td><td>như hiện tại</td><td>1</td><td>(ảnh nằm trong lệnh lưu)</td></tr>
-<tr><td>—</td><td>GET <code>/group</code>, GET <code>/usage-status</code> (có sẵn)</td><td>Danh mục cho app lưu đệm</td><td>Mobile</td><td>như hiện tại</td><td>1</td><td>—</td></tr>
-<tr><td>W1</td><td><code>/event/search</code>, <code>/event/create</code>, <code>/event/update</code></td><td>Quản lý đợt</td><td>Web</td><td>dot:quan_ly</td><td>1</td><td>Web.Office</td></tr>
-<tr><td>W2</td><td><code>/event/close</code>, <code>/event/reopen</code></td><td>Đóng / mở lại đợt</td><td>Web</td><td>dot:quan_ly</td><td>1</td><td>Sửa Status tay</td></tr>
-<tr><td>W3</td><td><code>/search</code></td><td>Tra phiên theo đợt, trạng thái, người kiểm, đối tượng, có lệch</td><td>Web</td><td>bao_cao:xem</td><td>1</td><td>—</td></tr>
-<tr><td>W4</td><td><code>/cancel</code>, <code>/reopen</code></td><td>Huỷ phiên treo; mở lại phiên đã chốt</td><td>Web</td><td>dot:quan_ly (huỷ: cả chủ phiên)</td><td>1</td><td>—</td></tr>
-<tr><td>W5</td><td><code>/report/by-event</code>, <code>/report/by-target</code>, <code>/report/by-asset</code>, <code>/report/reprint-label</code></td><td>Báo cáo (mục 10)</td><td>Web</td><td>bao_cao:xem</td><td>1</td><td>3 trang Web.Office</td></tr>
-<tr><td>W6</td><td><code>/movement/preview</code>, <code>/movement/generate</code>, <code>/movement/status</code></td><td>Xem trước, sinh phiếu điều chuyển, theo dõi</td><td>Web</td><td>dot:quan_ly</td><td><b>2</b></td><td><code>SyncCheckEvent</code> (chạy tay 2019)</td></tr>
+<tr><th>#</th><th>Route</th><th>Việc</th><th>Ai gọi</th><th>Quyền</th><th>Thay cho V4</th></tr>
+<tr><td>M1</td><td><code>/event/open</code></td><td>Đợt đang <code>DANG_KIEM_KE</code></td><td>Mobile</td><td>phien:thuc_hien</td><td><code>AsCheckAssetGetNotCompleteEvent</code></td></tr>
+<tr><td>M2</td><td><code>/start</code></td><td>Mở phiên hoặc lấy lại phiên dở của mình; trả danh sách</td><td>Mobile</td><td>phien:thuc_hien</td><td><code>AsAdminCheckGetCheckAssetByStaffCode</code></td></tr>
+<tr><td>M3</td><td><code>/mine</code></td><td>Các phiên <code>DANG_KIEM</code> của chính người gọi (đổi máy vẫn làm tiếp được)</td><td>Mobile</td><td>phien:thuc_hien</td><td>—</td></tr>
+<tr><td>M4</td><td><code>/get</code></td><td>Một phiên kèm mọi dòng</td><td>Mobile, Web</td><td>chủ phiên, hoặc bao_cao:xem</td><td>—</td></tr>
+<tr><td>M5</td><td><code>/save</code></td><td>Lưu các dòng đã đổi</td><td>Mobile</td><td>chủ phiên</td><td><code>AsAdminCheckCustomCreateCommand</code></td></tr>
+<tr><td>M6</td><td><code>/complete</code></td><td>Chốt phiên</td><td>Mobile</td><td>chủ phiên</td><td>—</td></tr>
+<tr><td>M7</td><td>GET <code>/lookup-item/{code}?stocktakeId=</code></td><td>Tra một mã khi quét ngoài danh sách</td><td>Mobile</td><td>phien:thuc_hien</td><td><code>AsAdminCheckDetailGetAssetInfo</code></td></tr>
+<tr><td>—</td><td><code>/asset-item/files/upload</code> (có sẵn)</td><td>Tải ảnh</td><td>Mobile</td><td>như hiện tại</td><td>(ảnh nằm trong lệnh lưu)</td></tr>
+<tr><td>—</td><td>GET <code>/group</code>, GET <code>/usage-status</code> (có sẵn)</td><td>Danh mục cho app lưu đệm</td><td>Mobile</td><td>như hiện tại</td><td>—</td></tr>
+<tr><td>W1</td><td><code>/event/search</code>, <code>/event/create</code>, <code>/event/update</code></td><td>Quản lý đợt</td><td>Web</td><td>dot:quan_ly</td><td>Web.Office</td></tr>
+<tr><td>W2</td><td><code>/event/close</code>, <code>/event/reopen</code></td><td>Đóng / mở lại đợt</td><td>Web</td><td>dot:quan_ly</td><td>Sửa Status tay</td></tr>
+<tr><td>W3</td><td><code>/search</code></td><td>Tra phiên theo đợt, trạng thái, người kiểm, đối tượng, có lệch</td><td>Web</td><td>bao_cao:xem</td><td>—</td></tr>
+<tr><td>W4</td><td><code>/cancel</code>, <code>/reopen</code></td><td>Huỷ phiên treo; mở lại phiên đã chốt</td><td>Web</td><td>dot:quan_ly (huỷ: cả chủ phiên)</td><td>—</td></tr>
+<tr><td>W5</td><td><code>/report/by-event</code>, <code>/report/by-target</code>, <code>/report/by-asset</code>, <code>/report/reprint-label</code></td><td>Báo cáo (mục 10)</td><td>Web</td><td>bao_cao:xem</td><td>3 trang Web.Office</td></tr>
 </table></div>
 <p>V4 <code>AsAdminCheckGetSoLanDaKiemKeCommand</code> bỏ: số lần đã kiểm của đối tượng trả kèm trong <code>start</code>.</p>
 
@@ -708,24 +688,24 @@ ORDER BY GroupCode, Code;</pre>
 // ApiResult.Data
 { "status": "DA_CHOT", "checkedAt": "2026-12-01T11:02:13",
   "summary": { "total": 412, "checked": 405, "unchecked": 7, "discrepant": 41, "needVerifier": 3 },
-  "isMovementRequired": true }</pre>
-<p>Luật: phiên <code>DANG_KIEM</code>, chủ phiên, đợt mở, version khớp. Ghi trong một transaction: <code>Status = DA_CHOT</code>, <code>CheckedAt</code>, <code>IsMovementRequired</code>, <code>Version + 1</code>, rồi <code>AssetItem.LastCheckedAt / LastVerifiedByStaffCode</code> theo mục 04. <b>Không sinh phiếu.</b></p>
+  "hasDiscrepancy": true }</pre>
+<p>Luật: phiên <code>DANG_KIEM</code>, chủ phiên, đợt mở, version khớp. Ghi trong một transaction: <code>Status = DA_CHOT</code>, <code>CheckedAt</code>, <code>HasDiscrepancy</code>, <code>Version + 1</code>, rồi <code>AssetItem.LastCheckedAt / LastVerifiedByStaffCode</code> theo mục 04. <b>Không sinh phiếu.</b></p>
 
 <h3>M7 · GET <code>/lookup-item/{code}?stocktakeId=</code></h3>
 <pre class="json">{ "found": true,
   "item": { /* ảnh chụp như StocktakeItemDto */ },
   "suggestedActionType": "THEM_CO_TON_TAI",           // found=false ⇒ "THEM_KHONG_TON_TAI"
   "warnings": [ "ALREADY_IN_STOCKTAKE", "MARKED_LOST", "OTHER_HOLDER", "NOT_TRACKED", "DISPOSED", "INACTIVE" ] }</pre>
-<p>Cảnh báo, không chặn. <code>MARKED_LOST</code> là ca "tài sản đang Mất mà gặp lại": V4 có 1.657 dòng <span class="chip c-ok">ĐO</span>, và V5 hôm nay không có đường nào trả nó về (v2 mục 06). GĐ1 vẫn cho ghi nhận để không mất dữ liệu.</p>
+<p>Cảnh báo, không chặn. <code>MARKED_LOST</code> là ca "tài sản đang Mất mà gặp lại": V4 có 1.657 dòng <span class="chip c-ok">ĐO</span>, và V5 hôm nay không có đường nào trả nó về (v2 mục 06). Kiểm kê vẫn cho ghi nhận để không mất dữ liệu; sửa tài sản là việc hành chính tự lập phiếu.</p>
 
 <h3>Web — hợp đồng tóm tắt</h3>
 <div class="tbl"><table>
 <tr><th>Route</th><th>Request</th><th>Luật chính</th></tr>
 <tr><td><code>/event/create</code></td><td><code>{ name, note }</code></td><td>Sinh <code>Code</code> qua sequence</td></tr>
 <tr><td><code>/event/close</code></td><td><code>{ code }</code></td><td>Còn phiên <code>DANG_KIEM</code> ⇒ lỗi <code>OPEN_STOCKTAKES_EXIST</code>, trả danh sách để HC chốt hoặc huỷ</td></tr>
-<tr><td><code>/search</code></td><td><code>{ eventCode, status[], checkType, checkStaffCode, staffCode, stationZoneCode, isMovementRequired, pageIndex, pageSize }</code></td><td>Phân trang theo kiểu <code>/asset-item/search</code> đang dùng</td></tr>
+<tr><td><code>/search</code></td><td><code>{ eventCode, status[], checkType, checkStaffCode, staffCode, stationZoneCode, hasDiscrepancy, pageIndex, pageSize }</code></td><td>Phân trang theo kiểu <code>/asset-item/search</code> đang dùng</td></tr>
 <tr><td><code>/cancel</code></td><td><code>{ stocktakeId, reason }</code></td><td>Chỉ <code>DANG_KIEM</code>; lý do bắt buộc</td></tr>
-<tr><td><code>/reopen</code></td><td><code>{ stocktakeId }</code></td><td>Chỉ <code>DA_CHOT</code>, đợt mở, không có dòng ở <code>AssetStocktakeTransfer</code>; trùng <code>OpenKey</code> với phiên dở khác của cùng người ⇒ lỗi</td></tr>
+<tr><td><code>/reopen</code></td><td><code>{ stocktakeId }</code></td><td>Chỉ <code>DA_CHOT</code>, đợt mở; trùng <code>OpenKey</code> với phiên dở khác của cùng người ⇒ lỗi</td></tr>
 </table></div>
 
 <h3>Những điểm tối ưu cho mobile, gom lại</h3>
@@ -763,15 +743,13 @@ ORDER BY GroupCode, Code;</pre>
 
 <!-- ============================================================ 09 -->
 <section id="dieu-chuyen">
-<h2><span class="n">09</span>GĐ2 — sinh phiếu điều chuyển</h2>
-<div class="warnbox">Chưa code được. Phụ thuộc câu 2 (mục 15). Phần dưới là khung kỹ thuật để GĐ2 không phải đổi GĐ1.</div>
-<ol>
-  <li><b><code>/movement/preview</code></b> (HC, phiên <code>DA_CHOT</code>, <code>IsMovementRequired = 1</code>): đọc các dòng <code>IsDiscrepant = 1</code>, tra bảng ánh xạ (v2 mục 06) ra kiểu phiếu, tách theo khoá <code>kiểu | nhóm | công ty | người quản lý | vị trí | người giữ</code> (bỏ hai thành phần cuối với <code>INTO_AREA</code>). Trả danh sách nhóm dự kiến và các dòng <b>không đi được qua phiếu</b> kèm lý do.</li>
-  <li><b><code>/movement/generate</code></b>: ghi trước mỗi nhóm một dòng <code>AssetStocktakeTransfer</code> (<code>DANG_TAO</code>), đặt <code>MovementRequestedAt</code>, rồi chạy nền: mỗi nhóm start một workflow <code>ASSET_TRANSFER</code> trong transaction riêng. Thành công ⇒ <code>DA_TAO</code> + <code>InstanceId</code> + <code>AssetStocktakeItem.TransferInstanceId</code>. Lỗi (vd tài sản đang bị khoá <code>ASSET:&lt;code&gt;</code> bởi phiếu khác) ⇒ <code>LOI</code> + thông báo.</li>
-  <li>Gọi lại <code>generate</code> chỉ xử lý nhóm <code>LOI</code> hoặc chưa có. UNIQUE <code>(StocktakeId, GroupKey)</code> bảo đảm không nhóm nào sinh hai phiếu.</li>
-  <li><b><code>/movement/status</code></b>: trạng thái từng nhóm, để web hiện tiến độ.</li>
-</ol>
-<p>Bốn loại hệ quả hiện chưa có đường đi: KHONG_CO → Mất; hỏng hoặc đổi tình trạng khi tài sản vẫn ở người dùng; thấy ở tay người khác (V5 không có USER_TO_USER); đổi nhóm/mô tả. Thêm ca "Mất gặp lại". Phương án và cái giá của từng loại: <code>ket-qua/2026-11-14-cau-hoi-kiem-ke-cho-anh-dat.md</code>.</p>
+<h2><span class="n">09</span>Phiếu điều chuyển — đã bỏ</h2>
+<div class="warnbox"><b>Chốt 16/11/2026 (anh Đạt):</b> kiểm kê không liên quan tới phiếu điều chuyển. Không có API, bảng hay màn hình nào sinh phiếu từ kết quả kiểm.</div>
+<ul>
+  <li>Kết quả kiểm chỉ để xem báo cáo (mục 10). Hành chính muốn sửa tài sản (đổi người giữ, báo mất, đổi tình trạng…) thì tự lập phiếu điều chuyển tay như V4.</li>
+  <li>Bản v3 có khung GĐ2 ở đây: <code>/movement/preview|generate|status</code>, bảng <code>AssetStocktakeTransfer</code>, tách phiếu theo nhóm / công ty / người quản lý / vị trí / người giữ. Đã bỏ cả. Bản cũ lưu ở <code>ket-qua/2026-11-16-bo-gd2/ban-truoc-khi-sua/</code>.</li>
+  <li>Các ca kiểm kê thấy mà phiếu chưa chở được (Mất, hỏng tại chỗ, chuyển thẳng người sang người, sửa nhóm/mô tả, Mất gặp lại) không còn là việc của kiểm kê. Nếu hành chính gặp khó khi lập phiếu tay cho các ca đó thì là việc của phần điều chuyển.</li>
+</ul>
 </section>
 
 <!-- ============================================================ 10 -->
@@ -802,7 +780,7 @@ WHERE s.IsDeleted = 0 AND s.Status = 'DA_CHOT' AND s.EventCode = @eventCode
 <!-- ============================================================ 11 -->
 <section id="quyen">
 <h2><span class="n">11</span>Quyền</h2>
-<pre class="sql">v5:asset:kiem_ke:dot:quan_ly       -- mở / sửa / đóng / mở lại đợt; huỷ, mở lại phiên; GĐ2: sinh phiếu
+<pre class="sql">v5:asset:kiem_ke:dot:quan_ly       -- mở / sửa / đóng / mở lại đợt; huỷ, mở lại phiên
 v5:asset:kiem_ke:phien:thuc_hien   -- đi kiểm trên mobile (M1–M7)
 v5:asset:kiem_ke:bao_cao:xem       -- tra phiên, xem mọi phiên, báo cáo</pre>
 <ul>
@@ -857,19 +835,20 @@ v5:asset:kiem_ke:bao_cao:xem       -- tra phiên, xem mọi phiên, báo cáo</p
 <tr><td><code>LIKE 'TSHN%'</code>, nhánh Miền Bắc / Miền Nam, kho <code>VN01_TANG_2_KHO_LUU_TRU</code></td><td>Không lọc gì trên V5; di chứng lần chạy tay 2019</td></tr>
 <tr><td>Tên nhân viên / công ty / đơn vị nhân bản vào từng dòng</td><td>Tra khi hiển thị</td></tr>
 <tr><td><code>getFakeContext</code> giả user</td><td>Lấy người dùng từ context thật</td></tr>
+<tr><td><code>SyncCheckEvent</code> (công cụ IT chạy tay 2019 ghi kết quả kiểm về tài sản)</td><td>Kiểm kê không sửa tài sản (Q2, 16/11/2026)</td></tr>
 </table></div>
 </section>
 
 <!-- ============================================================ 14 -->
 <section id="trien-khai">
 <h2><span class="n">14</span>Kế hoạch triển khai</h2>
-<h3>GĐ0 — trước khi code</h3>
+<h3>Trước khi code</h3>
 <ol>
   <li>Câu 1 đã chốt (Q6: mobile gọi API V5). Đã có người làm app mobile; gửi họ bảng "App mobile phải đổi gì" (mục 08) và hợp đồng API.</li>
-  <li>Người phụ trách duyệt v3, nhất là Q4 (tách chốt khỏi sinh phiếu) và các mục <span class="chip c-warn">CHỐT</span>.</li>
+  <li>Người phụ trách duyệt v3.1, nhất là Q2, Q4 và các mục <span class="chip c-warn">CHỐT</span>.</li>
   <li>Cấp 3 resource quyền trên identity dev (bên mình tự cấp).</li>
 </ol>
-<h3>GĐ1 — ghi nhận + báo cáo</h3>
+<h3>Code — ghi nhận + báo cáo</h3>
 <div class="tbl"><table>
 <tr><th>#</th><th>Việc</th><th>Repo</th><th>Xong khi</th></tr>
 <tr><td>1</td><td>Thay khối DDL trong <code>fl-asset-v5.sql</code>; áp lên dev bằng file áp-lên-DB-đã-có (theo skill <code>db-change-safety</code>)</td><td>api</td><td>information_schema khớp DDL; chốt chặn đã chạy</td></tr>
@@ -882,8 +861,6 @@ v5:asset:kiem_ke:bao_cao:xem       -- tra phiên, xem mọi phiên, báo cáo</p
 <tr><td>8</td><td>Web: màn đợt, tra phiên / chi tiết, 4 báo cáo</td><td>fe</td><td>Đóng đợt bị chặn khi còn phiên dở</td></tr>
 <tr><td>9</td><td>Mobile: viết lại phần kiểm kê theo cơ chế V5 (bảng "App mobile phải đổi gì" mục 08)</td><td>app mobile</td><td>Kiểm thử trên một vùng thật</td></tr>
 </table></div>
-<h3>GĐ2 — hệ quả lên tài sản</h3>
-<p>Sau câu 2: tạo <code>AssetStocktakeTransfer</code>, viết bảng ánh xạ thành code, <code>/movement/*</code>, màn xem trước trên web, và các đường còn thiếu (Mất, hỏng tại chỗ, người sang người, nhóm/mô tả) theo phương án được chọn.</p>
 </section>
 
 <!-- ============================================================ 15 -->
@@ -895,9 +872,9 @@ v5:asset:kiem_ke:bao_cao:xem       -- tra phiên, xem mọi phiên, báo cáo</p
 <h4>1. Mobile gọi API nào?</h4>
 <p>Đã chốt: mobile gọi thẳng API V5 theo mục 08 (Q6). Không dựng lớp chuyển đổi cho 5 command V4. Đã có người làm app mobile; việc còn lại là báo họ (việc #9 mục 14).</p></div>
 
-<div class="ask"><div class="who">CHẶN GĐ2 · anh Đạt / HC</div>
-<h4>2. Kiểm kê xong, hệ có đổi tài sản không — từng loại lệch đổi thành gì? Ai duyệt? Chấp nhận một phiên ra hơn 20 phiếu không?</h4>
-<p>Đang giả định: có, qua <code>ASSET_TRANSFER</code> (mục 09, DDL <code>AssetStocktakeTransfer</code>). GĐ1 không phụ thuộc câu này.</p></div>
+<div class="ask"><div class="who">ĐÃ CHỐT 16/11/2026 · anh Đạt</div>
+<h4>2. Kiểm kê xong, hệ có đổi tài sản không?</h4>
+<p>Không. Kiểm kê không liên quan tới phiếu điều chuyển; kết quả chỉ để xem báo cáo, hành chính tự lập phiếu tay như V4 (Q2, mục 09).</p></div>
 
 <div class="ask"><div class="who">anh Đạt / sếp</div>
 <h4>4. Chuyển lịch sử kiểm kê V4 sang V5 không?</h4>
@@ -909,7 +886,7 @@ v5:asset:kiem_ke:bao_cao:xem       -- tra phiên, xem mọi phiên, báo cáo</p
 
 <div class="ask"><div class="who">anh Đạt / HC</div>
 <h4>12. Nhân viên chuyên môn xác nhận hỏng vào lúc nào?</h4>
-<p>Đang giả định: ở bước chuyên môn của phiếu điều chuyển (GĐ2); kiểm kê chỉ ghi phân công (mục 06, cột <code>IsNeedVerifierConfirm</code>, <code>VerifierStaffCode</code>). Dòng "hỏng nhưng vẫn ở người giữ" sẽ không có ai xác nhận cho tới khi câu 2 có lời.</p></div>
+<p>v3 đặt việc xác nhận vào phiếu điều chuyển; bỏ phiếu thì việc này không còn chỗ. Hai hướng: (a) không cần xác nhận — kiểm kê chỉ ghi ai phụ trách để báo cáo; (b) thêm một bước xác nhận trong kiểm kê (thêm quyền, API, màn hình). Đang giả định <b>(a)</b>: giữ cột <code>IsNeedVerifierConfirm</code>, <code>VerifierStaffCode</code> làm dữ liệu phân công cho báo cáo; server tính lại mỗi lần lưu nên không còn cờ rác như V4 (72/410).</p></div>
 
 <div class="ask"><div class="who">HC · mới ở v3</div>
 <h4>13. Người kiểm được đặt tình trạng mới là những gì?</h4>
@@ -921,7 +898,11 @@ v5:asset:kiem_ke:bao_cao:xem       -- tra phiên, xem mọi phiên, báo cáo</p
 
 <div class="ask"><div class="who">HC · mới ở v3</div>
 <h4>15. Chốt phiên có ghi "ngày kiểm cuối" lên tài sản không?</h4>
-<p>Đang giả định: có, cho dòng Có / Có nhưng hỏng / Thêm tài sản có trên hệ (mục 04). Không làm đổi nghiệp vụ, chỉ là dữ liệu tham khảo, nhưng đây là lần đầu kiểm kê ghi vào <code>AssetItem</code>.</p></div>
+<p>Đang giả định: có, cho dòng Có / Có nhưng hỏng / Thêm tài sản có trên hệ (mục 04). <code>AssetItem</code> đã có sẵn hai cột <code>LastCheckedAt</code>, <code>LastVerifiedByStaffCode</code> cho việc này. Không đổi nghiệp vụ, nhưng là chỗ duy nhất kiểm kê còn ghi vào bảng tài sản. Nếu "kiểm kê không liên quan" nghĩa là không đụng bảng tài sản chút nào thì bỏ; ngày kiểm cuối tra từ bảng kiểm kê.</p></div>
+
+<div class="ask"><div class="who">HC · mới ở v3.1</div>
+<h4>16. Có cần báo cáo "tài sản lệch cần xử lý" để hành chính lập phiếu tay không?</h4>
+<p>Đang giả định: chưa làm báo cáo riêng. Hành chính lọc phiên có lệch bằng <code>/search</code> (<code>hasDiscrepancy</code>) và xem dòng lệch trong chi tiết phiên. Nếu cần một danh sách gom theo người giữ / nhóm để lập phiếu cho nhanh thì thêm một báo cáo ở mục 10.</p></div>
 </section>
 
 <!-- ============================================================ 16 -->
@@ -942,7 +923,7 @@ v5:asset:kiem_ke:bao_cao:xem       -- tra phiên, xem mọi phiên, báo cáo</p
 </section>
 
 <footer>
-  Thiết kế kiểm kê CCDC cho FastLink V5 · v3 · 15/11/2026. Thay <code>kiem-ke-tai-san-v2.html</code> (11/11, sửa 14/11).<br>
+  Thiết kế kiểm kê CCDC cho FastLink V5 · v3.1 · 15/11/2026, sửa 16/11/2026 (bỏ GĐ2). Thay <code>kiem-ke-tai-san-v2.html</code> (11/11, sửa 14/11).<br>
   Nguồn: <code>fl_asset_prod</code> dump 04/11/2026 (chỉ đọc) · <code>flink-webapi</code> main <code>c0c7f5e</code> · <code>fastlink-erp-api</code> HEAD <code>6fce8bf1</code> · số đo <code>ket-qua/2026-11-14-danh-gia-kiem-ke-v2-so-do/r1…r10</code>.
 </footer>
 </main>
