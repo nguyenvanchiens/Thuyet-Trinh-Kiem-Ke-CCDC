@@ -849,7 +849,10 @@ $('btnMo').onclick = () => {
   toast(`Đã mở đợt ${ma}: tạo ${fmt(soPhan)} phần kiểm. Mobile đã thấy đợt này.`);
 };
 
-khoiTao(); ve();
+khoiTao();
+// ?vai=son mở thẳng màn nhân viên xác nhận
+if (new URLSearchParams(location.search).get('vai') === 'son') { S.vai = 'son'; $('vai').value = 'son'; }
+ve();
 </script>
 </body>
 </html>
