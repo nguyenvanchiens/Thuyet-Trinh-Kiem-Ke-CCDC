@@ -166,6 +166,10 @@ h3{font-size:13px;margin:16px 0 8px}
 @media (prefers-reduced-motion:reduce){.cam::after{animation:none;top:80px}}
 .ph-sheet{position:absolute;inset:0;background:rgba(15,20,35,.45);display:flex;align-items:flex-end;z-index:2}
 .ph-sheet .in{background:#fff;border-radius:16px 16px 0 0;padding:14px 14px 16px;width:100%;display:flex;flex-direction:column;gap:6px;max-height:88%;overflow-y:auto}
+.tem-ds{display:flex;flex-wrap:wrap;gap:6px;padding:0 10px}
+.tem{border:1px dashed #9aa3b5;background:#fff;border-radius:8px;padding:6px 9px;cursor:pointer;text-align:left;font-size:12px;line-height:1.3;max-width:100%}
+.tem:hover{border-color:var(--primary);background:var(--primary-soft)}
+.tem .mono{display:block;font-size:11px;color:var(--muted)}
 .app-side{display:flex;flex-direction:column;gap:12px;min-width:0}
 .app-side .guide{margin:0}
 .app-side .giai p{margin:0 0 8px}
@@ -278,7 +282,7 @@ h3{font-size:13px;margin:16px 0 8px}
             <ol>
               <li>Bấm đợt <b>KK0012</b>.</li>
               <li>Tab <b>Người</b>, bấm <b>anh Sơn</b>: hiện 6 món anh Sơn đang giữ, tất cả "Chưa kiểm". Hàng nút thứ hai lọc nhanh phần <b>Chưa kiểm</b>, <b>Đang kiểm</b>, <b>Xong</b>.</li>
-              <li>Bấm <b>Quét tem</b>, bấm "Quét món tiếp theo" vài lần. Thử "Quét một món đang ghi ở phần khác" rồi <b>Ghi nhận</b>. Thử mã <span class="mono">ABC-123</span>: bị từ chối.</li>
+              <li>Bấm <b>Quét tem</b>. Bản minh hoạ không có camera: bấm vào một tem ở hàng "tem trước mặt", coi như quét tem đó. Đồ của anh Sơn thì tự <b>Có</b>. Chiếc <b>ghế xoay</b> đang ghi ở Phòng họp T5 thì app cảnh báo, bấm <b>Ghi nhận ở đây</b>. <b>Tem lạ</b> ABC-123 thì bị từ chối.</li>
               <li>Về danh sách, bấm một món chưa kiểm, chọn <b>Không thấy</b>. Thử <b>Hỏng</b>: phải chụp ảnh mới lưu được. Thử tích <b>cần in lại tem</b>.</li>
               <li>Bấm <b>+ Thêm tài sản</b>, gõ "máy tính bảng": ra món đang ghi ở chị Hà và món mua sau khi mở đợt. Chọn một món, bấm <b>Ghi nhận ở đây</b>. Thêm nhầm thì bấm vào món, "Bỏ khỏi phần này".</li>
               <li>Bấm <b>Xong phần</b>: anh Sơn nhận phiếu XN0153, menu "NV xác nhận kiểm kê" hiện số 1.</li>
@@ -801,11 +805,18 @@ function timMa(raw) {
   if (NGOAI_DOT[ma]) { A.kq = { loai:'ngoai', ma, ten:NGOAI_DOT[ma].ten, txt:esc(NGOAI_DOT[ma].ghi) + '. Ghi nhận là món thêm.' }; return; }
   A.kq = { loai:'khong', ma };
 }
-function quetKhac() {
-  const p = phanById(S.app.phan);
-  const g = S.items.find(i => i.nguon === 'DS' && i.kq === 'CHUA' && i.phan !== p.id && ['v-t5','v-t4','v-ph5','p-dong','p-van'].includes(i.phan) && !S.items.some(t => t.phan === p.id && t.ma === i.ma));
-  if (!g) { toast('Hết món mẫu để giả lập'); return; }
-  timMa(g.ma);
+function temTruocMat(p) {
+  // tem đang nằm trước mặt người kiểm: đồ của phần này chưa quét, một món của phần khác, đồ người đã nghỉ, món ngoài đợt, tem lạ
+  const daCo = ma => S.items.some(t => t.phan === p.id && t.ma === ma);
+  const cua = dsCua(p.id).filter(i => i.kq === 'CHUA').slice(0, 3).map(i => ({ ma:i.ma, ten:i.ten, loai:'cua' }));
+  const g = S.items.find(i => i.nguon === 'DS' && i.kq === 'CHUA' && i.phan !== p.id && ['v-ph5','v-t5','v-t4','p-dong','p-van'].includes(i.phan) && !daCo(i.ma));
+  const tem = [...cua];
+  if (g) tem.push({ ma:g.ma, ten:g.ten, loai:'khac' });
+  const n = S.nghi.find(v => !daCo(v.ma)); if (n) tem.push({ ma:n.ma, ten:n.ten, loai:'nghi' });
+  const ng = Object.entries(NGOAI_DOT).find(([ma]) => !daCo(ma)); if (ng) tem.push({ ma:ng[0], ten:ng[1].ten, loai:'ngoai' });
+  tem.push({ ma:'ABC-123', ten:'Tem lạ', loai:'la' });
+  return (cua.length ? '' : '<div class="ph-sub" style="width:100%">Đã quét hết đồ trong danh sách của phần này.</div>')
+    + tem.map(t => `<button class="tem" data-act="a-thu" data-ma="${t.ma}" data-loai="${t.loai}"><b>${esc(t.ten)}</b><span class="mono">${t.ma}</span></button>`).join('');
 }
 function ghiNhan() {
   const A = S.app, p = phanById(A.phan), r = A.kq, luc = bayGio();
@@ -1006,16 +1017,12 @@ function veApp() {
     back = bk; tt = 'Quét tem'; sub = `${esc(p.ten)} · ${ds.filter(daKiem).length}/${ds.length} đã kiểm`;
     const card = theKq(r, p);
     body = `<div class="cam">Đưa tem vào khung</div>${card}
-      <div class="ph-note">Bản minh hoạ không có camera. Bấm nút để giả lập một lần quét:</div>
-      <div style="padding:0 10px;display:flex;flex-direction:column;gap:6px">
-        <button class="ph-btn" data-act="a-quet-tiep">Quét món tiếp theo trong danh sách</button>
-        <button class="ph-btn" data-act="a-quet-khac">Quét một món đang ghi ở phần khác</button>
-        <div style="display:flex;gap:6px"><input class="input mono" id="appMa" placeholder="Hoặc gõ mã tem" style="height:40px"><button class="ph-btn" style="width:76px;flex:0 0 76px" data-act="a-tim">Tìm</button></div>
-      </div>
-      <div class="ph-note">Mã thử: <button class="link mono" data-act="a-thu" data-ma="TSHN26-0300">TSHN26-0300</button> (mua sau khi mở đợt) · <button class="link mono" data-act="a-thu" data-ma="TSHN23-0412">TSHN23-0412</button> (ghi ở người đã nghỉ) · <button class="link mono" data-act="a-thu" data-ma="ABC-123">ABC-123</button> (không có trên hệ)</div>`;
+      <div class="ph-note">Bản minh hoạ không có camera: <b>bấm vào một tem dưới đây</b>, coi như đưa tem đó vào khung. App thật chỉ có một nút Quét, quét tem nào thì app tự nhận ra món đó của ai.</div>
+      <div class="tem-ds">${temTruocMat(p)}</div>
+      <div style="padding:6px 10px 0;display:flex;gap:6px"><input class="input mono" id="appMa" placeholder="Hoặc gõ mã tem" style="height:40px"><button class="ph-btn" style="width:76px;flex:0 0 76px" data-act="a-tim">Tìm</button></div>`;
     foot = '<button class="ph-btn" data-act="a-ve-ds">← Về danh sách</button>';
     buoc = 'Bước 4'; ten = 'Quét tem';
-    giai = `<p>App tra mã trong <b>bản chụp của đợt</b>:</p>
+    giai = `<p>Chỉ có <b>một nút Quét</b>. Người kiểm không cần biết trước món đó của ai: app tra mã trong <b>bản chụp của đợt</b> rồi tự xử lý:</p>
       <div class="mini tblwrap"><table><tbody>
         <tr><td class="wrap" style="min-width:120px">Món thuộc phần đang kiểm</td><td class="wrap">Tự ghi <b>Có</b></td></tr>
         <tr><td class="wrap">Món thuộc phần khác</td><td class="wrap">Báo món đang ghi ở đâu. Bấm <b>Ghi nhận</b> thì lưu vết ở cả hai phần, không đổi người giữ.</td></tr>
@@ -1041,12 +1048,12 @@ function veApp() {
         ? tim.slice(0, 15).map(k => `<div class="ph-row" data-act="a-thu" data-ma="${k.ma}"><div><b>${esc(k.ten)}</b><div class="ph-sub mono">${k.ma}</div><div class="ph-sub">${esc(k.o)}</div></div><div class="r">${daCo.has(k.ma) ? pill('Đã thêm', 'p-mute') : pill('Chọn', 'p-info')}</div></div>`).join('')
           + (tim.length > 15 ? `<div class="ph-note">Hiện 15/${tim.length} kết quả, gõ cụ thể hơn.</div>` : '')
         : `<div class="ph-card bad">Không tìm thấy "${esc(A.qthem)}" trên hệ. Không thêm được: quản lý phải tạo tài sản trên web trước.</div>`;
-    } else kq = '<div class="ph-note">Bấm <b>Quét</b> để quét tem (bản minh hoạ giả lập một món đang ghi ở phần khác). Tem mất thì gõ ít nhất 2 ký tự, thử: "máy tính bảng", "laptop", "TSHN26".</div>';
-    body = `<div class="ph-info">Dùng khi người được kiểm đang cầm món <b>không có trong danh sách</b> của họ (ví dụ anh Tú cầm chiếc laptop lấy từ kho). <b>Quét tem</b>, hoặc tem mất thì tìm theo mã, tên. Hệ chỉ ghi nhận, <b>không đổi người giữ</b>.</div>
-      <div class="ph-search ph-loc"><button class="ph-btn pri" style="flex:0 0 92px;width:92px" data-act="a-them-quet" title="Bản minh hoạ: giả lập quét tem một món đang ghi ở phần khác">📷 Quét</button><input class="input" data-app="qthem" value="${esc(A.qthem || '')}" placeholder="hoặc gõ mã, tên tài sản"></div>${theKq(A.kq, p)}${kq}`;
+    } else kq = '<div class="ph-note">Gõ ít nhất 2 ký tự. Thử: "máy tính bảng", "laptop", "TSHN26".</div>';
+    body = `<div class="ph-info">Dùng khi người được kiểm đang cầm món <b>không có trong danh sách</b> của họ (ví dụ anh Tú cầm chiếc laptop lấy từ kho) mà <b>tem mất hoặc mờ</b>. Còn tem thì không cần vào đây: bấm Quét, app tự cảnh báo món đó đang ghi ở đâu. Hệ chỉ ghi nhận, <b>không đổi người giữ</b>.</div>
+      <div class="ph-search ph-loc"><button class="ph-btn pri" style="flex:0 0 92px;width:92px" data-act="a-them-quet" title="Mở màn quét">📷 Quét</button><input class="input" data-app="qthem" value="${esc(A.qthem || '')}" placeholder="hoặc gõ mã, tên tài sản"></div>${theKq(A.kq, p)}${kq}`;
     foot = '<button class="ph-btn" data-act="a-ve-ds">← Về danh sách</button>';
     buoc = 'Bước 3b'; ten = 'Thêm tài sản cho người được kiểm';
-    giai = `<p>Người được kiểm đưa ra một món mà danh sách của họ không có. Bấm <b>+ Thêm tài sản</b>: <b>quét tem</b> là nhanh nhất; tem mất hoặc mờ thì tìm theo mã hoặc tên ngay trên cùng màn.</p><p>Chọn món thì app báo món đang ghi ở đâu, bấm <b>Ghi nhận ở đây</b>. Món vẫn thuộc phần cũ, phần cũ tự hiện "thấy ở phần ${esc(p.ten)}".</p><p><b>Không đổi người giữ.</b> Muốn chuyển hẳn thì hành chính lập phiếu sau đợt, từ báo cáo ngoại lệ. Thêm nhầm thì bấm vào món, chọn "Bỏ khỏi phần này".</p><p>Mã hoặc tên không có trên hệ thì không thêm được.</p>`;
+    giai = `<p>Người được kiểm đưa ra một món mà danh sách của họ không có. Còn tem thì chỉ cần <b>Quét</b> như mọi món: app tự nhận ra món đó không thuộc phần này và cảnh báo. Màn <b>+ Thêm tài sản</b> dành cho lúc <b>tem mất hoặc mờ</b>: tìm theo mã hoặc tên.</p><p>Chọn món thì app báo món đang ghi ở đâu, bấm <b>Ghi nhận ở đây</b>. Món vẫn thuộc phần cũ, phần cũ tự hiện "thấy ở phần ${esc(p.ten)}".</p><p><b>Không đổi người giữ.</b> Muốn chuyển hẳn thì hành chính lập phiếu sau đợt, từ báo cáo ngoại lệ. Thêm nhầm thì bấm vào món, chọn "Bỏ khỏi phần này".</p><p>Mã hoặc tên không có trên hệ thì không thêm được.</p>`;
   }
   vePhone(back, tt, sub, body, foot, sheet, A.man + A.phan);
   $('appBuoc').textContent = buoc; $('appTen').textContent = ten; $('appGiai').innerHTML = giai;
@@ -1071,7 +1078,7 @@ function appAct(a, el, e) {
   if (a === 'a-luu-hong') { const i = monApp(); if (i && A.anh) { ghiKq(i, 'HONG', '', A.ghiChu); i.anh = true; datTem(i, !!A.tem); } dongSheet(); }
   if (a === 'a-bo-them') { const i = monApp(); if (i) { S.items.splice(S.items.indexOf(i), 1); if (i.gocRef) Object.assign(i.gocRef, i.gocTruoc); toast(`Đã bỏ ${i.ten} khỏi phần này`); } dongSheet(); }
   if (a === 'a-them') Object.assign(A, { man:'them', kq:null, qthem:'' });
-  if (a === 'a-them-quet') { A.qthem = ''; quetKhac(); }
+  if (a === 'a-them-quet') Object.assign(A, { man:'quet', kq:null, qthem:'' });
   if (a === 's-phieu') Object.assign(A, { sonMan:'ct', sonPhieu:el.dataset.ma, sonPd:false, sonChon:{}, sonLyDo:'', sonErr:false, sonXn:false });
   if (a === 's-back') Object.assign(A, { sonMan:'ds', sonPd:false, sonXn:false });
   if (a === 's-mo') A.sonMo[el.dataset.id] = !A.sonMo[el.dataset.id];
@@ -1085,8 +1092,6 @@ function appAct(a, el, e) {
   if (a === 's-ok') { dongYSon(); A.sonXn = false; ve(); toast('Đã xác nhận. Cảm ơn anh.'); return; }
   if (a === 'a-quet') Object.assign(A, { man:'quet', kq:null });
   if (a === 'a-ve-ds') Object.assign(A, { man:'ds', kq:null });
-  if (a === 'a-quet-tiep') { const i = dsCua(A.phan).find(v => v.kq === 'CHUA'); if (i) timMa(i.ma); else A.kq = { loai:'het' }; }
-  if (a === 'a-quet-khac') quetKhac();
   if (a === 'a-tim') timMa($('appMa').value);
   if (a === 'a-thu') timMa(el.dataset.ma);
   if (a === 'a-bo') A.kq = null;
