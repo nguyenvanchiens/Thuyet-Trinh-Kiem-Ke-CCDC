@@ -96,6 +96,12 @@ tr.pick td{background:var(--accent-soft)}
 .fig img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);background:#fff}
 .fig figcaption{font-size:13px;color:var(--muted);margin-top:6px}
 .figs{align-items:start}
+.ask{border:1px solid var(--warn);border-left-width:4px;background:var(--warn-soft);border-radius:8px;padding:8px 12px;margin:10px 0 12px;font-size:14px}
+.ask .lb{font-weight:700;color:var(--warn);margin-right:2px}
+a.ask-tag{display:inline-block;font-size:12px;font-weight:600;line-height:1.5;padding:0 8px;border-radius:999px;background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn);text-decoration:none;white-space:nowrap;vertical-align:1px}
+a.ask-tag:hover{filter:brightness(.95)}
+.tbl tr:target td{background:var(--warn-soft)}
+.tbl tr[id]{scroll-margin-top:16px}
 .phones .fig img{max-width:300px;margin:0 auto}
 .phones figcaption{text-align:center}
 footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
@@ -136,15 +142,18 @@ a{color:var(--accent)}
   <div class="card"><div class="k">Code</div><div class="v"><span class="pill p-warn">Chưa bắt đầu</span></div></div>
 </div>
 
+<div class="ask" style="margin-top:16px"><span class="lb">❓ Cách đọc trang này:</span> chỗ nào có nhãn <a class="ask-tag" href="#cau-hoi">❓ Hỏi anh Đạt</a> là <b>chưa chốt</b>, cần hỏi lại anh Đạt. Bấm nhãn để nhảy tới câu hỏi tương ứng ở <a href="#cau-hoi">mục 12</a>. Có 7 câu: 5 câu chính (1–5) và 2 câu nhỏ hỏi nhanh (6–7), ngoài việc duyệt hướng đi.</div>
+
 <!-- 1 -->
 <h2><span class="n">01</span>Tóm tắt</h2>
 <div class="card summary">
   <p><b>Đề xuất:</b> tách kiểm kê thành hai việc mà V4 đang gộp làm một.</p>
   <ul>
     <li><b>Kiểm</b> là việc của hành chính, đi theo <b>nơi đặt</b>: từng người, từng phòng/tầng, từng kho. Mỗi tài sản thuộc <b>đúng một</b> phần kiểm.</li>
-    <li><b>Xác nhận</b> là việc của <b>người giữ</b>: mỗi người xác nhận một lần cho mọi món mình đứng tên, dù món đó được kiểm ở phần nào. Đồ trong kho do người được giao cho kho xác nhận.</li>
+    <li><b>Xác nhận</b> là việc của <b>người giữ</b>: mỗi người xác nhận một lần cho mọi món mình đứng tên, dù món đó được kiểm ở phần nào. Đồ trong kho do người được giao cho kho xác nhận. <a class="ask-tag" href="#cau-1">❓ Hỏi anh Đạt · câu 1</a></li>
   </ul>
   <p>Cách này giữ được thói quen hiện tại của hành chính: 66% số dòng kiểm kê trên V4 là đi theo vùng. Nó sửa ba lỗi gốc của V4: một món nằm trong hai danh sách, kiểm theo vùng không ghi ai giữ, và không ai xác nhận kết quả. Web trả lời được hai câu hỏi chính: <b>ai/chỗ nào chưa được kiểm</b>, và <b>ai chưa xác nhận</b>.</p>
+  <div class="ask" style="margin-bottom:0"><span class="lb">❓ Hỏi anh Đạt trước tiên:</span> có đi theo hướng này không. Đồng ý hướng thì mới chốt 7 câu ở <a href="#cau-hoi">mục 12</a>, rồi làm thiết kế DB và API.</div>
 </div>
 
 <!-- 2 -->
@@ -190,7 +199,7 @@ a{color:var(--accent)}
 </table></div>
 
 <!-- 5 -->
-<h2><span class="n">05</span>Mô hình đề xuất</h2>
+<h2 id="mo-hinh"><span class="n">05</span>Mô hình đề xuất</h2>
 
 <div class="layers">
   <div class="card">
@@ -202,21 +211,22 @@ a{color:var(--accent)}
   <div class="card">
     <span class="tag">Tầng 2 · Xác nhận</span>
     <h3>Người giữ chịu trách nhiệm</h3>
-    <p>Khi mọi phần chứa đồ của một người đã kiểm xong, người đó nhận <b>một</b> yêu cầu xác nhận cho toàn bộ đồ mình đứng tên. Đồ trong kho do người được giao cho kho xác nhận.</p>
+    <p>Khi mọi phần chứa đồ của một người đã kiểm xong, người đó nhận <b>một</b> yêu cầu xác nhận cho toàn bộ đồ mình đứng tên. Đồ trong kho do người được giao cho kho xác nhận. <a class="ask-tag" href="#cau-1">❓ Hỏi anh Đạt · câu 1</a></p>
   </div>
 </div>
 
 <h3>Luật chia phần lúc mở đợt</h3>
 <p>Một đợt kiểm cho <b>một công ty</b>. Hệ chụp danh sách tại thời điểm mở đợt. Tài sản chuyển chỗ trong đợt vẫn tính theo bản chụp.</p>
+<div class="ask"><span class="lb">❓ Hỏi anh Đạt · câu 2:</span> nhân viên VN01 đang cầm tài sản của VN02 thì món đó nằm ở đợt nào? Nếu không xử lý, món đó lọt giữa hai đợt. <a href="#cau-2">Xem câu 2</a></div>
 <div class="tbl"><table>
   <tr><th style="width:45%">Tài sản</th><th>Vào phần</th></tr>
-  <tr><td>Đang ở kho (<code>PositionCode = STORAGE</code>)</td><td>Phần <b>kho/vùng</b> theo mã vùng của nó, ví dụ Kho MB</td></tr>
-  <tr><td>Có người giữ, có mã vùng <b>không phải kho</b></td><td>Phần <b>vùng</b> đó, ví dụ Tầng 3</td></tr>
+  <tr><td>Đang ở kho (<code>PositionCode = STORAGE</code>)</td><td>Phần <b>kho/vùng</b> theo mã vùng của nó, ví dụ Kho MB <a class="ask-tag" href="#cau-4">❓ Hỏi anh Đạt · câu 4</a></td></tr>
+  <tr><td>Có người giữ, có mã vùng <b>không phải kho</b></td><td>Phần <b>vùng</b> đó, ví dụ Tầng 3. Người đứng tên từng món xác nhận <a class="ask-tag" href="#cau-3">❓ Hỏi anh Đạt · câu 3</a></td></tr>
   <tr><td>Có người giữ, không có vùng, <b>hoặc</b> vẫn mang mã kho cũ</td><td>Phần <b>người</b> giữ. Nhãn kho chỉ có nghĩa khi đồ đang ở kho</td></tr>
   <tr><td>Đang ở kho nhưng thiếu mã vùng (dữ liệu cũ)</td><td>Phần <b>"Kho chưa rõ"</b>, để không món nào rơi khỏi danh sách</td></tr>
 </table></div>
 <p style="margin-top:12px"><b>Danh sách phần người</b> = mọi nhân viên <b>đang làm</b> của công ty, kể cả người có 0 món trên hệ. Nhờ vậy nhân viên mới đã cầm đồ nhưng chưa được gán vẫn được kiểm. Người vào làm giữa đợt thì hành chính thêm vào đợt. Người đã nghỉ không có phần kiểm. Đồ còn ghi ở họ hiện thành nhóm riêng trong báo cáo để thu hồi.</p>
-<p>Không lọc theo tiền tố mã. Chỉ bỏ các trạng thái không cần kiểm: Không theo dõi, Mất, Đã thanh lý.</p>
+<p>Không lọc theo tiền tố mã. Chỉ bỏ các trạng thái không cần kiểm: Không theo dõi, Mất, Đã thanh lý. <a class="ask-tag" href="#cau-7">❓ Hỏi anh Đạt · câu 7</a></p>
 
 <p><a href="#luong">Mục 06</a> kể luồng một đợt kiểm kê từ đầu tới cuối theo đúng các luật này.</p>
 
@@ -228,12 +238,12 @@ a{color:var(--accent)}
 <div class="tbl"><table>
   <tr><th style="width:34%">Ai / chỗ nào</th><th>Đồ đang ghi trên hệ</th></tr>
   <tr><td><b>Anh Minh</b>, nhân viên</td><td>1 laptop, 1 màn hình</td></tr>
-  <tr><td><b>Anh Sơn</b>, trưởng phòng</td><td>6 món đồ cá nhân (laptop, màn hình, bàn phím, chuột, tai nghe, điện thoại bàn). Ngoài ra đứng tên 120 món bàn ghế, máy chiếu ở <b>Tầng 3</b></td></tr>
+  <tr><td><b>Anh Sơn</b>, trưởng phòng</td><td>6 món đồ cá nhân (laptop, màn hình, bàn phím, chuột, tai nghe, điện thoại bàn). Ngoài ra đứng tên 120 món bàn ghế, máy chiếu ở <b>Tầng 3</b> <a class="ask-tag" href="#cau-3">❓ Hỏi anh Đạt · câu 3</a></td></tr>
   <tr><td><b>Anh Tú</b>, nhân viên mới vào tuần trước</td><td><b>Không có gì</b>. Thực tế đã cầm 1 laptop lấy từ kho nhưng chưa ai lập phiếu</td></tr>
   <tr><td><b>Kho MB</b></td><td>300 món, trong đó có chiếc laptop anh Tú đang cầm</td></tr>
   <tr><td><b>Anh Nam</b>, đã nghỉ việc</td><td>Hệ vẫn ghi đang giữ 1 điện thoại</td></tr>
 </table></div>
-<p class="note">Người đi kiểm: <b>chị Lan</b> (hành chính). Người xác nhận Kho MB: <b>chị Hoa</b> (tổ hành chính MB).</p>
+<p class="note">Người đi kiểm: <b>chị Lan</b> (hành chính). Người xác nhận Kho MB: <b>chị Hoa</b> (tổ hành chính MB). <a class="ask-tag" href="#cau-1">❓ Hỏi anh Đạt · câu 1</a></p>
 
 <div class="flow">
 
@@ -248,9 +258,9 @@ a{color:var(--accent)}
   <h3>Bấm "Xem trước": hệ lấy danh sách của công ty đó</h3>
   <ul>
     <li><b>Người:</b> mọi nhân viên <b>đang làm</b> của VN01, lấy từ nhân sự, <b>kể cả người mới chưa được gán tài sản nào</b> như anh Tú. Người đã nghỉ không lấy.</li>
-    <li><b>Tài sản:</b> mọi tài sản của VN01, mỗi món xếp vào đúng một chỗ: đồ đang ở người (laptop, điện thoại) vào <b>phần của người đó</b>; đồ ở tầng, phòng họp vào <b>phần vùng</b> (Tầng 3, 120 món, đứng tên anh Sơn); đồ trong kho vào <b>phần Kho MB</b>.</li>
+    <li><b>Tài sản:</b> mọi tài sản của VN01, mỗi món xếp vào đúng một chỗ: đồ đang ở người (laptop, điện thoại) vào <b>phần của người đó</b>; đồ ở tầng, phòng họp vào <b>phần vùng</b> (Tầng 3, 120 món, đứng tên anh Sơn); đồ trong kho vào <b>phần Kho MB</b>. <a class="ask-tag" href="#cau-2">❓ Hỏi anh Đạt · câu 2</a> <a class="ask-tag" href="#cau-4">❓ Hỏi anh Đạt · câu 4</a></li>
     <li>Màn hình hiện số liệu: <b>413 người</b> (25 người không giữ món nào), <b>4 vùng</b>, <b>1 kho</b>, <b>2.091 món</b>, kèm cảnh báo "1 điện thoại vẫn ghi ở anh Nam, người đã nghỉ".</li>
-    <li>Chọn <b>người xác nhận kho</b>: hệ gợi ý chị Hoa (tổ hành chính MB, đã xác nhận ở đợt trước).</li>
+    <li>Chọn <b>người xác nhận kho</b>: hệ gợi ý chị Hoa (tổ hành chính MB, đã xác nhận ở đợt trước). <a class="ask-tag" href="#cau-1">❓ Hỏi anh Đạt · câu 1</a></li>
   </ul>
   <figure class="fig"><img src="anh-minh-hoa/web-tao-dot-b2.png" alt="Bước xem trước khi tạo đợt VN01: 413 phần người, 4 phần vùng, 1 phần kho, 2.091 tài sản, cảnh báo người đã nghỉ, chọn người xác nhận Kho MB" loading="lazy">
   <figcaption>Màn xem trước: chưa lưu gì, chỉ tính cho quản lý xem.</figcaption></figure>
@@ -289,8 +299,8 @@ a{color:var(--accent)}
       <li><b>Bấm vào một phiếu</b> để mở chi tiết, gồm các phần dưới đây.</li>
       <li><b>Đầu màn:</b> tên đợt, người kiểm, trạng thái của mình, và 4 con số: số món mình đứng tên, số Có, số Không thấy/Hỏng, số Có ở chỗ khác.</li>
       <li><b>Danh sách:</b> chia nhóm theo phần ("Phần của tôi" và "Tầng 3"). Món có vấn đề (không thấy, hỏng, ở chỗ khác, thêm từ chỗ khác) xếp lên đầu, kèm ghi chú như "thấy ở phần Phòng họp T5". Món "Có" thu gọn, bấm "Hiện cả 115 món Có" để xem hết.</li>
-      <li><b>Nút Đồng ý:</b> hệ hỏi lại "Anh xác nhận kết quả của 126 món là đúng?". Đồng ý xong thì kết quả bị khoá, hành chính không mở lại được nữa.</li>
-      <li><b>Nút Không đồng ý:</b> hiện ô tích ở từng món (tích món chưa đúng, không bắt buộc) và ô <b>lý do bắt buộc</b>. Gửi xong thì phần chứa món đó trả về hành chính kiểm lại.</li>
+      <li><b>Nút Đồng ý:</b> hệ hỏi lại "Anh xác nhận kết quả của 126 món là đúng?". Đồng ý xong thì kết quả bị khoá, hành chính không mở lại được nữa. <a class="ask-tag" href="#cau-5">❓ Hỏi anh Đạt · câu 5</a></li>
+      <li><b>Nút Không đồng ý:</b> hiện ô tích ở từng món (tích món chưa đúng, không bắt buộc) và ô <b>lý do bắt buộc</b>. Gửi xong thì phần chứa món đó trả về hành chính kiểm lại. <a class="ask-tag" href="#cau-5">❓ Hỏi anh Đạt · câu 5</a></li>
       <li><b>Lịch sử:</b> ghi lại mỗi lần đồng ý hoặc không đồng ý, kèm lý do và thời gian.</li>
     </ul>
     <div class="tbl" style="margin-top:8px"><table>
@@ -309,7 +319,7 @@ a{color:var(--accent)}
 
 <div class="fstep"><div class="no">6</div><div>
   <div class="who">Anh Sơn → chị Lan → anh Sơn</div>
-  <h3>Nếu nhân viên không đồng ý</h3>
+  <h3>Nếu nhân viên không đồng ý <a class="ask-tag" href="#cau-5">❓ Hỏi anh Đạt · câu 5</a></h3>
   <p>Anh Sơn thấy máy chiếu bị ghi "Không thấy", bấm <b>Không đồng ý</b>, tích máy chiếu, ghi lý do <i>"máy chiếu đang để ở phòng giám đốc"</i>.</p>
   <ol>
     <li>Phần Tầng 3 tự <b>mở lại</b>, trả về chị Lan.</li>
@@ -336,7 +346,7 @@ a{color:var(--accent)}
 
 <div class="fstep"><div class="no">8</div><div>
   <div class="who">Quản lý · web</div>
-  <h3>Đóng đợt</h3>
+  <h3>Đóng đợt <a class="ask-tag" href="#cau-5">❓ Hỏi anh Đạt · câu 5</a> <a class="ask-tag" href="#cau-6">❓ Hỏi anh Đạt · câu 6</a></h3>
   <p>Bấm <b>Đóng đợt</b>. Hệ báo trước còn bao nhiêu phần chưa kiểm và bao nhiêu người chưa xác nhận. Đóng xong thì mọi thứ bị khoá. Danh sách ngoại lệ là việc hành chính <b>tự xử lý sau</b>: lập phiếu giao chiếc laptop cho anh Tú, thu hồi điện thoại của anh Nam, xử lý màn hình hỏng. Kiểm kê không tự sửa bảng tài sản.</p>
 </div></div>
 
@@ -379,11 +389,12 @@ a{color:var(--accent)}
 <h3>Ví dụ: chị Lan đi kiểm đồ của anh Sơn</h3>
 <ol class="steps">
   <li><b class="t">Bấm vào đợt</b>App chỉ hiện các đợt đang mở, ví dụ KK0012 · VN01. Đợt đã đóng không hiện.</li>
-  <li><b class="t">Hiện danh sách phần đã chia sẵn</b>Có các tab <b>Tất cả · Người · Vùng · Kho</b> và ô tìm. Mỗi dòng ghi số món, số đã kiểm, trạng thái. Danh sách này là bản chụp lúc mở đợt, không tính lại.</li>
+  <li><b class="t">Hiện danh sách phần đã chia sẵn</b>Có các tab <b>Tất cả · Người · Vùng · Kho</b>, ô tìm và ô chọn trạng thái (chọn <b>Chưa kiểm</b> để biết còn ai, chỗ nào chưa đi). Phần chưa xong xếp lên đầu. Mỗi dòng ghi số món, số đã kiểm, trạng thái. Danh sách này là bản chụp lúc mở đợt, không tính lại.</li>
   <li><b class="t">Bấm vào anh Sơn</b>Hiện danh sách tài sản anh Sơn đang giữ, ví dụ 6 món, tất cả đang "Chưa kiểm".</li>
   <li><b class="t">Quét tem từng món</b>Quét trúng món nào thì món đó tự thành <b>Có</b>, thanh tiến độ tăng 1/6, 2/6…</li>
-  <li><b class="t">Món tìm không thấy</b>Bấm vào món, chọn <b>Không thấy</b>, ghi thêm nếu cần ("anh Sơn nói đang mang đi sửa"). Hỏng thì chọn <b>Hỏng</b>, app bắt chụp ảnh.</li>
+  <li><b class="t">Món tìm không thấy</b>Bấm vào món, chọn <b>Không thấy</b>, ghi thêm nếu cần ("anh Sơn nói đang mang đi sửa"). Hỏng thì chọn <b>Hỏng</b>: phải chụp ảnh mới lưu được. Còn dùng nhưng chờ thanh lý thì chọn <b>Có · Chờ thanh lý</b>.</li>
   <li><b class="t">Quét phải món không thuộc anh Sơn</b>App báo món đó đang ghi ở đâu. Bấm <b>Ghi nhận ở đây</b>: hệ lưu vết ở cả hai phần, <b>không đổi người giữ</b>.</li>
+  <li><b class="t">Anh Sơn đang cầm món không có trong danh sách</b>Bấm <b>+ Thêm tài sản</b>: quét tem, hoặc tem mất thì tìm theo mã hoặc tên ngay trên màn đó. Chọn món, bấm <b>Ghi nhận ở đây</b>. Giống như quét được món của phần khác. Thêm nhầm thì bấm vào món, chọn "Bỏ khỏi phần này". Không có trên hệ thì không thêm được.</li>
   <li><b class="t">Kiểm hết thì bấm Xong phần</b>Nút chỉ bấm được khi không còn món "Chưa kiểm". Có nút tắt "Đánh dấu còn lại là Không thấy".</li>
   <li><b class="t">Sau đó là việc của anh Sơn</b>Khi <b>mọi phần</b> có đồ của anh Sơn đã xong (phần anh Sơn và Tầng 3), anh nhận phiếu, vào menu "NV xác nhận kiểm kê", bấm Đồng ý hoặc Không đồng ý (mục 06, bước 5).</li>
 </ol>
@@ -395,6 +406,15 @@ a{color:var(--accent)}
   <figcaption>Bấm anh Sơn: 6 món anh đang giữ. Món chưa kiểm xếp lên đầu.</figcaption></figure>
   <figure class="fig"><img src="anh-minh-hoa/app-quet.png" alt="App: màn quét, quét phải chiếc ghế thuộc Phòng họp T5, app hỏi có ghi nhận ở đây không" loading="lazy">
   <figcaption>Quét phải món của phần khác: app báo đang ghi ở đâu, hỏi có ghi nhận không.</figcaption></figure>
+</div>
+
+<div class="grid-3 figs phones" style="margin-top:4px">
+  <figure class="fig"><img src="anh-minh-hoa/app-them.png" alt="App: màn Thêm tài sản, tìm máy tính bảng ra món đang ghi ở chị Hà và món có trên hệ nhưng không có trong đợt" loading="lazy">
+  <figcaption>+ Thêm tài sản: quét tem, hoặc tem mất thì tìm theo mã, tên. App ghi rõ món đang ở đâu.</figcaption></figure>
+  <figure class="fig"><img src="anh-minh-hoa/app-chon-ket-qua.png" alt="App: bấm vào một món, chọn kết quả Có, Chờ thanh lý, Hỏng phải chụp ảnh, Không thấy, ô tem cần in lại" loading="lazy">
+  <figcaption>Bấm vào một món: chọn kết quả, tình trạng, đánh dấu tem cần in lại.</figcaption></figure>
+  <figure class="fig"><img src="anh-minh-hoa/app-nv-xac-nhan.png" alt="App đăng nhập bằng anh Sơn: chi tiết phiếu XN0153, món có vấn đề lên đầu, nút Không đồng ý và Đồng ý" loading="lazy">
+  <figcaption>Anh Sơn đăng nhập app: xác nhận phiếu ngay trên điện thoại.</figcaption></figure>
 </div>
 
 <h3>Quét ra gì thì app làm gì</h3>
@@ -422,21 +442,22 @@ a{color:var(--accent)}
 <div class="tbl"><table>
   <tr><th style="width:30%">Tài sản</th><th>Ai đi kiểm</th><th>Ai ký nhận kết quả</th></tr>
   <tr><td>Đồ nhân viên đang giữ</td><td>Hành chính (ai có quyền)</td><td>Chính nhân viên đó</td></tr>
-  <tr><td>Đồ để ở tầng, phòng (phần vùng)</td><td>Hành chính (ai có quyền)</td><td>Người đứng tên từng món</td></tr>
+  <tr><td>Đồ để ở tầng, phòng (phần vùng)</td><td>Hành chính (ai có quyền)</td><td>Người đứng tên từng món <a class="ask-tag" href="#cau-3">❓ Hỏi anh Đạt · câu 3</a></td></tr>
   <tr><td>Đồ trong kho</td><td>Hành chính (ai có quyền)</td><td><b>Người xác nhận kho</b>, chọn lúc mở đợt</td></tr>
 </table></div>
-<p class="note">Người xác nhận kho <b>chỉ ký cho các món trong kho</b>, ký một lần cho cả danh sách, không bấm từng món. Món nằm trong kho nhưng đang ghi tên một người thì thuộc phần người đó. Ai là người ký cho kho (thủ kho, trưởng tổ hành chính, hay không cần ai) là câu 1 ở <a href="#cau-hoi">mục 12</a>.</p>
+<p class="note">Người xác nhận kho <b>chỉ ký cho các món trong kho</b>, ký một lần cho cả danh sách, không bấm từng món. Món nằm trong kho nhưng đang ghi tên một người thì thuộc phần người đó. </p>
+<div class="ask"><span class="lb">❓ Hỏi anh Đạt · câu 1:</span> ai là người ký cho kho: thủ kho, trưởng tổ hành chính, hay không cần ai? Mỗi đợt chọn lại hay cố định? <a href="#cau-1">Xem câu 1</a></div>
 
 <h3>Các thao tác khác</h3>
 <ul>
-  <li><b>Tem hỏng hoặc mất:</b> tìm theo mã tay, chụp ảnh, hệ tự đánh dấu cần in lại tem.</li>
-  <li><b>Người không giữ món nào</b> (ví dụ người mới): danh sách trống. Hỏi có đang cầm đồ công ty không; có thì quét để ghi nhận, không thì bấm "Không giữ món nào · Xong phần".</li>
+  <li><b>Tem hỏng hoặc mất:</b> gõ mã hoặc tên vào ô tìm trong phần, bấm vào món, tích "Tem hỏng hoặc mất, cần in lại tem". Món hiện ở tab "In lại tem" bên web.</li>
+  <li><b>Người không giữ món nào</b> (ví dụ người mới): danh sách trống. Hỏi có đang cầm đồ công ty không; có thì quét hoặc bấm <b>+ Thêm tài sản</b> để ghi nhận, không thì bấm "Không giữ món nào · Xong phần".</li>
   <li><b>Phần đã xong</b> thì app chỉ cho xem. Muốn sửa, quản lý mở lại trên web (bắt buộc ghi lý do). Phần bị mở lại do nhân viên không đồng ý cũng hiện lại trên app để kiểm lại.</li>
 </ul>
 
 <h3>Người được kiểm xác nhận</h3>
 <ol class="steps">
-  <li><b class="t">Nhận thông báo</b>Khi mọi phần chứa đồ của mình đã kiểm xong. Ai cũng đăng nhập được, nên tự xác nhận bằng tài khoản của mình, trên app hoặc web.</li>
+  <li><b class="t">Nhận thông báo</b>Khi mọi phần chứa đồ của mình đã kiểm xong. Ai cũng đăng nhập được, nên tự xác nhận bằng tài khoản của mình, trên app hoặc web. Tài khoản nhân viên chỉ thấy phiếu của mình, không có chức năng đi kiểm. <a href="minh-hoa-tao-dot-kiem-ke.html?vai=app&amp;tk=son" target="_blank" rel="noopener">Bấm thử app của anh Sơn</a>.</li>
   <li><b class="t">Xem danh sách</b>Đồ của mình chia nhóm theo phần (phần của tôi, Tầng 3…), kèm kết quả từng món.</li>
   <li><b class="t">Đồng ý hoặc Không đồng ý</b>Không đồng ý thì bắt buộc ghi lý do. Phần liên quan trả về hành chính xem lại. Đồng ý thì kết quả của người đó bị khoá.</li>
 </ol>
@@ -449,7 +470,7 @@ a{color:var(--accent)}
     <ol>
       <li>Chọn công ty, đặt tên và thời gian.</li>
       <li>Hệ hiện bản xem trước: số người, số vùng/kho, số món mỗi phần, số món ghi ở người đã nghỉ.</li>
-      <li>Chọn người xác nhận cho từng kho. Hệ gợi ý từ tổ hành chính của miền và người của đợt trước.</li>
+      <li>Chọn người xác nhận cho từng kho. Hệ gợi ý từ tổ hành chính của miền và người của đợt trước. <a class="ask-tag" href="#cau-1">❓ Hỏi anh Đạt · câu 1</a></li>
       <li>Bấm mở. Hệ chụp danh sách và tạo toàn bộ phần kiểm.</li>
     </ol>
   </div>
@@ -467,8 +488,8 @@ a{color:var(--accent)}
     <h3 style="margin-top:0">Đóng đợt</h3>
     <ul>
       <li>Hệ báo trước số phần chưa kiểm và số người chưa xác nhận.</li>
-      <li>Đóng xong thì mọi kết quả bị khoá. Phần chưa kiểm vẫn hiện là "chưa kiểm" trong báo cáo, không bị coi là đã xong.</li>
-      <li>Ghi ngày kiểm cuối lên tài sản đã kiểm, chỉ để tham khảo.</li>
+      <li>Đóng xong thì mọi kết quả bị khoá. Phần chưa kiểm vẫn hiện là "chưa kiểm" trong báo cáo, không bị coi là đã xong. Người chưa xác nhận bị ghi "chưa xác nhận". <a class="ask-tag" href="#cau-5">❓ Hỏi anh Đạt · câu 5</a></li>
+      <li>Ghi ngày kiểm cuối lên tài sản đã kiểm, chỉ để tham khảo. <a class="ask-tag" href="#cau-6">❓ Hỏi anh Đạt · câu 6</a></li>
     </ul>
   </div>
   <div class="card">
@@ -507,7 +528,7 @@ a{color:var(--accent)}
   <tr><th style="width:34%">Điểm</th><th>Cách giảm</th></tr>
   <tr><td>Thêm tầng xác nhận, tách khỏi phần kiểm. DB và API phức tạp hơn "chỉ theo người"</td><td>Chỉ thêm một bảng xác nhận theo (đợt, người). Phần kiểm vẫn là một khái niệm duy nhất cho người, vùng và kho.</td></tr>
   <tr><td>Người giữ phải chờ mọi phần chứa đồ của mình xong mới xác nhận được</td><td>Báo cáo 2 ghi rõ đang chờ phần nào, để hành chính ưu tiên kiểm phần đó.</td></tr>
-  <tr><td>Một người đứng tên rất nhiều đồ dùng chung thì việc xác nhận dễ thành hình thức</td><td>Đây là việc quản lý: đồ chung nên đứng tên người thật sự chịu trách nhiệm. Cần hỏi hành chính đồ ở các tầng đang đứng tên ai.</td></tr>
+  <tr><td>Một người đứng tên rất nhiều đồ dùng chung thì việc xác nhận dễ thành hình thức</td><td>Đây là việc quản lý: đồ chung nên đứng tên người thật sự chịu trách nhiệm. Cần hỏi hành chính đồ ở các tầng đang đứng tên ai. <a class="ask-tag" href="#cau-3">❓ Hỏi anh Đạt · câu 3</a></td></tr>
   <tr><td>Mã vùng trên dữ liệu có thể đã cũ, nên lúc đầu sẽ nhiều món "sai chỗ"</td><td>Đó là phát hiện đúng, không phải lỗi. Báo cáo 4 gom lại để hành chính sửa nhãn bằng phiếu.</td></tr>
   <tr><td>API mobile khác hẳn v3.1: không còn chọn chế độ hay gõ mã vùng, có thêm phần và xác nhận</td><td>Báo bên app sớm, gửi hợp đồng API mới trước khi code.</td></tr>
 </table></div>
@@ -518,7 +539,7 @@ a{color:var(--accent)}
   <h3 style="margin-top:0">Đã chốt</h3>
   <ul>
     <li>Kiểm kê không sinh phiếu và không sửa bảng tài sản (16/11, anh Đạt).</li>
-    <li><b>Hướng đi: kiểm theo nơi đặt, xác nhận theo người giữ</b> (16/11, đã thống nhất trong nhóm; trình anh Đạt).</li>
+    <li><b>Hướng đi: kiểm theo nơi đặt, xác nhận theo người giữ</b> (16/11, đã thống nhất trong nhóm) <a class="ask-tag" href="#mo-hinh">❓ chờ anh Đạt duyệt</a></li>
     <li>Một đợt cho một công ty. Danh sách được chụp lúc mở đợt.</li>
     <li><b>Người giữ bắt buộc xác nhận</b>, đợt nào cũng vậy, không có ô bật/tắt. Ai cũng đăng nhập được. Luồng "NV duyệt kiểm kê" của V4 bị huỷ vì quy trình cũ làm lộn xộn, không phải vì bỏ yêu cầu xác nhận.</li>
     <li>Không giao trước ai đi kiểm phần nào. Ai có quyền thì kiểm, hệ ghi lại ai đã kiểm.</li>
@@ -531,23 +552,30 @@ a{color:var(--accent)}
 </div>
 
 <h3>Câu hỏi cần anh Đạt chốt</h3>
+<p class="muted">Câu 1–5 là câu chính. Câu 6–7 là câu nhỏ, hỏi nhanh. Trong trang, mỗi chỗ phụ thuộc vào một câu đều có nhãn <a class="ask-tag" href="#cau-hoi">❓ Hỏi anh Đạt · câu N</a>.</p>
 <div class="tbl"><table>
   <tr><th style="width:4%">#</th><th style="width:30%">Câu hỏi</th><th>Vì sao cần, kèm ví dụ</th><th style="width:26%">Đề xuất</th></tr>
-  <tr><td>1</td><td><b>Ai xác nhận Kho MB và Kho MN?</b> Thủ kho, trưởng tổ hành chính, hay người khác? Mỗi đợt chọn lại hay cố định một người?</td>
+  <tr id="cau-1"><td>1</td><td><b>Ai xác nhận Kho MB và Kho MN?</b> Thủ kho, trưởng tổ hành chính, hay người khác? Mỗi đợt chọn lại hay cố định một người?</td>
     <td>Người thì ai giữ đồ người đó xác nhận, còn kho không có ai giữ. Ví dụ: chị Lan kiểm Kho MB xong, có 297 món, 1 món không thấy. Phải có một người bấm "đúng, kho có những món này" và chịu trách nhiệm nếu sau này kho thiếu đồ.</td>
     <td>Khi tạo đợt, chọn người xác nhận cho từng kho. Hệ gợi ý người trong tổ hành chính của miền (V5 đã có danh sách) và người của đợt trước.</td></tr>
-  <tr><td>2</td><td><b>Nhân viên công ty này cầm tài sản công ty kia thì ai kiểm?</b></td>
+  <tr id="cau-2"><td>2</td><td><b>Nhân viên công ty này cầm tài sản công ty kia thì ai kiểm?</b></td>
     <td>Ví dụ: anh X là nhân viên VN01, nhưng chiếc laptop anh X cầm ghi là tài sản VN02. Đợt VN01 chỉ lấy tài sản VN01, nên không có chiếc laptop. Đợt VN02 có chiếc laptop, nhưng anh X không phải nhân viên VN02, nên không có phần của anh X. Chiếc laptop lọt giữa hai đợt.</td>
     <td>Theo người: đợt VN01 lấy thêm đồ công ty khác mà nhân viên VN01 đang cầm, đánh dấu "tài sản của VN02". Đếm dữ liệu trước xem có bao nhiêu món như vậy.</td></tr>
-  <tr><td>3</td><td><b>Đồ dùng chung ở các tầng và phòng họp đang đứng tên ai?</b> Người đó có chịu xác nhận cả danh sách không?</td>
+  <tr id="cau-3"><td>3</td><td><b>Đồ dùng chung ở các tầng và phòng họp đang đứng tên ai?</b> Người đó có chịu xác nhận cả danh sách không?</td>
     <td>Trên V5 mỗi món phải ghi ở một người hoặc ở kho, nên bàn ghế, máy chiếu, điều hoà cũng đang ghi tên ai đó. Ví dụ: 120 món ở Tầng 3 đứng tên anh Sơn, thì anh Sơn phải xác nhận cả 120 món. Nếu cả trăm món của nhiều tầng cùng ghi tên một người hành chính, việc xác nhận dễ thành hình thức.</td>
     <td>Đồ chung nên đứng tên người thật sự chịu trách nhiệm khu đó, ví dụ trưởng bộ phận của tầng. Đếm dữ liệu trước: mỗi vùng ai đứng tên, mỗi người bao nhiêu món.</td></tr>
-  <tr><td>4</td><td><b>Kho MB thuộc VN01, Kho MN thuộc VN02</b>, đúng không?</td>
+  <tr id="cau-4"><td>4</td><td><b>Kho MB thuộc VN01, Kho MN thuộc VN02</b>, đúng không?</td>
     <td>Mã kho trong V4 gợi ý như vậy (<code>VN01_TANG_2_KHO_LUU_TRU</code>, <code>VN02_KHO_LUU_TRU_CCDC</code>). Nếu đúng thì "một đợt một công ty" tự cho ra mỗi đợt một kho.</td>
     <td>Xác nhận nhanh, không cần thảo luận.</td></tr>
-  <tr><td>5</td><td><b>Ba luật đang làm theo đề xuất</b> trong màn minh hoạ, có đồng ý không?</td>
+  <tr id="cau-5"><td>5</td><td><b>Ba luật đang làm theo đề xuất</b> trong màn minh hoạ, có đồng ý không?</td>
     <td>(a) Người giữ không đồng ý thì tích các món chưa đúng (không bắt buộc). Chỉ phần chứa các món đó bị mở lại cho hành chính kiểm lại. (b) Đã có người xác nhận thì phần đó không mở lại được nữa. (c) Đóng đợt khi còn người chưa xác nhận thì người đó bị ghi "chưa xác nhận", không tự coi là đồng ý.</td>
     <td>Giữ cả ba.</td></tr>
+  <tr id="cau-6"><td>6</td><td><b>Đóng đợt có ghi ngày kiểm cuối lên tài sản không?</b> <span class="pill p-mute">câu nhỏ</span></td>
+    <td>Đã chốt "kiểm kê không sửa bảng tài sản". Nhưng bảng tài sản V5 có sẵn cột ngày kiểm cuối và người xác nhận cuối. Ví dụ: tra chiếc laptop TSHN25-0102 thấy ngay "kiểm lần cuối 16/11/2026, anh Sơn đã xác nhận" mà không phải mở từng đợt. Ghi hai cột này vẫn là sửa bảng tài sản, dù không đụng người giữ, vị trí hay tình trạng.</td>
+    <td>Ghi, chỉ hai cột đó, lúc đóng đợt. Nếu anh muốn giữ tuyệt đối "không sửa" thì bỏ, tra qua báo cáo của đợt.</td></tr>
+  <tr id="cau-7"><td>7</td><td><b>Món "chờ thanh lý, đang sử dụng" có kiểm không?</b> <span class="pill p-mute">câu nhỏ</span></td>
+    <td>V4 bỏ qua 4 trạng thái: không theo dõi, mất, chờ thanh lý đang sử dụng, đã thanh lý. Danh sách loại trừ có sẵn trong code V5 chỉ bỏ 3, vẫn kiểm món chờ thanh lý. Ví dụ: chiếc máy in cũ đã đề nghị thanh lý nhưng vẫn đang dùng: V4 không kiểm, cách mới có kiểm.</td>
+    <td>Vẫn kiểm, vì đồ còn đang dùng thì vẫn có thể mất.</td></tr>
 </table></div>
 <p class="note">Câu 2 và câu 3 nên kèm số liệu: tôi đếm được trên dữ liệu thật (chỉ đọc, cần nạp dump hoặc kết nối DB chỉ đọc).</p>
 

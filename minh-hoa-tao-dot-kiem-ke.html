@@ -144,6 +144,9 @@ h3{font-size:13px;margin:16px 0 8px}
 .ph-seg{display:flex;gap:4px;padding:8px 10px 6px;background:#fff;border-bottom:1px solid var(--border);overflow-x:auto}
 .ph-seg button{border:1px solid var(--border);background:#fff;border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer;white-space:nowrap}
 .ph-seg button.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.ph-loc{display:flex;gap:6px}
+.ph-loc input{flex:1;min-width:0}
+.ph-loc select{flex:0 0 132px;width:132px;padding:0 6px;font-size:12px}
 .ph-search{padding:6px 10px 8px;background:#fff;border-bottom:1px solid var(--border)}
 .ph-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:#fff;border-bottom:1px solid var(--border);cursor:pointer}
 .ph-row:hover{background:#fafbfd}
@@ -265,7 +268,7 @@ h3{font-size:13px;margin:16px 0 8px}
     <!-- ===== APP MOBILE (người đi kiểm) ===== -->
     <section id="vApp" hidden>
       <div class="crumb">App mobile · người đi kiểm</div>
-      <div class="head"><h1>App kiểm kê (mobile)</h1><span class="hint">Đang xem như <b>chị Lan</b>, hành chính đi kiểm · dùng chung dữ liệu với web</span></div>
+      <div class="head"><h1>App kiểm kê (mobile)</h1><label class="hint" style="display:flex;gap:6px;align-items:center">Đăng nhập app bằng: <select class="input" id="appTk" style="width:auto;height:30px"><option value="lan">chị Lan · hành chính (đi kiểm)</option><option value="son">anh Sơn · nhân viên (xác nhận)</option></select></label></div>
       <div class="app-wrap">
         <div class="phone" id="phone"></div>
         <div class="app-side">
@@ -274,10 +277,12 @@ h3{font-size:13px;margin:16px 0 8px}
             <summary>Kịch bản demo app (bấm theo thứ tự)</summary>
             <ol>
               <li>Bấm đợt <b>KK0012</b>.</li>
-              <li>Tab <b>Người</b>, bấm <b>anh Sơn</b>: hiện 6 món anh Sơn đang giữ, tất cả "Chưa kiểm".</li>
+              <li>Tab <b>Người</b>, bấm <b>anh Sơn</b>: hiện 6 món anh Sơn đang giữ, tất cả "Chưa kiểm". Hàng nút thứ hai lọc nhanh phần <b>Chưa kiểm</b>, <b>Đang kiểm</b>, <b>Xong</b>.</li>
               <li>Bấm <b>Quét tem</b>, bấm "Quét món tiếp theo" vài lần. Thử "Quét một món đang ghi ở phần khác" rồi <b>Ghi nhận</b>. Thử mã <span class="mono">ABC-123</span>: bị từ chối.</li>
-              <li>Về danh sách, bấm một món chưa kiểm, chọn <b>Không thấy</b>. Hoặc bấm "Đánh dấu còn lại là Không thấy".</li>
+              <li>Về danh sách, bấm một món chưa kiểm, chọn <b>Không thấy</b>. Thử <b>Hỏng</b>: phải chụp ảnh mới lưu được. Thử tích <b>cần in lại tem</b>.</li>
+              <li>Bấm <b>+ Thêm tài sản</b>, gõ "máy tính bảng": ra món đang ghi ở chị Hà và món mua sau khi mở đợt. Chọn một món, bấm <b>Ghi nhận ở đây</b>. Thêm nhầm thì bấm vào món, "Bỏ khỏi phần này".</li>
               <li>Bấm <b>Xong phần</b>: anh Sơn nhận phiếu XN0153, menu "NV xác nhận kiểm kê" hiện số 1.</li>
+              <li>Đổi <b>Đăng nhập app bằng: anh Sơn</b>: thấy phiếu XN0153, bấm vào, <b>Đồng ý</b> hoặc <b>Không đồng ý</b> ngay trên điện thoại.</li>
               <li>Xuống kho: quay lại, tab <b>Kho</b>, bấm <b>Kho chưa rõ</b>, quét 2 món rồi Xong phần. Người xác nhận kho (chị Linh) nhận phiếu, không phải chị Lan.</li>
             </ol>
           </details>
@@ -358,7 +363,7 @@ h3{font-size:13px;margin:16px 0 8px}
         <thead><tr><th>Phần</th><th>Loại</th><th class="num">Số món</th><th>Người đứng tên chính</th></tr></thead>
         <tbody id="dsPhan"></tbody>
       </table></div>
-      <h3>Người xác nhận kho <span class="req">*</span></h3>
+      <h3>Người xác nhận kho <span class="req">*</span> <span class="pill p-warn" title="Câu 1 trên trang phân tích">Chờ anh Đạt chốt: ai ký cho kho</span></h3>
       <p class="hint" style="margin:-4px 0 8px">Kho không có người giữ, nên cần một người xác nhận kết quả kiểm của kho. Gợi ý lấy từ tổ hành chính của miền và người của đợt trước.</p>
       <div class="mini tblwrap"><table>
         <thead><tr><th>Kho</th><th class="num">Số món</th><th style="min-width:260px">Người xác nhận</th></tr></thead>
@@ -487,7 +492,8 @@ function khoiTao() {
     ],
     nghi: [{ ma:'TSHN23-0412', ten:'Điện thoại Samsung', ai:'anh Nam', nghi:'09/2026' }],
     son: { moRong: {}, phanDoi: false, chon: {}, view: 'list', phieu: null },
-    app: { man:'dot', loai:'', q:'', phan:null, loc:'', mon:null, kq:null }
+    app: { tk:'lan', man:'dot', loai:'', tt:'', q:'', phan:null, loc:'', qmon:'', qthem:'', mon:null, kq:null,
+      sonMan:'ds', sonPhieu:null, sonPd:false, sonChon:{}, sonLyDo:'', sonErr:false, sonXn:false, sonMo:{} }
   };
 }
 
@@ -769,6 +775,7 @@ function veChiTietPhieu() {
 
 /* ================= APP MOBILE (chị Lan đi kiểm) ================= */
 const NGOAI_DOT = { 'TSHN26-0300': { ten:'Máy tính bảng Samsung', ghi:'Có trên hệ nhưng tạo ngày 14/11, sau khi mở đợt, nên không nằm trong danh sách đã chụp' } };
+const THU_TU_TT = { 'Mở lại':0, 'Đang kiểm':1, 'Chưa kiểm':2, 'Xong':3 };
 const THU_TU_APP = { CHUA:0, KHONG_THAY:1, HONG:2, SAI_CHO:3, THEM:4, CO:5 };
 const ICON = { CHUA:['○',''], CO:['✓','ok'], HONG:['!','bad'], KHONG_THAY:['✕','bad'], SAI_CHO:['↪','warn'], THEM:['+','warn'] };
 const mk = o => Object.assign({ nguon:'DS', kq:'CO', tinhTrang:'Tốt đang dùng', giu:'', quet:'chị Lan', luc:'', anh:false, vet:'', tem:false }, o);
@@ -802,8 +809,8 @@ function quetKhac() {
 }
 function ghiNhan() {
   const A = S.app, p = phanById(A.phan), r = A.kq, luc = bayGio();
-  if (r.loai === 'khac') { const g = r.goc, p2 = phanById(g.phan);
-    S.items.push(mk({ ma:r.ma, ten:r.ten, phan:p.id, nguon:'THEM', giu:g.giu, kq:'THEM', luc, vet:`Đang ghi ở ${p2.ten} · đã báo sang phần ${p2.ten}` }));
+  if (r.loai === 'khac') { const g = r.goc, p2 = phanById(g.phan), truoc = { kq:g.kq, tinhTrang:g.tinhTrang, quet:g.quet, luc:g.luc, vet:g.vet };
+    S.items.push(mk({ ma:r.ma, ten:r.ten, phan:p.id, nguon:'THEM', giu:g.giu, kq:'THEM', luc, vet:`Đang ghi ở ${p2.ten} · đã báo sang phần ${p2.ten}`, gocRef:g, gocTruoc:truoc }));
     if (g.kq === 'CHUA') Object.assign(g, { kq:'SAI_CHO', tinhTrang:'Tốt đang dùng', quet:'chị Lan', luc, vet:`Thấy ở phần ${p.ten} (chị Lan, ${luc})` });
     else g.vet = (g.vet ? g.vet + ' · ' : '') + `Cũng thấy ở phần ${p.ten} (${luc})`;
     A.kq = { loai:'ghi', ten:r.ten, txt:`Phần ${p2.ten} tự hiện "thấy ở phần ${p.ten}", người kiểm phần đó không phải đi tìm.` };
@@ -834,8 +841,89 @@ function giaLapXongSon(luc) {
   p.trangThai = 'Xong'; p.nguoiKiem = 'chị Lan'; p.capNhat = luc || '16/11 09:31';
   const x = xnSon(); if (ttXn(x).tt === 'Chờ xác nhận') x.tu = luc || '16/11 14:22';
 }
+function theKq(r, p) {
+  if (!r) return '';
+  if (r.loai === 'ok') return `<div class="ph-card ok"><b>✓ ${esc(r.ten)}</b> <span class="ph-sub mono">${r.ma}</span><div style="margin-top:4px">Đã ghi <b>Có · Tốt đang dùng</b>. Tình trạng khác thì bấm vào món ở danh sách để sửa.</div></div>`;
+  if (r.loai === 'da') return `<div class="ph-card">${esc(r.ten)} <span class="mono">${r.ma}</span> đã có trong phần này (${KQ[r.kq][0]}).</div>`;
+  if (r.loai === 'het') return '<div class="ph-card ok">Đã quét hết món trong danh sách. Về danh sách để bấm Xong phần.</div>';
+  if (['khac', 'nghi', 'ngoai'].includes(r.loai)) return `<div class="ph-card warn"><b>⚠ ${esc(r.ten)}</b> <span class="ph-sub mono">${r.ma}</span><div style="margin:4px 0 8px">${r.txt}</div><div style="display:flex;gap:6px"><button class="ph-btn" data-act="a-bo">Bỏ qua</button><button class="ph-btn pri" data-act="a-ghi-nhan">Ghi nhận ở đây</button></div></div>`;
+  if (r.loai === 'khong') return `<div class="ph-card bad"><b>✕ Mã ${esc(r.ma)} không có trên hệ</b><div style="margin-top:4px">Không thêm được. Quản lý phải tạo tài sản trên web trước, rồi mới thêm vào đợt.</div></div>`;
+  if (r.loai === 'ghi') return `<div class="ph-card ok">Đã ghi nhận <b>${esc(r.ten)}</b> vào ${esc(p.ten)}. ${esc(r.txt)}</div>`;
+  return '';
+}
+function datTem(i, on) {
+  i.tem = on;
+  if (on && !/in lại tem/.test(i.vet)) i.vet = (i.vet ? i.vet + ' · ' : '') + 'Tem hỏng/mất, cần in lại tem';
+}
+function phanDoiSon(v, mon) {
+  const x = xnSon(), phanMo = mon.length ? [...new Set(mon.map(k => k.split('|')[0]))] : x.phanIds.slice(), luc = bayGio();
+  x.phanDoi = { lyDo: v, luc, mon, phanMo, xong: false };
+  x.lichSu.push([luc, `Không đồng ý: "${v}"${mon.length ? ` · ${mon.length} món được đánh dấu` : ''}`]);
+  for (const pid of phanMo) { const p = phanById(pid); p.trangThai = 'Mở lại'; p.log.push([luc, `Mở lại do ${x.ai} không đồng ý: "${v}"`]); }
+  return phanMo;
+}
+function dongYSon() { const x = xnSon(), luc = bayGio(); x.xacNhanLuc = luc; x.lichSu.push([luc, 'Đồng ý']); }
+function vePhone(back, tt, sub, body, foot, sheet, key) {
+  const cu = document.querySelector('#phone .ph-body'), cuon = cu && S.app._key === key ? cu.scrollTop : 0;
+  $('phone').innerHTML = `<div class="ph-status"><span>9:41</span><span>FastLink</span><span>4G ▮▮▮</span></div>
+    <div class="ph-top">${back}<div style="min-width:0"><b>${esc(tt)}</b><small>${sub}</small></div></div>
+    <div class="ph-body">${body}</div>${foot ? `<div class="ph-foot">${foot}</div>` : ''}${sheet}`;
+  const nb = document.querySelector('#phone .ph-body'); if (nb) nb.scrollTop = cuon; S.app._key = key;
+}
+/* ---- app khi đăng nhập bằng tài khoản nhân viên (anh Sơn) ---- */
+function veAppSon() {
+  const A = S.app, ds = phieuSon(), x = xnSon();
+  $('appTk').value = 'son';
+  let back = '', tt = '', sub = '', body = '', foot = '', sheet = '', ten = '', giai = '';
+  if (A.sonMan !== 'ct') {
+    tt = 'Phiếu xác nhận của tôi'; sub = 'anh Sơn · tài khoản nhân viên';
+    const cho = ds.filter(p => p.tt === 'Chờ xác nhận').length;
+    body = (cho ? `<div class="ph-card warn">🔔 Anh có <b>${cho}</b> phiếu kiểm kê đang chờ xác nhận.</div>` : '<div class="ph-note">Không có phiếu nào đang chờ anh xác nhận.</div>')
+      + ds.map(p => `<div class="ph-row" data-act="s-phieu" data-ma="${p.ma}"${p.tt === 'Chờ xác nhận' ? ' style="background:var(--primary-soft)"' : ''}><div><b>${p.ma} · ${p.dot}</b><div class="ph-sub">${esc(p.ten)}</div><div class="ph-sub">Gửi ${p.gui} · ${p.so} món</div></div><div class="r">${pill(p.tt, p.cls)}</div></div>`).join('')
+      + '<div class="ph-note">Mới nhất ở trên. Tài khoản nhân viên không có chức năng đi kiểm.</div>';
+    ten = 'Phiếu xác nhận của anh Sơn';
+    giai = `<p>Anh Sơn đăng nhập app bằng <b>tài khoản của mình</b>, chỉ thấy phiếu của chính mình, mới nhất ở trên. Cùng nội dung với menu "NV xác nhận kiểm kê" trên web: xác nhận ở app hay web đều được, kết quả là một.</p><p>Không có chức năng đi kiểm: đó là quyền của hành chính.</p><p>Phiếu chỉ chuyển sang "Chờ xác nhận" khi <b>mọi phần</b> có đồ của anh Sơn đã kiểm xong.</p>`;
+  } else {
+    const p = ds.find(v => v.ma === A.sonPhieu) || ds[0];
+    back = '<button class="bk" data-act="s-back" aria-label="Quay lại">‹</button>'; tt = 'Phiếu ' + p.ma; sub = `${p.dot} · ${p.so} món`;
+    ten = 'Chi tiết phiếu ' + p.ma;
+    if (!p.live) {
+      body = `<div class="ph-card ok">Anh đã đồng ý lúc ${p.luc}. Kết quả đã khoá.</div><div class="ph-card"><b>${esc(p.ten)}</b><div class="ph-sub">${esc(p.tom)}</div></div><div class="ph-note">Bản minh hoạ chỉ có chi tiết từng món cho phiếu XN0153.</div>`;
+      giai = '<p>Phiếu của đợt cũ, đã xác nhận: chỉ xem lại.</p>';
+    } else {
+      const t = ttXn(x), its = itemsXn(x), dong = dongDot(), cho = t.tt === 'Chờ xác nhận' && !dong, pd = A.sonPd && cho;
+      const dem = k => its.filter(i => i.kq === k).length;
+      let bn = '';
+      if (cho) bn = `<div class="ph-card">Hành chính đã kiểm xong mọi phần có đồ của anh. Xem rồi bấm <b>Đồng ý</b> hoặc <b>Không đồng ý</b>.${x.phanDoi ? ' <b>Đây là lần xác nhận thứ hai.</b>' : ''}</div>`;
+      if (t.tt === 'Chờ kiểm xong') bn = `<div class="ph-card">Đang chờ hành chính kiểm xong: ${t.chua.map(q => esc(q.ten)).join(', ')}. Anh chưa cần làm gì.</div>`;
+      if (t.tt === 'Không đồng ý') bn = `<div class="ph-card warn">Anh đã không đồng ý: "${esc(x.phanDoi.lyDo)}". Đang chờ hành chính kiểm lại: ${t.chua.map(q => esc(q.ten)).join(', ')}.</div>`;
+      if (t.tt === 'Đã xác nhận') bn = `<div class="ph-card ok">Anh đã đồng ý lúc ${x.xacNhanLuc}. Kết quả của ${its.length} món đã khoá.</div>`;
+      if (dong && !x.xacNhanLuc) bn = '<div class="ph-card warn">Đợt đã đóng khi anh chưa xác nhận. Báo cáo ghi "chưa xác nhận".</div>';
+      body = bn + `<div class="ph-info" style="display:flex;gap:4px;flex-wrap:wrap">${pill('Có ' + (dem('CO') + dem('THEM')), 'p-ok')}${pill('Không thấy/hỏng ' + (dem('KHONG_THAY') + dem('HONG')), 'p-bad')}${pill('Ở chỗ khác ' + dem('SAI_CHO'), 'p-warn')}</div>`
+        + (pd ? '<div class="ph-card warn">Tích món anh thấy chưa đúng (không bắt buộc), ghi lý do ở dưới rồi bấm Gửi.</div>' : '')
+        + x.phanIds.map(pid => {
+            const ph = phanById(pid), li = its.filter(i => i.phan === pid).sort((a, b) => THU_TU_APP[a.kq] - THU_TU_APP[b.kq]);
+            const mo = A.sonMo[pid], hien = mo ? li : li.filter(i => i.kq !== 'CO'), an = li.length - hien.length;
+            return `<div class="ph-note" style="font-weight:600;color:var(--text);background:#fff;border-bottom:1px solid var(--border)">${ph.loai === 'Người' ? 'Đồ của tôi' : esc(ph.ten)} · ${li.length} món</div>`
+              + hien.slice(0, 60).map(i => `<div class="ph-row" style="cursor:default">${pd ? `<input type="checkbox" class="ck" data-schon="${i.phan}|${i.ma}" ${A.sonChon[i.phan + '|' + i.ma] ? 'checked' : ''}>` : ''}<div style="display:flex;align-items:flex-start;flex:1;min-width:0"><span class="ph-ic ${ICON[i.kq][1]}">${ICON[i.kq][0]}</span><div style="min-width:0"><b>${esc(i.ten)}</b><div class="ph-sub mono">${i.ma}</div>${i.vet ? `<div class="ph-sub">${esc(i.vet)}</div>` : ''}</div></div><div class="r">${kqPill(i)}</div></div>`).join('')
+              + (an ? `<div class="ph-note"><button class="link" data-act="s-mo" data-id="${pid}">Hiện cả ${an} món "Có"</button></div>` : '')
+              + (mo && hien.length > 60 ? `<div class="ph-note">Hiện 60/${hien.length} món.</div>` : '');
+          }).join('')
+        + (x.lichSu.length ? `<div class="ph-card"><b>Lịch sử</b>${x.lichSu.map(l => `<div class="ph-sub">${l[0]} · ${esc(l[1])}</div>`).join('')}</div>` : '');
+      if (cho) foot = pd
+        ? `<textarea class="input" id="sonLyDo" placeholder="Lý do không đồng ý (bắt buộc)" style="height:56px;padding:6px 10px">${esc(A.sonLyDo || '')}</textarea>${A.sonErr ? '<div class="errtxt">Cần ghi lý do.</div>' : ''}<div style="display:flex;gap:6px"><button class="ph-btn" data-act="s-huy-pd">Huỷ</button><button class="ph-btn" style="background:var(--bad);border-color:var(--bad);color:#fff" data-act="s-gui-pd">Gửi không đồng ý</button></div>`
+        : '<div style="display:flex;gap:6px"><button class="ph-btn" data-act="s-pd">Không đồng ý</button><button class="ph-btn okb" data-act="s-dong-y">Đồng ý</button></div>';
+      if (A.sonXn && cho) sheet = `<div class="ph-sheet" data-act="s-sheet-bg"><div class="in"><b>Đồng ý với kết quả kiểm kê?</b><p style="margin:0">Anh xác nhận kết quả của <b>${its.length} món</b> anh đứng tên trong đợt ${S.dot.ma} là đúng. Sau khi đồng ý, kết quả bị khoá, hành chính không mở lại được.</p><button class="ph-btn okb" data-act="s-ok">Đồng ý</button><button class="ph-btn" data-act="s-sheet-x">Huỷ</button></div></div>`;
+      giai = `<p>Cùng nội dung với màn web: đồ chia theo phần, món có vấn đề lên đầu, món "Có" thu gọn.</p><p><b>Đồng ý</b>: kết quả bị khoá. <b>Không đồng ý</b>: tích món chưa đúng (không bắt buộc), lý do bắt buộc. Phần chứa các món đó trả về hành chính kiểm lại, rồi anh xác nhận lần hai.</p>`;
+    }
+  }
+  vePhone(back, tt, sub, body, foot, sheet, 'son' + A.sonMan + A.sonPhieu);
+  $('appBuoc').textContent = 'Nhân viên · app'; $('appTen').textContent = ten; $('appGiai').innerHTML = giai;
+}
 function veApp() {
-  const A = S.app, cu = document.querySelector('#phone .ph-body'), cuon = cu && A._key === A.man + A.phan ? cu.scrollTop : 0;
+  if (S.app.tk === 'son') return veAppSon();
+  $('appTk').value = 'lan';
+  const A = S.app;
   const bk = '<button class="bk" data-act="a-back" aria-label="Quay lại">‹</button>';
   let back = '', tt = '', sub = '', body = '', foot = '', sheet = '', buoc = '', ten = '', giai = '';
   if (A.man === 'dot') {
@@ -851,10 +939,11 @@ function veApp() {
   }
   if (A.man === 'phan') {
     back = bk; tt = `${S.dot.ma} · ${S.dot.cty}`; sub = 'Chọn phần cần kiểm';
-    const q = A.q.trim().toLowerCase(), ds = S.phan.filter(p => (!A.loai || p.loai === A.loai) && (!q || p.ten.toLowerCase().includes(q)));
-    const dem = l => S.phan.filter(p => !l || p.loai === l).length;
+    const q = A.q.trim().toLowerCase(), theoLoai = S.phan.filter(p => !A.loai || p.loai === A.loai);
+    const ds = theoLoai.filter(p => (!A.tt || p.trangThai === A.tt) && (!q || p.ten.toLowerCase().includes(q))).sort((x, y) => THU_TU_TT[x.trangThai] - THU_TU_TT[y.trangThai]);
+    const dem = l => S.phan.filter(p => !l || p.loai === l).length, demTt = t => theoLoai.filter(p => !t || p.trangThai === t).length;
     body = `<div class="ph-seg">${[['','Tất cả'],['Người','Người'],['Vùng','Vùng'],['Kho','Kho']].map(([v, t]) => `<button class="${A.loai === v ? 'on' : ''}" data-act="a-loai" data-v="${v}">${t} ${dem(v)}</button>`).join('')}</div>
-      <div class="ph-search"><input class="input" data-app="q" value="${esc(A.q)}" placeholder="Tìm tên người, vùng, kho"></div>`
+      <div class="ph-search ph-loc"><input class="input" data-app="q" value="${esc(A.q)}" placeholder="Tìm tên người, vùng, kho"><select class="input" data-app-sel="tt" aria-label="Lọc trạng thái">${[['','Mọi trạng thái'],['Chưa kiểm','Chưa kiểm'],['Đang kiểm','Đang kiểm'],['Mở lại','Mở lại'],['Xong','Xong']].filter(([v]) => !v || v === A.tt || demTt(v)).map(([v, t]) => `<option value="${v}" ${A.tt === v ? 'selected' : ''}>${t} (${demTt(v)})</option>`).join('')}</select></div>`
       + ds.map(p => { const li = dsCua(p.id), n = li.length, them = itemsCua(p.id).length - n;
         return `<div class="ph-row" data-act="a-phan" data-id="${p.id}"><div><b>${esc(p.ten)}</b><div class="ph-sub">${p.loai} · ${n} món${them ? ` · +${them} thêm` : ''}${p.loai === 'Kho' ? ` · ${esc(nguoiKy(p))} ký` : ''}</div></div><div class="r">${pill(p.trangThai, TT_PHAN[p.trangThai])}<div class="ph-sub">${li.filter(daKiem).length}/${n}</div></div></div>`; }).join('')
       + (ds.length ? '' : '<div class="ph-card">Không có phần nào khớp.</div>')
@@ -862,6 +951,7 @@ function veApp() {
     buoc = 'Bước 2'; ten = 'Chọn phần cần kiểm';
     giai = `<p>Đây là danh sách phần <b>đã chia sẵn lúc mở đợt</b> trên web. Không có bước chọn "kiểm theo nhân viên" hay "kiểm theo vùng" như V4.</p>
       <p>Đứng trước ai thì bấm phần người đó (tab <b>Người</b>, gõ tên). Đi theo tầng, phòng thì tab <b>Vùng</b>. Xuống kho thì tab <b>Kho</b>.</p>
+      <p>Ô chọn cạnh ô tìm lọc theo trạng thái: chọn <b>Chưa kiểm</b> để biết còn ai, chỗ nào chưa đi. Phần chưa xong luôn xếp lên đầu (mở lại, đang kiểm, chưa kiểm, rồi mới tới xong).</p>
       <p>App đọc từ bản chụp của đợt, không tính lại. Ai mở cũng thấy cùng một danh sách.</p>`;
   }
   if (A.man === 'ds') {
@@ -869,7 +959,8 @@ function veApp() {
     back = bk; tt = p.ten; sub = `${p.loai} · ${S.dot.ma} · ${pill(p.trangThai, TT_PHAN[p.trangThai])}`;
     const loc = A.loc || '';
     const vd = i => i.kq !== 'CO' && i.kq !== 'CHUA';
-    const rows = its.filter(i => !loc || (loc === 'CHUA' ? i.kq === 'CHUA' : vd(i))).sort((x, y) => THU_TU_APP[x.kq] - THU_TU_APP[y.kq]);
+    const qm = (A.qmon || '').trim().toLowerCase();
+    const rows = its.filter(i => (!loc || (loc === 'CHUA' ? i.kq === 'CHUA' : vd(i))) && (!qm || (i.ma + ' ' + i.ten).toLowerCase().includes(qm))).sort((x, y) => THU_TU_APP[x.kq] - THU_TU_APP[y.kq]);
     const dungTen = [...new Set(ds.map(i => i.giu).filter(Boolean))];
     const ai = p.loai === 'Người' ? `Đồ <b>${esc(p.ten)}</b> đang giữ · ${esc(p.ten)} tự xác nhận`
       : p.loai === 'Vùng' ? `Đồ trong vùng · người đứng tên xác nhận: ${dungTen.map(esc).join(', ') || '—'}`
@@ -879,16 +970,16 @@ function veApp() {
     if (p.trangThai === 'Xong') banner = `<div class="ph-card ok">Đã xong lúc ${p.capNhat}. Muốn sửa phải nhờ quản lý mở lại trên web.</div>`;
     if (dongDot()) banner = '<div class="ph-card">Đợt đã đóng, không ghi được nữa.</div>';
     body = `<div class="ph-info">${ai}<div style="margin-top:6px">${tienDo(ds.filter(daKiem).length, ds.length)} đã kiểm</div></div>${banner}`
-      + (its.length ? `<div class="ph-seg">${[['','Tất cả', its.length],['CHUA','Chưa kiểm', con],['VD','Có vấn đề', its.filter(vd).length]].map(([v, t, n]) => `<button class="${loc === v ? 'on' : ''}" data-act="a-loc" data-v="${v}">${t} ${n}</button>`).join('')}</div>`
+      + (its.length ? `<div class="ph-search ph-loc"><input class="input" data-app="qmon" value="${esc(A.qmon || '')}" placeholder="Tìm mã hoặc tên (tem mờ thì gõ tay)"><select class="input" data-app-sel="loc" aria-label="Lọc kết quả">${[['','Tất cả', its.length],['CHUA','Chưa kiểm', con],['VD','Có vấn đề', its.filter(vd).length]].map(([v, t, n]) => `<option value="${v}" ${loc === v ? 'selected' : ''}>${t} (${n})</option>`).join('')}</select></div>`
         + rows.slice(0, 80).map(i => `<div class="ph-row" data-act="a-mon" data-ma="${i.ma}" data-nguon="${i.nguon}"><div style="display:flex;align-items:flex-start"><span class="ph-ic ${ICON[i.kq][1]}">${ICON[i.kq][0]}</span><div style="min-width:0"><b>${esc(i.ten)}</b><div class="ph-sub mono">${i.ma}</div>${i.vet ? `<div class="ph-sub">${esc(i.vet)}</div>` : ''}</div></div><div class="r">${kqPill(i)}</div></div>`).join('')
         + (rows.length > 80 ? `<div class="ph-note">Hiện 80/${rows.length} món. Lọc "Chưa kiểm" để đi vòng cuối.</div>` : '')
         + (rows.length ? '' : '<div class="ph-card">Không có món nào khớp bộ lọc.</div>')
-        : `<div class="ph-card"><b>${esc(p.ten)} không giữ món nào trên hệ.</b><br>Hỏi xem có đang cầm đồ công ty không. Có thì bấm Quét để ghi nhận. Không thì bấm Xong phần.</div>`)
+        : `<div class="ph-card"><b>${esc(p.ten)} không giữ món nào trên hệ.</b><br>Hỏi xem có đang cầm đồ công ty không. Có thì bấm Quét hoặc <b>+ Thêm tài sản</b> để ghi nhận. Không thì bấm Xong phần.</div>`)
       + (sua && con ? `<div class="ph-note"><button class="link" data-act="a-con-lai">Đánh dấu ${con} món còn lại là Không thấy</button></div>` : '');
-    if (sua) foot = `<button class="ph-btn pri" data-act="a-quet">📷 Quét tem</button><button class="ph-btn okb" data-act="a-xong" ${con ? 'disabled' : ''}>${con ? `Xong phần (còn ${con} món chưa kiểm)` : its.length ? 'Xong phần' : 'Không giữ món nào · Xong phần'}</button>`;
+    if (sua) foot = `<div style="display:flex;gap:6px"><button class="ph-btn pri" data-act="a-quet">📷 Quét tem</button><button class="ph-btn" data-act="a-them">＋ Thêm tài sản</button></div><button class="ph-btn okb" data-act="a-xong" ${con ? 'disabled' : ''}>${con ? `Xong phần (còn ${con} món chưa kiểm)` : its.length ? 'Xong phần' : 'Không giữ món nào · Xong phần'}</button>`;
     buoc = 'Bước 3'; ten = `Danh sách món của phần ${p.ten}`;
     giai = (p.loai === 'Người'
-      ? `<p>Đây là đồ <b>${esc(p.ten)}</b> đang giữ, lấy từ bản chụp lúc mở đợt.</p><p>Quét tem từng món: quét trúng thì món tự thành <b>Có</b>. Món tìm không thấy thì bấm vào món, chọn <b>Không thấy</b>. Hỏng thì chọn <b>Hỏng</b>, app bắt chụp ảnh.</p><p>Kiểm hết thì bấm <b>Xong phần</b>. Khi <b>mọi phần</b> có đồ của ${esc(p.ten)} đã xong, ${esc(p.ten)} nhận phiếu xác nhận.</p>`
+      ? `<p>Đây là đồ <b>${esc(p.ten)}</b> đang giữ, lấy từ bản chụp lúc mở đợt.</p><p>Quét tem từng món: quét trúng thì món tự thành <b>Có</b>. Món tìm không thấy thì bấm vào món, chọn <b>Không thấy</b>. Hỏng thì chọn <b>Hỏng</b>, app bắt chụp ảnh. Tem mờ hay mất thì gõ mã vào ô tìm, tích <b>cần in lại tem</b>.</p><p>Người đó đang cầm món <b>không có trong danh sách</b> thì quét tem hoặc bấm <b>+ Thêm tài sản</b>.</p><p>Kiểm hết thì bấm <b>Xong phần</b>. Khi <b>mọi phần</b> có đồ của ${esc(p.ten)} đã xong, ${esc(p.ten)} nhận phiếu xác nhận.</p>`
       : p.loai === 'Vùng'
       ? `<p>Đồ để ở ${esc(p.ten)}. Đi hết vùng và quét, giống thói quen kiểm theo vùng của V4.</p><p>Khác V4: mỗi món vẫn do <b>người đứng tên</b> xác nhận (${dungTen.map(esc).join(', ') || '—'}), không phải người đi kiểm.</p>`
       : `<p>Đồ nằm trong kho, không ai giữ. Thao tác giống hệt phần người: quét, đánh dấu Không thấy, Xong phần.</p><p>Bấm Xong phần thì <b>người xác nhận kho (${esc(nguoiKy(p))})</b> nhận phiếu và ký cho cả phần kho. Người đi kiểm không tự ký.</p>`)
@@ -896,25 +987,24 @@ function veApp() {
     const i = monApp();
     if (i) {
       const nut = (kq, tinh, txt, cls) => `<button class="ph-btn ${cls || ''}" data-act="a-kq" data-kq="${kq}" data-tinh="${tinh}">${txt}</button>`;
+      let noi = '';
+      if (i.nguon === 'THEM') noi = `<div class="ph-sub">${esc(i.vet)}</div><p class="ph-sub" style="margin:0">Món thêm từ chỗ khác: chỉ ghi nhận, không đổi người giữ.</p>${sua ? '<button class="ph-btn" data-act="a-bo-them">Bỏ khỏi phần này (thêm nhầm)</button>' : ''}`;
+      else if (!sua) noi = '<p class="ph-sub" style="margin:0">Phần đã xong, chỉ xem.</p>';
+      else if (A.hong) noi = `<div class="ph-card bad" style="margin:0">Hỏng thì <b>bắt buộc chụp ảnh</b> trước khi lưu.</div><button class="ph-btn" data-act="a-chup">${A.anh ? '✓ Đã chụp 1 ảnh · chụp lại' : '📷 Chụp ảnh (giả lập)'}</button><button class="ph-btn" style="background:var(--bad);border-color:var(--bad);color:#fff" data-act="a-luu-hong" ${A.anh ? '' : 'disabled'}>Lưu: Hỏng</button><button class="ph-btn" data-act="a-hong-huy">← Chọn kết quả khác</button>`;
+      else noi = `<input class="input" id="appGhiChu" value="${esc(A.ghiChu || '')}" placeholder="Ghi chú (không bắt buộc)" style="height:36px">
+        <label style="display:flex;gap:8px;align-items:center;font-size:12px"><input type="checkbox" class="ck" id="appTem" ${(A.tem ?? i.tem) ? 'checked' : ''}> Tem hỏng hoặc mất, cần in lại tem</label>
+        ${nut('CO', 'Tốt đang dùng', '✓ Có · Tốt đang dùng', 'okb')}${nut('CO', 'Tốt không dùng', '✓ Có · Tốt không dùng')}${nut('CO', 'Chờ thanh lý', '✓ Có · Chờ thanh lý')}${nut('HONG', '', '! Hỏng · phải chụp ảnh')}${nut('KHONG_THAY', '', '✕ Không thấy')}${nut('SAI_CHO', '', '↪ Có, nhưng đang ở chỗ khác')}`;
       sheet = `<div class="ph-sheet" data-act="a-sheet-bg"><div class="in">
         <b>${esc(i.ten)}</b><div class="ph-sub mono">${i.ma}${i.giu ? ' · đang ghi ở ' + esc(i.giu) : p.loai === 'Kho' ? ' · ở kho' : ''}</div>
-        <div>Kết quả hiện tại: ${kqPill(i)}</div>
-        ${i.nguon === 'THEM' ? `<div class="ph-sub">${esc(i.vet)}</div><p class="ph-sub" style="margin:0">Món thêm từ chỗ khác: chỉ ghi nhận, không đổi người giữ.</p>`
-          : sua ? `<input class="input" id="appGhiChu" placeholder="Ghi chú (không bắt buộc)" style="height:36px">${nut('CO', 'Tốt đang dùng', '✓ Có · Tốt đang dùng', 'okb')}${nut('CO', 'Tốt không dùng', '✓ Có · Tốt không dùng')}${nut('HONG', '', '! Hỏng · chụp ảnh')}${nut('KHONG_THAY', '', '✕ Không thấy')}${nut('SAI_CHO', '', '↪ Có, nhưng đang ở chỗ khác')}`
-          : '<p class="ph-sub" style="margin:0">Phần đã xong, chỉ xem.</p>'}
+        <div>Kết quả hiện tại: ${kqPill(i)}${i.tinhTrang && i.kq !== 'CHUA' ? ' · ' + esc(i.tinhTrang) : ''}${i.anh ? ' · 📷' : ''}${i.tem ? ' · <span class="pill p-warn">in lại tem</span>' : ''}</div>
+        ${noi}
         <button class="ph-btn" data-act="a-sheet-x">Đóng</button></div></div>`;
     }
   }
   if (A.man === 'quet') {
     const p = phanById(A.phan), ds = dsCua(p.id), r = A.kq;
     back = bk; tt = 'Quét tem'; sub = `${esc(p.ten)} · ${ds.filter(daKiem).length}/${ds.length} đã kiểm`;
-    let card = '';
-    if (r && r.loai === 'ok') card = `<div class="ph-card ok"><b>✓ ${esc(r.ten)}</b> <span class="ph-sub mono">${r.ma}</span><div style="margin-top:4px">Đã ghi <b>Có · Tốt đang dùng</b>. Tình trạng khác thì bấm vào món ở danh sách để sửa.</div></div>`;
-    if (r && r.loai === 'da') card = `<div class="ph-card">${esc(r.ten)} <span class="mono">${r.ma}</span> đã quét rồi (${KQ[r.kq][0]}).</div>`;
-    if (r && r.loai === 'het') card = '<div class="ph-card ok">Đã quét hết món trong danh sách. Về danh sách để bấm Xong phần.</div>';
-    if (r && ['khac', 'nghi', 'ngoai'].includes(r.loai)) card = `<div class="ph-card warn"><b>⚠ ${esc(r.ten)}</b> <span class="ph-sub mono">${r.ma}</span><div style="margin:4px 0 8px">${r.txt}</div><div style="display:flex;gap:6px"><button class="ph-btn" data-act="a-bo">Bỏ qua</button><button class="ph-btn pri" data-act="a-ghi-nhan">Ghi nhận ở đây</button></div></div>`;
-    if (r && r.loai === 'khong') card = `<div class="ph-card bad"><b>✕ Mã ${esc(r.ma)} không có trên hệ</b><div style="margin-top:4px">Không thêm được. Quản lý phải tạo tài sản trên web trước, rồi mới thêm vào đợt.</div></div>`;
-    if (r && r.loai === 'ghi') card = `<div class="ph-card ok">Đã ghi nhận <b>${esc(r.ten)}</b> vào ${esc(p.ten)}. ${esc(r.txt)}</div>`;
+    const card = theKq(r, p);
     body = `<div class="cam">Đưa tem vào khung</div>${card}
       <div class="ph-note">Bản minh hoạ không có camera. Bấm nút để giả lập một lần quét:</div>
       <div style="padding:0 10px;display:flex;flex-direction:column;gap:6px">
@@ -935,24 +1025,64 @@ function veApp() {
       </tbody></table></div>
       <p class="hint" style="margin-top:8px">Mỗi lần quét lưu ngay lên hệ. Mất mạng giữa chừng thì món đã lưu vẫn còn.</p>`;
   }
-  $('phone').innerHTML = `<div class="ph-status"><span>9:41</span><span>FastLink</span><span>4G ▮▮▮</span></div>
-    <div class="ph-top">${back}<div style="min-width:0"><b>${esc(tt)}</b><small>${sub}</small></div></div>
-    <div class="ph-body">${body}</div>${foot ? `<div class="ph-foot">${foot}</div>` : ''}${sheet}`;
-  const nb = document.querySelector('#phone .ph-body'); if (nb) nb.scrollTop = cuon; A._key = A.man + A.phan;
+  if (A.man === 'them') {
+    const p = phanById(A.phan), q = (A.qthem || '').trim().toLowerCase();
+    back = bk; tt = 'Thêm tài sản'; sub = `vào phần ${esc(p.ten)}`;
+    let kq = '';
+    if (q.length >= 2) {
+      const daCo = new Set(S.items.filter(i => i.phan === p.id).map(i => i.ma));
+      const nguon = [
+        ...S.items.filter(i => i.nguon === 'DS' && i.phan !== p.id).map(i => { const p2 = phanById(i.phan); return { ma:i.ma, ten:i.ten, o:`Đang ghi ở phần ${p2.ten}${i.giu && p2.loai !== 'Người' ? ' (đứng tên ' + i.giu + ')' : ''}` }; }),
+        ...S.nghi.map(n => ({ ma:n.ma, ten:n.ten, o:`Ghi ở ${n.ai} (đã nghỉ ${n.nghi})` })),
+        ...Object.entries(NGOAI_DOT).map(([ma, v]) => ({ ma, ten:v.ten, o:'Có trên hệ, không có trong đợt' }))
+      ];
+      const tim = nguon.filter(k => (k.ma + ' ' + k.ten).toLowerCase().includes(q));
+      kq = tim.length
+        ? tim.slice(0, 15).map(k => `<div class="ph-row" data-act="a-thu" data-ma="${k.ma}"><div><b>${esc(k.ten)}</b><div class="ph-sub mono">${k.ma}</div><div class="ph-sub">${esc(k.o)}</div></div><div class="r">${daCo.has(k.ma) ? pill('Đã thêm', 'p-mute') : pill('Chọn', 'p-info')}</div></div>`).join('')
+          + (tim.length > 15 ? `<div class="ph-note">Hiện 15/${tim.length} kết quả, gõ cụ thể hơn.</div>` : '')
+        : `<div class="ph-card bad">Không tìm thấy "${esc(A.qthem)}" trên hệ. Không thêm được: quản lý phải tạo tài sản trên web trước.</div>`;
+    } else kq = '<div class="ph-note">Bấm <b>Quét</b> để quét tem (bản minh hoạ giả lập một món đang ghi ở phần khác). Tem mất thì gõ ít nhất 2 ký tự, thử: "máy tính bảng", "laptop", "TSHN26".</div>';
+    body = `<div class="ph-info">Dùng khi người được kiểm đang cầm món <b>không có trong danh sách</b> của họ (ví dụ anh Tú cầm chiếc laptop lấy từ kho). <b>Quét tem</b>, hoặc tem mất thì tìm theo mã, tên. Hệ chỉ ghi nhận, <b>không đổi người giữ</b>.</div>
+      <div class="ph-search ph-loc"><button class="ph-btn pri" style="flex:0 0 92px;width:92px" data-act="a-them-quet" title="Bản minh hoạ: giả lập quét tem một món đang ghi ở phần khác">📷 Quét</button><input class="input" data-app="qthem" value="${esc(A.qthem || '')}" placeholder="hoặc gõ mã, tên tài sản"></div>${theKq(A.kq, p)}${kq}`;
+    foot = '<button class="ph-btn" data-act="a-ve-ds">← Về danh sách</button>';
+    buoc = 'Bước 3b'; ten = 'Thêm tài sản cho người được kiểm';
+    giai = `<p>Người được kiểm đưa ra một món mà danh sách của họ không có. Bấm <b>+ Thêm tài sản</b>: <b>quét tem</b> là nhanh nhất; tem mất hoặc mờ thì tìm theo mã hoặc tên ngay trên cùng màn.</p><p>Chọn món thì app báo món đang ghi ở đâu, bấm <b>Ghi nhận ở đây</b>. Món vẫn thuộc phần cũ, phần cũ tự hiện "thấy ở phần ${esc(p.ten)}".</p><p><b>Không đổi người giữ.</b> Muốn chuyển hẳn thì hành chính lập phiếu sau đợt, từ báo cáo ngoại lệ. Thêm nhầm thì bấm vào món, chọn "Bỏ khỏi phần này".</p><p>Mã hoặc tên không có trên hệ thì không thêm được.</p>`;
+  }
+  vePhone(back, tt, sub, body, foot, sheet, A.man + A.phan);
   $('appBuoc').textContent = buoc; $('appTen').textContent = ten; $('appGiai').innerHTML = giai;
 }
 function appAct(a, el, e) {
   const A = S.app;
   if (a === 'a-dot') A.man = 'phan';
   if (a === 'a-dot-khac') { toast('Bản minh hoạ chỉ có dữ liệu chi tiết cho đợt ' + S.dot.ma); return; }
-  if (a === 'a-back') { A.mon = null; A.kq = null; A.man = A.man === 'quet' ? 'ds' : A.man === 'ds' ? 'phan' : 'dot'; }
+  if (a === 'a-back') { A.mon = null; A.kq = null; A.man = A.man === 'quet' || A.man === 'them' ? 'ds' : A.man === 'ds' ? 'phan' : 'dot'; }
   if (a === 'a-loai') { A.loai = el.dataset.v; A.q = ''; }
-  if (a === 'a-phan') Object.assign(A, { man:'ds', phan:el.dataset.id, loc:'', mon:null, kq:null });
+  if (a === 'a-phan') Object.assign(A, { man:'ds', phan:el.dataset.id, loc:'', qmon:'', mon:null, kq:null });
   if (a === 'a-loc') A.loc = el.dataset.v;
-  if (a === 'a-mon') A.mon = { ma:el.dataset.ma, nguon:el.dataset.nguon };
-  if (a === 'a-sheet-x') A.mon = null;
-  if (a === 'a-sheet-bg') { if (e.target !== el) return; A.mon = null; }
-  if (a === 'a-kq') { const i = monApp(); if (i) ghiKq(i, el.dataset.kq, el.dataset.tinh, (($('appGhiChu') || {}).value || '').trim()); A.mon = null; }
+  const dongSheet = () => Object.assign(A, { mon:null, hong:false, anh:false, ghiChu:'', tem:undefined });
+  if (a === 'a-mon') { dongSheet(); A.mon = { ma:el.dataset.ma, nguon:el.dataset.nguon }; }
+  if (a === 'a-sheet-x') dongSheet();
+  if (a === 'a-sheet-bg') { if (e.target !== el) return; dongSheet(); }
+  if (a === 'a-kq') { const i = monApp(), tem = !!($('appTem') || {}).checked, gc = (($('appGhiChu') || {}).value || '').trim();
+    if (el.dataset.kq === 'HONG') Object.assign(A, { hong:true, anh:false, ghiChu:gc, tem });
+    else { if (i) { ghiKq(i, el.dataset.kq, el.dataset.tinh, gc); datTem(i, tem); } dongSheet(); } }
+  if (a === 'a-chup') A.anh = true;
+  if (a === 'a-hong-huy') A.hong = false;
+  if (a === 'a-luu-hong') { const i = monApp(); if (i && A.anh) { ghiKq(i, 'HONG', '', A.ghiChu); i.anh = true; datTem(i, !!A.tem); } dongSheet(); }
+  if (a === 'a-bo-them') { const i = monApp(); if (i) { S.items.splice(S.items.indexOf(i), 1); if (i.gocRef) Object.assign(i.gocRef, i.gocTruoc); toast(`Đã bỏ ${i.ten} khỏi phần này`); } dongSheet(); }
+  if (a === 'a-them') Object.assign(A, { man:'them', kq:null, qthem:'' });
+  if (a === 'a-them-quet') { A.qthem = ''; quetKhac(); }
+  if (a === 's-phieu') Object.assign(A, { sonMan:'ct', sonPhieu:el.dataset.ma, sonPd:false, sonChon:{}, sonLyDo:'', sonErr:false, sonXn:false });
+  if (a === 's-back') Object.assign(A, { sonMan:'ds', sonPd:false, sonXn:false });
+  if (a === 's-mo') A.sonMo[el.dataset.id] = !A.sonMo[el.dataset.id];
+  if (a === 's-pd') Object.assign(A, { sonPd:true, sonChon:{}, sonErr:false });
+  if (a === 's-huy-pd') Object.assign(A, { sonPd:false, sonChon:{}, sonLyDo:'', sonErr:false });
+  if (a === 's-gui-pd') { const v = (A.sonLyDo || '').trim(); if (!v) A.sonErr = true;
+    else { const mon = Object.keys(A.sonChon).filter(k => A.sonChon[k]), phanMo = phanDoiSon(v, mon); Object.assign(A, { sonPd:false, sonChon:{}, sonLyDo:'', sonErr:false }); ve(); toast(`Đã gửi. Phần ${phanMo.map(id => phanById(id).ten).join(', ')} trả về hành chính kiểm lại.`); return; } }
+  if (a === 's-dong-y') A.sonXn = true;
+  if (a === 's-sheet-x') A.sonXn = false;
+  if (a === 's-sheet-bg') { if (e.target !== el) return; A.sonXn = false; }
+  if (a === 's-ok') { dongYSon(); A.sonXn = false; ve(); toast('Đã xác nhận. Cảm ơn anh.'); return; }
   if (a === 'a-quet') Object.assign(A, { man:'quet', kq:null });
   if (a === 'a-ve-ds') Object.assign(A, { man:'ds', kq:null });
   if (a === 'a-quet-tiep') { const i = dsCua(A.phan).find(v => v.kq === 'CHUA'); if (i) timMa(i.ma); else A.kq = { loai:'het' }; }
@@ -1007,23 +1137,27 @@ document.addEventListener('click', e => {
   if (a === 've-app-phan') { S.vai = 'app'; $('vai').value = 'app'; Object.assign(S.app, { man:'ds', phan:el.dataset.id, loc:'', mon:null, kq:null }); dongDrawer(); ve(); window.scrollTo(0, 0); }
   if (a === 've-dot') { S.vai = 'ql'; $('vai').value = 'ql'; S.view = 'detail'; S.tab = 'phan'; dongDrawer(); ve(); window.scrollTo(0, 0); }
   if (a === 'gia-lap-son') { giaLapXongSon(bayGio()); ve(); toast('Đã giả lập: phần anh Sơn kiểm xong. Phiếu XN0153 chờ anh Sơn xác nhận.'); }
-  if (a.startsWith('a-')) appAct(a, el, e);
+  if (a.startsWith('a-') || a.startsWith('s-')) appAct(a, el, e);
 });
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.dataset.loc) { S.locPhan = Object.assign({ tt:'', loai:'' }, S.locPhan, { [t.dataset.loc]: t.value }); tabPhan(); }
   if (t.dataset.locts === 'kq') { S.locTs = Object.assign({ kq:'', q:'' }, S.locTs, { kq: t.value }); tabTs(); }
   if (t.dataset.chon) S.son.chon[t.dataset.chon] = t.checked;
+  if (t.dataset.schon) S.app.sonChon[t.dataset.schon] = t.checked;
+  if (t.dataset.appSel) { S.app[t.dataset.appSel] = t.value; veApp(); }
+  if (t.id === 'appTk') { S.app.tk = t.value; Object.assign(S.app, { mon:null, sonXn:false, sonPd:false }); veApp(); capNhatMenu(); }
 });
 document.addEventListener('input', e => {
   const t = e.target;
-  if (t.dataset.app === 'q') { S.app.q = t.value; const pos = t.selectionStart; veApp(); const n = document.querySelector('[data-app="q"]'); n.focus(); n.setSelectionRange(pos, pos); }
+  if (t.dataset.app) { const k = t.dataset.app; S.app[k] = t.value; if (k === 'qthem') S.app.kq = null; const pos = t.selectionStart; veApp(); const n = document.querySelector(`[data-app="${k}"]`); n.focus(); n.setSelectionRange(pos, pos); }
+  if (t.id === 'sonLyDo') S.app.sonLyDo = t.value;
   if (t.dataset.locts === 'q') { S.locTs = Object.assign({ kq:'', q:'' }, S.locTs, { q: t.value }); const pos = t.selectionStart; tabTs(); const n = document.querySelector('[data-locts="q"]'); n.focus(); n.setSelectionRange(pos, pos); }
 });
 document.addEventListener('keydown', e => {
   if (e.key === 'Enter' && e.target.id === 'appMa') { timMa(e.target.value); veApp(); return; }
   if (e.key !== 'Escape') return;
-  if (S.vai === 'app' && S.app.mon) { S.app.mon = null; veApp(); return; }
+  if (S.vai === 'app' && (S.app.mon || S.app.sonXn)) { Object.assign(S.app, { mon:null, hong:false, sonXn:false }); veApp(); return; }
   if ($('ovM').classList.contains('open')) dongModal();
   else if ($('ov').classList.contains('open')) dongHop();
   else if (S.drawer) dongDrawer();
@@ -1075,12 +1209,8 @@ function dongDotHop() {
 function guiPhanDoi() {
   const v = ($('lyDo').value || '').trim();
   if (!v) { $('lyDoErr').hidden = false; $('lyDo').classList.add('err'); return; }
-  const x = xnSon(), mon = Object.keys(S.son.chon).filter(k => S.son.chon[k]);
-  const phanMo = mon.length ? [...new Set(mon.map(k => k.split('|')[0]))] : x.phanIds.slice();
-  const luc = bayGio();
-  x.phanDoi = { lyDo: v, luc, mon, phanMo, xong: false };
-  x.lichSu.push([luc, `Không đồng ý: "${v}"${mon.length ? ` · ${mon.length} món được đánh dấu` : ''}`]);
-  for (const pid of phanMo) { const p = phanById(pid); p.trangThai = 'Mở lại'; p.log.push([luc, `Mở lại do ${x.ai} không đồng ý: "${v}"`]); }
+  const mon = Object.keys(S.son.chon).filter(k => S.son.chon[k]);
+  const phanMo = phanDoiSon(v, mon);
   S.son.phanDoi = false; S.son.chon = {};
   ve(); window.scrollTo(0, 0);
   toast(`Đã gửi. Phần ${phanMo.map(id => phanById(id).ten).join(', ')} trả về hành chính kiểm lại.`);
@@ -1089,7 +1219,7 @@ function dongYHop() {
   const x = xnSon(), n = itemsXn(x).length;
   modal('Đồng ý với kết quả kiểm kê?', `<p>Anh xác nhận kết quả của <b>${n} món</b> anh đứng tên trong đợt ${S.dot.ma} là đúng.</p>
     <p class="hint">Sau khi đồng ý, kết quả bị khoá. Hành chính không mở lại được các phần này nữa.</p>`, 'Đồng ý', () => {
-      const luc = bayGio(); x.xacNhanLuc = luc; x.lichSu.push([luc, 'Đồng ý']); veConfirm(); ve(); toast('Đã xác nhận. Cảm ơn anh.');
+      dongYSon(); veConfirm(); ve(); toast('Đã xác nhận. Cảm ơn anh.');
     }, 'ok');
 }
 
@@ -1181,7 +1311,7 @@ khoiTao();
 { const q = new URLSearchParams(location.search);
   // link thẳng tới màn anh Sơn: coi như chị Lan đã kiểm xong phần anh Sơn, để phiếu ở trạng thái chờ xác nhận
   if (q.get('vai') === 'son') { giaLapXongSon(); S.vai = 'son'; $('vai').value = 'son'; if (q.get('phieu')) { S.son.view = 'detail'; S.son.phieu = q.get('phieu'); } }
-  if (q.get('vai') === 'app') { S.vai = 'app'; $('vai').value = 'app'; } }
+  if (q.get('vai') === 'app') { S.vai = 'app'; $('vai').value = 'app'; if (q.get('tk') === 'son') S.app.tk = 'son'; } }
 ve();
 </script>
 </body>
