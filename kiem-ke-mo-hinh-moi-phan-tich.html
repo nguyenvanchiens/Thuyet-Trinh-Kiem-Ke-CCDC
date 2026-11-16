@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mô hình kiểm kê mới</title>
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --surface-2:#f1f3f6; --text:#1c2230; --muted:#5d6678;
+  --line:#dfe3ea; --accent:#2457c5; --accent-soft:#e7eefc;
+  --ok:#1e7a46; --ok-soft:#e3f4ea; --warn:#9a6200; --warn-soft:#fdf1dc; --bad:#b3261e; --bad-soft:#fbe7e5;
+  --shadow:0 1px 2px rgba(20,30,50,.06),0 2px 8px rgba(20,30,50,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11141a; --surface:#181c24; --surface-2:#1f2430; --text:#e6e9ef; --muted:#9aa3b5;
+    --line:#2c3341; --accent:#7aa2ff; --accent-soft:#1f2a44;
+    --ok:#5fcf8f; --ok-soft:#163223; --warn:#f0b54a; --warn-soft:#3a2c12; --bad:#ff8a80; --bad-soft:#3d1c1a;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11141a; --surface:#181c24; --surface-2:#1f2430; --text:#e6e9ef; --muted:#9aa3b5;
+  --line:#2c3341; --accent:#7aa2ff; --accent-soft:#1f2a44;
+  --ok:#5fcf8f; --ok-soft:#163223; --warn:#f0b54a; --warn-soft:#3a2c12; --bad:#ff8a80; --bad-soft:#3d1c1a;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 "Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:32px 16px 64px}
+header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:28px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0}
+.meta{font-size:13px;color:var(--muted);text-align:right}
+.meta b{color:var(--text);font-weight:600}
+h2{font-size:20px;margin:40px 0 14px;display:flex;align-items:baseline;gap:10px}
+h2 .n{font-size:13px;color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums}
+h3{font-size:16px;margin:22px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin:4px 0}
+.muted{color:var(--muted)}
+code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.88em;background:var(--surface-2);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;box-shadow:var(--shadow)}
+.card > :last-child{margin-bottom:0}
+.status{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.status .card{padding:14px 16px}
+.status .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.status .v{font-size:16px;font-weight:600;margin-top:2px}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.p-ok{background:var(--ok-soft);color:var(--ok)}
+.p-warn{background:var(--warn-soft);color:var(--warn)}
+.p-bad{background:var(--bad-soft);color:var(--bad)}
+.p-info{background:var(--accent-soft);color:var(--accent)}
+.summary{border-left:4px solid var(--accent)}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stat .num{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .lbl{font-size:13px;color:var(--muted);margin-top:4px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{background:var(--surface-2);font-weight:600;font-size:13px;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tr.pick td{background:var(--accent-soft)}
+.layers{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:stretch}
+.layers .arrow{display:grid;place-items:center;color:var(--accent);font-size:22px;font-weight:700}
+.layers .card h3{margin-top:0}
+.tag{display:inline-block;font-size:12px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.benefit h3{margin-top:0;display:flex;gap:8px;align-items:center}
+.ico{display:inline-grid;place-items:center;flex:0 0 26px;width:26px;height:26px;border-radius:7px;background:var(--accent-soft);color:var(--accent);font-size:14px;font-weight:700}
+.steps{counter-reset:s;list-style:none;padding:0;margin:0}
+.steps > li{counter-increment:s;position:relative;padding:0 0 14px 40px;margin:0}
+.steps > li::before{content:counter(s);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:13px;display:grid;place-items:center}
+.steps > li b.t{display:block}
+.screen{border:1px solid var(--line);border-radius:14px;background:var(--surface-2);padding:12px;font-size:13px}
+.screen .bar{font-weight:700;margin-bottom:8px}
+.screen .row{display:flex;justify-content:space-between;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 10px;margin:6px 0}
+.screen .row span:last-child{white-space:nowrap}
+.ask{border-left:4px solid var(--warn)}
+.done{border-left:4px solid var(--ok)}
+.note{font-size:13px;color:var(--muted)}
+footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+a{color:var(--accent)}
+@media (max-width:760px){
+  .status,.grid-3,.grid-2{grid-template-columns:1fr}
+  .layers{grid-template-columns:1fr}
+  .layers .arrow{transform:rotate(90deg)}
+  .meta{text-align:left}
+  h1{font-size:23px}
+}
+@media print{
+  body{background:#fff}
+  .card,.tbl,.screen{box-shadow:none;break-inside:avoid}
+  h2{break-after:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div>
+    <p class="eyebrow">CCDC · Quản lý tài sản · Kiểm kê V5</p>
+    <h1>Mô hình kiểm kê mới: kiểm theo nơi đặt, xác nhận theo người giữ</h1>
+  </div>
+  <div class="meta">
+    Ngày lập: <b>16/11/2026</b><br>
+    Trạng thái: <b>đề xuất, chờ duyệt</b><br>
+    Thay cho phần mô hình của thiết kế v3.1
+  </div>
+</header>
+
+<div class="status">
+  <div class="card"><div class="k">Đọc code V4</div><div class="v"><span class="pill p-ok">Xong</span></div></div>
+  <div class="card"><div class="k">Mô hình mới</div><div class="v"><span class="pill p-warn">Chờ duyệt</span></div></div>
+  <div class="card"><div class="k">DB + API theo mô hình mới</div><div class="v"><span class="pill p-warn">Chưa làm</span></div></div>
+  <div class="card"><div class="k">Code</div><div class="v"><span class="pill p-warn">Chưa bắt đầu</span></div></div>
+</div>
+
+<!-- 1 -->
+<h2><span class="n">01</span>Tóm tắt</h2>
+<div class="card summary">
+  <p><b>Đề xuất:</b> tách kiểm kê thành hai việc mà V4 đang gộp làm một.</p>
+  <ul>
+    <li><b>Kiểm</b> là việc của hành chính, đi theo <b>nơi đặt</b>: từng người, từng phòng/tầng, từng kho. Mỗi tài sản thuộc <b>đúng một</b> phần kiểm.</li>
+    <li><b>Xác nhận</b> là việc của <b>người giữ</b>: mỗi người xác nhận một lần cho mọi món mình đứng tên, dù món đó được kiểm ở phần nào. Đồ trong kho do người được giao cho kho xác nhận.</li>
+  </ul>
+  <p>Cách này giữ được thói quen hiện tại của hành chính: 66% số dòng kiểm kê trên V4 là đi theo vùng. Nó sửa ba lỗi gốc của V4: một món nằm trong hai danh sách, kiểm theo vùng không ghi ai giữ, và không ai xác nhận kết quả. Web trả lời được hai câu hỏi chính: <b>ai/chỗ nào chưa được kiểm</b>, và <b>ai chưa xác nhận</b>.</p>
+</div>
+
+<!-- 2 -->
+<h2><span class="n">02</span>Bài toán cần giải</h2>
+<div class="card">
+  <p>Sau mỗi đợt kiểm kê, công ty cần trả lời được:</p>
+  <ol>
+    <li><b>Nhân viên nào chưa được kiểm</b>, kể cả nhân viên mới chưa có tài sản trên hệ.</li>
+    <li><b>Tài sản nào chưa được kiểm</b>, và tài sản nào kiểm rồi nhưng không thấy, hỏng hoặc sai chỗ.</li>
+    <li><b>Ai chịu trách nhiệm</b> cho từng món: người giữ đã đồng ý với kết quả chưa.</li>
+  </ol>
+  <p class="muted">Ràng buộc đã chốt: kiểm kê chỉ ghi nhận và báo cáo. Kiểm kê không sinh phiếu điều chuyển và không sửa người giữ, vị trí hay tình trạng trên bảng tài sản (chốt 16/11/2026 với anh Đạt).</p>
+</div>
+
+<!-- 3 -->
+<h2><span class="n">03</span>V4 đang làm gì và sai ở đâu</h2>
+<p>Mobile V4 cho chọn <b>kiểm theo nhân viên</b> hoặc <b>kiểm theo vùng</b>. Vùng là nơi đặt tài sản: kho, tầng, phòng. Kho MB là vùng <code>VN01_TANG_2_KHO_LUU_TRU</code>, kho MN là vùng <code>VN02_KHO_LUU_TRU_CCDC</code>.</p>
+
+<div class="grid-2">
+  <div class="card stat"><div class="num">509 phiên · 44.751 dòng</div><div class="lbl">Kiểm theo vùng, trung bình 390 dòng mỗi phiên. Chiếm 66% số dòng.</div></div>
+  <div class="card stat"><div class="num">2.037 phiên · 23.411 dòng</div><div class="lbl">Kiểm theo nhân viên, trung bình 14 dòng mỗi phiên.</div></div>
+</div>
+<p class="note" style="margin-top:8px">Số đo trên dữ liệu online, 15/11/2026.</p>
+
+<div class="tbl"><table>
+  <tr><th style="width:30%">Lỗi</th><th>Chuyện gì xảy ra</th><th style="width:28%">Chỗ trong code V4</th></tr>
+  <tr><td><b>Một món nằm trong hai danh sách</b></td><td>Danh sách vùng lấy mọi tài sản mang mã vùng, không cần biết ai giữ. Phiếu Kho → Người lại giữ nguyên mã kho cũ. Một chiếc laptop đã giao cho nhân viên vẫn hiện trong danh sách kho: đi kiểm kho ghi "Không thấy", ở người thì ghi "Có". Không có cảnh báo nào.</td><td><code>AsAdminCheckBL.cs:186</code>, <code>AsItemChangeFlowBL.cs:763-767</code></td></tr>
+  <tr><td><b>Kiểm theo vùng không ghi ai giữ</b></td><td>Mỗi dòng kiểm theo vùng bị xoá trắng người giữ. Không biết món "không thấy" ở tầng 3 là trách nhiệm của ai.</td><td><code>AsAdminCheckExtension.cs:31-35</code></td></tr>
+  <tr><td><b>Không ai xác nhận</b></td><td>Người kiểm bấm lưu là xong. Người giữ không biết mình bị ghi gì, kho không có ai chịu trách nhiệm.</td><td><code>AsAdminCheckBL.cs:559</code></td></tr>
+  <tr><td><b>Danh sách người chỉ lấy theo người đang giữ</b></td><td>Nhân viên mới đã cầm đồ nhưng trên hệ chưa gán thì không có trong danh sách, nên không ai đến kiểm.</td><td><code>AsAdminCheckBL.cs:300</code></td></tr>
+  <tr><td><b>Mỗi lần lưu xoá rồi ghi lại cả phiên</b></td><td>Hai máy cùng kiểm một phiên thì lần lưu sau xoá lần trước. Bấm "tạo mới" thì sinh thêm một bản của cùng một lần kiểm.</td><td><code>AsAdminCheckBL.cs:386-403</code></td></tr>
+  <tr><td><b>Chỉ lấy mã bắt đầu bằng <code>TSHN</code></b></td><td><code>TSHN</code> chỉ là tiền tố mã tài sản hành chính. Món có mã khác (nhập tay, mã cũ) không bao giờ vào danh sách kiểm. Chưa đếm được có bao nhiêu món như vậy.</td><td><code>AsAdminCheckBL.cs:186</code> và <code>:300</code></td></tr>
+</table></div>
+<p class="note" style="margin-top:8px">Đường dẫn tính từ <code>flink-webapi/AssetManagement/</code>. Code chỉ được đọc, không sửa.</p>
+
+<!-- 4 -->
+<h2><span class="n">04</span>Ba cách đã cân nhắc</h2>
+<div class="tbl"><table>
+  <tr><th style="width:22%">Cách</th><th>Hành chính đi thế nào</th><th>Một món ở mấy phần</th><th>Ai xác nhận</th><th>Đánh giá</th></tr>
+  <tr><td><b>A. Giữ như V4</b><br>người hoặc vùng, độc lập</td><td>Theo người hoặc theo phòng</td><td>Có thể hai</td><td>Không ai</td><td><span class="pill p-bad">Loại</span> Giữ nguyên cả ba lỗi gốc.</td></tr>
+  <tr><td><b>B. Chỉ theo người</b></td><td>Từng người. Đồ dùng chung nằm trong phần của người đứng tên</td><td>Một</td><td>Người giữ</td><td><span class="pill p-warn">Được, nhưng</span> Bắt hành chính bỏ cách đi theo phòng, trong khi đó là 66% công việc hiện tại.</td></tr>
+  <tr class="pick"><td><b>C. Kiểm theo nơi đặt, xác nhận theo người giữ</b></td><td>Theo người <b>hoặc</b> theo phòng/kho, như thói quen</td><td>Một</td><td>Người giữ (gom từ mọi phần) và người được giao cho kho</td><td><span class="pill p-ok">Đề xuất</span> Sửa ba lỗi gốc mà không đổi cách đi kiểm.</td></tr>
+</table></div>
+
+<!-- 5 -->
+<h2><span class="n">05</span>Mô hình đề xuất</h2>
+
+<div class="layers">
+  <div class="card">
+    <span class="tag">Tầng 1 · Kiểm</span>
+    <h3>Hành chính đi theo nơi đặt</h3>
+    <p>Lúc mở đợt, hệ chia mọi tài sản vào các <b>phần kiểm</b>: phần người, phần vùng, phần kho. Mỗi món đúng một phần. Hành chính chọn phần nào thì kiểm phần đó.</p>
+  </div>
+  <div class="arrow" aria-hidden="true">→</div>
+  <div class="card">
+    <span class="tag">Tầng 2 · Xác nhận</span>
+    <h3>Người giữ chịu trách nhiệm</h3>
+    <p>Khi mọi phần chứa đồ của một người đã kiểm xong, người đó nhận <b>một</b> yêu cầu xác nhận cho toàn bộ đồ mình đứng tên. Đồ trong kho do người được giao cho kho xác nhận.</p>
+  </div>
+</div>
+
+<h3>Luật chia phần lúc mở đợt</h3>
+<p>Một đợt kiểm cho <b>một công ty</b>. Hệ chụp danh sách tại thời điểm mở đợt. Tài sản chuyển chỗ trong đợt vẫn tính theo bản chụp.</p>
+<div class="tbl"><table>
+  <tr><th style="width:45%">Tài sản</th><th>Vào phần</th></tr>
+  <tr><td>Đang ở kho (<code>PositionCode = STORAGE</code>)</td><td>Phần <b>kho/vùng</b> theo mã vùng của nó, ví dụ Kho MB</td></tr>
+  <tr><td>Có người giữ, có mã vùng <b>không phải kho</b></td><td>Phần <b>vùng</b> đó, ví dụ Tầng 3</td></tr>
+  <tr><td>Có người giữ, không có vùng, <b>hoặc</b> vẫn mang mã kho cũ</td><td>Phần <b>người</b> giữ. Nhãn kho chỉ có nghĩa khi đồ đang ở kho</td></tr>
+  <tr><td>Đang ở kho nhưng thiếu mã vùng (dữ liệu cũ)</td><td>Phần <b>"Kho chưa rõ"</b>, để không món nào rơi khỏi danh sách</td></tr>
+</table></div>
+<p style="margin-top:12px"><b>Danh sách phần người</b> = mọi nhân viên <b>đang làm</b> của công ty, kể cả người có 0 món trên hệ. Nhờ vậy nhân viên mới đã cầm đồ nhưng chưa được gán vẫn được kiểm. Người vào làm giữa đợt thì hành chính thêm vào đợt. Người đã nghỉ không có phần kiểm. Đồ còn ghi ở họ hiện thành nhóm riêng trong báo cáo để thu hồi.</p>
+<p>Không lọc theo tiền tố mã. Chỉ bỏ các trạng thái không cần kiểm: Không theo dõi, Mất, Đã thanh lý.</p>
+
+<p>Mục 06 kể một đợt kiểm kê cụ thể từ đầu tới cuối theo đúng các luật này.</p>
+
+<!-- 6 -->
+<h2><span class="n">06</span>Ví dụ: một đợt kiểm kê từ đầu đến cuối</h2>
+<p class="muted">Tên người, mã và số liệu trong mục này đều là giả định, chỉ để minh hoạ quy trình.</p>
+
+<h3>Bối cảnh</h3>
+<p>Công ty <b>VN01</b>, đợt <b>"Kiểm kê T11/2026"</b>. Người đi kiểm: <b>chị Lan</b> (hành chính). Người xác nhận Kho MB: <b>chị Hoa</b> (tổ hành chính MB). Trên hệ đang có:</p>
+<div class="tbl"><table>
+  <tr><th style="width:34%">Ai / chỗ nào</th><th>Đồ trên hệ</th></tr>
+  <tr><td><b>Anh Minh</b>, nhân viên</td><td>1 laptop, 1 màn hình</td></tr>
+  <tr><td><b>Anh Sơn</b>, trưởng phòng</td><td>1 laptop. Ngoài ra <b>đứng tên 120 món</b> bàn ghế, máy chiếu ở <b>Tầng 3</b> (đã "vào vùng Tầng 3")</td></tr>
+  <tr><td><b>Anh Tú</b>, nhân viên mới vào tuần trước</td><td>Trên hệ <b>không có gì</b>. Thực tế đã cầm 1 laptop lấy từ kho, nhưng chưa ai lập phiếu</td></tr>
+  <tr><td><b>Kho MB</b></td><td>300 món đang ở kho, trong đó có chiếc laptop anh Tú đang cầm</td></tr>
+  <tr><td><b>Anh Nam</b>, đã nghỉ việc</td><td>Hệ vẫn ghi đang giữ 1 điện thoại</td></tr>
+</table></div>
+
+<h3>Bước 0. Mở đợt (web)</h3>
+<div class="card">
+  <p>Quản lý vào web, chọn công ty VN01, bấm "Mở đợt". Hệ tự làm ba việc.</p>
+  <p><b>1. Chụp danh sách và chia phần:</b></p>
+  <div class="tbl" style="margin-bottom:12px"><table>
+    <tr><th>Phần</th><th>Loại</th><th>Gồm</th></tr>
+    <tr><td>Anh Minh</td><td>Người</td><td>laptop, màn hình</td></tr>
+    <tr><td>Anh Sơn</td><td>Người</td><td>laptop của anh Sơn</td></tr>
+    <tr><td>Anh Tú</td><td>Người</td><td>(trống)</td></tr>
+    <tr><td>… mọi nhân viên đang làm khác</td><td>Người</td><td>đồ của họ</td></tr>
+    <tr><td>Tầng 3</td><td>Vùng</td><td>120 món anh Sơn đứng tên</td></tr>
+    <tr><td>Kho MB</td><td>Kho</td><td>300 món</td></tr>
+  </table></div>
+  <p>Ba điểm cần để ý:</p>
+  <ul>
+    <li><b>Anh Tú có phần kiểm dù trên hệ không giữ gì</b>, vì danh sách lấy theo nhân viên đang làm. V4 sẽ bỏ sót anh Tú.</li>
+    <li><b>120 món ở Tầng 3 không nằm trong phần của anh Sơn</b> mà nằm trong phần Tầng 3. Mỗi món chỉ thuộc một phần.</li>
+    <li>Điện thoại của <b>anh Nam</b> (đã nghỉ) không thuộc phần nào. Nó được đưa vào nhóm riêng "Ghi ở người đã nghỉ" trong báo cáo.</li>
+  </ul>
+  <p><b>2. Hỏi người xác nhận Kho MB.</b> Hệ gợi ý chị Hoa, quản lý giữ nguyên.</p>
+  <p><b>3. Khoá danh sách.</b> Trong đợt, ai lập phiếu điều chuyển thì danh sách kiểm vẫn giữ như lúc mở.</p>
+</div>
+
+<h3>Bước 1. Chị Lan kiểm anh Minh (mobile)</h3>
+<div class="card">
+  <p>Chị Lan mở app, chọn đợt, vào tab <b>Người</b>, chọn <b>anh Minh</b>. App hiện 2 món.</p>
+  <ul>
+    <li>Quét tem laptop: <b>Có</b>, tốt.</li>
+    <li>Quét tem màn hình: <b>Có</b>, nhưng màn hình bị sọc. Chị Lan chọn <b>Hỏng</b> và app bắt chụp ảnh.</li>
+    <li>Trên bàn anh Minh còn <b>một con chuột không dây có tem</b>. Chị Lan quét, app báo: <i>"Món này đang ghi ở <b>Kho MB</b>"</i>. Chị Lan bấm "Thêm vào phần của anh Minh". Hệ <b>chỉ ghi nhận</b>, không đổi người giữ trên bảng tài sản, và ghi vào phần Kho MB: <i>"món này đã được thấy ở phần anh Minh"</i>.</li>
+    <li>Chị Lan bấm <b>"Xong phần này"</b>.</li>
+  </ul>
+  <p class="note">Mỗi lần quét là app lưu ngay món đó. Chị Lan mất mạng giữa chừng cũng không mất gì. Nếu có người khác cũng mở phần anh Minh, hai người không xoá kết quả của nhau. Trên V4, lần lưu sau ghi đè cả phiên.</p>
+</div>
+
+<h3>Bước 2. Chị Lan kiểm Tầng 3 (mobile)</h3>
+<div class="card">
+  <p>Chị Lan vào tab <b>Vùng</b>, chọn <b>Tầng 3</b>, rồi đi hết tầng và quét như thói quen V4.</p>
+  <ul>
+    <li>115 món: <b>Có</b>.</li>
+    <li>3 món: tìm không thấy.</li>
+    <li>2 chiếc ghế: không có ở Tầng 3. Hôm sau chị Lan quét được chúng ở <b>phòng họp Tầng 5</b>, trong phần "Phòng họp T5". App báo <i>"Món này thuộc phần Tầng 3"</i>, chị Lan thêm vào. Ở phần Tầng 3, hai chiếc ghế tự hiện <b>"Thấy ở phần Phòng họp T5"</b>.</li>
+    <li>Chị Lan bấm <b>"Đánh dấu còn lại là Không thấy"</b>: chỉ còn 3 món thật sự không thấy. Rồi bấm <b>Xong phần</b>.</li>
+  </ul>
+  <p class="note">Kết quả: 2 chiếc ghế là "Có, sai chỗ", không bị tính là mất. Trên V4, chúng sẽ thành "Không thấy" ở Tầng 3, và không ai biết chúng đang ở Tầng 5.</p>
+</div>
+
+<h3>Bước 3. Chị Lan kiểm anh Tú, nhân viên mới (mobile)</h3>
+<div class="card">
+  <p>Chị Lan vào phần <b>anh Tú</b>: danh sách trống. Chị Lan hỏi, anh Tú đưa chiếc laptop ra. Chị Lan quét, app báo <i>"Món này đang ghi ở <b>Kho MB</b>"</i>. Chị Lan thêm vào phần anh Tú, Kho MB nhận cảnh báo ngược. Chị Lan bấm <b>Xong phần</b>.</p>
+  <p class="note">Nếu anh Tú không cầm gì, chị Lan bấm "Không giữ tài sản nào". Anh Tú vẫn phải xác nhận câu đó.</p>
+</div>
+
+<h3>Bước 4. Chị Lan kiểm Kho MB (mobile)</h3>
+<div class="card">
+  <p>Chị Lan vào <b>Kho MB</b> và quét 300 món. App đã đánh dấu sẵn hai món: con chuột <i>"đã thấy ở phần anh Minh"</i> và chiếc laptop <i>"đã thấy ở phần anh Tú"</i>. Chị Lan không cần đi tìm hai món này. 297 món còn lại: 296 <b>Có</b>, 1 <b>Không thấy</b>. Chị Lan bấm <b>Xong phần</b>.</p>
+</div>
+
+<h3>Bước 5. Xác nhận (app hoặc web của từng người)</h3>
+<p>Hệ gửi yêu cầu xác nhận cho <b>người giữ</b>, khi <b>mọi phần chứa đồ của họ</b> đã xong:</p>
+<div class="tbl"><table>
+  <tr><th style="width:12%">Ai</th><th style="width:22%">Nhận khi nào</th><th>Thấy gì</th><th style="width:30%">Làm gì</th></tr>
+  <tr><td><b>Anh Minh</b></td><td>Ngay sau bước 1</td><td>Laptop: Có. Màn hình: Hỏng (ảnh). Chuột: thêm từ Kho MB</td><td><b>Đồng ý</b>, phần anh Minh bị khoá</td></tr>
+  <tr><td><b>Anh Sơn</b></td><td>Phải chờ <b>cả phần anh Sơn và phần Tầng 3</b> xong</td><td>Một danh sách 121 món, chia nhóm "Của tôi" (1) và "Tầng 3" (120). Có 3 món Không thấy, 2 món sai chỗ</td><td><b>Không đồng ý</b>, ghi lý do: <i>"1 trong 3 món không thấy đang ở phòng giám đốc"</i>. Phần Tầng 3 quay về chị Lan để kiểm lại món đó, rồi anh Sơn xác nhận lại</td></tr>
+  <tr><td><b>Anh Tú</b></td><td>Sau bước 3</td><td>Laptop: thêm từ Kho MB</td><td><b>Đồng ý</b>. Từ giờ có bằng chứng anh Tú đang cầm chiếc laptop đó</td></tr>
+  <tr><td><b>Chị Hoa</b> (Kho MB)</td><td>Sau bước 4</td><td>296 Có, 1 Không thấy, 2 món đã thấy ở người khác</td><td><b>Đồng ý</b></td></tr>
+</table></div>
+
+<h3>Bước 6. Quản lý theo dõi (web)</h3>
+<div class="grid-3">
+  <div class="card"><h3 style="margin-top:0">Báo cáo 1: tiến độ kiểm</h3><p><i>"Còn 37 phần chưa kiểm: 35 người, Phòng họp T5, Kho MN…"</i></p><p class="note">Quản lý biết ngay còn phải đi những đâu.</p></div>
+  <div class="card"><h3 style="margin-top:0">Báo cáo 2: tiến độ xác nhận</h3><ul><li><i>"Anh Sơn: không đồng ý, đang chờ chị Lan kiểm lại Tầng 3"</i></li><li><i>"Chị Hà: đã kiểm, 3 ngày chưa xác nhận"</i>, có nút <b>Nhắc</b></li></ul></div>
+  <div class="card"><h3 style="margin-top:0">Báo cáo ngoại lệ</h3><ul><li>Màn hình của anh Minh hỏng</li><li>2 ghế sai chỗ</li><li>Chuột và laptop đang ở người nhưng hệ vẫn ghi ở kho</li><li>1 món kho không thấy</li><li>Điện thoại của anh Nam (người đã nghỉ)</li></ul><p class="note">Đây là danh sách việc hành chính tự xử lý sau đợt: lập phiếu giao chiếc laptop cho anh Tú, thu hồi điện thoại của anh Nam…</p></div>
+</div>
+
+<h3>Bước 7. Đóng đợt (web)</h3>
+<div class="card">
+  <p>Quản lý bấm <b>Đóng</b>. Hệ cảnh báo trước: <i>"Còn 2 phần chưa kiểm, 4 người chưa xác nhận"</i>. Đóng xong thì mọi kết quả bị khoá. Phần chưa kiểm vẫn hiện là <b>chưa kiểm</b> trong báo cáo, không bị coi là xong.</p>
+  <p><b>Kiểm kê không tự sửa gì trên bảng tài sản.</b> Laptop của anh Tú vẫn ghi ở kho cho tới khi hành chính tự lập phiếu, đúng như đã chốt với anh Đạt.</p>
+</div>
+
+<h3>Khác V4 ở đâu, tóm lại</h3>
+<div class="tbl"><table>
+  <tr><th style="width:30%">Tình huống trong ví dụ</th><th>V4</th><th>Cách mới</th></tr>
+  <tr><td>Anh Tú mới vào, trên hệ không giữ gì</td><td>Không có trong danh sách, không ai kiểm</td><td>Có phần riêng, laptop được phát hiện</td></tr>
+  <tr><td>Laptop của anh Tú vẫn ghi ở kho</td><td>Kho ghi "Không thấy", không ai biết nó ở đâu</td><td>Kho tự hiện "đã thấy ở phần anh Tú"</td></tr>
+  <tr><td>2 ghế ở Tầng 5</td><td>"Không thấy" ở Tầng 3</td><td>"Có, sai chỗ", biết đang ở đâu</td></tr>
+  <tr><td>120 món Tầng 3</td><td>Kiểm theo vùng, không ghi ai giữ, không ai xác nhận</td><td>Kiểm theo vùng, anh Sơn xác nhận và có quyền phản đối</td></tr>
+  <tr><td>Hai người cùng kiểm một phần</td><td>Lần lưu sau xoá lần trước</td><td>Mỗi món lưu riêng, không mất</td></tr>
+  <tr><td>Biết đợt đã xong chưa</td><td>Phải tự dò nhiều bản ghi</td><td>Báo cáo 1 và 2 trả lời thẳng</td></tr>
+</table></div>
+
+<!-- 6 -->
+<h2><span class="n">07</span>Lợi ích</h2>
+<div class="grid-2">
+  <div class="card benefit"><h3><span class="ico">1</span>Biết chính xác cái gì chưa kiểm</h3><p>Danh sách được chụp lúc mở đợt và mỗi món thuộc đúng một phần. "Chưa kiểm" là một con số đếm được, không còn suy đoán từ nhiều bản ghi.</p></div>
+  <div class="card benefit"><h3><span class="ico">2</span>Không còn kết quả mâu thuẫn</h3><p>Một món không thể vừa "Có" ở người vừa "Không thấy" ở kho. Món thấy sai chỗ được ghi đúng là sai chỗ.</p></div>
+  <div class="card benefit"><h3><span class="ico">3</span>Mọi món đều có người chịu trách nhiệm</h3><p>Người giữ xác nhận đồ của mình, kể cả đồ được kiểm theo phòng. Kho có người xác nhận riêng. Có tranh chấp thì có lý do ghi lại.</p></div>
+  <div class="card benefit"><h3><span class="ico">4</span>Giữ thói quen đi theo phòng</h3><p>Hành chính vẫn chọn "theo vùng" như V4. Không phải đào tạo lại cách đi kiểm.</p></div>
+  <div class="card benefit"><h3><span class="ico">5</span>Không sót người</h3><p>Danh sách người lấy theo nhân viên đang làm, không theo người đang giữ đồ. Nhân viên mới và người tưởng không giữ gì đều được kiểm và phải xác nhận.</p></div>
+  <div class="card benefit"><h3><span class="ico">6</span>Không còn ghi đè và nhiều bản</h3><p>Mỗi phần chỉ có một bản trong một đợt. Mobile lưu từng món ngay khi quét, không gửi lại cả danh sách. Hai máy cùng kiểm một phần không xoá kết quả của nhau.</p></div>
+  <div class="card benefit"><h3><span class="ico">7</span>An toàn cho dữ liệu tài sản</h3><p>Kiểm kê không sửa bảng tài sản. Nhãn vùng cũ hay dữ liệu bẩn chỉ hiện thành ngoại lệ trong báo cáo, để hành chính tự lập phiếu nếu cần.</p></div>
+  <div class="card benefit"><h3><span class="ico">8</span>Nhẹ và dễ báo cáo</h3><p>Một đợt một công ty, tạo một lần lúc mở. Báo cáo chính chỉ có hai câu hỏi: chỗ nào chưa kiểm, ai chưa xác nhận.</p></div>
+</div>
+
+<!-- 7 -->
+<h2><span class="n">08</span>Thao tác trên mobile</h2>
+
+<h3>Hành chính đi kiểm</h3>
+<div class="grid-2">
+  <ol class="steps">
+    <li><b class="t">Chọn đợt</b>Chỉ hiện các đợt đang mở của công ty mình có quyền.</li>
+    <li><b class="t">Chọn phần</b>Hai tab <b>Người</b> và <b>Vùng/Kho</b>, có ô tìm. Phần chưa kiểm xếp lên đầu, mỗi phần có số món và trạng thái.</li>
+    <li><b class="t">Quét tem</b>Món có trong danh sách được đánh dấu <b>Có</b>. Chọn tình trạng nếu khác: Tốt đang dùng, Tốt không dùng, Hỏng (bắt buộc chụp ảnh), Chờ thanh lý.</li>
+    <li><b class="t">Tem hỏng hoặc mất</b>Tìm theo mã tay, chụp ảnh, hệ tự đánh dấu cần in lại tem.</li>
+    <li><b class="t">Quét được món không có trong danh sách</b>Hệ báo món đó thuộc phần nào ("đang ghi ở anh Y" / "thuộc Kho MB" / "ghi ở người đã nghỉ"). Hành chính thêm vào phần đang kiểm. Hệ chỉ ghi nhận, không đổi người giữ, và lưu vết ở cả hai phần.</li>
+    <li><b class="t">Mã không có trên hệ</b>Không thêm được. Quản lý phải tạo tài sản trước, sau đó mới thêm vào đợt.</li>
+    <li><b class="t">Bấm "Xong phần này"</b>Món chưa đụng tới phải được đánh dấu trước, có nút "đánh dấu còn lại là Không thấy". Người có 0 món: bấm "Không giữ tài sản nào".</li>
+  </ol>
+  <div>
+    <div class="screen">
+      <div class="bar">Kiểm kê T11/2026 · VN01</div>
+      <div class="row"><span><b>Người</b> · 412</span><span><b>Vùng/Kho</b> · 9</span></div>
+      <div class="row"><span>Tầng 3 · 120 món</span><span class="pill p-warn">Đang kiểm 64/120</span></div>
+      <div class="row"><span>Kho MB · 310 món</span><span class="pill p-info">Chưa kiểm</span></div>
+      <div class="row"><span>Phòng họp A · 30 món</span><span class="pill p-ok">Xong</span></div>
+    </div>
+    <div class="screen" style="margin-top:10px">
+      <div class="bar">Tầng 3 · quét</div>
+      <div class="row"><span>TSHN24-0153 Ghế xoay</span><span class="pill p-ok">Có</span></div>
+      <div class="row"><span>TSHN25-0420 Máy chiếu</span><span class="pill p-bad">Hỏng · ảnh</span></div>
+      <div class="row"><span>TSHN23-0077 Bàn họp<br><span class="note">Đang ghi ở anh Y · đã lưu vết</span></span><span class="pill p-warn">Thêm</span></div>
+      <div class="row"><span>[ Đánh dấu còn lại là Không thấy ]</span><span>[ Xong phần ]</span></div>
+    </div>
+    <p class="note" style="margin-top:8px">Hình minh hoạ bố cục, không phải thiết kế giao diện.</p>
+  </div>
+</div>
+<p>Mobile lưu từng món ngay khi quét. Mất mạng giữa chừng thì món đã lưu vẫn còn. Phần đã xong được mở lại khi đợt còn mở, có ghi lại ai mở và lúc nào.</p>
+
+<h3>Người được kiểm xác nhận</h3>
+<ol class="steps">
+  <li><b class="t">Nhận thông báo</b>Khi mọi phần chứa đồ của mình đã kiểm xong. Ai cũng đăng nhập được, nên tự xác nhận bằng tài khoản của mình, trên app hoặc web.</li>
+  <li><b class="t">Xem danh sách</b>Đồ của mình chia nhóm theo phần (phần của tôi, Tầng 3…), kèm kết quả từng món.</li>
+  <li><b class="t">Đồng ý hoặc Không đồng ý</b>Không đồng ý thì bắt buộc ghi lý do. Phần liên quan trả về hành chính xem lại. Đồng ý thì kết quả của người đó bị khoá.</li>
+</ol>
+
+<!-- 8 -->
+<h2><span class="n">09</span>Thao tác trên web</h2>
+<div class="grid-2">
+  <div class="card">
+    <h3 style="margin-top:0">Mở đợt</h3>
+    <ol>
+      <li>Chọn công ty, đặt tên và thời gian.</li>
+      <li>Hệ hiện bản xem trước: số người, số vùng/kho, số món mỗi phần, số món ghi ở người đã nghỉ.</li>
+      <li>Chọn người xác nhận cho từng kho. Hệ gợi ý từ tổ hành chính của miền và người của đợt trước.</li>
+      <li>Bấm mở. Hệ chụp danh sách và tạo toàn bộ phần kiểm.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Trong đợt</h3>
+    <ul>
+      <li>Theo dõi tiến độ bằng các báo cáo ở mục 10.</li>
+      <li>Thêm nhân viên vào làm giữa đợt.</li>
+      <li>Mở lại một phần đã xong, bắt buộc ghi lý do.</li>
+      <li>Nhắc người chưa xác nhận: một người hoặc tất cả.</li>
+      <li>Xem chi tiết một phần: từng món, ai kiểm, lúc nào, ảnh.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Đóng đợt</h3>
+    <ul>
+      <li>Hệ báo trước số phần chưa kiểm và số người chưa xác nhận.</li>
+      <li>Đóng xong thì mọi kết quả bị khoá. Phần chưa kiểm vẫn hiện là "chưa kiểm" trong báo cáo, không bị coi là đã xong.</li>
+      <li>Ghi ngày kiểm cuối lên tài sản đã kiểm, chỉ để tham khảo.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 style="margin-top:0">Người giữ xác nhận trên web</h3>
+    <p>Màn "Tài sản của tôi trong đợt": cùng nội dung như trên app, có nút Đồng ý / Không đồng ý.</p>
+  </div>
+</div>
+
+<!-- 9 -->
+<h2><span class="n">10</span>Báo cáo</h2>
+<div class="tbl"><table>
+  <tr><th style="width:24%">Báo cáo</th><th>Trả lời câu hỏi</th><th style="width:36%">Nội dung</th></tr>
+  <tr><td><b>1. Tiến độ kiểm</b><span class="pill p-info" style="margin-left:6px">chính</span></td><td>Người nào, phòng nào, kho nào chưa được kiểm?</td><td>Mỗi phần một dòng: loại (người/vùng/kho), số món, đã kiểm bao nhiêu, trạng thái, người kiểm. Lọc theo chưa kiểm hoặc đang kiểm.</td></tr>
+  <tr><td><b>2. Tiến độ xác nhận</b><span class="pill p-info" style="margin-left:6px">chính</span></td><td>Ai đã được kiểm mà chưa xác nhận? Ai không đồng ý?</td><td>Mỗi người giữ một dòng: chờ kiểm xong (đang chờ phần nào), chờ xác nhận, đã xác nhận, không đồng ý kèm lý do. Có nút nhắc. Kho tính như một người.</td></tr>
+  <tr><td><b>3. Theo tài sản</b></td><td>Tài sản nào chưa được kiểm, và kết quả của từng món?</td><td>Mỗi món một dòng: phần, kết quả (Có / Hỏng / Không thấy / Sai chỗ / Chưa kiểm), tình trạng mới, người giữ, đã xác nhận chưa.</td></tr>
+  <tr><td><b>4. Ngoại lệ</b></td><td>Cần xử lý gì sau kiểm kê?</td><td>Món không thấy, hỏng, sai chỗ, thấy ở phần khác, và nhóm "ghi ở người đã nghỉ". Để hành chính tự lập phiếu nếu cần.</td></tr>
+  <tr><td><b>5. In lại tem</b></td><td>Món nào cần dán tem mới?</td><td>Các món được đánh dấu tem hỏng hoặc mất trong lúc kiểm.</td></tr>
+</table></div>
+<p class="note" style="margin-top:8px">Báo cáo 1 và 2 là hai báo cáo chính đã thống nhất với hành chính. Ba báo cáo kiểm kê cũ của V4 sẽ được thay bằng các báo cáo này.</p>
+
+<!-- 10 -->
+<h2><span class="n">11</span>Cái giá và rủi ro</h2>
+<div class="tbl"><table>
+  <tr><th style="width:34%">Điểm</th><th>Cách giảm</th></tr>
+  <tr><td>Thêm tầng xác nhận, tách khỏi phần kiểm. DB và API phức tạp hơn "chỉ theo người"</td><td>Chỉ thêm một bảng xác nhận theo (đợt, người). Phần kiểm vẫn là một khái niệm duy nhất cho người, vùng và kho.</td></tr>
+  <tr><td>Người giữ phải chờ mọi phần chứa đồ của mình xong mới xác nhận được</td><td>Báo cáo 2 ghi rõ đang chờ phần nào, để hành chính ưu tiên kiểm phần đó.</td></tr>
+  <tr><td>Một người đứng tên rất nhiều đồ dùng chung thì việc xác nhận dễ thành hình thức</td><td>Đây là việc quản lý: đồ chung nên đứng tên người thật sự chịu trách nhiệm. Cần hỏi hành chính đồ ở các tầng đang đứng tên ai.</td></tr>
+  <tr><td>Mã vùng trên dữ liệu có thể đã cũ, nên lúc đầu sẽ nhiều món "sai chỗ"</td><td>Đó là phát hiện đúng, không phải lỗi. Báo cáo 4 gom lại để hành chính sửa nhãn bằng phiếu.</td></tr>
+  <tr><td>API mobile khác hẳn v3.1: không còn chọn chế độ hay gõ mã vùng, có thêm phần và xác nhận</td><td>Báo bên app sớm, gửi hợp đồng API mới trước khi code.</td></tr>
+</table></div>
+
+<!-- 11 -->
+<h2><span class="n">12</span>Đã chốt và còn chờ</h2>
+<div class="grid-2">
+  <div class="card done">
+    <h3 style="margin-top:0">Đã chốt</h3>
+    <ul>
+      <li>Kiểm kê không sinh phiếu và không sửa bảng tài sản (16/11, anh Đạt).</li>
+      <li>Một đợt cho một công ty. Danh sách được chụp lúc mở đợt.</li>
+      <li>Người giữ bắt buộc xác nhận. Ai cũng đăng nhập được.</li>
+      <li>Tài sản không có người giữ thì ở kho. Có kho MB và kho MN.</li>
+      <li>Chỉ nạp nhân viên đang làm. Duyệt hộ cho người nghỉ việc sẽ bổ sung sau.</li>
+      <li>Thêm món của phần khác chỉ là ghi nhận, có cảnh báo hai chiều và lưu vết (anh Đạt).</li>
+      <li>Mã không có trên hệ thì không thêm được.</li>
+      <li><code>TSHN</code> là tiền tố mã, không dùng để lọc.</li>
+    </ul>
+  </div>
+  <div class="card ask">
+    <h3 style="margin-top:0">Còn chờ</h3>
+    <ul>
+      <li><b>Duyệt mô hình trong tài liệu này</b>: kiểm theo nơi đặt, xác nhận theo người giữ.</li>
+      <li>Ai xác nhận kho MB và kho MN: gợi ý người trong tổ hành chính của miền, chọn lúc mở đợt.</li>
+      <li>MB là công ty VN01, MN là VN02: đúng không?</li>
+      <li>Nhân viên công ty A giữ tài sản công ty B: đề xuất người tính theo công ty của nhân viên, tài sản theo công ty sở hữu, có cảnh báo.</li>
+      <li>Hỏi hành chính: đồ dùng chung ở các tầng/phòng đang đứng tên ai?</li>
+      <li>Đếm trên dữ liệu thật (chỉ đọc): số món theo từng nhóm ở bảng chia phần, top vùng, số món không bắt đầu bằng <code>TSHN</code>.</li>
+    </ul>
+  </div>
+</div>
+
+<footer>
+  Lập 16/11/2026 từ việc đọc code V4 (<code>flink-webapi/AssetManagement</code>) và V5 (<code>fastlink-erp-api</code>), chỉ đọc. Khi mô hình được duyệt sẽ cập nhật thiết kế DB và API (v3.1 → v4), DDL, bộ chạy thử, báo cáo chuyển đổi và slide.
+</footer>
+
+</div>
+</body>
+</html>

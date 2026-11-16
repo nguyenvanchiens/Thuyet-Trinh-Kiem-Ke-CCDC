@@ -13,5 +13,6 @@ Phím tắt:
 
 Tài liệu kèm theo:
 
+- `kiem-ke-mo-hinh-moi-phan-tich.html`: phân tích mô hình kiểm kê mới (kiểm theo nơi đặt, xác nhận theo người giữ), có ví dụ một đợt từ đầu đến cuối, thao tác mobile, web và báo cáo. Đề xuất, chờ duyệt (16/11/2026).
 - `kiem-ke-tai-san-v3.html`: thiết kế v3.1 (database, API, luật nghiệp vụ, phân quyền, kế hoạch). Bản đang dùng; 16/11/2026 bỏ phần sinh phiếu điều chuyển.
 - `kiem-ke-tai-san-v2.html`: thiết kế v2, bản trước, giữ để đối chiếu.
