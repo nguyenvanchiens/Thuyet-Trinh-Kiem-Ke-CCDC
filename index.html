@@ -154,6 +154,13 @@ tr:last-child td{border-bottom:0}
 .doc-links{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px;font-size:19px}
 .doc-links a{border:2px solid var(--stamp);border-radius:8px;padding:8px 16px;text-decoration:none}
 
+/* screenshots */
+.shots{display:flex;gap:20px;align-items:flex-start;justify-content:center}
+.shot{margin:0;border:1.5px solid var(--rule);border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 12px 28px -18px rgba(0,0,0,.35);flex:none}
+.shot img{display:block;width:auto}
+.shot-row{display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:start}
+.shot-row.rev{grid-template-columns:auto 1fr}
+
 /* ---------- chrome ---------- */
 .bar{position:fixed;left:0;top:0;height:4px;background:var(--stamp);transition:width .25s ease}
 .hint{position:fixed;right:14px;bottom:10px;font-size:13px;color:var(--muted);user-select:none}
@@ -178,6 +185,7 @@ tr:last-child td{border-bottom:0}
   .title-slide h1{font-size:36px}
   .tag{position:relative;right:auto;top:auto;transform:rotate(-2deg);width:100%;max-width:320px;margin:20px auto 0}
   .g2,.g3,.ex,.layers,.phone-row{grid-template-columns:1fr}
+  .shots{flex-direction:column} .shot-row,.shot-row.rev{grid-template-columns:1fr} .shot{flex:auto} .shot img{width:100%!important;height:auto!important}
   .arrow{transform:rotate(90deg);height:50px}
   .phone{margin:0 auto}
   .rule-line{flex-direction:column}
@@ -445,25 +453,49 @@ tr:last-child td{border-bottom:0}
     <div class="box"><div class="who">Người giữ</div><h3>Xác nhận</h3><p>Anh Minh, anh Tú, chị Hoa (kho) đồng ý. Anh Sơn không đồng ý, Tầng 3 được kiểm lại, rồi anh Sơn đồng ý.</p></div>
     <div class="box good"><div class="who">Quản lý · web</div><h3>Báo cáo và đóng đợt</h3><p>Ngoại lệ: màn hình hỏng, laptop của anh Tú chưa có phiếu… Hành chính tự lập phiếu sau đợt.</p></div>
   </div>
-  <p class="small" style="margin-top:16px">Tên người và số liệu là giả định. Bấm thử đúng kịch bản này ở <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">màn minh hoạ</a>.</p>
+  <p class="small" style="margin-top:16px">Tên người và số liệu là giả định. Bấm thử đúng kịch bản này ở <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">màn minh hoạ web</a>; hình các màn ở ba slide tiếp theo.</p>
   <aside>Kể nhanh theo sáu ô. Điểm cần nhấn: anh Tú không bị sót; chuột và laptop của kho được tìm thấy ở người chứ không thành "mất"; 2 ghế sai chỗ không bị tính là mất; anh Sơn có quyền phản đối và phản đối được xử lý gọn.</aside>
 </section>
 
 <!-- 11 -->
 <section class="slide">
-  <p class="kicker">Web</p>
-  <h2>Ba màn web, và hai báo cáo chính</h2>
-  <div class="grid g3">
-    <div class="box"><div class="label">Tạo đợt · 2 bước</div><ul><li>Tên, công ty, ngày, ghi chú</li><li>Xem trước: số người, vùng, kho, cảnh báo</li><li>Chọn người xác nhận kho</li><li>Mỗi công ty một đợt đang mở</li></ul></div>
-    <div class="box"><div class="label">Chi tiết đợt</div><ul><li>4 con số: phần đã kiểm, tài sản đã kiểm, đã xác nhận, ngoại lệ</li><li>5 tab báo cáo</li><li>Thêm nhân viên, nhắc xác nhận, mở lại phần, đóng đợt</li></ul></div>
-    <div class="box"><div class="label">Người giữ xác nhận</div><ul><li>Đồ của tôi, chia theo phần</li><li>Món có vấn đề xếp lên đầu</li><li>Đồng ý hoặc Không đồng ý kèm lý do</li></ul></div>
+  <p class="kicker">Web · Quản lý</p>
+  <h2>Tạo đợt: hai bước, xem trước rồi mới mở</h2>
+  <div class="shots">
+    <figure class="shot"><img src="anh-minh-hoa/web-tao-dot-b1.png" alt="Bước 1: nhập tên đợt, chọn công ty, ngày bắt đầu, dự kiến xong, ghi chú" style="height:410px"></figure>
+    <figure class="shot"><img src="anh-minh-hoa/web-tao-dot-b2.png" alt="Bước 2: xem trước số phần người, vùng, kho, tổng tài sản, cảnh báo, và chọn người xác nhận kho" style="height:410px"></figure>
   </div>
-  <div class="grid g2" style="margin-top:18px">
-    <div class="box good"><h3>Báo cáo 1 · Tiến độ kiểm</h3><p>Người nào, phòng nào, kho nào chưa được kiểm.</p></div>
-    <div class="box blue"><h3>Báo cáo 2 · Tiến độ xác nhận</h3><p>Ai đã được kiểm mà chưa xác nhận, ai không đồng ý. Có nút nhắc.</p></div>
+  <p class="small" style="margin-top:14px"><b>Bước 1</b> chỉ nhập tên, công ty, ngày, ghi chú. <b>Bước 2</b> hệ tính trước số phần và cảnh báo nhưng chưa lưu gì; chọn người xác nhận kho rồi mới bấm Mở đợt.</p>
+  <aside>Người tạo đợt không nhập danh sách người hay tài sản: hệ tự lấy. Bước xem trước cho biết đợt sẽ có bao nhiêu phần, bao nhiêu món, có món nào ghi ở người đã nghỉ. Mỗi công ty chỉ có một đợt đang mở, tạo trùng sẽ bị chặn ngay ở bước 1.</aside>
+</section>
+
+<!-- 11b -->
+<section class="slide">
+  <p class="kicker">Web · Quản lý</p>
+  <h2>Chi tiết đợt: nhìn là biết còn thiếu gì</h2>
+  <div class="shot-row">
+    <figure class="shot"><img src="anh-minh-hoa/web-chi-tiet-dot.png" alt="Màn chi tiết đợt KK0012: 4 ô số, các tab Phần kiểm, Xác nhận, Tài sản, Ngoại lệ, In lại tem, bảng các phần với tiến độ" style="height:430px"></figure>
+    <div class="grid" style="gap:12px">
+      <div class="box good"><div class="label">Báo cáo 1 · Phần kiểm</div><p>Người, phòng, kho nào chưa kiểm hoặc đang kiểm. Bấm một dòng để xem từng món.</p></div>
+      <div class="box blue"><div class="label">Báo cáo 2 · Xác nhận</div><p>Ai chưa xác nhận, ai không đồng ý. Có nút nhắc.</p></div>
+      <div class="box"><div class="label">Thêm</div><p>Tài sản, ngoại lệ, in lại tem. Thêm nhân viên, mở lại phần, đóng đợt.</p></div>
+    </div>
   </div>
-  <p class="small" style="margin-top:14px">Thêm: theo tài sản, ngoại lệ, in lại tem. <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">Mở màn minh hoạ web</a> (đổi vai quản lý / nhân viên ở thanh trên cùng).</p>
-  <aside>Hai báo cáo chính đúng như hành chính đã yêu cầu: biết ai và chỗ nào chưa được kiểm, biết ai chưa xác nhận. Nếu có thời gian, mở màn minh hoạ và bấm thử kịch bản không đồng ý rồi kiểm lại.</aside>
+  <aside>Bốn ô số trên cùng trả lời ngay: còn bao nhiêu phần chưa kiểm, bao nhiêu món chưa kiểm, bao nhiêu người chưa xác nhận, bao nhiêu ngoại lệ. Hai tab đầu là hai báo cáo chính hành chính đã yêu cầu.</aside>
+</section>
+
+<!-- 11c -->
+<section class="slide">
+  <p class="kicker">Web · Người giữ và quản lý</p>
+  <h2>Người giữ phản hồi, quản lý thấy ngay</h2>
+  <div class="shot-row rev">
+    <figure class="shot"><img src="anh-minh-hoa/web-nguoi-giu-gon.png" alt="Màn xác nhận của anh Sơn: Tầng 3 có 3 không thấy, 2 ở chỗ khác, tích máy chiếu và ghi lý do không đồng ý" style="height:400px"></figure>
+    <div>
+      <figure class="shot" style="margin-bottom:12px"><img src="anh-minh-hoa/web-tab-xac-nhan.png" alt="Tab Xác nhận phía quản lý: trạng thái từng người, chờ kiểm xong, chờ xác nhận, đã xác nhận, nút nhắc" style="width:100%;height:auto"></figure>
+      <p class="small" style="margin:0"><b>Trái:</b> anh Sơn tích món chưa đúng và ghi lý do. <b>Phải:</b> tab Xác nhận phía quản lý, từng người đang ở bước nào.</p>
+    </div>
+  </div>
+  <aside>Bên trái là màn của người giữ: món có vấn đề xếp lên đầu, 115 món "Có" thu gọn. Anh Sơn không đồng ý về máy chiếu, ghi lý do. Bên phải là tab Xác nhận phía quản lý: thấy ngay ai chờ kiểm xong, ai chờ xác nhận, ai đã xác nhận, và nhắc được. Muốn bấm thử thì mở màn minh hoạ.</aside>
 </section>
 
 <!-- 12 -->

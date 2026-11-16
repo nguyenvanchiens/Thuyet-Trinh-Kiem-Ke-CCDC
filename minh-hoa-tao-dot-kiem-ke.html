@@ -325,7 +325,7 @@ const CONG_TY = {
   VN01: { ten: 'VN01 · Miền Bắc', nguoi: 413, nguoi0: 25,
     nghi: [['TSHN23-0412','Điện thoại Samsung','anh Nam (đã nghỉ 09/2026)']],
     vung: [['Tầng 3',120,'anh Sơn'],['Tầng 4',86,'chị Vân'],['Tầng 5',64,'anh Đông'],['Phòng họp T5',30,'chị Vân']],
-    kho: [['Kho MB',300,'Linh']], khoChuaRo: [], taiSanNguoi: 1490 },
+    kho: [['Kho MB',300,'Hoa']], khoChuaRo: [], taiSanNguoi: 1490 },
   VN02: { ten: 'VN02 · Miền Nam', nguoi: 175, nguoi0: 12,
     nghi: [['TSHN23-0911','Điện thoại','anh Phúc (đã nghỉ 08/2026)']],
     vung: [['Tầng 2 VN02',64,'chị Ngân'],['Phòng họp VN02',20,'chị Ngân'],['Sảnh VN02',9,'anh Tín']],
@@ -333,7 +333,7 @@ const CONG_TY = {
   VN03: { ten: 'VN03 · Công ty thành viên', nguoi: 58, nguoi0: 6, nghi: [],
     vung: [['Văn phòng VN03',41,'anh Tâm']], kho: [], khoChuaRo: [], taiSanNguoi: 97 }
 };
-const NGUOI_XN = { Thao:'chị Thảo · Tổ Hành chính - Nhân sự MN', Kiet:'anh Kiệt · Tổ Hành chính - Nhân sự MN', Linh:'chị Linh · Phòng Tổ chức - Hành chính' };
+const NGUOI_XN = { Hoa:'chị Hoa · Tổ hành chính MB', Thao:'chị Thảo · Tổ Hành chính - Nhân sự MN', Kiet:'anh Kiệt · Tổ Hành chính - Nhân sự MN', Linh:'chị Linh · Phòng Tổ chức - Hành chính' };
 const NV_MOI = ['anh Quân · vào làm 15/11', 'chị My · vào làm 16/11', 'anh Bảo · vào làm 16/11'];
 const TEN_DS = ['Ghế xoay','Bàn làm việc','Tủ hồ sơ','Ghế chờ','Màn hình 24"','Điều hoà','Quạt cây','Bảng trắng','Kệ sách','Máy in'];
 const KQ = { CO:['Có','p-ok'], HONG:['Hỏng','p-bad'], KHONG_THAY:['Không thấy','p-bad'], SAI_CHO:['Có, ở chỗ khác','p-warn'], THEM:['Thêm vào phần này','p-warn'], CHUA:['Chưa kiểm','p-mute'] };
@@ -833,7 +833,7 @@ function veXemTruoc(c) {
   const kho = d.kho.map(k => [k[0], k[1], k[2]]);
   $('dsKho').innerHTML = kho.length ? kho.map((k, i) => `<tr><td>${esc(k[0])}</td><td class="num">${k[1]}</td><td>
       <select class="input xn" data-i="${i}"><option value="">— Chọn người xác nhận —</option>${Object.entries(NGUOI_XN).map(([v, t]) => `<option value="${v}" ${v === k[2] ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select>
-      ${k[2] ? '<div class="hint">Gợi ý từ đợt trước (KK0009)</div>' : ''}</td></tr>`).join('')
+      ${k[2] ? `<div class="hint">Gợi ý từ đợt trước (${c === 'VN01' ? 'KK0010' : 'KK0009'})</div>` : ''}</td></tr>`).join('')
     : '<tr><td colspan="3" class="hint">Công ty này không có kho, không cần người xác nhận kho.</td></tr>';
   $('e2').hidden = true;
 }
