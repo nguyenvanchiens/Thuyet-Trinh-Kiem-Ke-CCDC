@@ -13,6 +13,7 @@ Phím tắt:
 
 Tài liệu kèm theo:
 
+- `HUONG-DAN-DOC-KIEM-KE.md`: hướng dẫn đọc tuần tự để nắm trọn luồng (trang phân tích → màn minh hoạ → slide), mỗi bước ghi đọc xong làm được gì, cuối file là 12 câu tự kiểm tra và việc cần làm trước, trong, sau buổi gặp anh Đạt.
 - `kiem-ke-mo-hinh-moi-phan-tich.html`: phân tích mô hình kiểm kê mới (kiểm theo nơi đặt, xác nhận theo người giữ), có ví dụ một đợt từ đầu đến cuối, thao tác mobile, web và báo cáo. Hướng đã thống nhất; mục 12 là các câu cần anh Đạt chốt (16/11/2026).
 - `minh-hoa-tao-dot-kiem-ke.html`: màn minh hoạ web cho mô hình mới: danh sách đợt, form tạo đợt hai bước, chi tiết đợt (5 tab báo cáo, chi tiết từng phần) màn xác nhận của nhân viên (menu "NV xác nhận kiểm kê") và app mobile (menu "App kiểm kê", mở thẳng bằng `?vai=app`; đăng nhập app bằng chị Lan để đi kiểm: quét, thêm tài sản, tình trạng, tem; hoặc bằng anh Sơn để xác nhận phiếu, `?vai=app&tk=son`). Ba màn dùng chung dữ liệu. Có kịch bản demo; dữ liệu giả.
 - `thuyet-trinh-v31.html`: bộ slide cũ theo thiết kế v3.1, giữ để đối chiếu. Mô hình mới thay phần kiểm theo phiên của v3.1.
