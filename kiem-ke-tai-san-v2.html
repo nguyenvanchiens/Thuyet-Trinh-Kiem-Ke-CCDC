@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kiểm kê CCDC V5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Giữ nguyên hệ thống thị giác của kiem-ke-tai-san.html để hai tài liệu đọc liền mạch. */
+:root {
+  --bg: #f6f7f6;
+  --surface: #ffffff;
+  --fg: #1b2420;
+  --muted: #5b6863;
+  --line: #dde3e0;
+  --accent: #0f6b5c;
+  --accent-soft: #e2f0ec;
+  --code-bg: #eef1ef;
+  --ok: #1d7a3e; --ok-bg: #e3f3e8;
+  --warn: #9a5b00; --warn-bg: #fbefd9;
+  --bad: #b3261e; --bad-bg: #fbe5e3;
+  --info: #2a5ea8; --info-bg: #e4ecf8;
+  --font-display: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121715; --surface: #19201d; --fg: #e3e9e6; --muted: #9aa8a2; --line: #2b3531;
+    --accent: #5cc4ae; --accent-soft: #1d3530; --code-bg: #212a27;
+    --ok: #6fcf8f; --ok-bg: #1c3324; --warn: #e6b45c; --warn-bg: #3a2c12;
+    --bad: #f08a80; --bad-bg: #3d1d1a; --info: #8ab4f0; --info-bg: #1c2a40;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121715; --surface: #19201d; --fg: #e3e9e6; --muted: #9aa8a2; --line: #2b3531;
+  --accent: #5cc4ae; --accent-soft: #1d3530; --code-bg: #212a27;
+  --ok: #6fcf8f; --ok-bg: #1c3324; --warn: #e6b45c; --warn-bg: #3a2c12;
+  --bad: #f08a80; --bad-bg: #3d1d1a; --info: #8ab4f0; --info-bg: #1c2a40;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+img { max-width: 100%; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; }
+@media (max-width: 900px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; } nav.toc { position: static !important; } }
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; font-size: 13.5px; }
+nav.toc .lbl { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: s; }
+nav.toc li { counter-increment: s; }
+/* Viền trái luôn tồn tại dưới dạng trong suốt — hiện màu khi hover thì chữ không bị đẩy ngang.
+   Cố ý KHÔNG đổi font-weight khi hover: cột chỉ rộng 220px, chữ đậm lên sẽ xuống dòng và cả
+   danh sách nhảy. Độ nổi lấy từ nền + màu + thanh dọc, không lấy từ nét chữ. */
+nav.toc a {
+  display: block; padding: 5px 10px 5px 9px; border-radius: 0 6px 6px 0;
+  color: var(--muted); text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: background-color .12s ease, color .12s ease, border-left-color .12s ease;
+}
+nav.toc a::before { content: counter(s) ". "; font-family: var(--font-mono); font-size: 12px; opacity: .65; }
+nav.toc a:hover, nav.toc a:focus-visible {
+  background: var(--accent-soft); color: var(--accent);
+  border-left-color: var(--accent); outline: none;
+}
+nav.toc a:hover::before, nav.toc a:focus-visible::before { opacity: 1; }
+/* Mục đang đọc: CHỈ thanh dọc + màu chữ, KHÔNG nền — để hover (có nền) vẫn phân biệt được
+   với nó. Đặt sau luật hover để trạng thái này không bị mất khi chuột rời đi. */
+nav.toc a[aria-current] { color: var(--accent); border-left-color: var(--accent); }
+nav.toc a[aria-current]::before { opacity: 1; }
+main { min-width: 0; }
+header.hero { padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: .02em; }
+h1 { font-family: var(--font-display); font-size: clamp(28px, 4vw, 38px); line-height: 1.2; margin: 8px 0 12px; font-weight: 700; text-wrap: balance; }
+.lede { color: var(--muted); max-width: 68ch; margin: 0; }
+section { padding-block: 28px 4px; }
+h2 { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin: 0 0 12px; text-wrap: balance; display: flex; gap: 10px; align-items: baseline; }
+h2 .n { font-family: var(--font-mono); font-size: 14px; color: var(--accent); font-weight: 600; }
+h3 { font-size: 16.5px; font-weight: 600; margin: 24px 0 8px; }
+p, li { max-width: 74ch; }
+code { font-family: var(--font-mono); font-size: .86em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+a { color: var(--accent); }
+.tbl { overflow-x: auto; margin: 12px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; background: var(--code-bg); }
+tr:last-child td { border-bottom: 0; }
+.diagram { overflow-x: auto; margin: 16px 0; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.diagram pre.mermaid { margin: 0; background: transparent; }
+.cap { font-size: 12.5px; color: var(--muted); margin-top: -8px; }
+.chip { display: inline-block; font-family: var(--font-mono); font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.c-ok { color: var(--ok); background: var(--ok-bg); }
+.c-warn { color: var(--warn); background: var(--warn-bg); }
+.c-bad { color: var(--bad); background: var(--bad-bg); }
+.c-info { color: var(--info); background: var(--info-bg); }
+.c-none { color: var(--muted); background: var(--code-bg); }
+.note { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 16px 0; max-width: 80ch; }
+.warnbox { border-left: 3px solid var(--bad); background: var(--bad-bg); padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 16px 0; max-width: 80ch; }
+.formula { font-family: var(--font-mono); font-size: 13.5px; background: var(--code-bg); padding: 10px 14px; border-radius: 6px; overflow-x: auto; white-space: pre; }
+pre.sql { font-family: var(--font-mono); font-size: 13px; line-height: 1.5; background: var(--code-bg); padding: 12px 14px; border-radius: 6px; overflow-x: auto; margin: 12px 0; }
+ol.rules { padding-left: 22px; display: grid; gap: 4px; }
+.issue td:first-child { font-family: var(--font-mono); color: var(--muted); }
+.ask { border: 1px solid var(--line); border-left: 3px solid var(--info); background: var(--surface); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; max-width: 80ch; }
+.ask .who { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.ask h4 { margin: 2px 0 6px; font-size: 15.5px; font-weight: 600; }
+.ask p { margin: 6px 0 0; font-size: 14px; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 14px 0 0; font-size: 13px; color: var(--muted); }
+footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+html { scroll-behavior: smooth; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Mục lục">
+  <div class="lbl">Mục lục</div>
+  <ol>
+    <li><a href="#gioi-thieu">Tài liệu này là gì</a></li>
+    <li><a href="#quyet-dinh-nen">Quyết định nền</a></li>
+    <li><a href="#vong-doi">Vòng đời một đợt</a></li>
+    <li><a href="#du-lieu">Mô hình dữ liệu</a></li>
+    <li><a href="#nghiep-vu">Quy tắc nghiệp vụ</a></li>
+    <li><a href="#dieu-chuyen">Sinh phiếu điều chuyển</a></li>
+    <li><a href="#bao-cao">Báo cáo</a></li>
+    <li><a href="#api">API và quyền</a></li>
+    <li><a href="#bo-di">V4 có, V5 cố ý bỏ</a></li>
+    <li><a href="#phai-hoi">Câu phải đi hỏi</a></li>
+    <li><a href="#chua-kiem">Chưa kiểm được</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="hero">
+  <div class="eyebrow">AssetManagement · Stocktake · thiết kế V5</div>
+  <h1>Kiểm kê tài sản CCDC trên FastLink V5</h1>
+  <p class="lede">Thiết kế kiểm kê CCDC cho V5, viết theo đúng khuôn đang chạy của phân hệ: engine workflow sở hữu quy trình duyệt, bảng nghiệp vụ chỉ giữ dữ liệu. Tài liệu đối chiếu với V4 ở chỗ cần, nhưng <b>không phải bản port</b> — mọi chỗ lệch V4 đều có lý do kèm số đo.</p>
+  <div class="legend">
+    <span><span class="chip c-ok">ĐO</span> số đo trên dữ liệu thật, có ghi nguồn</span>
+    <span><span class="chip c-warn">CHỐT</span> quyết định của tài liệu này, bác được</span>
+    <span><span class="chip c-info">HỎI</span> phải hỏi người khác mới trả lời được</span>
+    <span><span class="chip c-bad">CHỜ QUYẾT</span> đã có phương án, nhưng chọn phương án nào là quyết định nghiệp vụ</span>
+  </div>
+</header>
+
+<section id="gioi-thieu">
+<h2><span class="n">01</span>Tài liệu này là gì</h2>
+<p>Đây là <b>thiết kế</b>, không phải mô tả hệ đang chạy. Nó thay vai trò "đặc tả" của <code>kiem-ke-tai-san.html</code> — tài liệu đó mô tả V4 và có <b>23 điểm sai hoặc thiếu đã xác định</b>, trong đó 8 điểm thuộc loại nguy hiểm nhất: tài liệu tả một hành vi hợp lý, code V4 làm một hành vi khác. Ai đọc tài liệu đó để viết V5 sẽ tái tạo cái hợp lý và tưởng mình đang port.</p>
+
+<div class="tbl"><table>
+<tr><th>Dùng để</th><th>Đọc file nào</th></tr>
+<tr><td>Biết V4 thật sự làm gì, kèm bug</td><td><code>kiem-ke-tai-san.html</code> + danh sách 23 điểm sửa</td></tr>
+<tr><td>Viết code V5</td><td><b>file này</b></td></tr>
+<tr><td>Khuôn mẫu code</td><td><code>Modules/AssetManagement/AssetManagement.Application/Workflows/AssetTransferFlow.cs</code>, <code>Apps/AssetManagement.Api/Endpoints/AssetTransfer/</code></td></tr>
+</table></div>
+
+<h3>Lịch sử sửa</h3>
+<div class="tbl"><table>
+<tr><th>Ngày</th><th>Sửa gì</th></tr>
+<tr><td>11/11/2026</td><td>Bản đầu.</td></tr>
+<tr><td><b>14/11/2026</b></td><td>Sửa theo <b>bản đánh giá độc lập</b> (<code>coordination/ket-qua/2026-11-14-danh-gia-kiem-ke-v2.md</code>, một phiên khác đọc lại code V4 + V5 và đo lại trên dữ liệu thật). <b>Đã sửa:</b> Chặn 4 (<code>ItemCode</code> rỗng), Chặn 5 (mâu thuẫn Q3 ↔ cột duyệt NVCM), định nghĩa "lệch" ở Chặn 3, giả định sai của Q2, 9 mục "nên sửa" và 7 mục nhỏ, và viết lại mục 10. <b>Còn chờ quyết nghiệp vụ:</b> Chặn 1 (một phiên phải sinh nhiều phiếu), Chặn 2 (Mất / hỏng tại chỗ / đổi người giữ trực tiếp không biểu diễn được bằng <code>ASSET_TRANSFER</code>), và đường ghi nhóm/mô tả mới về tài sản — xem <code>coordination/ket-qua/2026-11-14-cau-hoi-kiem-ke-cho-anh-dat.md</code>.</td></tr>
+</table></div>
+<div class="warnbox"><b>Trạng thái hôm nay: CHƯA code được trọn vẹn.</b> Mục 04, 05, 07 đủ để bắt đầu. Mục 06 (sinh phiếu điều chuyển) <b>chưa</b> — nó đứng chờ ba câu hỏi nghiệp vụ ở trên.</div>
+
+<h3>Nguồn số liệu dùng trong tài liệu này</h3>
+<ul>
+<li><b>Dữ liệu V4</b>: <code>mysql.fastlink.dev</code> / <code>fl_asset_prod</code> — dump production 04/11/2026, phiên chỉ đọc. Đối chứng: <code>as_item</code> = 9.112 dòng (TSHN 4.379 / TS00 4.733).</li>
+<li><b>Code V4</b>: <code>D:\HNCWEB\flink-webapi</code> nhánh <code>main</code> <code>c0c7f5e</code>.</li>
+<li><b>V5</b>: <code>fastlink-erp-api</code> <code>main</code> <code>cd5403a1</code> (12/11/2026 — bản đầu viết trên <code>e3b1574</code>, nên <b>mọi số dòng code V5 trích trong tài liệu này đã trôi</b>; ví dụ lời gọi resolver nay ở <code>AssetTransferFlow.cs:709</code> chứ không phải <code>:684</code>. Trích dẫn dùng để tìm, không dùng để đếm); DB dev <code>fl_asset_v5</code>, <code>AssetItem</code> = 4.379 dòng.</li>
+</ul>
+<div class="warnbox"><b>V5 chưa lên production.</b> Mọi số đo phía V5 là số của môi trường dev. Hệ đang chạy thật vẫn là V4.</div>
+</section>
+
+<section id="quyet-dinh-nen">
+<h2><span class="n">02</span>Quyết định nền</h2>
+<p>Ba quyết định dưới đây chi phối toàn bộ phần còn lại. Bác một trong ba thì phải viết lại tài liệu.</p>
+
+<h3>Q1. Kiểm kê là GHI THẲNG, không phải quy trình duyệt <span class="chip c-warn">CHỐT</span></h3>
+<p>V4 có hai cơ chế cùng gắn vào một đợt. Số đo quyết định:</p>
+<div class="tbl"><table>
+<tr><th>Cơ chế</th><th>Có duyệt?</th><th>Dữ liệu thật</th><th>Kết luận</th></tr>
+<tr><td>A — HC kiểm trực tiếp, ghi thẳng</td><td>Không</td><td>2.546 phiên · 68.162 dòng chi tiết · 2.740 lần làm tiếp của 28 người, từ 12/2020 tới 12/2025</td><td><span class="chip c-ok">Giữ</span></td></tr>
+<tr><td>B — Flow <code>ASSET_CHECK</code>, NV tự xác nhận rồi HC duyệt</td><td>Có</td><td>1.530 yêu cầu, trong đó <b>1.529 bị huỷ tự động trong 13 giây</b> ngay sau khi tạo đợt, ghi chú "IT support hủy". Chi tiết: 25.767/25.781 dòng chưa kiểm</td><td><span class="chip c-bad">Bỏ</span></td></tr>
+</table></div>
+<p>Kiểm kê là <b>thu thập sự thật</b>: người đi kiểm nhìn thấy cái tủ, ghi lại cái mình thấy. Không có gì để duyệt — không ai "từ chối" việc một cái ghế có mặt ở đó. Thứ đáng duyệt là <b>hệ quả</b> của kiểm kê: đưa tài sản về kho, đổi tình trạng sử dụng, đổi người giữ. V5 đã có đúng một quy trình cho việc đó.</p>
+
+<h3>Q2. Hệ quả của kiểm kê đi qua <code>ASSET_TRANSFER</code>, không qua job chạy tay <span class="chip c-warn">CHỐT</span> <span class="chip c-bad">CHỜ QUYẾT</span></h3>
+<div class="warnbox"><b>Sửa 14/11: bản đầu nói sai một câu nền.</b> Nó viết "V4 ghi thẳng, không ai duyệt" như thể V5 đang <i>đổi</i> một nghiệp vụ đang chạy. Sự thật: <b>V4 chưa bao giờ cho kiểm kê đổi tài sản trong vận hành</b> — cơ chế A không ghi <code>as_item</code> một dòng nào, cơ chế B cũng không, và lần 2019 là một <b>công cụ IT chạy tay đúng một lần</b>. Nên "kiểm kê làm đổi tài sản" là <b>nghiệp vụ MỚI</b>, không phải điểm khác V4. Người quyết phải biết họ đang thêm một nghiệp vụ chưa từng có, chứ không phải đang chọn cách port.</div>
+<div class="warnbox">
+<b>Đây là lỗ hổng lớn nhất của V4.</b> <code>AsItemChangeBL.SyncCheckEvent</code> là thứ duy nhất đưa kết quả kiểm kê về tài sản. Nó <b>không có lịch chạy</b>, chỉ gọi được từ <code>ConsoleTestClient/Asset/TestSyncCheckToChange.cs</code>, và nó <b>chạy đúng một lần: 29/11/2019</b>, sinh 1.910 phiếu. Từ đó tới nay không lần nào. <span class="chip c-ok">ĐO</span><br><br>
+Tức suốt 6 năm, V4 kiểm kê là một cuộc thu thập dữ liệu <b>không khép vòng</b>: người ta đi kiểm thật, ghi thật, rồi dữ liệu nằm lại trong bảng.
+</div>
+<p>V5 khép vòng bằng cơ chế đã có sẵn và đã chạy: phiên kiểm kê hoàn tất sẽ <b>sinh phiếu <code>ASSET_TRANSFER</code></b>. Phiếu đó đi qua engine workflow như mọi phiếu điều chuyển khác — có người duyệt, có lịch sử, có khoá <code>ASSET:&lt;code&gt;</code> chống hai phiếu cùng đụng một tài sản, và <code>OnCompletedAsync</code> đã biết cách ghi về <code>AssetItem</code>.</p>
+<p class="cap">Hai cột <code>IsMovementRequired</code> và <code>MovementRequestedAt</code> trong DDL <code>AssetStocktake</code> đã được dựng sẵn cho đúng việc này. <b>Nhưng cột <code>TransferInstanceId</code> thì không đủ</b> — một phiên sinh nhiều phiếu, xem Chặn 1 ở mục 06; ERD mục 04 đã thay nó bằng bảng nối <code>AssetStocktakeTransfer</code>.</p>
+<div class="warnbox"><b>Nhưng <code>ASSET_TRANSFER</code> chỉ chở được MỘT PHẦN kết quả kiểm kê.</b> Ba loại kết quả không có kiểu phiếu nào biểu diễn được (Mất · hỏng nhưng vẫn ở người giữ · đổi người giữ trực tiếp), và một phiên lệch thường phải tách thành <b>nhiều</b> phiếu chứ không phải một — xem mục 06. Hai điểm đó là <b>câu hỏi nghiệp vụ chưa có lời</b>, nên Q2 đứng vững ở phần "đi qua phiếu có duyệt" và <b>chưa đủ</b> ở phần "chở được mọi thứ".</div>
+
+<h3>Q3. Theo khuôn V5: engine giữ quy trình, bảng nghiệp vụ giữ dữ liệu <span class="chip c-warn">CHỐT</span></h3>
+<p>Khuôn này được tuyên bố ngay trong <code>AssetTransferContentEntity.cs</code> và phải áp cho kiểm kê:</p>
+<div class="tbl"><table>
+<tr><th>Thứ</th><th>Ở đâu</th></tr>
+<tr><td>Trạng thái phiếu</td><td><code>WorkflowInstance.Status</code> + <code>SubStatus</code></td></tr>
+<tr><td>Số phiếu</td><td><code>WorkflowInstance.InstanceCode</code> — engine sinh từ <code>core_sequence</code> theo chính <code>WorkflowCode</code></td></tr>
+<tr><td>Người duyệt</td><td><code>WorkflowInstanceAssignee</code></td></tr>
+<tr><td>Lịch sử</td><td><code>WorkflowInstanceHistory</code></td></tr>
+</table></div>
+<p>Vì kiểm kê <b>không</b> là workflow (Q1), bảng kiểm kê là bảng nghiệp vụ độc lập và <b>được phép</b> có mã phiên, người kiểm, thời điểm kiểm. Nhưng nó <b>không được</b> có cột "người duyệt" hay "trạng thái duyệt" — nếu thấy mình muốn thêm, nghĩa là Q1 sai và phải quay lại bàn.</p>
+
+<div class="warnbox"><b>Sửa 14/11 — bản đầu tự mâu thuẫn ở đúng chỗ này.</b> Nó cấm cột trạng thái duyệt, rồi chính nó đặt <code>VerifierActionType</code> (DONG_Y / TU_CHOI) vào bảng chi tiết và mở endpoint <code>Stocktake/VerifierAct</code>. Đó <b>là</b> một trạng thái duyệt, nên theo đúng luật của Q3 thì hoặc bỏ nó, hoặc thừa nhận Q1 sai.</div>
+<p><b>Hướng đã chọn: bỏ kết quả duyệt khỏi bảng kiểm kê.</b> Bảng giữ hai cột <b>phân công</b> — <code>IsNeedVerifierConfirm</code> (dòng này cần người chuyên môn nhìn) và <code>VerifierStaffCode</code> (ai phải nhìn). Đó là dữ liệu nghiệp vụ, không phải trạng thái duyệt. Việc xác nhận thật diễn ra ở <b>bước chuyên môn của phiếu điều chuyển</b> mà kết quả kiểm kê sinh ra — bước đó đã tồn tại và đã chạy. Thêm một lần xác nhận trong kiểm kê nữa là bắt NVCM duyệt hai lần cho cùng một cái máy.</p>
+<p>Ba căn cứ: (a) V4 cơ chế A — cơ chế đang sống — <b>cũng chỉ có đúng hai cột đó</b>: bảng <code>as_admin_check_detail</code> có <code>is_need_verifier_confirm</code> và <code>verifier_staff_code</code>, và <b>không có cột kết quả xác nhận nào</b> (đo 14/11, <code>information_schema</code>, mẫu <code>verifier%</code> ra đúng 1 cột) <span class="chip c-ok">ĐO</span>; (b) kết quả xác nhận của NVCM ở V4 chỉ tồn tại trong cơ chế B, mà B đã bỏ; (c) cờ NVCM ở V4 chỉ được dùng để <b>hiện trong báo cáo</b>.</p>
+<div class="note"><b>Chỗ hướng này còn hở, và nó phụ thuộc câu hỏi nghiệp vụ:</b> dòng <code>CO_HONG</code> của một tài sản vẫn nằm trong tay người dùng hiện <b>không sinh ra phiếu nào</b> (mục 06, Chặn 2) — không có phiếu thì không có bước chuyên môn, nên cờ NVCM của dòng đó không có nơi nào được giải quyết. Nếu HC muốn chuyên môn xác nhận <b>ngay trong lúc kiểm</b>, trước khi có phiếu, thì phải trả lại cột kết quả và sửa Q3. <span class="chip c-info">Xem bảng câu hỏi, câu "chuyên môn xác nhận lúc nào"</span></div>
+</section>
+
+<section id="vong-doi">
+<h2><span class="n">03</span>Vòng đời một đợt kiểm kê</h2>
+<div class="diagram"><pre class="mermaid">
+flowchart TD
+    A["HC mở ĐỢT&lt;br/&gt;AssetStocktakeEvent&lt;br/&gt;Status = DANG_KIEM_KE"] --&gt; B
+    B["NV hành chính mở PHIÊN&lt;br/&gt;AssetStocktake&lt;br/&gt;theo Nhân viên hoặc theo Vùng"] --&gt; C
+    C["Hệ nạp danh sách TS cần kiểm&lt;br/&gt;AssetItem → AssetStocktakeItem"] --&gt; D
+    D["Đi kiểm: đánh dấu từng TS&lt;br/&gt;Có / Hỏng / Không có / Thêm&lt;br/&gt;chụp ảnh, ghi chú"] --&gt; E
+    E{"Kiểm hết chưa?"}
+    E -- "chưa" --&gt; F["Lưu dở, đóng app&lt;br/&gt;lần sau mở lại ĐÚNG phiên đó"]
+    F --&gt; D
+    E -- "rồi" --&gt; G["Chốt phiên&lt;br/&gt;CheckedAt được ghi"]
+    G --&gt; H{"Có TS lệch&lt;br/&gt;so với sổ không?"}
+    H -- "không" --&gt; I["Chỉ cập nhật&lt;br/&gt;AssetItem.LastCheckedAt"]
+    H -- "có" --&gt; J["Sinh phiếu ASSET_TRANSFER&lt;br/&gt;IsMovementRequired = 1"]
+    J --&gt; K["Engine workflow:&lt;br/&gt;chuyên môn → người nhận → hành chính"]
+    K --&gt; L["OnCompletedAsync ghi về AssetItem"]
+    I --&gt; M["HC đóng ĐỢT&lt;br/&gt;Status = DA_HOAN_THANH"]
+    L --&gt; M
+</pre></div>
+
+<h3>"Lệch" nghĩa là gì — định nghĩa, vì nhánh trên phụ thuộc nó</h3>
+<div class="warnbox"><b>Sửa 14/11.</b> Bản đầu coi "lệch" là chuyện của riêng <code>ActionType</code>, nên dòng <code>CO</code> chỉ cập nhật <code>LastCheckedAt</code>. Sai: người đi kiểm ghi phần lớn thay đổi vào các ô <b>giá trị mới</b>, kể cả khi họ đánh dấu "Có". Đo trên V4 các ô <code>New*</code> khác giá trị cũ <span class="chip c-ok">ĐO</span>: <b><code>CO</code></b> — 122 dòng đổi tình trạng sử dụng, 267 đổi nhóm, 223 đổi mô tả, 192 yêu cầu in lại tem; <b><code>THEM_CO_TON_TAI</code></b> — 3.219 dòng đổi tình trạng sử dụng. Bỏ qua chúng là ném đi phần lớn kết quả kiểm kê.</div>
+<p>Một dòng là <b>lệch</b> khi có ít nhất một trong các điều sau, không chỉ điều đầu:</p>
+<ol class="rules">
+<li><code>ActionType</code> ∈ {<code>KHONG_CO</code>, <code>CO_HONG</code>, <code>THEM_CO_TON_TAI</code>, <code>THEM_KHONG_TON_TAI</code>}.</li>
+<li><code>NewUsageStatus</code> khác tình trạng sử dụng đang có.</li>
+<li><code>NewGroupCode</code> khác nhóm đang có.</li>
+<li><code>NewDescription</code> khác mô tả đang có.</li>
+<li><code>IsNeedReprintLabel = 1</code>.</li>
+</ol>
+<p class="cap"><b>Thêm 14/11 sau khi đo lại:</b> điều 2 kéo theo một ca mà cả bản đầu lẫn bản đánh giá đều không nêu — <b>tài sản đang mang tình trạng Mất mà người kiểm gặp lại</b>. Đo trên V4: <b>1.657 dòng</b> (1.628 ở "thấy ở chỗ khác", 28 ở "Có", 1 ở "thêm mới"), ghi lại thành Tốt-đang dùng 1.382 · Tốt-không dùng 257 · Hỏng 12 · khác 6 <span class="chip c-ok">ĐO</span>. Đây là chiều NGƯỢC của <code>KHONG_CO</code> và V5 chặn nó cứng hơn mọi ca khác — xem bảng ánh xạ mục 06.</p>
+<p>Mỗi loại lệch đi ra một <b>hệ quả</b> khác nhau, và không phải loại nào cũng đi được qua phiếu điều chuyển — bảng đầy đủ ở mục 06. Riêng nhóm và mô tả thì <code>ASSET_TRANSFER</code> <b>không đổi được</b>, nên phải chọn đường khác cho chúng. <span class="chip c-bad">CHỜ QUYẾT</span></p>
+
+<h3>"Chốt phiên" là khái niệm MỚI — phải định nghĩa trước khi code</h3>
+<p>V4 không có bước chốt: người dùng chỉ <b>lưu</b>, và mỗi lần lưu chỉ là một lần lưu. Tài liệu này dựng thêm bước chốt vì phiếu điều chuyển cần một mốc "kết quả đã xong mới sinh phiếu". Nhưng dựng một bước mới thì phải trả lời luôn những gì nó kéo theo — <b>49,6% dòng của V4 chưa kiểm</b> cho thấy người ta thường <b>không</b> làm hết:</p>
+<div class="tbl"><table>
+<tr><th>Câu</th><th>Tài liệu này chốt</th></tr>
+<tr><td>Phiên không ai chốt thì sao?</td><td>Nằm mãi ở trạng thái chưa chốt; <b>không</b> sinh phiếu, <b>không</b> ghi gì về tài sản. Dữ liệu vẫn đọc được, vẫn vào báo cáo.</td></tr>
+<tr><td>Đóng đợt khi còn phiên chưa chốt?</td><td><b>Chặn</b>: đóng đợt yêu cầu mọi phiên của đợt đã chốt hoặc bị huỷ. Lý do: đóng đợt mà vẫn còn phiên treo thì không ai biết kết quả đã đầy đủ chưa. HC muốn đóng thì chốt hoặc huỷ phiên treo trước — cả hai là thao tác một nút.</td></tr>
+<tr><td>Chốt rồi mở lại được không?</td><td><b>Không</b>, khi phiếu điều chuyển đã sinh. Phiếu đã vào engine thì mở lại phiên là sinh hai lần. Chưa sinh phiếu (phiên không lệch) thì mở lại được.</td></tr>
+<tr><td>Chốt một phần được không?</td><td>Không. Chốt là chốt cả phiên; dòng chưa kiểm được bỏ qua chứ không chặn chốt.</td></tr>
+</table></div>
+<p class="cap">Bốn câu trên là <span class="chip c-warn">CHỐT</span> của tài liệu, bác được — nhưng không được bỏ trống, vì dev sẽ phải chọn một đáp án nào đó và không ai biết họ chọn gì.</p>
+
+<h3>Khác V4 ở đâu</h3>
+<div class="tbl"><table>
+<tr><th>Bước</th><th>V4</th><th>V5</th></tr>
+<tr><td>Đóng đợt</td><td>Người dùng đổi <code>Status</code> trên màn Web.Office, nhưng <b>không backend nào đọc cột đó</b>; cái chặn mobile là <code>is_complete</code> — và cột này <b>không có writer nào trong toàn repo</b>. Hệ quả: CAS00023–26 tới nay <b>vẫn mở</b> với mobile <span class="chip c-ok">ĐO</span></td><td>Một cột <code>Status</code> duy nhất, <code>NOT NULL</code>, có <code>CHECK</code>, và chính backend đọc nó để chặn ghi</td></tr>
+<tr><td>Làm tiếp phiên dở</td><td>Xoá <b>toàn bộ</b> chi tiết rồi insert lại; bản cũ đẩy sang bảng log</td><td>Cập nhật tại chỗ; chỉ phần <b>thay đổi</b> vào <code>AssetStocktakeItemLog.ChangedFields</code></td></tr>
+<tr><td>Kết quả về tài sản</td><td>Job console, IT chạy tay, chạy 1 lần năm 2019</td><td>Phiếu <code>ASSET_TRANSFER</code> qua engine</td></tr>
+<tr><td>Chốt phiên</td><td><b>Không có bước này.</b> Chỉ có lưu</td><td>Có, và nó là mốc sinh phiếu — xem mục trên</td></tr>
+<tr><td>Khoá khi đang kiểm kê</td><td>Còn phiếu kiểm kê (cơ chế B) đang chờ ⇒ <b>chặn mọi thao tác sửa tài sản và mọi phiếu điều chuyển</b> (<code>AsItemBL.cs:134-138</code>, <code>AsItemChangeFlowBL.cs:818-829</code>). Thực tế mỗi năm IT phải gỡ khoá bằng tay</td><td><b>Cố ý KHÔNG đóng băng</b> — xem mục 09</td></tr>
+</table></div>
+</section>
+
+<section id="du-lieu">
+<h2><span class="n">04</span>Mô hình dữ liệu</h2>
+<p>V5 <b>đã có sẵn 5 bảng</b> trong <code>scripts/sql/asset/fl-asset-v5.sql</code> — <code>AssetStocktakeEvent</code> (<code>:82</code>), <code>AssetStocktakeAttribute</code> (<code>:99</code>), <code>AssetStocktake</code> (<code>:257</code>), <code>AssetStocktakeItem</code> (<code>:290</code>), <code>AssetStocktakeItemLog</code> (<code>:340</code>) — đã tạo trên <code>fl_asset_v5</code> dev, <b>0 dòng</b> (đối chứng: <code>AssetItem</code> = 4.379). Chưa có entity, chưa có DbSet, chưa có endpoint. Dưới đây là bản <b>sửa</b> của vỏ đó, kèm lý do từng thay đổi.</p>
+<p class="cap">Bản đầu ghi "6 bảng" — đếm sai, đã đo lại 14/11 (đối chứng dương: cả file có 13 <code>CREATE TABLE</code>). <span class="chip c-ok">ĐO</span></p>
+
+<div class="diagram"><pre class="mermaid">
+erDiagram
+    AssetStocktakeEvent ||--o{ AssetStocktake : "EventCode"
+    AssetStocktake ||--o{ AssetStocktakeItem : "StocktakeId"
+    AssetStocktakeItem ||--o{ AssetStocktakeItemLog : "StocktakeItemId"
+    AssetStocktake ||--o{ AssetStocktakeTransfer : "StocktakeId (mot phien nhieu phieu)"
+    AssetItem |o--o{ AssetStocktakeItem : "ItemCode (rong khi THEM_KHONG_TON_TAI)"
+    AssetStocktakeEvent {
+        string Code PK
+        string Name
+        string Status "CHECK DANG_KIEM_KE hoac DA_HOAN_THANH"
+    }
+    AssetStocktake {
+        string Id PK
+        string DocNo "sequence ASSET_STOCKTAKE"
+        string EventCode FK
+        string CheckType "BY_STAFF hoac BY_ZONE"
+        string StaffCode "rong neu BY_ZONE"
+        string StationZoneCode "rong neu BY_STAFF"
+        string CheckStaffCode "NV hanh chinh di kiem"
+        datetime CheckedAt "NULL = chua chot"
+    }
+    AssetStocktakeItem {
+        string Id PK
+        string StocktakeId FK
+        string ItemCode "rong khi THEM_KHONG_TON_TAI, UNIQUE cung StocktakeId"
+        string ActionType "NULL = chua kiem"
+        int UsageStatus "anh chup; NULL khi chua co tai san"
+        string NewGroupCode "cot that co FK"
+        string NewDescription "cot that"
+        int NewUsageStatus "cot that co FK"
+        bool IsNeedVerifierConfirm "phan cong, khong phai trang thai duyet"
+        string VerifierStaffCode "ai phai nhin"
+    }
+    AssetStocktakeItemLog {
+        string Id PK
+        string StocktakeItemId FK
+        string LogType
+        json ChangedFields "chi ghi phan thay doi"
+    }
+    AssetStocktakeTransfer {
+        string Id PK
+        string StocktakeId FK
+        string InstanceId "WorkflowInstance cua phieu"
+        string ChangeType "kieu phieu da chon"
+        int ItemCount
+    }
+</pre></div>
+
+<h3>Thay đổi 1 — Trạng thái đợt phải cưỡng chế được</h3>
+<pre class="sql">-- Vỏ hiện tại (fl-asset-v5.sql:86): Status VARCHAR(64) NULL, không CHECK, không enum.
+-- Đây là LẶP LẠI lỗi của V4 trong hình dạng mới: câu "đợt này còn mở không"
+-- lại không có cột nào trả lời dứt khoát.
+
+Status  VARCHAR(32) NOT NULL DEFAULT 'DANG_KIEM_KE',
+CONSTRAINT CK_AssetStocktakeEvent_Status
+  CHECK (Status IN ('DANG_KIEM_KE','DA_HOAN_THANH'))</pre>
+<p>Backend đọc <b>chính cột này</b> để chặn mọi lời gọi ghi; không dựng thêm cờ thứ hai.</p>
+<p class="cap">Bản đầu lấy <code>AssetStocktake.StocktakeType CHECK IN ('STAFF','ADMIN')</code> trong cùng file làm bằng chứng "khuôn này đã có sẵn". Bỏ câu đó: chính cột <code>StocktakeType</code> lại là cột <b>phải bỏ</b> (xem ngay dưới), nên viện dẫn nó vừa yếu vừa mâu thuẫn.</p>
+
+<h3>Thay đổi 2 — Ba quyết định của kiểm kê ra khỏi JSON</h3>
+<p>V4 nhét 6 giá trị vào cột <code>content</code> JSON, khoá lấy từ bảng <code>as_check_asset_attribute</code>. Bảng đó có <b>6 dòng, seed một lần lúc 09/11/2019 09:44:31, không có màn hình, không có menu</b> — 7 năm không ai sửa <span class="chip c-ok">ĐO</span>. Đó không phải cấu hình, đó là hằng số viết vào DB.</p>
+<p>Nguy hiểm hơn: ba trong sáu khoá chính là <b>quyết định</b> của cuộc kiểm kê — thứ sẽ ghi ngược về tài sản. Để chúng trong JSON nghĩa là không FK, không validate ở tầng DB, và mọi báo cáo phải <code>JSON_EXTRACT</code>.</p>
+<div class="tbl"><table>
+<tr><th>Khoá V4</th><th>V5</th><th>Vì sao</th></tr>
+<tr><td><code>NEW_GROUP_CODE</code></td><td>cột <code>NewGroupCode</code> + FK <code>AssetGroup</code></td><td>quyết định, ghi về tài sản</td></tr>
+<tr><td><code>NEW_DESCRIPTION</code></td><td>cột <code>NewDescription</code></td><td>quyết định, ghi về tài sản</td></tr>
+<tr><td><code>NEW_USAGE_STATUS</code></td><td>cột <code>NewUsageStatus</code> + FK <code>AssetUsageStatus</code></td><td>quyết định, ghi về tài sản. Cột <code>UsageStatus</code> (giá trị cũ) ngay cạnh <b>đã có</b> FK — không lý do gì giá trị mới lại không</td></tr>
+<tr><td><code>IS_NEED_REPRINT_TEMP</code></td><td>cột <code>IsNeedReprintLabel BIT</code></td><td>boolean, không cần JSON</td></tr>
+<tr><td><code>OLD_CODE</code></td><td>cột <code>OldItemCode</code></td><td>chuỗi, không cần JSON</td></tr>
+<tr><td><code>ASSET_NOTE</code></td><td>cột <code>Note</code> (đã có)</td><td>trùng cột sẵn có</td></tr>
+</table></div>
+<p><b>Bỏ bảng <code>AssetStocktakeAttribute</code> và cột <code>Content JSON</code>.</b> Vỏ V5 còn <i>thêm</i> <code>IsRequired</code> và <code>EditorType</code> vào bảng attribute, tức xây thêm engine cấu hình cho thứ chưa từng được cấu hình.</p>
+
+<h3>Thay đổi 3 — Bỏ 10 cột lặp lại của bảng cha</h3>
+<p>Vỏ <code>AssetStocktakeItem</code> có 40 cột, trong đó <b>10 cột lặp y nguyên bảng cha</b>: <code>CheckType</code>, <code>EventType</code>, <code>EventCode</code>, <code>CompanyCode</code>, <code>StationCode</code>, <code>StaffCode</code>, <code>StationZoneCode</code>, <code>CheckStaffCode</code>, <code>CheckedAt</code>, <code>CheckCount</code>. V4 làm vậy vì báo cáo truy vấn thẳng bảng chi tiết. V5 đã có FK và index — giữ lại là giữ 10 cột có thể mâu thuẫn với cha mà không gì cưỡng chế.</p>
+<div class="note"><b>Giữ lại snapshot của TÀI SẢN</b> (<code>ItemDescription</code>, <code>GroupCode</code>, <code>UsageStatus</code>, <code>ManagerStaffCode</code>, <code>PositionCode</code>): đây không phải lặp, mà là <b>giá trị tại thời điểm kiểm</b>. Tài sản đổi sau đó, báo cáo vẫn phải đọc đúng cái người đi kiểm đã thấy. Đây là lý do chính đáng duy nhất để sao chép dữ liệu.</div>
+
+<h3>Thay đổi 4 — Chống trùng bằng ràng buộc, không bằng code</h3>
+<pre class="sql">UNIQUE KEY UX_AssetStocktakeItem_Unique (StocktakeId, ItemCode)</pre>
+<p>V4 kiểm trùng trong <code>ProcessCheckDetail</code> ở tầng code. Cùng lúc, <code>AsAdminCheckBL.cs:362-365</code> cho phép <code>Id</code> rỗng sinh master <b>mới</b> cùng <code>DataCode</code> — dữ liệu thật: <b>25 <code>data_code</code> có nhiều master, 112 dòng, cao nhất ×43</b> <span class="chip c-ok">ĐO</span>. Vỏ V5 đã chặn phía master bằng <code>UX_AssetStocktake_Doc</code>; chặn nốt phía item.</p>
+
+<div class="warnbox"><b>Sửa 14/11 — ràng buộc này, viết như bản đầu, sẽ từ chối 1.970 dòng dữ liệu thật.</b> "Thêm tài sản chưa có mã" là món <b>chưa có mã</b>: trong V4, <b>1.970 / 2.034 dòng <code>THEM_KHONG_TON_TAI</code> có mã rỗng</b>, và rỗng ở đây là <b>chuỗi rỗng, không phải NULL</b> (đo 14/11: <code>code=''</code> 1.970 dòng, <code>code IS NULL</code> 0 dòng) <span class="chip c-ok">ĐO</span>. Vỏ V5 lại khai <code>ItemCode VARCHAR(64) NOT NULL</code> (<code>fl-asset-v5.sql:304</code>), và ERD của bản đầu còn vẽ <code>AssetItem ||--o{ AssetStocktakeItem</code> như một khoá ngoại bắt buộc — với loại này thì <b>không có tài sản nào để trỏ tới</b>.</div>
+<pre class="sql">ItemCode  VARCHAR(64) NULL,   -- NULL khi ActionType = THEM_KHONG_TON_TAI
+-- KHÔNG đặt FK tới AssetItem trên cột này. Quan hệ là tuỳ chọn, kiểm ở tầng ứng dụng:
+--   ActionType = THEM_KHONG_TON_TAI  ⇒ ItemCode PHẢI rỗng (và phải là NULL, không phải '')
+--   mọi ActionType khác              ⇒ ItemCode PHẢI trỏ tới một AssetItem đang Status = 1
+UNIQUE KEY UX_AssetStocktakeItem_Unique (StocktakeId, ItemCode)
+-- MySQL cho nhiều NULL trong UNIQUE, nên ràng buộc chống trùng vẫn giữ nguyên tác dụng
+-- cho các dòng CÓ mã. Chuỗi rỗng thì KHÔNG: hai dòng '' là trùng.</pre>
+<p><b>Hệ quả cho việc chuyển lịch sử</b> (câu hỏi "có chuyển lịch sử không"): dữ liệu V4 dùng <code>''</code>, nên bản chuyển phải đổi <code>'' → NULL</code> cho đúng 1.970 dòng này. Chuyển thẳng là <b>đâm vào UNIQUE ngay dòng thứ hai</b> của cùng một phiên.</p>
+
+<div class="warnbox"><b>Cùng một lỗi, chỗ thứ hai — bản đánh giá không nêu, tự tìm khi quét cả lớp 14/11.</b> <code>UsageStatus INT NOT NULL</code> (<code>:306</code>) cũng là một ô "ảnh chụp tài sản", mà tài sản chưa tồn tại thì không có tình trạng nào để chụp. V4 giải quyết bằng cách <b>dùng lại chính ô đó để chứa giá trị MỚI</b>: trong 2.034 dòng <code>THEM_KHONG_TON_TAI</code>, <code>usage_status</code> không NULL dòng nào, phân bố 1.847 mã <code>1</code> · 116 mã <code>2</code> · 49 mã <code>0</code> · 17 mã <code>4</code> · 4 mã <code>3</code> · 1 mã <code>-1</code> <span class="chip c-ok">ĐO</span>. Cùng một cột mang hai nghĩa tuỳ <code>ActionType</code> — đúng thứ mà Thay đổi 2 đang dọn.<br><br>
+<b>V5:</b> <code>UsageStatus INT NULL</code> (ảnh chụp, rỗng khi chưa có tài sản — khoá ngoại <code>FK_AssetStocktakeItem_Usage</code> ở <code>:337</code> vẫn giữ được, FK chấp nhận NULL), giá trị người kiểm nhập luôn nằm ở <code>NewUsageStatus</code>. Bản chuyển lịch sử phải <b>dời</b> <code>usage_status → NewUsageStatus</code> cho riêng 2.034 dòng này; chuyển thẳng là ghi "tài sản không tồn tại, tình trạng hiện tại: Tốt - đang sử dụng".<br><br>
+Hai ô <code>ManagerStaffCode</code> và <code>PositionCode</code> thì V4 để rỗng đúng như mong đợi — <b>2.031/2.034 dòng</b> <span class="chip c-ok">ĐO</span>, nên chúng đã là <code>NULL</code> được rồi.</div>
+
+<h3>Thay đổi 5 — Một định nghĩa "phiên cuối" duy nhất</h3>
+<p>V4 có <b>bốn</b> định nghĩa cho cùng một khái niệm (bản đầu đếm ba, thiếu dòng cuối — đã đọc lại 14/11):</p>
+<div class="tbl"><table>
+<tr><th>Nơi</th><th>Dùng</th><th>Vị trí</th></tr>
+<tr><td>Mobile lấy phiên để làm tiếp</td><td><code>UpdatedTime</code></td><td><code>AsAdminCheckBL:137, :251</code></td></tr>
+<tr><td>Báo cáo</td><td>so sánh <b>chuỗi</b> <code>DataCode</code></td><td><code>DetailBL:207, :328, :405</code></td></tr>
+<tr><td>Đồng bộ (miền Bắc)</td><td><code>CheckTime</code></td><td><code>SyncCheckData:51</code></td></tr>
+<tr><td>Báo cáo trên Web.Office</td><td>lớn nhất của <code>CheckCount</code></td><td><code>Web.Office/…/AsAdminCheckDetailEndpoint.cs:98</code></td></tr>
+</table></div>
+<p><b>V5 chốt một: <code>CheckedAt</code> lớn nhất</b>; phiên chưa chốt (<code>CheckedAt IS NULL</code>) không bao giờ là "phiên cuối". So sánh chuỗi mã phiếu bị cấm — nó chỉ đúng khi sequence có độ dài cố định, và không gì bảo đảm điều đó về sau.</p>
+
+<h3>Thay đổi 6 — Log ghi thay đổi, không chép cả dòng</h3>
+<p>Vỏ V5 đã làm đúng: <code>AssetStocktakeItemLog.ChangedFields JSON</code> + <code>LogType</code>. Giữ nguyên. Đây là lời giải cho chỗ V4 phình <b>458.403 dòng log trên 68.162 dòng dữ liệu — gấp 6,7 lần</b> <span class="chip c-ok">ĐO</span>, vì mỗi lần làm tiếp chép lại toàn bộ chi tiết.</p>
+<div class="warnbox"><b>Tác dụng phụ của cách cài V4 không được tái lập.</b> Khi làm tiếp theo <b>vùng</b>, <code>AsAdminCheckBL:150</code> lọc bớt chi tiết cũ trước khi trả về mobile, rồi <code>:388-399</code> xoá toàn bộ chi tiết cùng <code>data_code</code>. Dòng bị lọc <b>biến mất khỏi phiên</b>, chỉ còn trong log. Đo trên CAS00026: <b>≥11 dòng <code>THEM_CO_TON_TAI</code> mất</b> đúng theo điều kiện lọc <span class="chip c-ok">ĐO</span>. V5 cập nhật tại chỗ nên lỗi này không tồn tại được.</div>
+<h3>Thay đổi 7 — Nói rõ số phận TỪNG cột của vỏ, kể cả cột bị bỏ</h3>
+<p>Bản đầu im lặng với một nhóm cột đang có trong DDL. Im lặng là cách tệ nhất: người viết entity sẽ hoặc chép hết sang (mang theo di sản), hoặc bỏ hết (mất cột cần). Liệt kê:</p>
+<div class="tbl"><table class="issue">
+<tr><th>Cột của vỏ</th><th>Ở bảng</th><th>V5</th></tr>
+<tr><td><code>StocktakeType CHECK IN ('STAFF','ADMIN')</code> (<code>:276,287</code>)</td><td>phiên</td><td><b>Bỏ.</b> "STAFF" là cơ chế B — nhân viên tự kiểm — mà B đã bỏ (Q1). Giữ lại là để sẵn một giá trị không nhánh code nào xử lý</td></tr>
+<tr><td><code>IsCheckByManager</code>, <code>ManagerStaffCode</code> (<code>:274-275</code>)</td><td>phiên</td><td><b>Bỏ.</b> Di sản của B (quản lý duyệt thay nhân viên)</td></tr>
+<tr><td><code>IsCheckByManager</code> (<code>:321</code>)</td><td>chi tiết</td><td><b>Bỏ.</b> Cùng lý do, và còn là cột lặp của cha</td></tr>
+<tr><td><code>OwnerCompanyCode</code> (<code>:296</code>)</td><td>chi tiết</td><td><b>Giữ</b>, nhưng là <b>ảnh chụp</b>: công ty sở hữu tài sản tại thời điểm kiểm. Phiếu điều chuyển ép mọi dòng cùng công ty, nên đây là một trong các khoá tách phiếu (mục 06)</td></tr>
+<tr><td><code>CurrentStaffCode</code>, <code>CurrentManagerStaffCode</code>, <code>CurrentPositionCode</code> (<code>:316-321</code>)</td><td>chi tiết</td><td><b>GIỮ — và đây là chỗ vỏ V5 đã nghĩ xa hơn V4.</b> Đó là ảnh chụp "sổ đang ghi tài sản ở đâu, trong tay ai" ngay lúc kiểm. V4 <b>không</b> chụp cái này (<code>CopyFromAsset</code> không chép <code>StaffCode</code>/<code>StationZoneCode</code>), nên mọi số đo kiểu "tài sản được thấy ở chỗ khác với sổ" chỉ so được với sổ <b>hôm nay</b>, không phải sổ lúc kiểm. Chính ba cột này là dữ liệu dựng phiếu cho <code>THEM_CO_TON_TAI</code>: không có chúng thì không biết chuyển <b>từ đâu</b></td></tr>
+<tr><td><code>MovementRequestedAt</code> (<code>:320</code> trên chi tiết, <code>:273</code> trên phiên)</td><td>chi tiết</td><td><b>Bỏ ở chi tiết, giữ ở phiên.</b> Mốc "đã yêu cầu điều chuyển" là của cả lần chốt. Nếu một phiên sinh NHIỀU phiếu (Chặn 1) thì mốc này vẫn là một, còn danh sách phiếu nằm ở bảng nối — xem mục 06</td></tr>
+<tr><td><code>Content JSON</code>, bảng <code>AssetStocktakeAttribute</code></td><td>chi tiết</td><td><b>Bỏ</b> — Thay đổi 2</td></tr>
+<tr><td><code>VerifierActionType</code> (<code>:322</code>), <code>VerifierNote</code> (<code>:323</code>)</td><td>chi tiết</td><td><b>Bỏ</b> — Q3, xem mục 02</td></tr>
+</table></div>
+</section>
+
+<section id="nghiep-vu">
+<h2><span class="n">05</span>Quy tắc nghiệp vụ</h2>
+
+<h3>Loại xác nhận (<code>ActionType</code>)</h3>
+<p>Giữ nguyên 6 giá trị của V4 — người dùng đã quen, và phân bố cho thấy đều được dùng thật:</p>
+<div class="tbl"><table>
+<tr><th>Mã</th><th>Nghĩa</th><th>Số dòng trên V4 <span class="chip c-ok">ĐO</span></th></tr>
+<tr><td><span class="chip c-none">NULL</span></td><td>Có trong danh sách, chưa kiểm</td><td>33.794 (49,6%)</td></tr>
+<tr><td><span class="chip c-ok">CO</span></td><td>Có, đúng</td><td>17.814</td></tr>
+<tr><td><span class="chip c-info">THEM_CO_TON_TAI</span></td><td>Thấy TS ngoài danh sách, mã đã có trên hệ</td><td>7.939</td></tr>
+<tr><td><span class="chip c-bad">KHONG_CO</span></td><td>Không tìm thấy</td><td>6.422</td></tr>
+<tr><td><span class="chip c-info">THEM_KHONG_TON_TAI</span></td><td>Thấy TS chưa có trên hệ</td><td>2.034</td></tr>
+<tr><td><span class="chip c-warn">CO_HONG</span></td><td>Có nhưng hỏng</td><td>159</td></tr>
+</table></div>
+<div class="note"><b>49,6% dòng chưa kiểm không phải lỗi dữ liệu — đó là cách làm việc thật.</b> Người ta mở phiên, kiểm dần, lưu dở. Thiết kế phải coi "phiên kiểm dở" là trạng thái hợp lệ, không phải ngoại lệ.</div>
+
+<h3>Danh sách tài sản cần kiểm</h3>
+<pre class="sql">-- V4: as_item.code LIKE 'TSHN%' AND UsageStatus NOT IN (...)
+-- Điều kiện LIKE là CỐ Ý (ticket ERP-2289, commit 9a7614f104 + 2ce9f871b2, 11-12/12/2025),
+-- nhưng trên V5 nó là NO-OP: V5 chỉ có mã TSHN2, AssetItem = 4.379 = đúng tập
+-- mà điều kiện này chọn trên V4. Chép sang là chép một bộ lọc không lọc gì.
+
+-- V5:
+WHERE Status = 1
+  AND UsageStatus NOT IN (KhongTheoDoi, Mat, DaThanhLy)
+  AND (StaffCode = @staff  OR  StationZoneCode = @zone)</pre>
+<div class="warnbox"><b>Bảng "TTSD nào được kiểm" trong tài liệu V4 chỉ đúng từ 11–12/12/2025.</b> Trước đó danh sách gồm mọi TS active <span class="chip c-ok">ĐO</span>. Nghĩa là số liệu các đợt cũ <b>không so được</b> với đợt CAS00026. Đừng dùng đợt cũ làm chuẩn nghiệm thu.</div>
+<p class="cap">Mã <code>3 — Chờ thanh lý, đang sử dụng</code> của V4 <b>đã bị bỏ khỏi V5</b> từ 31/10/2026 (<code>Constants/UsageStatusCode.cs</code>). Không đưa lại.</p>
+
+<h3>Quy tắc kiểm khi lưu</h3>
+<ol class="rules">
+<li>Không trùng <code>ItemCode</code> trong cùng phiên — <b>ràng buộc DB</b>, không phải vòng lặp trong code.</li>
+<li><code>NewDescription</code> và <code>NewGroupCode</code> bắt buộc với mọi dòng đã có <code>ActionType</code>; nhóm phải tồn tại và không phải nhóm cha.</li>
+<li><code>THEM_KHONG_TON_TAI</code>: mã phải hợp lệ theo quy tắc mã tài sản V5.</li>
+<li>Các loại còn lại: tài sản phải tồn tại và <code>Status = 1</code>.</li>
+<li>Tài sản <b>đang</b> ở trạng thái Hỏng không được chọn <code>CO_HONG</code> — chỉ Có hoặc Không có.</li>
+<li><code>CO_HONG</code> với tài sản chưa hỏng, hoặc <b>bất kỳ loại <code>THEM_*</code> nào</b> mà <code>NewUsageStatus</code> = Hỏng ⇒ gán NVCM qua <code>IAssetVerifierResolver.ResolveAsync(group, company)</code>, đặt <code>IsNeedVerifierConfirm = 1</code>.
+  <br><span class="cap">Sửa 14/11: bản đầu chỉ kể <code>THEM_CO_TON_TAI</code>. V4 gán cờ cho <b>cả</b> <code>THEM_KHONG_TON_TAI</code> + Hỏng (<code>AsAdminCheckBL.cs:749-757</code>, đã đọc lại) — và có <b>49 dòng</b> thật mang cờ đó <span class="chip c-ok">ĐO</span>. Một món vừa nhặt được đã hỏng thì vẫn cần người chuyên môn nhìn, không phụ thuộc nó có mã hay chưa.</span></li>
+<li><b>Cờ NVCM được TÍNH LẠI mỗi lần lưu</b>, cả chiều bật lẫn chiều tắt: người kiểm sửa từ <code>CO_HONG</code> về <code>CO</code> thì cờ phải mất theo.
+  <br><span class="cap">V4 không bao giờ xoá cờ: mobile gửi lại giá trị cũ khi làm tiếp, nên dữ liệu thật còn <b>63 dòng <code>CO</code></b> và <b>9 dòng <code>KHONG_CO</code></b> đang mang cờ "cần chuyên môn xác nhận" <span class="chip c-ok">ĐO</span> — 72 cờ rác trên tổng 410. Đừng tin cờ do client gửi lên; tính lại từ <code>ActionType</code> + <code>NewUsageStatus</code>.</span></li>
+<li><code>THEM_KHONG_TON_TAI</code> mà mã <b>đã tồn tại</b> trên hệ ⇒ báo lỗi, bắt người kiểm chọn lại <code>THEM_CO_TON_TAI</code>; không tự ý đổi thay họ.
+  <br><span class="cap">V4 có ý định xử lý ca này nhưng viết hỏng: <code>AsAdminCheckBL.cs:763</code> gán lại <b>chính</b> <code>THEM_KHONG_TON_TAI</code> cho dòng mà mã có trên <code>as_item</code> — gần như chắc chắn ý là <code>THEM_CO_TON_TAI</code> (đã đọc lại 14/11). Hậu quả: <b>3 dòng</b> "không tồn tại" thực ra là tài sản đang có trên hệ <span class="chip c-ok">ĐO</span>. Ba dòng thì nhỏ; cái đáng sợ là loại này <b>bỏ qua hẳn</b> phép kiểm tồn tại ở dưới, nên lỗi không bao giờ phát ra tiếng.</span></li>
+<li>Lỗi gom lại trả một lần, mỗi lỗi một dòng, <b>kèm mã tài sản</b>.</li>
+</ol>
+<p class="cap">Điểm cuối là sửa bug V4 <code>AsAdminCheckBL.cs:676-677</code>: <code>string.Join</code> trên danh sách <code>bool</code> in ra "True, False…" thay vì mã tài sản.</p>
+
+<h3>Nhân viên chuyên môn xác nhận hỏng</h3>
+<p>Dùng lại <code>IAssetVerifierResolver</code> đang chạy trong <code>AssetTransferFlow.cs:709</code> để <b>tìm người</b> chuyên môn phụ trách nhóm, rồi ghi hai ô <b>phân công</b>: <code>IsNeedVerifierConfirm</code> và <code>VerifierStaffCode</code>. <b>Không</b> dựng flow riêng cho việc này (Q1).</p>
+<div class="warnbox"><b>Sửa 14/11:</b> bản đầu viết tiếp "kết quả xác nhận ghi thẳng vào <code>VerifierActionType</code> + <code>VerifierNote</code>". Hai cột đó <b>đã bị bỏ</b> — chúng là trạng thái duyệt, mà Q3 cấm trạng thái duyệt nằm trong bảng nghiệp vụ. Người chuyên môn xác nhận ở <b>bước chuyên môn của phiếu điều chuyển</b>; xem mục 02 và câu hỏi 12 ở mục 10.</div>
+<div class="warnbox">
+<b>Hai hành vi của resolver phải biết trước khi dùng:</b> nó leo nhóm cha tới 64 cấp, và nếu không có NVCM nào cùng công ty thì <b>lấy người ở công ty bất kỳ</b> (<code>AssetVerifierResolver.cs:61-72</code>). Với điều chuyển thì chấp nhận được; với kiểm kê — nơi NVCM phải đến tận nơi nhìn cái máy hỏng — có thể không.<br><br>
+<b>Sửa 14/11:</b> bản đầu trình bày điều này như một <b>rủi ro mới của V5</b>. Không phải: <b>V4 làm y hệt</b> (<code>AsGroupManagerBL.cs:161-169</code> — không có người cùng công ty thì lấy người công ty bất kỳ). Nên đây là <b>hiện trạng đã sống 7 năm</b>, không phải thứ V5 vừa gây ra. Vẫn đáng hỏi, nhưng hỏi với đúng mức: "có muốn siết lại không", không phải "V5 có đang làm hỏng gì không".
+</div>
+</section>
+
+<section id="dieu-chuyen">
+<h2><span class="n">06</span>Sinh phiếu điều chuyển từ kết quả kiểm kê</h2>
+<p>Thay cho <code>SyncCheckEvent</code>. Chạy khi phiên được <b>chốt</b>, không chạy theo lịch, không gom nhiều đợt.</p>
+<div class="diagram"><pre class="mermaid">
+flowchart TD
+    S["Phiên được chốt&lt;br/&gt;CheckedAt được ghi"] --&gt; A["Duyệt từng AssetStocktakeItem&lt;br/&gt;CHỈ trong phiên này"]
+    A --&gt; B{"ActionType"}
+    B -- "NULL (chưa kiểm)" --&gt; X["BỎ QUA&lt;br/&gt;không đụng tới tài sản"]
+    B -- "CO, khong lech o dau ca" --&gt; Y["Chỉ ghi AssetItem.LastCheckedAt&lt;br/&gt;không sinh phiếu"]
+    B -- "THEM_KHONG_TON_TAI" --&gt; Z["Không sinh phiếu&lt;br/&gt;cần đường TẠO tài sản — chờ quyết"]
+    B -- "lech (dinh nghia o muc 03)" --&gt; C["Tra bảng ánh xạ bên dưới&lt;br/&gt;TÁCH theo nhóm / công ty / NQL / vị trí / người giữ"]
+    C --&gt; D["Kiểm khoá ASSET:&amp;lt;code&amp;gt;&lt;br/&gt;TS đang nằm trong phiếu khác ⇒ báo, không nuốt"]
+    D --&gt; E["Start N workflow&lt;br/&gt;IsMovementRequired = 1&lt;br/&gt;MovementRequestedAt = now&lt;br/&gt;mỗi phiếu một dòng ở bảng nối"]
+    E --&gt; F["Engine: chuyên môn → người nhận → hành chính"]
+    F --&gt; G["OnCompletedAsync ghi về AssetItem"]
+</pre></div>
+
+<div class="warnbox"><b>Mục này CHƯA code được. Hai điểm chặn, cả hai là quyết định nghiệp vụ.</b> <span class="chip c-bad">CHỜ QUYẾT</span> Bản đầu viết mục này trên hai giả định mà code V5 bác: rằng một phiên ra <b>một</b> phiếu, và rằng <code>ASSET_TRANSFER</code> chở được <b>mọi</b> loại kết quả kiểm kê. Phần dưới giữ những gì đã kiểm được và đánh dấu rõ chỗ còn trống — đừng lấp bằng suy đoán lúc code.</div>
+
+<h3>Chặn 1 — Một phiên sinh NHIỀU phiếu, không phải một</h3>
+<p><code>AssetTransferFlow</code> ép <b>năm</b> thứ phải đồng nhất trong một phiếu (đã đọc lại <code>AssetTransferFlow.cs:307-370</code> ngày 14/11):</p>
+<div class="tbl"><table>
+<tr><th>Ràng buộc</th><th>Vì sao có</th></tr>
+<tr><td>Cùng <b>nhóm</b></td><td>Bước chuyên môn tra đúng một người, leo từ một mã nhóm duy nhất. Trộn nhóm ⇒ phụ trách các nhóm còn lại không bao giờ thấy phiếu</td></tr>
+<tr><td>Cùng <b>công ty</b></td><td><code>content.CompanyCode</code> chụp từ một dòng rồi dùng để lọc phạm vi người xác nhận</td></tr>
+<tr><td>Cùng <b>người quản lý</b></td><td>Người này là người duyệt bước hành chính</td></tr>
+<tr><td>Cùng <b>vị trí</b> và cùng <b>người giữ</b></td><td>"Nơi đi" của phiếu chụp từ một dòng mẫu. <b>Trừ <code>INTO_AREA</code></b> — dán nhãn vùng không đổi chủ, nên được miễn đúng hai ràng buộc này</td></tr>
+</table></div>
+<p>Kết quả kiểm kê <b>không</b> đồng nhất như vậy. Đo trên đợt gần nhất CAS00026 <span class="chip c-ok">ĐO</span>: <b>99/131 phiên có lệch trải trên nhiều hơn một nhóm</b>; phiên lớn nhất (<code>CA0022716</code>) có <b>106 dòng lệch, 21 nhóm, 2 người quản lý, 3 người giữ</b> ⇒ riêng phiên đó phải sinh <b>ít nhất 21 phiếu</b>.</p>
+<p><b>Hệ quả lên mô hình dữ liệu:</b> cột <code>AssetStocktake.TransferInstanceId</code> (một phiên một phiếu) <b>không đủ</b>. Thay bằng bảng nối:</p>
+<pre class="sql">CREATE TABLE AssetStocktakeTransfer (
+  Id            VARCHAR(64)  NOT NULL,
+  StocktakeId   VARCHAR(64)  NOT NULL,   -- phiên sinh ra phiếu
+  InstanceId    VARCHAR(64)  NOT NULL,   -- WorkflowInstance của phiếu
+  ChangeType    VARCHAR(64)  NOT NULL,   -- kiểu phiếu đã chọn
+  ItemCount     INT          NOT NULL,
+  PRIMARY KEY (Id),
+  UNIQUE KEY UX_AssetStocktakeTransfer (StocktakeId, InstanceId)
+);
+-- và mỗi dòng chi tiết ghi mình đã đi vào phiếu nào:
+ALTER TABLE AssetStocktakeItem ADD COLUMN TransferInstanceId VARCHAR(64) NULL;</pre>
+<p><b>Khoá tách phiếu</b> = (kiểu phiếu, nhóm, công ty, người quản lý, vị trí, người giữ) — bỏ hai thành phần cuối với <code>INTO_AREA</code>. Đây là <span class="chip c-warn">CHỐT</span> kỹ thuật: nó suy ra từ ràng buộc của engine, không có lựa chọn nào khác.</p>
+<div class="note"><b>Cái PHẢI hỏi là cái giá.</b> Chốt một phiên có thể đẻ ra <b>hơn hai mươi phiếu</b>, mỗi phiếu đi qua chuyên môn → người nhận → hành chính. Một đợt kiểm kê cả công ty sẽ ra hàng trăm phiếu chờ duyệt. HC có chấp nhận không, hay muốn cách khác (duyệt gộp một lần cho cả phiên; hoặc chỉ sinh phiếu cho một số loại lệch)? <span class="chip c-info">Xem bảng câu hỏi</span></div>
+
+<h3>Chặn 2 — Ba loại kết quả KHÔNG có kiểu phiếu nào chở được</h3>
+<p>V5 có đúng bốn kiểu chỗ đứng: <code>USER_TO_STORAGE</code>, <code>STORAGE_TO_USER</code>, <code>STORAGE_TO_STORAGE</code>, <code>INTO_AREA</code>. Bảng ánh xạ dưới đây là thứ bản đầu <b>thiếu hẳn</b> — không có nó thì dev không suy ra được, và sẽ tự bịa một bảng khác:</p>
+<div class="tbl"><table class="issue">
+<tr><th>Kết quả kiểm kê</th><th>Tài sản đang ở</th><th>Kiểu phiếu và tình trạng đích</th></tr>
+<tr><td><code>CO_HONG</code></td><td>trong kho</td><td><code>STORAGE_TO_STORAGE</code>, đích <code>0</code> Hỏng ✔</td></tr>
+<tr><td><code>THEM_CO_TON_TAI</code> — kiểm theo <b>vùng</b>, chỉ lệch vùng</td><td>bất kỳ</td><td><code>INTO_AREA</code>, không đụng tình trạng ✔</td></tr>
+<tr><td><code>CO</code> + chỉ đổi tình trạng, tài sản trong kho</td><td>trong kho</td><td><code>STORAGE_TO_STORAGE</code>, đích <code>NewUsageStatus</code> ✔</td></tr>
+<tr><td><b><code>KHONG_CO</code> (Mất)</b></td><td>bất kỳ</td><td><b>KHÔNG CÓ.</b> Mã <code>-1</code> (Mất) bị <b>cố ý loại khỏi mọi kiểu</b> (<code>AssetPositionChangeType.cs</code>) và nằm trong <code>UsageStatusCode.Excluded</code>. Lần chạy 2019 của V4 ghi thẳng "Mất", không qua phiếu nào <span class="chip c-bad">CHỜ QUYẾT</span></td></tr>
+<tr><td><b><code>CO_HONG</code> hoặc đổi tình trạng, tài sản đang ở người dùng</b></td><td>người dùng</td><td><b>KHÔNG CÓ.</b> Không kiểu nào "giữ nguyên người giữ, chỉ đổi tình trạng" cho tài sản ngoài kho: <code>STORAGE_TO_USER</code> chỉ cho tình trạng <code>1</code>, và nó là chiều từ kho ra. Bắt tài sản về kho rồi cấp lại là <b>ghi một chuyển động chưa từng xảy ra</b> <span class="chip c-bad">CHỜ QUYẾT</span></td></tr>
+<tr><td><b><code>THEM_CO_TON_TAI</code> — thấy ở tay người khác</b></td><td>sổ ghi ở A, thấy ở B</td><td><b>KHÔNG CÓ kiểu trực tiếp.</b> V5 không có <code>USER_TO_USER</code>; V4 có và đã dùng <b>420 phiếu</b> <span class="chip c-ok">ĐO</span>. Phải lập <b>hai</b> phiếu (về kho rồi cấp lại) — lại là một chuyển động không có thật <span class="chip c-bad">CHỜ QUYẾT</span></td></tr>
+<tr><td><b><code>CO</code> + đổi nhóm hoặc đổi mô tả</b></td><td>bất kỳ</td><td><b>KHÔNG ĐI QUA PHIẾU ĐƯỢC.</b> <code>ASSET_TRANSFER</code> không đổi nhóm, không đổi mô tả. 267 + 223 dòng thật <span class="chip c-ok">ĐO</span>. Cần một đường ghi khác (sửa tài sản có duyệt, hoặc ghi thẳng) <span class="chip c-bad">CHỜ QUYẾT</span></td></tr>
+<tr><td><b>Tài sản đang mang tình trạng <code>-1</code> (Mất) mà người kiểm GẶP LẠI</b></td><td>bất kỳ</td><td><b>KHÔNG CÓ — và bị chặn cứng ở HAI tầng.</b> <code>AssetTransferFlow</code> từ chối ngay lúc lập ("không còn trong diện theo dõi", <code>:283-292</code>) <b>và</b> lúc hoàn thành (<code>:904-915</code>). Đường duy nhất hôm nay là sửa trên màn tài sản qua <code>UpdateAssetItemRequest.UsageStatus</code> — <b>không qua duyệt</b>. Phạm vi: <b>1.657 dòng</b> V4 (1.628 ở <code>THEM_CO_TON_TAI</code>, 28 ở <code>CO</code>, 1 ở <code>THEM_KHONG_TON_TAI</code>) <span class="chip c-ok">ĐO</span> <span class="chip c-bad">CHỜ QUYẾT</span></td></tr>
+<tr><td><code>THEM_KHONG_TON_TAI</code></td><td>chưa có trên hệ</td><td>Không sinh phiếu — cần đường <b>tạo tài sản</b>. 2.034 dòng thật, 1.970 trong đó chưa có mã <span class="chip c-info">câu hỏi "ai tạo tài sản mới"</span></td></tr>
+<tr><td><code>IsNeedReprintLabel = 1</code></td><td>bất kỳ</td><td>Không phải chuyển động. <b>1.102 dòng</b> trên toàn lịch sử, trong đó 192 ở loại <code>CO</code> và 687 ở loại "thêm TS chưa có mã" <span class="chip c-ok">ĐO</span>. Đề xuất: giữ cột + một báo cáo "cần in lại tem", không sinh phiếu gì</td></tr>
+</table></div>
+<p class="cap">Bốn dòng <b>CHỜ QUYẾT</b> ở trên là bốn chỗ hệ V5 hôm nay <b>không làm được</b> việc mà kiểm kê sinh ra. Mỗi chỗ có 2–3 phương án với một cái giá khác nhau; chúng nằm thành bảng riêng trong <code>coordination/ket-qua/2026-11-14-cau-hoi-kiem-ke-cho-anh-dat.md</code>.</p>
+
+<h3>Năm chỗ V4 làm sai mà V5 phải làm khác</h3>
+<div class="tbl"><table class="issue">
+<tr><th>V4</th><th>Hành vi thật</th><th>V5</th></tr>
+<tr><td><code>SyncCheckData.cs:30</code></td><td>Đọc <b>mọi phiên của mọi đợt</b>, không lọc đợt</td><td>Chỉ phiên vừa chốt</td></tr>
+<tr><td><code>:186</code> + <code>:226</code></td><td>Tài sản <b>chưa kiểm</b> (<code>ActionType</code> rỗng) <b>vẫn bị đưa về kho</b></td><td>Bỏ qua tuyệt đối</td></tr>
+<tr><td><code>:438</code></td><td>Lấy <code>GroupCode</code> <b>cũ</b>, không phải giá trị kiểm kê — tài liệu V4 ghi ngược</td><td>Dùng <code>NewGroupCode</code></td></tr>
+<tr><td><code>:411-423</code></td><td>TTSD đích tính từ giá trị <b>cũ</b>, nên <code>CO_HONG</code> cho ra "Tốt - không sử dụng" trừ khi TS đã hỏng sẵn</td><td>Dùng <code>NewUsageStatus</code></td></tr>
+<tr><td><code>:158-181</code></td><td>Tổ hợp <code>THEM_CO_TON_TAI</code> + <code>CO_HONG</code> <b>bị bỏ qua</b> hoàn toàn</td><td>Liệt kê đủ tổ hợp; tổ hợp lạ ⇒ báo lỗi, không im lặng</td></tr>
+</table></div>
+<p class="cap">Miền Bắc / Miền Nam xử lý khác nhau và vùng đích gán cứng <code>VN01_TANG_2_KHO_LUU_TRU</code> là di chứng của lần chạy tay 2019 — nhánh Miền Nam rỗng. Không mang sang.</p>
+<p class="cap">Một đính chính cho dòng thứ hai của bảng: "tài sản chưa kiểm vẫn bị đưa về kho" là lỗi <b>lý thuyết</b>, chưa từng xảy ra. Lưu dở (<code>ActionType</code> rỗng được bỏ qua) chỉ có từ 19/12/2020, còn lần chạy đồng bộ duy nhất là 29/11/2019 — lúc đó chưa có dòng nào rỗng. V5 vẫn phải bỏ qua tuyệt đối, nhưng đừng trích nó như bằng chứng "V4 đã làm hỏng dữ liệu".</p>
+</section>
+
+<section id="bao-cao">
+<h2><span class="n">07</span>Báo cáo</h2>
+<p>Giữ ba báo cáo của V4 về mặt <b>ý nghĩa</b>, sửa ba lỗi đếm.</p>
+<div class="tbl"><table>
+<tr><th>Báo cáo</th><th>Mỗi dòng là</th><th>Lỗi V4 phải sửa</th></tr>
+<tr><td>Kiểm kê theo đợt</td><td>một tài sản trong một phiên</td><td>Gom nhóm "phiên cuối" theo <b>tên vùng</b> sau khi đã đổi mã sang tên — hai vùng trùng tên bị gộp (<code>DetailBL:192-224</code>). V5 gom theo <b>mã</b>.</td></tr>
+<tr><td>Số lượng kiểm kê</td><td>một đối tượng (NV hoặc vùng)</td><td><code>PhaiKiemKe</code> đếm <b>mọi</b> tài sản, gồm cả inactive và 4.733 mã TS00 (<code>:267</code>). Mẫu số phải đúng bằng danh sách thực tế nạp cho phiên. Báo cáo này còn chọn "phiên cuối" bằng <b>so sánh chuỗi</b> <code>DataCode</code> (<code>:328</code>).</td></tr>
+<tr><td>Kiểm kê theo tài sản</td><td>một tài sản trong sổ</td><td><code>:385</code> điều kiện <code>ActionType != null <b>||</b> ActionType != ""</code> <b>luôn đúng</b> ⇒ 33.794 dòng chưa kiểm hiện ra là "đã kiểm kê". Ý định là <code>&amp;&amp;</code>. Và vòng lặp ở <code>:432-438</code> duyệt <b>toàn bộ</b> <code>as_item</code>, không lọc <code>Status</code>, không lọc tiền tố mã — nên mọi tài sản inactive và 4.733 mã TS00 đều hiện ra.</td></tr>
+</table></div>
+<div class="formula">CanXacNhan = PhaiKiemKe − Co − Khong − Hong
+DaXacNhan  = PhaiKiemKe − CanXacNhan</div>
+<p class="cap">Công thức giữ nguyên, nhưng chỉ đúng khi <code>PhaiKiemKe</code> được sửa theo trên.</p>
+<p class="cap"><b>Đính chính 14/11:</b> bản đầu xếp <code>:343</code> vào hàng "Kiểm kê theo tài sản". Sai hàng — <code>:343</code> nằm trong báo cáo <b>"Số lượng kiểm kê"</b> (đã mở lại file, hàm chạy từ <code>:240</code> tới <code>:364</code>).</p>
+<div class="warnbox"><b>Báo cáo phụ thuộc quyết định "chốt phiên" ở mục 03.</b> Nếu "phiên cuối" định nghĩa là "phiên đã chốt" thì <b>mọi phiên chưa chốt biến mất khỏi cả ba báo cáo</b> — V4 thì tính hết. Với 49,6% dòng chưa kiểm, số liệu hai bên sẽ lệch nhau rất xa và không ai hiểu vì sao. Hai cái này phải quyết cùng nhau, không quyết rời.</div>
+<div class="note"><b>Mức độ dùng ba báo cáo này không đo được</b> — hệ không có log truy cập. Trước khi bỏ công viết lại cả ba, nên hỏi người dùng thật. <span class="chip c-info">Xem câu hỏi 10</span></div>
+</section>
+
+<section id="api">
+<h2><span class="n">08</span>API và quyền</h2>
+<p>Theo đúng khuôn <code>Apps/AssetManagement.Api/Endpoints/AssetTransfer/</code>: mỗi thao tác một thư mục, mỗi thư mục một <code>*Endpoint.cs</code> và <code>*RequestValidator.cs</code> khi cần.</p>
+<div class="tbl"><table>
+<tr><th>Endpoint</th><th>Việc</th><th>Ai gọi</th></tr>
+<tr><td><code>Event/Search</code>, <code>Event/Act</code></td><td>Danh sách đợt đang mở; mở / đóng đợt</td><td>Web</td></tr>
+<tr><td><code>Stocktake/Start</code></td><td>Mở phiên mới hoặc lấy lại phiên dở, trả kèm danh sách TS cần kiểm</td><td><b>Mobile</b></td></tr>
+<tr><td><code>Stocktake/Save</code></td><td>Lưu kết quả, toàn phần hoặc một phần</td><td><b>Mobile</b></td></tr>
+<tr><td><code>Stocktake/Complete</code></td><td>Chốt phiên; sinh phiếu điều chuyển nếu có lệch</td><td><b>Mobile</b></td></tr>
+<tr><td><code>Stocktake/LookupItem</code></td><td>Tra một tài sản theo mã khi quét thêm ngoài danh sách</td><td><b>Mobile</b></td></tr>
+<tr><td><code>Stocktake/Search</code>, <code>Stocktake/Get</code></td><td>Tra cứu phiên</td><td>Web</td></tr>
+<tr><td><code>Report/*</code></td><td>Ba báo cáo mục 07</td><td>Web</td></tr>
+</table></div>
+<p class="cap"><b>Bỏ 14/11:</b> bản đầu có thêm <code>Stocktake/VerifierAct</code> (NVCM xác nhận / từ chối). Nó mâu thuẫn với chính Q3 — xem mục 02. Việc xác nhận diễn ra ở bước chuyên môn của phiếu điều chuyển.</p>
+
+<h3>Bốn chỗ hợp đồng API còn hở</h3>
+<div class="tbl"><table class="issue">
+<tr><th>Endpoint</th><th>Chỗ hở</th><th>Phải quyết trước khi code</th></tr>
+<tr><td><code>Complete</code></td><td>Sinh phiếu <b>ngay</b> lúc chốt, trong khi dòng cần chuyên môn có thể chưa ai nhìn</td><td>Thứ tự: chốt ⇒ sinh phiếu ⇒ chuyên môn duyệt <b>trên phiếu</b>. Nếu HC muốn chuyên môn gật <b>trước</b> khi sinh phiếu thì phải thêm một trạng thái phiên mới, và Q3 phải sửa <span class="chip c-bad">CHỜ QUYẾT</span></td></tr>
+<tr><td><code>Start</code></td><td>V4 tìm "phiên dở" theo (đợt, NV hoặc vùng, <code>UpdatedTime</code> mới nhất) <b>bất kể ai kiểm</b>. Hai nhân viên hành chính cùng kiểm một vùng sẽ <b>ghi đè nhau</b> và không ai biết</td><td><b>V5 chốt:</b> phiên dở là phiên <code>CheckedAt IS NULL</code> của <b>chính người đang gọi</b> (khoá = đợt + đối tượng + <code>CheckStaffCode</code>). Người khác mở cùng đối tượng ⇒ phiên riêng. <code>Save</code> kiểm <code>UpdatedTime</code> client gửi lên; lệch ⇒ trả 409, không ghi đè <span class="chip c-warn">CHỐT</span></td></tr>
+<tr><td><code>Event/Search</code></td><td>Mobile phải chỉ thấy đợt còn mở. V4 lọc bằng <code>IsComplete == false</code> (<code>AsCheckAssetEventHandler.cs:27</code>) — đúng cột mà không ai ghi</td><td>Lọc bằng <code>Status = 'DANG_KIEM_KE'</code>, đúng cột mà backend cưỡng chế ở Thay đổi 1</td></tr>
+<tr><td>Cả 4 quyền <code>v5:</code></td><td>V4 <b>không kiểm quyền ở API</b> (<code>AsAdminCheckHandler.cs:14-43</code> chỉ có <code>[HandleCommand]</code>). Nên đây là <b>quyền mới hoàn toàn</b>, không phải port</td><td>Cần danh sách người được cấp từng quyền. Dữ kiện mang theo khi hỏi: <b>28 người</b> đã từng làm tiếp phiên trên V4 <span class="chip c-ok">ĐO</span></td></tr>
+</table></div>
+
+<h3>Quyền</h3>
+<p>Theo quy ước đang dùng (<code>AssetTransferConsts.QuyenDuyetHanhChinh = "v5:asset:dieu_chuyen:hanh_chinh:duyet"</code>), khai dưới dạng <b>hằng trong code</b>, không phải cấu hình — tên resource bên identity giống nhau ở mọi môi trường, còn cấu hình sinh ra để chứa thứ khác nhau giữa các môi trường.</p>
+<pre class="sql">v5:asset:kiem_ke:dot:quan_ly      -- mở / đóng đợt
+v5:asset:kiem_ke:phien:thuc_hien  -- đi kiểm (NV hành chính)
+v5:asset:kiem_ke:chuyen_mon:xac_nhan
+v5:asset:kiem_ke:bao_cao:xem</pre>
+<div class="warnbox"><b>Chưa tồn tại resource <code>v5:</code> nào trên identity</b> — dev lẫn production. Đây là điều kiện tiên quyết dùng chung với <code>ASSET_TRANSFER</code>, không riêng kiểm kê.</div>
+</section>
+
+<section id="bo-di">
+<h2><span class="n">09</span>V4 có, V5 cố ý bỏ</h2>
+<p>Danh sách này tồn tại để sau này không ai "phát hiện thiếu" rồi thêm lại.</p>
+<div class="tbl"><table class="issue">
+<tr><th>Thứ</th><th>Vì sao bỏ</th></tr>
+<tr><td>Cơ chế B — flow <code>ASSET_CHECK</code></td><td><b>1.529/1.530 yêu cầu nằm ở trạng thái bị từ chối, ghi chú "IT support hủy"</b>; hai bảng dữ liệu của nó (<code>as_check_asset</code>, <code>as_check_asset_detail</code>) có <b>0 dòng</b>. Port một luồng chưa ai từng dùng = nhập khẩu một ẩn số.<br><span class="cap"><b>Sửa 14/11:</b> bản đầu nói "bị huỷ tự động trong 13 giây". Số 13 giây là thời gian <b>TẠO</b> hàng loạt — do chính người tạo đợt bấm nút tạo yêu cầu trên màn đợt. Thời điểm huỷ thì <b>không để lại dấu vết</b>: các dòng đó có <code>updated_time = created_time</code>, dấu hiệu của một lệnh UPDATE thẳng vào DB. Lý do bỏ vẫn đứng, nhưng câu chuyện "công cụ tự động" là suy đoán sai.</span></td></tr>
+<tr><td>Bảng <code>as_check_asset_attribute</code></td><td>6 dòng, seed 2019, không UI, 7 năm không đổi ⇒ hằng trong code</td></tr>
+<tr><td><code>as_item.code LIKE 'TSHN%'</code></td><td>No-op trên dữ liệu V5 (chỉ có mã TSHN2)</td></tr>
+<tr><td>Nhánh Miền Bắc / Miền Nam + <code>VN01_TANG_2_KHO_LUU_TRU</code></td><td>Di chứng lần chạy tay 2019; nhánh Miền Nam rỗng</td></tr>
+<tr><td><code>getFakeContext</code> giả user <code>000011</code></td><td>Giàn thử. V5 lấy người dùng từ context thật; thiếu thì lỗi</td></tr>
+<tr><td><code>check_count</code> như một cột đếm</td><td>V4 lên tới <b>42</b> và hiện ra cho người dùng là "Số lần kiểm kê". V5 đếm bằng truy vấn khi cần, không nuôi cột</td></tr>
+<tr><td>Xoá-rồi-insert khi làm tiếp</td><td>Gây mất dòng, master trùng, log phình 6,7 lần</td></tr>
+<tr><td>Cột <code>Status INT</code> song song với <code>IsDeleted</code> trên <code>AssetStocktake</code></td><td>Hai khái niệm "còn sống" cho cùng một dòng</td></tr>
+<tr><td><code>DocNo</code> trên bảng <code>AssetStocktakeItem</code></td><td>Chi tiết không cần số phiếu riêng; V4 chỉ mang mã của cha</td></tr>
+<tr><td><b>Luật "đóng băng" khi có kiểm kê đang chờ</b></td><td><b>Cố ý KHÔNG mang sang.</b> V4: còn phiếu kiểm kê B đang chờ ⇒ chặn <b>mọi</b> thao tác sửa tài sản (<code>AsItemBL.cs:134-138</code>, <code>:190-194</code>) và <b>mọi</b> phiếu điều chuyển (<code>AsItemChangeFlowBL.cs:818-829</code>), kể cả tạo đợt kiểm kê mới. Luật này đi liền với cơ chế B; thực tế nó bị gỡ bằng tay mỗi năm (xem dòng trên). Ghi ra đây để sau này không ai "phát hiện thiếu" rồi thêm lại — một đợt kiểm kê kéo cả tháng mà khoá toàn bộ điều chuyển thì hệ đứng im cả tháng</td></tr>
+<tr><td>Nút "tạo yêu cầu kiểm kê" trên màn đợt</td><td>Chính nút này đẻ ra 1.530 phiếu B chết. Bỏ cùng cơ chế B</td></tr>
+</table></div>
+</section>
+
+<section id="phai-hoi">
+<h2><span class="n">10</span>Câu phải đi hỏi</h2>
+<div class="warnbox"><b>Viết lại 14/11.</b> Bản đầu để cả 11 câu ở dạng câu hỏi. Đọc lại code và đo lại dữ liệu thì <b>7 câu tự trả lời được</b> — để chúng nằm chờ người bận là tự chặn mình. Phần còn lại là <b>4 câu thật sự cần người quyết</b>, cộng một câu mới nảy ra từ Chặn 5. Bản dành cho anh Đạt / HC đọc nằm ở <code>coordination/ket-qua/2026-11-14-cau-hoi-kiem-ke-cho-anh-dat.md</code> — viết bằng ngôn ngữ nghiệp vụ, không có tên bảng tên cột.</div>
+
+<h3>Đã tự trả lời — không hỏi nữa</h3>
+<div class="tbl"><table class="issue">
+<tr><th>Câu cũ</th><th>Trả lời</th><th>Nguồn</th></tr>
+<tr><td>3. Đợt đóng bằng gì, ai đóng</td><td>Đóng = HC đổi <code>Status</code> sang <code>DA_HOAN_THANH</code> trên Web.Office; cả 7 đợt đều đã đóng như vậy, luôn vào cuối tháng 12. Ý định của code <b>là chặn ghi</b> — <code>is_complete</code> bị kiểm ở 4 chỗ lưu/đọc; lỗi là hai cột không nối với nhau. Ai được đóng: bất kỳ ai có quyền sửa module tài sản. <b>V5 làm theo ý định đó</b> (Thay đổi 1). Chỉ còn một câu xác nhận nhẹ với HC, đã gộp vào bảng câu hỏi</td><td><code>AsCheckAssetEventForm.cs:22</code>, <code>AsAdminCheckBL.cs:98,235,528,608</code>, đo r4</td></tr>
+<tr><td>5. "Thêm TS không tồn tại" tạo tài sản bằng đường nào</td><td><b>V4 không có đường nào</b>: cơ chế A không ghi <code>as_item</code>, còn công cụ đồng bộ 2019 bỏ qua hẳn loại này. Dữ liệu: 1.970/2.034 dòng không có mã, 824 dòng có mã hệ cũ, 687 dòng cần in tem ⇒ đây là <b>tài sản dán tem cũ hoặc chưa có tem</b>, không phải món mới mua. Phần còn phải hỏi HC (hiện ai tạo, bằng màn nào) đã vào bảng câu hỏi</td><td><code>SyncCheckData.cs:98</code>, đo r1</td></tr>
+<tr><td>6. Tài sản chưa kiểm khi đóng đợt</td><td>Không phải bug cần tra — là một quyết định nhỏ. <b>Chốt: chưa kiểm = không kết luận, không sinh phiếu</b>, và đóng đợt thì chặn nếu còn phiên chưa chốt (mục 03). V4 trả lời mâu thuẫn chỉ vì hai bug khác nhau (<code>:385</code> đếm chúng là đã kiểm, <code>:186</code> đưa chúng về kho)</td><td>mục 03, mục 07</td></tr>
+<tr><td>7. Vùng là gì, tài sản thuộc vùng bằng cách nào</td><td>Vùng = <code>org_station_zone</code>, có hiệu lực theo <code>FromDate/ToDate</code> và phải còn hiệu lực mới nạp được. Tài sản thuộc vùng qua <code>as_item.station_zone_code</code>, được gán bằng phiếu <code>INTO_AREA</code> hoặc khi nhập kho. Còn đúng một mẩu phải hỏi: <b>ai duy trì danh mục vùng</b> — đã vào bảng câu hỏi</td><td><code>AsAdminCheckBL.cs:110-112</code>, <code>AssetTransferFlow.cs:989-1017</code></td></tr>
+<tr><td>8. NVCM từ chối thì sao</td><td>Ở cơ chế đang sống, <b>NVCM chưa bao giờ xác nhận gì</b>: bảng chi tiết V4 không có cột kết quả, cờ chỉ để hiện trong báo cáo. Kết quả từ chối chỉ tồn tại ở cơ chế B đã chết. Nên "NVCM xác nhận trong kiểm kê" là <b>tính năng mới</b> — xem Q3 và câu mới bên dưới. Việc resolver lấy người khác công ty: <b>V4 làm y hệt</b>, không phải rủi ro mới.<br><b>Sửa số liệu của bản đầu:</b> 410 cờ = <code>CO_HONG</code> 159 + <code>THEM_CO_TON_TAI</code> 130 + <code>CO</code> 63 + <code>THEM_KHONG_TON_TAI</code> 49 + <code>KHONG_CO</code> 9. Bản đầu viết "phần lớn đến từ <code>THEM_CO_TON_TAI</code>" — sai; và 72 cờ trong số đó là <b>rác</b> do V4 không bao giờ xoá cờ</td><td>đo r1, <code>information_schema</code> 14/11, <code>AsGroupManagerBL.cs:161-169</code></td></tr>
+<tr><td>9. Giới hạn 5 ảnh</td><td>Quyết định nhỏ, không chặn gì. <b>Chốt: giữ một hằng số giới hạn</b> (5) để chặn lạm dụng. 224/68.162 dòng có ảnh — giới hạn này chưa bao giờ làm ai vướng</td><td>đo r1</td></tr>
+<tr><td>11. Ai chạy "IT support hủy"</td><td>Không phải công cụ chạy nền. <b>Ai tạo</b> 1.530 phiếu: chính người tạo đợt, bấm nút trên màn đợt, trong 12–13 giây sau khi tạo đợt. <b>Ai huỷ</b>: các dòng có <code>updated_time = created_time</code> — dấu hiệu một lệnh UPDATE thẳng DB. <b>Vì sao</b>: phiếu B đang chờ khoá toàn bộ sửa tài sản và điều chuyển, nên mỗi năm IT gỡ khoá bằng tay. Không chặn thiết kế; còn lại là một câu xác nhận với IT</td><td>đo r4/r5, <code>AsItemBL.cs:134</code>, <code>AsItemChangeFlowBL.cs:818-823</code></td></tr>
+</table></div>
+
+<h3>Còn phải hỏi — bốn câu, và chúng chặn thật</h3>
+
+<div class="ask">
+<div class="who">CHẶN TẤT CẢ · hỏi: anh Đạt / sếp / bên mobile</div>
+<h4>1. Ai viết lại app mobile, và theo hợp đồng API nào?</h4>
+<p>Kiểm kê V4 là <b>100% nhập liệu từ mobile</b>; không có màn hình Web.Office nào ghi dữ liệu này. Mobile gọi thẳng command của V4, và <b>code mobile không nằm trong repo</b>. V5 là REST, khác hoàn toàn.</p>
+<p>Không có câu trả lời thì kiểm kê V5 <b>không có đường nhập liệu</b>, và mọi thứ còn lại — bảng, báo cáo, phiếu điều chuyển — là vô nghĩa.</p>
+<p><b>Mang theo khi hỏi:</b> mobile V4 gọi đúng 4 command, cả 4 <b>không có nơi gọi nào trong repo</b> — <code>AsAdminCheckGetCheckAssetByStaffCode</code>, <code>AsAdminCheckCustomCreateCommand</code>, <code>AsAdminCheckGetSoLanDaKiemKeCommand</code>, <code>AsAdminCheckDetailGetAssetInfoCommand</code>. Hỏi kèm: ai giữ mã nguồn app, có kế hoạch nâng cấp chưa, và <b>có cần làm màn kiểm kê trên Web để dùng tạm không</b>.</p>
+</div>
+
+<div class="ask">
+<div class="who">CHẶN THIẾT KẾ · hỏi: anh Đạt / HC · <b>câu quan trọng nhất</b></div>
+<h4>2. Kiểm kê xong thì hệ có tự đổi tài sản không — và với TỪNG loại lệch thì đổi thành gì?</h4>
+<p><b>Đã sửa cách hỏi.</b> Bản đầu hỏi "tự đổi hay qua phiếu duyệt", kèm giả định "V4 ghi thẳng". Giả định đó sai: <b>V4 chưa bao giờ cho kiểm kê đổi tài sản trong vận hành</b>. Nên đây không phải chọn cách port, mà là <b>quyết định thêm một nghiệp vụ chưa từng có</b>.</p>
+<p>Và câu hỏi không có một đáp án chung: mỗi loại lệch đi một đường khác nhau, bốn trong số đó <b>hệ V5 hôm nay không làm được</b> (mục 06, Chặn 2). Bảng "từng loại lệch × hệ nên làm gì", kèm phương án và giá của từng phương án, nằm trong file câu hỏi dành cho anh Đạt.</p>
+<p>Hỏi kèm: ai duyệt phiếu sinh ra từ kiểm kê — vẫn chuyên môn → người nhận → hành chính như điều chuyển thường, hay rút gọn? Và <b>chấp nhận một phiên đẻ ra hơn hai mươi phiếu không</b> (Chặn 1)?</p>
+</div>
+
+<div class="ask">
+<div class="who">CHẶN DỮ LIỆU · hỏi: anh Đạt / sếp</div>
+<h4>4. Có chuyển lịch sử kiểm kê cũ sang V5 không?</h4>
+<p>V4 có <b>68.162 dòng chi tiết</b> và <b>458.403 dòng log</b> trải 7 đợt từ 2019. Theo chốt "chỉ mã TSHN2* sang V5", phần lớn lịch sử gắn mã TS00 sẽ <b>mồ côi</b> — riêng đợt CAS00025 có 3.924 dòng mã TS00. Ba lựa chọn: không chuyển gì, chuyển đợt gần nhất, hoặc chuyển tất rồi chấp nhận dòng mồ côi.</p>
+<p><b>Giá kỹ thuật, đo 14/11 — nếu chuyển thì phải làm ba việc dọn trước:</b> (a) khử trùng mã trong cùng phiên: CAS00024 có 2.501 nhóm trùng, toàn hệ 2.648 nhóm / 9.465 dòng; (b) đổi <code>code = ''</code> sang <code>NULL</code> cho 1.970 dòng "thêm TS chưa có mã", không thì đâm vào ràng buộc UNIQUE; (c) dời <code>usage_status</code> sang ô "giá trị mới" cho 2.034 dòng cùng loại, và xử lý <b>11 dòng mang mã tình trạng <code>3</code></b> mà V5 đã bỏ từ 31/10/2026 <span class="chip c-ok">ĐO</span>.</p>
+</div>
+
+<div class="ask">
+<div class="who">hỏi: HC / người dùng báo cáo</div>
+<h4>10. Ba báo cáo của V4 có ai dùng không, và có thiếu báo cáo nào?</h4>
+<p>Không đo được mức sử dụng — hệ không có log truy cập. Tra được: cả ba đang bật trên menu và có quyền riêng. Viết lại cả ba là công thật; nên biết trước cái nào còn sống. Hỏi kèm: có cần báo cáo <b>"cần in lại tem"</b> không (192 dòng thật, hiện không có báo cáo nào chở nó).</p>
+</div>
+
+<div class="ask">
+<div class="who">CÂU MỚI (14/11) · hỏi: anh Đạt / HC</div>
+<h4>12. Nhân viên chuyên môn xác nhận hỏng vào LÚC NÀO?</h4>
+<p>Nảy ra khi gỡ mâu thuẫn ở Q3. Hai mốc có thể: <b>(a)</b> ngay trong lúc kiểm, trước khi sinh phiếu — thì bảng kiểm kê phải có cột kết quả duyệt, Q3 phải sửa, và người đi kiểm phải chờ; <b>(b)</b> ở bước chuyên môn của phiếu điều chuyển — thì không thêm gì, nhưng <b>dòng không sinh ra phiếu sẽ không ai xác nhận</b>, mà "hỏng nhưng vẫn ở người giữ" đúng là loại không sinh phiếu được hôm nay (Chặn 2).</p>
+<p>Tài liệu này <span class="chip c-warn">CHỐT</span> phương án (b) vì nó không bắt NVCM duyệt hai lần, và vì V4 cũng chưa bao giờ có bước xác nhận trong kiểm kê. Nhưng (b) chỉ trọn vẹn sau khi Chặn 2 có lời.</p>
+</div>
+</section>
+
+<section id="chua-kiem">
+<h2><span class="n">11</span>Chưa kiểm được — đừng tin phần này</h2>
+<div class="tbl"><table class="issue">
+<tr><th>Chỗ</th><th>Tình trạng</th></tr>
+<tr><td>Mọi câu về app mobile V4</td><td>Suy luận. Code mobile không nằm trong repo</td></tr>
+<tr><td>Flow <code>ASSET_CHECK</code> của V4 (cơ chế B)</td><td><b>Đã đọc hết 14/11</b> (1.954 dòng): nhân viên tự xác nhận → HC duyệt, có bước NVCM <code>DONG_Y</code>/<code>TU_CHOI</code>; NVCM từ chối thì HC chỉ còn cách trả cả phiếu về nhân viên; kiểm kê phát sinh do HC tạo thì mọi thao tác ném lỗi "Chưa có cấu hình". Nó <b>không ghi <code>as_item</code> và không sinh phiếu điều chuyển</b>. Quyết định bỏ cơ chế B vì thế đứng vững hơn trước, không phải yếu đi</td></tr>
+<tr><td>Tầng UI của báo cáo V4</td><td>Đã đọc endpoint, page và menu; <b>thân các file <code>.ts</code> vẫn chưa mở</b></td></tr>
+<tr><td>Định nghĩa workflow kiểm kê trong <code>fl_core</code></td><td>Chưa tra. <code>fl-asset-v5-workflow.sql:213</code> tự ghi "CHƯA CÓ: flow Kiểm kê hành chính… làm sau khi flow điều chuyển chạy thông"</td></tr>
+<tr><td>Số đo trên <code>fl_core</code> production</td><td>Mới đo dev. Vùng trùng tên: dev có 80 vùng / 80 tên (chưa kích lỗi gộp của V4), production chưa đo</td></tr>
+<tr><td>Chi phí thật của việc sửa app mobile</td><td>Không ước lượng được cho tới khi trả lời câu hỏi 1</td></tr>
+</table></div>
+<div class="note"><b>Số dòng code V4 trong tài liệu này do một phiên phân tích khác đọc và báo lại</b> (repo <code>flink-webapi</code> nhánh <code>main</code> <code>c0c7f5e</code>). <b>Cập nhật 14/11:</b> một phiên độc lập thứ hai đã đọc lại và kiểm chéo phần lớn — xem <code>coordination/ket-qua/2026-11-14-danh-gia-kiem-ke-v2.md</code> mục 5 để biết chính xác dòng nào đã được đọc chéo và dòng nào chưa. Các dòng mà bản sửa 14/11 dựa vào thì <b>người sửa đã tự mở lại từng chỗ</b> (<code>AsAdminCheckBL.cs:741-790</code>, <code>AsAdminCheckDetailBL.cs:320-350</code> và <code>:374-440</code>, <code>AsAdminCheckDetailEndpoint.cs:88-106</code>, <code>AssetTransferFlow.cs:300-375</code>, DDL <code>fl-asset-v5.sql:257-340</code>).</div>
+<div class="warnbox"><b>Chưa kiểm: bản chạy production của V4 có thể mới hơn <code>c0c7f5e</code> (23/10/2026).</b> Mọi câu "V4 làm X" ở đây đúng với mã nguồn tại mốc đó, không phải với thứ đang chạy sáng nay.</div>
+</section>
+
+<footer>
+Thiết kế kiểm kê CCDC cho FastLink V5 · 11/11/2026, sửa 14/11/2026 theo bản đánh giá độc lập<br>
+Thay vai trò đặc tả của <code>kiem-ke-tai-san.html</code> — tài liệu đó mô tả V4 và có 23 điểm sai/thiếu đã xác định.<br>
+Nguồn: <code>fl_asset_prod</code> dump 04/11/2026 · <code>flink-webapi</code> main <code>c0c7f5e</code> · <code>fastlink-erp-api</code> main <code>cd5403a1</code> · <code>fl_asset_v5</code> dev.<br>
+Số đo thêm ngày 14/11 (chỉ đọc, có đối chứng dương): <code>coordination/ket-qua/2026-11-14-danh-gia-kiem-ke-v2-so-do/r1…r7</code>.
+</footer>
+</main>
+</div>
+<script>
+  (function () {
+    var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({ startOnLoad: true, theme: dark ? 'dark' : 'default', securityLevel: 'loose' });
+  })();
+
+  // Mục lục tự sáng theo mục đang đọc.
+  //
+  // Không dùng IntersectionObserver: nó trả lời "phần tử có trong khung nhìn không", còn câu
+  // cần trả lời là "mục nào đang được đọc" — hai thứ khác nhau khi nhiều mục cùng hiện, và
+  // mục cuối (ngắn) có thể không bao giờ chiếm đủ khung để thắng.
+  //
+  // Luật ở đây: mục đang đọc là mục CUỐI CÙNG có mép trên đã vượt qua vạch 30% chiều cao
+  // khung nhìn. Riêng khi cuộn chạm đáy thì mục cuối luôn thắng, vì một mục ngắn ở cuối
+  // trang không bao giờ đẩy được mép trên của nó lên tới vạch đó.
+  (function () {
+    var links = [].slice.call(document.querySelectorAll('nav.toc a[href^="#"]'));
+    var secs = links.map(function (a) { return document.getElementById(a.hash.slice(1)); });
+    var cho = false;
+
+    function dongBo() {
+      cho = false;
+      var vach = window.innerHeight * 0.3, i = 0;
+      for (var j = 0; j < secs.length; j++) {
+        if (secs[j] && secs[j].getBoundingClientRect().top <= vach) i = j;
+      }
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+        i = links.length - 1;
+      }
+      for (var k = 0; k < links.length; k++) {
+        if (k === i) links[k].setAttribute('aria-current', 'true');
+        else links[k].removeAttribute('aria-current');
+      }
+    }
+
+    function khiCuon() {
+      if (!cho) { cho = true; requestAnimationFrame(dongBo); }
+    }
+
+    addEventListener('scroll', khiCuon, { passive: true });
+    addEventListener('resize', khiCuon);
+    // Sơ đồ mermaid render bất đồng bộ và làm đổi chiều cao các mục, nên tính lại sau 'load'.
+    addEventListener('load', dongBo);
+    dongBo();
+  })();
+</script>
+</body>
+</html>

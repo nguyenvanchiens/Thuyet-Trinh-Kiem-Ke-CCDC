@@ -1,0 +1,978 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Kiểm kê CCDC V5 — v3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Cùng hệ thống thị giác với kiem-ke-tai-san-v2.html. */
+:root {
+  --bg: #f6f7f6; --surface: #ffffff; --fg: #1b2420; --muted: #5b6863; --line: #dde3e0;
+  --accent: #0f6b5c; --accent-soft: #e2f0ec; --code-bg: #eef1ef;
+  --ok: #1d7a3e; --ok-bg: #e3f3e8; --warn: #9a5b00; --warn-bg: #fbefd9;
+  --bad: #b3261e; --bad-bg: #fbe5e3; --info: #2a5ea8; --info-bg: #e4ecf8;
+  --font-display: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Be Vietnam Pro", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121715; --surface: #19201d; --fg: #e3e9e6; --muted: #9aa8a2; --line: #2b3531;
+    --accent: #5cc4ae; --accent-soft: #1d3530; --code-bg: #212a27;
+    --ok: #6fcf8f; --ok-bg: #1c3324; --warn: #e6b45c; --warn-bg: #3a2c12;
+    --bad: #f08a80; --bad-bg: #3d1d1a; --info: #8ab4f0; --info-bg: #1c2a40;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121715; --surface: #19201d; --fg: #e3e9e6; --muted: #9aa8a2; --line: #2b3531;
+  --accent: #5cc4ae; --accent-soft: #1d3530; --code-bg: #212a27;
+  --ok: #6fcf8f; --ok-bg: #1c3324; --warn: #e6b45c; --warn-bg: #3a2c12;
+  --bad: #f08a80; --bad-bg: #3d1d1a; --info: #8ab4f0; --info-bg: #1c2a40;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.65;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px 64px;
+}
+.wrap { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; }
+@media (max-width: 900px) { .wrap { grid-template-columns: minmax(0, 1fr); gap: 24px; } nav.toc { position: static !important; } }
+nav.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 24px); align-self: start; font-size: 13.5px; }
+nav.toc .lbl { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 8px; }
+nav.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; counter-reset: s; }
+nav.toc li { counter-increment: s; }
+nav.toc a {
+  display: block; padding: 5px 10px 5px 9px; border-radius: 0 6px 6px 0;
+  color: var(--muted); text-decoration: none; border-left: 3px solid transparent;
+  transition: background-color .12s ease, color .12s ease, border-left-color .12s ease;
+}
+nav.toc a::before { content: counter(s) ". "; font-family: var(--font-mono); font-size: 12px; opacity: .65; }
+nav.toc a:hover, nav.toc a:focus-visible { background: var(--accent-soft); color: var(--accent); border-left-color: var(--accent); outline: none; }
+nav.toc a:hover::before, nav.toc a:focus-visible::before { opacity: 1; }
+nav.toc a[aria-current] { color: var(--accent); border-left-color: var(--accent); }
+nav.toc a[aria-current]::before { opacity: 1; }
+main { min-width: 0; }
+header.hero { padding-bottom: 24px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+.eyebrow { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: .02em; }
+h1 { font-family: var(--font-display); font-size: clamp(28px, 4vw, 38px); line-height: 1.2; margin: 8px 0 12px; font-weight: 700; text-wrap: balance; }
+.lede { color: var(--muted); max-width: 68ch; margin: 0; }
+section { padding-block: 28px 4px; }
+h2 { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin: 0 0 12px; text-wrap: balance; display: flex; gap: 10px; align-items: baseline; }
+h2 .n { font-family: var(--font-mono); font-size: 14px; color: var(--accent); font-weight: 600; }
+h3 { font-size: 16.5px; font-weight: 600; margin: 24px 0 8px; }
+h4 { font-size: 15px; font-weight: 600; margin: 18px 0 6px; }
+p, li { max-width: 74ch; }
+code { font-family: var(--font-mono); font-size: .86em; background: var(--code-bg); padding: 1px 5px; border-radius: 4px; overflow-wrap: anywhere; }
+a { color: var(--accent); }
+.tbl { overflow-x: auto; margin: 12px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); font-weight: 600; background: var(--code-bg); }
+tr:last-child td { border-bottom: 0; }
+td code { white-space: nowrap; }
+.diagram { overflow-x: auto; margin: 16px 0; padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.diagram pre.mermaid { margin: 0; background: transparent; }
+.chip { display: inline-block; font-family: var(--font-mono); font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.c-ok { color: var(--ok); background: var(--ok-bg); }
+.c-warn { color: var(--warn); background: var(--warn-bg); }
+.c-bad { color: var(--bad); background: var(--bad-bg); }
+.c-info { color: var(--info); background: var(--info-bg); }
+.c-none { color: var(--muted); background: var(--code-bg); }
+.note { border-left: 3px solid var(--accent); background: var(--accent-soft); padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 16px 0; max-width: 80ch; }
+.warnbox { border-left: 3px solid var(--bad); background: var(--bad-bg); padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 16px 0; max-width: 80ch; }
+pre.sql, pre.json { font-family: var(--font-mono); font-size: 12.5px; line-height: 1.5; background: var(--code-bg); padding: 12px 14px; border-radius: 6px; overflow-x: auto; margin: 12px 0; }
+details { margin: 12px 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+details > summary { cursor: pointer; padding: 10px 14px; font-weight: 600; }
+details > pre { margin: 0 12px 12px; }
+.ask { border: 1px solid var(--line); border-left: 3px solid var(--info); background: var(--surface); border-radius: 0 8px 8px 0; padding: 12px 16px; margin: 14px 0; max-width: 80ch; }
+.ask .who { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.ask h4 { margin: 2px 0 6px; }
+.ask p { margin: 6px 0 0; font-size: 14px; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin: 14px 0 0; font-size: 13px; color: var(--muted); }
+footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+html { scroll-behavior: smooth; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
+</head>
+<body>
+
+<div class="wrap">
+<nav class="toc" aria-label="Mục lục">
+  <div class="lbl">Mục lục</div>
+  <ol>
+    <li><a href="#gioi-thieu">Tài liệu này là gì</a></li>
+    <li><a href="#v4">V4 đang làm gì</a></li>
+    <li><a href="#quyet-dinh">Quyết định nền</a></li>
+    <li><a href="#vong-doi">Vòng đời và trạng thái</a></li>
+    <li><a href="#du-lieu">Database</a></li>
+    <li><a href="#nghiep-vu">Quy tắc nghiệp vụ</a></li>
+    <li><a href="#api-quy-uoc">API — quy ước</a></li>
+    <li><a href="#api">API — danh sách và hợp đồng</a></li>
+    <li><a href="#dieu-chuyen">GĐ2 — sinh phiếu điều chuyển</a></li>
+    <li><a href="#bao-cao">Báo cáo</a></li>
+    <li><a href="#quyen">Quyền</a></li>
+    <li><a href="#lich-su">Dữ liệu V4</a></li>
+    <li><a href="#bo-di">V4 có, V5 cố ý bỏ</a></li>
+    <li><a href="#trien-khai">Kế hoạch triển khai</a></li>
+    <li><a href="#phai-hoi">Câu còn phải hỏi</a></li>
+    <li><a href="#chua-kiem">Chưa kiểm được</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="hero">
+  <div class="eyebrow">AssetManagement · Stocktake · thiết kế chuyển đổi V4 → V5 · v3</div>
+  <h1>Kiểm kê tài sản CCDC trên FastLink V5 — thiết kế database và API</h1>
+  <p class="lede">Bản v3 biến thiết kế v2 thành thứ dev cầm lên làm được: DDL đầy đủ đã chạy thử trên MySQL 8.0, hợp đồng API theo đúng quy ước đang chạy của <code>fastlink-erp-api</code>, và kế hoạch chia hai giai đoạn để phần ghi nhận kiểm kê không phải chờ các quyết định nghiệp vụ còn treo.</p>
+  <div class="legend">
+    <span><span class="chip c-ok">ĐO</span> số đo trên dữ liệu thật hoặc đã chạy thử</span>
+    <span><span class="chip c-warn">CHỐT</span> quyết định của tài liệu, bác được</span>
+    <span><span class="chip c-info">KIỂM</span> chưa xác minh, có ghi cách kiểm</span>
+    <span><span class="chip c-bad">CHỜ QUYẾT</span> quyết định nghiệp vụ còn treo</span>
+  </div>
+</header>
+
+<!-- ============================================================ 01 -->
+<section id="gioi-thieu">
+<h2><span class="n">01</span>Tài liệu này là gì</h2>
+<p>Đây là <b>đặc tả để code</b> phần kiểm kê CCDC trên V5. Nó thay vai trò của <code>kiem-ke-tai-san-v2.html</code>. Bản v2 vẫn giữ làm hồ sơ lý lẽ: các số đo V4, lý do bỏ cơ chế duyệt B, bảng ánh xạ kết quả kiểm kê sang kiểu phiếu điều chuyển. v3 dẫn lại những chỗ cần, không chép lại hết.</p>
+
+<div class="tbl"><table>
+<tr><th>Dùng để</th><th>Đọc</th></tr>
+<tr><td>Viết DDL, entity</td><td>Mục 05 và file <code>kiem-ke-tai-san-v3-ddl.sql</code> (cùng thư mục)</td></tr>
+<tr><td>Viết service, luật kiểm</td><td>Mục 04, 06</td></tr>
+<tr><td>Viết endpoint, làm app mobile</td><td>Mục 07, 08, 11</td></tr>
+<tr><td>Làm web</td><td>Mục 08 (phần web), 10</td></tr>
+<tr><td>Lên kế hoạch, chia việc</td><td>Mục 03, 14, 15</td></tr>
+</table></div>
+
+<h3>v3 khác v2 ở đâu</h3>
+<div class="tbl"><table>
+<tr><th>#</th><th>Thay đổi</th><th>Vì sao</th></tr>
+<tr><td>1</td><td><b>Chốt phiên tách khỏi sinh phiếu.</b> Mobile chốt chỉ ghi kết quả. Sinh phiếu điều chuyển là thao tác riêng trên web, chạy nền, làm lại được.</td><td>Một phiên có thể cần ≥21 phiếu (v2 Chặn 1). Gọi từ điện thoại dễ hết giờ hoặc tạo được một nửa số phiếu. Luật ánh xạ còn chờ quyết, tách ra thì đổi luật không chạm app.</td></tr>
+<tr><td>2</td><td><b>Hai giai đoạn.</b> GĐ1 = ghi nhận + báo cáo, tương đương V4 đang chạy nhưng đã sửa lỗi. GĐ2 = hệ quả lên tài sản.</td><td>GĐ1 không phụ thuộc câu hỏi nghiệp vụ nào. Câu "mobile gọi API nào" đã chốt ở Q6.</td></tr>
+<tr><td>3</td><td><b>DDL đầy đủ, đã chạy thử</b>, kèm script đưa DB đã có vỏ cũ về DDL mới.</td><td>v2 chỉ mô tả thay đổi trên vỏ; DDL hiện tại (HEAD <code>6fce8bf1</code>) chưa áp thay đổi nào.</td></tr>
+<tr><td>4</td><td><b>Trạng thái phiên tường minh</b> (<code>DANG_KIEM / DA_CHOT / DA_HUY</code>) thay cho "CheckedAt NULL = chưa chốt".</td><td>v2 cần "huỷ phiên" để đóng đợt nhưng không có chỗ ghi trạng thái huỷ.</td></tr>
+<tr><td>5</td><td><b>Chặn hai phiên đang kiểm trùng nhau bằng UNIQUE</b> trên cột sinh <code>OpenKey</code>.</td><td>V4 có 25 phiên bị nhân bản, cao nhất ×43 <span class="chip c-ok">ĐO</span>. Chặn bằng code thì hai lời gọi đồng thời vẫn lọt.</td></tr>
+<tr><td>6</td><td><b>Lưu gửi phần thay đổi</b>, có <code>Version</code> chống ghi đè và <code>RequestId</code> chống ghi hai lần khi mạng chập.</td><td>Phiên theo vùng trung bình ~390 dòng; 393 phiên đã làm tiếp tổng 2.740 lần <span class="chip c-ok">ĐO</span>.</td></tr>
+<tr><td>7</td><td><b>Id dòng "thêm" do client sinh</b> (UUID).</td><td>Dòng "thêm tài sản chưa có trên hệ" không có mã để nhận diện; gửi lại không được tạo dòng trùng.</td></tr>
+<tr><td>8</td><td><b>Sửa một mâu thuẫn của v2:</b> v2 vừa nói <code>THEM_KHONG_TON_TAI</code> thì mã phải NULL, vừa nói mã phải hợp lệ. v3: mã được NULL, hoặc là một mã chưa có trên <code>AssetItem</code>.</td><td>V4 có 64 dòng loại này mang mã (1.970/2.034 không mã) <span class="chip c-ok">ĐO</span>.</td></tr>
+<tr><td>9</td><td><b>Bỏ quyền <code>kiem_ke:chuyen_mon:xac_nhan</code>.</b></td><td>v2 đã bỏ việc NVCM xác nhận trong kiểm kê nhưng quên bỏ quyền đi kèm.</td></tr>
+<tr><td>10</td><td><b>Lịch sử V4: đề xuất không chuyển vào bảng V5</b>, kèm ánh xạ đầy đủ nếu vẫn chọn chuyển.</td><td>Chuyển cần dọn 3 loại dữ liệu bẩn mà phần lớn dòng sẽ mồ côi (mã TS00).</td></tr>
+<tr><td>11</td><td><b>Mobile gọi thẳng API V5</b> (mục 08). Không dựng lớp nhận command V4.</td><td>Chốt 15/11/2026 (Q6). Giữ command V4 thì phải giữ luôn kiểu "lưu = gửi cả danh sách", mất version và chống gửi trùng.</td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================ 02 -->
+<section id="v4">
+<h2><span class="n">02</span>V4 đang làm gì</h2>
+<p>Tóm tắt từ báo cáo <code>ket-qua/2026-11-14-danh-gia-kiem-ke-v2.md</code> mục 2 (đọc code <code>flink-webapi</code>, đo bản dump <code>fl_asset_prod</code> 04/11/2026). Ngày 15/11/2026 đã đo lại trên dữ liệu online <code>fl_asset</code> (dump 14/11/2026 18:14): mọi số liệu dùng trong tài liệu này đều khớp (<code>ket-qua/2026-11-15-do-lai-du-lieu-online/</code>).</p>
+<ol>
+  <li>Hành chính tạo <b>đợt</b> trên Web.Office.</li>
+  <li>Trên mobile, người kiểm chọn kiểm <b>theo nhân viên</b> hoặc <b>theo vùng</b>. Hệ nạp danh sách tài sản: đang hoạt động, mã <code>TSHN%</code>, tình trạng không thuộc Không theo dõi / Mất / Chờ thanh lý đang dùng / Đã thanh lý.</li>
+  <li>Đánh dấu từng tài sản: Có / Không có / Có nhưng hỏng / Thêm tài sản có trên hệ / Thêm tài sản chưa có trên hệ. Ghi nhóm mới, mô tả mới, tình trạng mới, in lại tem, mã cũ, ghi chú, ≤5 ảnh.</li>
+  <li><b>Lưu.</b> Lưu dở được. "Làm tiếp" chép chi tiết cũ sang bảng log, xoá, ghi lại toàn bộ. Không có bước chốt.</li>
+  <li>Hệ gán nhân viên chuyên môn cho dòng hỏng, nhưng <b>không có bước nào để người đó xác nhận</b>.</li>
+  <li>Xem 3 báo cáo trên Web.Office. Đóng đợt bằng cách đổi chữ trạng thái; cờ thật sự chặn mobile (<code>is_complete</code>) không có chỗ nào ghi.</li>
+  <li><b>Kết quả không bao giờ ghi về tài sản.</b> Lần duy nhất là công cụ IT chạy tay 29/11/2019.</li>
+</ol>
+<div class="tbl"><table>
+<tr><th>Bảng V4</th><th>Lưu gì</th><th>Số dòng <span class="chip c-ok">ĐO</span></th><th>Ở V5</th></tr>
+<tr><td><code>as_check_asset_event</code></td><td>Đợt</td><td>7</td><td><code>AssetStocktakeEvent</code></td></tr>
+<tr><td><code>as_admin_check</code></td><td>Phiên kiểm</td><td>2.546</td><td><code>AssetStocktake</code></td></tr>
+<tr><td><code>as_admin_check_detail</code></td><td>Từng tài sản trong phiên; quyết định của người kiểm nằm trong JSON <code>content</code></td><td>68.162</td><td><code>AssetStocktakeItem</code> (quyết định thành cột riêng)</td></tr>
+<tr><td><code>as_admin_check_detail_log</code></td><td>Bản sao cả dòng mỗi lần làm tiếp</td><td>458.403</td><td><code>AssetStocktakeItemLog</code> (chỉ ghi cột đổi)</td></tr>
+</table></div>
+<p>Mobile V4 gọi 4 command: <code>AsAdminCheckGetCheckAssetByStaffCode</code> (nạp danh sách theo NV hoặc vùng), <code>AsAdminCheckCustomCreateCommand</code> (lưu), <code>AsAdminCheckGetSoLanDaKiemKeCommand</code> (đếm lần kiểm), <code>AsAdminCheckDetailGetAssetInfoCommand</code> (tra tài sản), và lấy đợt qua <code>AsCheckAssetGetNotCompleteEventCommand</code>. Không lệnh nào kiểm quyền. Mã nguồn app mobile không nằm trong repo nào trên máy.</p>
+<p>Cách gọi: V4 không có URL riêng cho từng chức năng. Client gửi <code>{ tên command, dữ liệu }</code> vào một URL chung <code>/api/_gateway</code>; server tra tên rồi chạy hàm gắn <code>[HandleCommand]</code>. V5 đã có cầu nối <code>POST /api/v1/legacy-gateway/v2</code> (<code>Apps/LegacyGateway.Api</code>, CNTT-11) chuyển nguyên gói xuống <code>/api/_gateway</code> của V4. Cầu nối này chỉ chuyển tiếp: gọi kiểm kê qua nó thì dữ liệu vẫn vào bảng V4, không vào bảng V5.</p>
+</section>
+
+<!-- ============================================================ 03 -->
+<section id="quyet-dinh">
+<h2><span class="n">03</span>Quyết định nền</h2>
+<div class="tbl"><table>
+<tr><th>#</th><th>Quyết định</th><th>Trạng thái</th></tr>
+<tr><td>Q1</td><td><b>Kiểm kê là ghi thẳng, không phải quy trình duyệt.</b> Không port cơ chế B (<code>ASSET_CHECK</code>): 1.529/1.530 phiếu bị huỷ bằng tay, bảng dữ liệu 0 dòng.</td><td><span class="chip c-warn">CHỐT</span> (từ v2)</td></tr>
+<tr><td>Q2</td><td><b>Hệ quả lên tài sản đi qua phiếu <code>ASSET_TRANSFER</code></b>, có duyệt. Bốn loại kết quả chưa có kiểu phiếu chở được.</td><td><span class="chip c-bad">CHỜ QUYẾT</span> — GĐ2</td></tr>
+<tr><td>Q3</td><td><b>Engine giữ quy trình, bảng nghiệp vụ giữ dữ liệu.</b> Bảng kiểm kê không có cột "người duyệt / trạng thái duyệt". Cờ NVCM chỉ là dữ liệu phân công.</td><td><span class="chip c-warn">CHỐT</span> (từ v2)</td></tr>
+<tr><td>Q4</td><td><b>Ghi nhận tách khỏi hệ quả.</b> Không API nào của mobile tạo phiếu điều chuyển hay sửa nghiệp vụ của tài sản. Chốt phiên chỉ đổi trạng thái phiên và ghi ngày kiểm cuối lên tài sản.</td><td><span class="chip c-warn">CHỐT</span> (mới)</td></tr>
+<tr><td>Q5</td><td><b>Hai giai đoạn.</b> GĐ1 ra production trước. GĐ2 chỉ thêm bảng, thêm API web, không đổi API mobile.</td><td><span class="chip c-warn">CHỐT</span> (mới)</td></tr>
+<tr><td>Q6</td><td><b>Mobile viết lại theo cơ chế V5, gọi thẳng API V5</b> theo mục 08 (lưu phần thay đổi, version, requestId, chốt phiên). Không viết lớp nhận 5 command V4, không đi qua cầu nối <code>LegacyGateway</code> (cầu nối đó ghi vào bảng V4).</td><td><span class="chip c-warn">CHỐT</span> 15/11/2026</td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================ 04 -->
+<section id="vong-doi">
+<h2><span class="n">04</span>Vòng đời và trạng thái</h2>
+<div class="diagram"><pre class="mermaid">
+flowchart TD
+  A["Web · HC mở ĐỢT<br/>Event.Status = DANG_KIEM_KE"] --> B
+  B["Mobile · start<br/>có phiên dở của mình → trả lại<br/>chưa có → tạo phiên + chụp danh sách"] --> C
+  C["Mobile · save (nhiều lần)<br/>chỉ gửi dòng đã đổi"] --> D{"Xong?"}
+  D -- "chưa" --> C
+  D -- "rồi" --> E["Mobile · complete<br/>Status = DA_CHOT<br/>ghi AssetItem.LastCheckedAt"]
+  E --> F{"Có dòng lệch?"}
+  F -- "không" --> H
+  F -- "có · GĐ1" --> G1["Hiện trong báo cáo<br/>IsMovementRequired = 1"]
+  F -- "có · GĐ2" --> G2["Web · HC xem trước → sinh phiếu<br/>chạy nền, mỗi nhóm một phiếu"]
+  G1 --> H["Web · HC đóng ĐỢT<br/>chỉ khi mọi phiên DA_CHOT hoặc DA_HUY"]
+  G2 --> H
+</pre></div>
+
+<h3>Trạng thái đợt — <code>AssetStocktakeEvent.Status</code></h3>
+<div class="tbl"><table>
+<tr><th>Từ</th><th>Sang</th><th>Ai</th><th>Điều kiện</th></tr>
+<tr><td>(mới)</td><td><code>DANG_KIEM_KE</code></td><td>HC (web)</td><td>—</td></tr>
+<tr><td><code>DANG_KIEM_KE</code></td><td><code>DA_HOAN_THANH</code></td><td>HC (web)</td><td>Không còn phiên <code>DANG_KIEM</code> nào trong đợt. Ghi <code>ClosedAt</code>, <code>ClosedUser</code>.</td></tr>
+<tr><td><code>DA_HOAN_THANH</code></td><td><code>DANG_KIEM_KE</code></td><td>HC (web)</td><td>Mở lại đợt. Xoá <code>ClosedAt</code>. <span class="chip c-warn">CHỐT</span> V4 cho sửa trạng thái tự do nên giữ khả năng này.</td></tr>
+</table></div>
+<p>Khi đợt <code>DA_HOAN_THANH</code>, mọi API ghi của phiên trong đợt trả lỗi <code>EVENT_CLOSED</code>. Đây là chỗ V4 hỏng: cột trạng thái và cờ chặn mobile là hai cột không nối với nhau.</p>
+
+<h3>Trạng thái phiên — <code>AssetStocktake.Status</code></h3>
+<div class="diagram"><pre class="mermaid">
+stateDiagram-v2
+  [*] --> DANG_KIEM : start
+  DANG_KIEM --> DANG_KIEM : save
+  DANG_KIEM --> DA_CHOT : complete (người kiểm)
+  DANG_KIEM --> DA_HUY : cancel (HC, hoặc người kiểm với phiên của mình)
+  DA_CHOT --> DANG_KIEM : reopen (HC) — chỉ khi chưa sinh phiếu nào
+</pre></div>
+<div class="tbl"><table>
+<tr><th>Câu hỏi</th><th>Trả lời</th></tr>
+<tr><td>Phiên không ai chốt?</td><td>Nằm ở <code>DANG_KIEM</code>. Không ghi gì lên tài sản. Vẫn vào báo cáo khi bật "gồm phiên đang kiểm" (mục 10). Chặn đóng đợt cho tới khi được chốt hoặc huỷ.</td></tr>
+<tr><td>Chốt có cần kiểm hết?</td><td>Không. Dòng chưa kiểm (<code>ActionType</code> NULL) bỏ qua, không chặn chốt. V4 có 49,6% dòng chưa kiểm <span class="chip c-ok">ĐO</span> — đó là cách làm việc thật.</td></tr>
+<tr><td>Mở lại phiên đã chốt?</td><td>Được, do HC, khi phiên chưa có dòng nào ở <code>AssetStocktakeTransfer</code>. GĐ1 không sinh phiếu nên luôn mở lại được. Mở lại xoá <code>CheckedAt</code>; <code>AssetItem.LastCheckedAt</code> đã ghi thì giữ.</td></tr>
+<tr><td>Hai người cùng kiểm một đối tượng?</td><td>Mỗi người một phiên riêng (khoá <code>OpenKey</code> gồm cả người kiểm). <code>start</code> trả kèm danh sách phiên đang kiểm khác của cùng đối tượng để app cảnh báo. Báo cáo lấy "phiên cuối" theo <code>CheckedAt</code>.</td></tr>
+<tr><td>Một người mở hai phiên cùng đối tượng?</td><td>Không được. <code>start</code> lần hai trả lại phiên đang dở. DB chặn bằng <code>UX_AssetStocktake_Open</code>, cả khi hai lời gọi đến cùng lúc.</td></tr>
+<tr><td>Chốt ghi gì lên tài sản?</td><td>Với dòng có mã và <code>ActionType</code> ∈ {<code>CO</code>, <code>CO_HONG</code>, <code>THEM_CO_TON_TAI</code>}: <code>AssetItem.LastCheckedAt = CheckedAt</code>, <code>LastVerifiedByStaffCode = CheckStaffCode</code>. Không lấy khoá <code>ASSET:&lt;code&gt;</code> của phiếu điều chuyển — đây là dữ liệu tham khảo, không phải chuyển động. <span class="chip c-warn">CHỐT</span></td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================ 05 -->
+<section id="du-lieu">
+<h2><span class="n">05</span>Database</h2>
+<div class="diagram"><pre class="mermaid">
+erDiagram
+  AssetStocktakeEvent ||--o{ AssetStocktake : "EventCode (FK)"
+  AssetStocktake ||--o{ AssetStocktakeItem : "StocktakeId (FK, cascade)"
+  AssetStocktakeItem ||--o{ AssetStocktakeItemLog : "StocktakeItemId (FK, cascade)"
+  AssetStocktake ||--o{ AssetStocktakeTransfer : "StocktakeId — GĐ2"
+  AssetItem |o..o{ AssetStocktakeItem : "ItemCode — không FK"
+  AssetGroup ||--o{ AssetStocktakeItem : "NewGroupCode (FK)"
+  AssetUsageStatus ||--o{ AssetStocktakeItem : "UsageStatus, NewUsageStatus (FK)"
+</pre></div>
+
+<h3>Những gì đổi so với vỏ đang có trong <code>fl-asset-v5.sql</code></h3>
+<div class="tbl"><table>
+<tr><th>Bảng</th><th>Đổi</th><th>Lý do</th></tr>
+<tr><td><code>AssetStocktakeEvent</code></td><td><code>Status</code> NOT NULL + CHECK; thêm <code>ClosedAt</code>, <code>ClosedUser</code>; CHECK "đã đóng ⇔ có ClosedAt"</td><td>Một cột duy nhất trả lời "đợt còn mở không", backend đọc chính nó</td></tr>
+<tr><td rowspan="4"><code>AssetStocktake</code></td><td>Bỏ <code>StocktakeType</code>, <code>IsCheckByManager</code>, <code>ManagerStaffCode</code>, <code>EventType</code>, <code>DbFiles</code>, <code>Status INT</code></td><td>Di sản cơ chế B; EventType ở V4 luôn <code>THEO_DOT</code>; phiên không có ảnh; Status INT trùng nghĩa IsDeleted</td></tr>
+<tr><td><code>DocNo</code>, <code>EventCode</code>, <code>CheckType</code>, <code>CheckStaffCode</code> NOT NULL; FK tới đợt; CHECK đối tượng khớp kiểu kiểm</td><td>Vỏ để NULL hết, không gì chặn phiên mồ côi</td></tr>
+<tr><td>Thêm <code>Status</code> (chuỗi), <code>StartedAt</code>, <code>CancelledAt</code>, <code>CancelReason</code>, <code>Version</code>, <code>LastSaveRequestId</code></td><td>Mục 04; chống ghi đè và ghi hai lần</td></tr>
+<tr><td>Thêm cột sinh <code>OpenKey</code> + UNIQUE</td><td>Chặn hai phiên đang kiểm trùng ở tầng DB</td></tr>
+<tr><td rowspan="5"><code>AssetStocktakeItem</code></td><td>Bỏ 10 cột lặp bảng cha (CheckType, EventType, EventCode, CompanyCode, StationCode, StaffCode, StationZoneCode, CheckStaffCode, CheckCount, DocNo) và <code>IsCheckByManager</code>, <code>MovementRequestedAt</code>, <code>VerifierActionType</code>, <code>VerifierNote</code>, <code>Content</code></td><td>v2 Thay đổi 2, 3, 7</td></tr>
+<tr><td>Gộp ảnh chụp sổ về một bộ <code>Current*</code> (+ <code>CurrentStationZoneCode</code> mới); bỏ <code>ManagerStaffCode</code>/<code>PositionCode</code> trùng nghĩa</td><td>Vỏ có hai bộ cột cùng nghĩa "sổ đang ghi"; vùng cần cho phiếu <code>INTO_AREA</code> ở GĐ2</td></tr>
+<tr><td>Quyết định thành cột: <code>NewGroupCode</code> (FK), <code>NewDescription</code>, <code>NewUsageStatus</code> (FK), <code>IsNeedReprintLabel</code>, <code>OldItemCode</code></td><td>v2 Thay đổi 2</td></tr>
+<tr><td>Thêm <code>Source</code>, <code>IsDiscrepant</code>, <code>CheckedByStaffCode</code>, <code>TransferInstanceId</code>; <code>ItemCode</code>, <code>UsageStatus</code> cho phép NULL</td><td>Mẫu số báo cáo = dòng <code>DANH_SACH</code>; "lệch" tính một lần ở server; dòng chưa có tài sản</td></tr>
+<tr><td>UNIQUE <code>(StocktakeId, ActiveItemCode)</code> + 4 CHECK</td><td>Chống trùng mã bằng DB; dòng xoá mềm không chặn thêm lại; mã <code>''</code> bị cấm (V4 dùng <code>''</code> cho 1.970 dòng)</td></tr>
+<tr><td><code>AssetStocktakeItemLog</code></td><td>Thêm <code>StocktakeId</code>, <code>SaveRequestId</code>; CHECK <code>LogType</code>; bỏ cột Updated*/IsDeleted</td><td>Log chỉ thêm, không sửa, không xoá</td></tr>
+<tr><td><code>AssetStocktakeAttribute</code></td><td><b>Bỏ bảng</b></td><td>V4: 6 dòng seed 2019, không UI, 7 năm không đổi — là hằng số</td></tr>
+<tr><td><code>AssetItem</code></td><td>Thêm <code>KEY IX_AssetItem_Zone (StationZoneCode, Status)</code></td><td>Câu nạp danh sách theo vùng hiện không có index; đã có <code>IX_AssetItem_Staff</code></td></tr>
+<tr><td><code>AssetStocktakeTransfer</code> (GĐ2)</td><td>Bảng mới, UNIQUE <code>(StocktakeId, GroupKey)</code></td><td>Một phiên nhiều phiếu; sinh lại sau lỗi chỉ tạo nhóm còn thiếu</td></tr>
+</table></div>
+
+<h3>DDL</h3>
+<p>Nguyên văn file <code>kiem-ke-tai-san-v3-ddl.sql</code>. File <code>kiem-ke-tai-san-v3-ap-len-db-da-co.sql</code> dùng cho DB đã có vỏ cũ: nó dừng nếu vỏ có dòng nào, ngược lại xoá vỏ và thêm index cho <code>AssetItem</code>.</p>
+<div class="warnbox"><b>Bẫy:</b> mọi câu trong file là <code>CREATE TABLE IF NOT EXISTS</code>. Trên <code>fl_asset_v5</code> dev (đã có vỏ cũ, 0 dòng theo v2), chạy thẳng file DDL sẽ <b>im lặng giữ vỏ cũ</b>. Phải chạy file áp-lên-DB-đã-có trước.</div>
+<details open><summary>kiem-ke-tai-san-v3-ddl.sql</summary>
+<pre class="sql">-- =============================================================================================
+-- Kiểm kê CCDC V5 — DDL thiết kế v3 (15/11/2026)
+-- Đặc tả: coordination/kiem-ke-tai-san-v3.html, mục 05.
+--
+-- Dùng thế nào:
+--   * Thay NGUYÊN khối AssetStocktakeEvent / AssetStocktakeAttribute / AssetStocktake /
+--     AssetStocktakeItem / AssetStocktakeItemLog trong scripts/sql/asset/fl-asset-v5.sql bằng
+--     khối GĐ1 dưới đây. AssetStocktakeAttribute bị bỏ hẳn.
+--   * Thêm dòng  KEY IX_AssetItem_Zone (StationZoneCode, Status),  vào CREATE TABLE AssetItem.
+--   * DB ĐÃ có vỏ cũ (fl_asset_v5 dev): CREATE TABLE IF NOT EXISTS sẽ IM LẶNG bỏ qua và giữ vỏ
+--     cũ. Phải chạy kiem-ke-tai-san-v3-ap-len-db-da-co.sql trước.
+--   * Khối GĐ2 (AssetStocktakeTransfer) chỉ tạo khi làm phần sinh phiếu điều chuyển.
+--
+-- Đã chạy thử trên MySQL 8.0 sạch (container dùng một lần), sau khi chạy fl-asset-v5.sql của
+-- fastlink-erp-api HEAD 6fce8bf1 — kết quả và các phép thử ràng buộc ở mục 05 của đặc tả.
+-- =============================================================================================
+
+-- ---------------------------------------------------------------------------------------------
+-- GĐ1
+-- ---------------------------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS AssetStocktakeEvent (
+  Id                            VARCHAR(64)   NOT NULL,
+  Code                          VARCHAR(64)   NOT NULL COMMENT 'Mã đợt, sinh qua ISequenceClient',
+  Name                          VARCHAR(128)  NOT NULL,
+  Note                          VARCHAR(1024) NULL,
+  Status                        VARCHAR(32)   NOT NULL DEFAULT 'DANG_KIEM_KE' COMMENT 'DANG_KIEM_KE | DA_HOAN_THANH. Backend đọc chính cột này để chặn mọi lời gọi ghi',
+  ClosedAt                      DATETIME(6)   NULL,
+  ClosedUser                    VARCHAR(64)   NULL,
+  CreatedTime                   DATETIME(6)   NOT NULL,
+  CreatedUser                   VARCHAR(64)   NULL,
+  UpdatedTime                   DATETIME(6)   NULL,
+  UpdatedUser                   VARCHAR(64)   NULL,
+  IsDeleted                     BIT           NOT NULL DEFAULT 0,
+  DeletedTime                   DATETIME(6)   NULL,
+  DeletedUser                   VARCHAR(64)   NULL,
+  PRIMARY KEY (Id),
+  UNIQUE KEY UX_AssetStocktakeEvent_Code (Code),
+  KEY IX_AssetStocktakeEvent_Status (Status),
+  CONSTRAINT CK_AssetStocktakeEvent_Status CHECK (Status IN ('DANG_KIEM_KE', 'DA_HOAN_THANH')),
+  CONSTRAINT CK_AssetStocktakeEvent_Closed CHECK ((Status = 'DA_HOAN_THANH') = (ClosedAt IS NOT NULL))
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_as_ci;
+
+CREATE TABLE IF NOT EXISTS AssetStocktake (
+  Id                            VARCHAR(64)   NOT NULL,
+  DocNo                         VARCHAR(64)   NOT NULL COMMENT 'Số phiên, sinh qua ISequenceClient',
+  EventCode                     VARCHAR(64)   NOT NULL,
+  CheckType                     VARCHAR(32)   NOT NULL COMMENT 'BY_STAFF | BY_STATION_ZONE (giữ đúng từ vựng V4)',
+  StaffCode                     VARCHAR(64)   NULL COMMENT 'Đối tượng kiểm khi BY_STAFF',
+  StationZoneCode               VARCHAR(64)   NULL COMMENT 'Đối tượng kiểm khi BY_STATION_ZONE',
+  CompanyCode                   VARCHAR(64)   NULL COMMENT 'Ảnh chụp công ty của đối tượng lúc mở phiên',
+  StationCode                   VARCHAR(64)   NULL COMMENT 'Ảnh chụp đơn vị của đối tượng lúc mở phiên',
+  CheckStaffCode                VARCHAR(64)   NOT NULL COMMENT 'Người đi kiểm = người mở phiên',
+  Status                        VARCHAR(32)   NOT NULL DEFAULT 'DANG_KIEM' COMMENT 'DANG_KIEM | DA_CHOT | DA_HUY',
+  StartedAt                     DATETIME(6)   NOT NULL,
+  CheckedAt                     DATETIME(6)   NULL COMMENT 'Lúc chốt. NULL khi chưa chốt hoặc đã mở lại',
+  CancelledAt                   DATETIME(6)   NULL,
+  CancelReason                  VARCHAR(512)  NULL,
+  Version                       INT           NOT NULL DEFAULT 0 COMMENT 'Tăng 1 mỗi lần lưu thành công; client gửi kèm để không ghi đè lẫn nhau',
+  LastSaveRequestId             VARCHAR(64)   NULL COMMENT 'RequestId của lần lưu gần nhất; gửi lại đúng Id đó thì trả lại kết quả, không ghi lần hai',
+  IsMovementRequired            BIT           NOT NULL DEFAULT 0 COMMENT 'Tính lúc chốt: có ít nhất một dòng IsDiscrepant = 1',
+  MovementRequestedAt           DATETIME(6)   NULL COMMENT 'GĐ2: lúc bắt đầu sinh phiếu điều chuyển',
+  Note                          VARCHAR(1024) NULL,
+  CreatedTime                   DATETIME(6)   NOT NULL,
+  CreatedUser                   VARCHAR(64)   NULL,
+  UpdatedTime                   DATETIME(6)   NULL,
+  UpdatedUser                   VARCHAR(64)   NULL,
+  IsDeleted                     BIT           NOT NULL DEFAULT 0,
+  DeletedTime                   DATETIME(6)   NULL,
+  DeletedUser                   VARCHAR(64)   NULL,
+  OpenKey                       VARCHAR(400)  GENERATED ALWAYS AS (
+                                  IF(Status = 'DANG_KIEM' AND IsDeleted = 0,
+                                     CONCAT_WS('|', EventCode, CheckType, IFNULL(StaffCode, ''), IFNULL(StationZoneCode, ''), CheckStaffCode),
+                                     NULL)) STORED COMMENT 'Một người chỉ có MỘT phiên đang kiểm cho mỗi (đợt, đối tượng)',
+  PRIMARY KEY (Id),
+  UNIQUE KEY UX_AssetStocktake_Doc (DocNo),
+  UNIQUE KEY UX_AssetStocktake_Open (OpenKey),
+  KEY IX_AssetStocktake_Event (EventCode, Status),
+  KEY IX_AssetStocktake_CheckStaff (CheckStaffCode, Status),
+  KEY IX_AssetStocktake_Staff (StaffCode),
+  KEY IX_AssetStocktake_Zone (StationZoneCode),
+  CONSTRAINT FK_AssetStocktake_Event FOREIGN KEY (EventCode) REFERENCES AssetStocktakeEvent (Code),
+  CONSTRAINT CK_AssetStocktake_Status CHECK (Status IN ('DANG_KIEM', 'DA_CHOT', 'DA_HUY')),
+  CONSTRAINT CK_AssetStocktake_Target CHECK (
+       (CheckType = 'BY_STAFF'        AND StaffCode IS NOT NULL       AND StationZoneCode IS NULL)
+    OR (CheckType = 'BY_STATION_ZONE' AND StationZoneCode IS NOT NULL AND StaffCode IS NULL)),
+  CONSTRAINT CK_AssetStocktake_Checked   CHECK ((Status = 'DA_CHOT') = (CheckedAt IS NOT NULL)),
+  CONSTRAINT CK_AssetStocktake_Cancelled CHECK ((Status = 'DA_HUY')  = (CancelledAt IS NOT NULL))
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_as_ci;
+
+CREATE TABLE IF NOT EXISTS AssetStocktakeItem (
+  Id                            VARCHAR(64)   NOT NULL COMMENT 'Server sinh cho dòng nạp từ danh sách; CLIENT sinh (UUID) cho dòng THEM để gửi lại không tạo trùng',
+  StocktakeId                   VARCHAR(64)   NOT NULL,
+  Source                        VARCHAR(16)   NOT NULL COMMENT 'DANH_SACH = nạp lúc mở phiên | THEM = người kiểm thêm ngoài danh sách',
+  ItemCode                      VARCHAR(64)   NULL COMMENT 'NULL chỉ khi THEM_KHONG_TON_TAI chưa có mã. Không FK: THEM_KHONG_TON_TAI có thể mang mã chưa có trên AssetItem',
+  -- Ảnh chụp sổ tài sản lúc nạp / lúc tra (không đổi theo tài sản về sau)
+  ItemDescription               VARCHAR(512)  NULL,
+  GroupCode                     VARCHAR(64)   NULL,
+  UsageStatus                   INT           NULL COMMENT 'Tình trạng trên sổ lúc kiểm. NULL khi tài sản chưa có trên hệ',
+  OwnerCompanyCode              VARCHAR(64)   NULL,
+  CurrentStaffCode              VARCHAR(64)   NULL COMMENT 'Sổ đang ghi ai giữ',
+  CurrentManagerStaffCode       VARCHAR(64)   NULL,
+  CurrentPositionCode           VARCHAR(64)   NULL,
+  CurrentStationZoneCode        VARCHAR(64)   NULL,
+  -- Kết quả người kiểm ghi
+  ActionType                    VARCHAR(32)   NULL COMMENT 'NULL = chưa kiểm | CO | CO_HONG | KHONG_CO | THEM_CO_TON_TAI | THEM_KHONG_TON_TAI',
+  NewGroupCode                  VARCHAR(64)   NULL,
+  NewDescription                VARCHAR(512)  NULL,
+  NewUsageStatus                INT           NULL,
+  IsNeedReprintLabel            BIT           NOT NULL DEFAULT 0,
+  OldItemCode                   VARCHAR(64)   NULL COMMENT 'Mã cũ dán trên tài sản (V4: content.OLD_CODE)',
+  Note                          VARCHAR(1024) NULL,
+  DbFiles                       TEXT          NULL COMMENT 'Mảng AssetItemFileDto (JSON), cùng định dạng AssetItem.DbFiles; tối đa 5',
+  -- Server tính lại mỗi lần lưu, KHÔNG nhận từ client
+  IsDiscrepant                  BIT           NOT NULL DEFAULT 0 COMMENT 'Dòng lệch theo định nghĩa mục 06',
+  IsNeedVerifierConfirm         BIT           NOT NULL DEFAULT 0 COMMENT 'Phân công, không phải trạng thái duyệt',
+  VerifierStaffCode             VARCHAR(64)   NULL,
+  CheckedByStaffCode            VARCHAR(64)   NULL,
+  CheckedAt                     DATETIME(6)   NULL COMMENT 'Lần cuối dòng này đổi kết quả',
+  SortOrder                     INT           NOT NULL DEFAULT 0,
+  TransferInstanceId            VARCHAR(64)   NULL COMMENT 'GĐ2: phiếu điều chuyển dòng này đã đi vào',
+  CreatedTime                   DATETIME(6)   NOT NULL,
+  CreatedUser                   VARCHAR(64)   NULL,
+  UpdatedTime                   DATETIME(6)   NULL,
+  UpdatedUser                   VARCHAR(64)   NULL,
+  IsDeleted                     BIT           NOT NULL DEFAULT 0 COMMENT 'Chỉ dòng THEM được xoá (mềm)',
+  DeletedTime                   DATETIME(6)   NULL,
+  DeletedUser                   VARCHAR(64)   NULL,
+  ActiveItemCode                VARCHAR(64)   GENERATED ALWAYS AS (IF(IsDeleted = 0, ItemCode, NULL)) STORED
+                                              COMMENT 'Để dòng THEM đã xoá mềm không chặn việc thêm lại cùng mã',
+  PRIMARY KEY (Id),
+  UNIQUE KEY UX_AssetStocktakeItem_Code (StocktakeId, ActiveItemCode),
+  KEY IX_AssetStocktakeItem_Item (ItemCode),
+  KEY IX_AssetStocktakeItem_Discrepant (StocktakeId, IsDiscrepant),
+  KEY IX_AssetStocktakeItem_Verifier (VerifierStaffCode),
+  CONSTRAINT FK_AssetStocktakeItem_Parent   FOREIGN KEY (StocktakeId)    REFERENCES AssetStocktake (Id) ON DELETE CASCADE,
+  CONSTRAINT FK_AssetStocktakeItem_Usage    FOREIGN KEY (UsageStatus)    REFERENCES AssetUsageStatus (Code),
+  CONSTRAINT FK_AssetStocktakeItem_NewUsage FOREIGN KEY (NewUsageStatus) REFERENCES AssetUsageStatus (Code),
+  CONSTRAINT FK_AssetStocktakeItem_NewGroup FOREIGN KEY (NewGroupCode)   REFERENCES AssetGroup (Code),
+  CONSTRAINT CK_AssetStocktakeItem_Source CHECK (Source IN ('DANH_SACH', 'THEM')),
+  -- IFNULL bắt buộc: CHECK chỉ báo vi phạm khi biểu thức là FALSE; NULL được cho qua.
+  CONSTRAINT CK_AssetStocktakeItem_Action CHECK (
+       (Source = 'DANH_SACH' AND IFNULL(ActionType, 'CHUA_KIEM') IN ('CHUA_KIEM', 'CO', 'CO_HONG', 'KHONG_CO'))
+    OR (Source = 'THEM'      AND IFNULL(ActionType, '')          IN ('THEM_CO_TON_TAI', 'THEM_KHONG_TON_TAI'))),
+  CONSTRAINT CK_AssetStocktakeItem_Code CHECK (ItemCode IS NOT NULL OR IFNULL(ActionType, '') = 'THEM_KHONG_TON_TAI'),
+  CONSTRAINT CK_AssetStocktakeItem_NotBlank CHECK (ItemCode IS NULL OR ItemCode &lt;&gt; '')
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_as_ci;
+
+CREATE TABLE IF NOT EXISTS AssetStocktakeItemLog (
+  Id                            VARCHAR(64)   NOT NULL,
+  StocktakeId                   VARCHAR(64)   NOT NULL,
+  StocktakeItemId               VARCHAR(64)   NOT NULL,
+  LogType                       VARCHAR(16)   NOT NULL COMMENT 'TAO | SUA | XOA',
+  LoggedAt                      DATETIME(6)   NOT NULL,
+  LoggedByStaffCode             VARCHAR(64)   NULL,
+  SaveRequestId                 VARCHAR(64)   NULL COMMENT 'Lần lưu đã sinh ra dòng log này',
+  ChangedFields                 JSON          NULL COMMENT '{"Cột": [cũ, mới]} — chỉ cột đổi',
+  CreatedTime                   DATETIME(6)   NOT NULL,
+  CreatedUser                   VARCHAR(64)   NULL,
+  PRIMARY KEY (Id),
+  KEY IX_AssetStocktakeItemLog_Item (StocktakeItemId, LoggedAt),
+  KEY IX_AssetStocktakeItemLog_Stocktake (StocktakeId, LoggedAt),
+  CONSTRAINT FK_AssetStocktakeItemLog_Item FOREIGN KEY (StocktakeItemId) REFERENCES AssetStocktakeItem (Id) ON DELETE CASCADE,
+  CONSTRAINT CK_AssetStocktakeItemLog_Type CHECK (LogType IN ('TAO', 'SUA', 'XOA'))
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_as_ci;
+
+-- ---------------------------------------------------------------------------------------------
+-- GĐ2 — chỉ tạo khi làm phần sinh phiếu điều chuyển (sau khi nghiệp vụ trả lời câu 2)
+-- ---------------------------------------------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS AssetStocktakeTransfer (
+  Id                            VARCHAR(64)   NOT NULL,
+  StocktakeId                   VARCHAR(64)   NOT NULL,
+  GroupKey                      VARCHAR(512)  NOT NULL COMMENT 'Khoá tách phiếu: kiểu|nhóm|công ty|người quản lý|vị trí|người giữ',
+  ChangeType                    VARCHAR(64)   NOT NULL COMMENT 'AssetPositionChangeType',
+  Status                        VARCHAR(16)   NOT NULL DEFAULT 'DANG_TAO' COMMENT 'DANG_TAO | DA_TAO | LOI',
+  InstanceId                    VARCHAR(64)   NULL COMMENT 'WorkflowInstance của phiếu; NULL khi chưa tạo được',
+  ItemCount                     INT           NOT NULL,
+  ErrorMessage                  VARCHAR(1024) NULL,
+  CreatedTime                   DATETIME(6)   NOT NULL,
+  CreatedUser                   VARCHAR(64)   NULL,
+  UpdatedTime                   DATETIME(6)   NULL,
+  UpdatedUser                   VARCHAR(64)   NULL,
+  PRIMARY KEY (Id),
+  UNIQUE KEY UX_AssetStocktakeTransfer_Group (StocktakeId, GroupKey),
+  UNIQUE KEY UX_AssetStocktakeTransfer_Instance (InstanceId),
+  CONSTRAINT FK_AssetStocktakeTransfer_Stocktake FOREIGN KEY (StocktakeId) REFERENCES AssetStocktake (Id),
+  CONSTRAINT CK_AssetStocktakeTransfer_Status CHECK (Status IN ('DANG_TAO', 'DA_TAO', 'LOI')),
+  CONSTRAINT CK_AssetStocktakeTransfer_Instance CHECK ((Status = 'DA_TAO') = (InstanceId IS NOT NULL))
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_as_ci;</pre>
+</details>
+
+<h3>Đã chạy thử</h3>
+<p><span class="chip c-ok">ĐO</span> 15/11/2026, MySQL <code>8.0.46</code> sạch trong container dùng một lần (image <code>mysql:8.0</code> có sẵn trên máy, không mở cổng, xoá sau khi chạy). Trình tự: chạy <code>fl-asset-v5.sql</code> của HEAD <code>6fce8bf1</code> → chèn một dòng vào vỏ cũ → file áp-lên-DB-đã-có <b>dừng ở chốt chặn</b> (<code>ERROR 1242</code>, 5 bảng vỏ còn nguyên) → xoá dòng → chạy lại: xoá vỏ, thêm index → chạy DDL v3 (và chạy lần hai: không lỗi) → 30 ca ghi thử. Kết quả: <b>30/30 ca đúng mong đợi</b>, 13 CHECK được tạo. Script và output: <code>ket-qua/2026-11-15-kiem-ke-v3-chay-thu-ddl/</code>.</p>
+<details><summary>30 ca ghi thử</summary>
+<div class="tbl" style="margin:0 12px 12px"><table>
+<tr><th>Ca</th><th>Mong đợi</th><th>Kết quả</th></tr>
+<tr><td>đợt hợp lệ</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>đợt Status lạ</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Check constraint &#x27;CK_AssetStocktakeEvent_Status&#x27;</code></td></tr>
+<tr><td>đợt DA_HOAN_THANH thiếu ClosedAt</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Check constraint &#x27;CK_AssetStocktakeEvent_Closed&#x27;</code></td></tr>
+<tr><td>phiên BY_STAFF đang kiểm</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>phiên đang kiểm thứ hai cùng khoá</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Duplicate entry</code></td></tr>
+<tr><td>cùng khoá nhưng người kiểm khác</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>cùng khoá, phiên cũ đã chốt</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>DA_CHOT thiếu CheckedAt</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Check constraint &#x27;CK_AssetStocktake_Checked&#x27;</code></td></tr>
+<tr><td>BY_STAFF mà mang vùng</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Check constraint &#x27;CK_AssetStocktake_Target&#x27;</code></td></tr>
+<tr><td>đợt không tồn tại (FK)</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>foreign key constraint fails</code></td></tr>
+<tr><td>huỷ s1 rồi mở lại đúng khoá đó</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>dòng DANH_SACH chưa kiểm</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>dòng DANH_SACH CO</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>DANH_SACH mà THEM_CO_TON_TAI</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Check constraint &#x27;CK_AssetStocktakeItem_Action&#x27;</code></td></tr>
+<tr><td>THEM mà ActionType NULL</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Check constraint &#x27;CK_AssetStocktakeItem_Action&#x27;</code></td></tr>
+<tr><td>DANH_SACH mà không mã</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Check constraint &#x27;CK_AssetStocktakeItem_Code&#x27;</code></td></tr>
+<tr><td>THEM_KHONG_TON_TAI không mã #1</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>THEM_KHONG_TON_TAI không mã #2</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>mã rỗng &#x27;&#x27;</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Check constraint &#x27;CK_AssetStocktakeItem_NotBlank&#x27;</code></td></tr>
+<tr><td>trùng mã trong phiên</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Duplicate entry</code></td></tr>
+<tr><td>cùng mã ở phiên khác</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>thêm THEM, xoá mềm, thêm lại cùng mã</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>NewUsageStatus = 3 (đã bỏ)</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>foreign key constraint fails</code></td></tr>
+<tr><td>NewUsageStatus = 0 + nhóm có thật</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>NewGroupCode không tồn tại</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>foreign key constraint fails</code></td></tr>
+<tr><td>log hợp lệ</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>log LogType lạ</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Check constraint &#x27;CK_AssetStocktakeItemLog_Type&#x27;</code></td></tr>
+<tr><td>GĐ2 nhóm phiếu đang tạo</td><td>ghi được</td><td><span class="chip c-ok">ĐÚNG</span> <code>rc=0</code></td></tr>
+<tr><td>GĐ2 trùng GroupKey trong phiên</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Duplicate entry</code></td></tr>
+<tr><td>GĐ2 DA_TAO thiếu InstanceId</td><td>bị chặn</td><td><span class="chip c-ok">ĐÚNG</span> <code>Check constraint &#x27;CK_AssetStocktakeTransfer_Instance&#x27;</code></td></tr>
+</table></div>
+</details>
+
+<h3>Ghi chú cho entity (EF Core)</h3>
+<ul>
+  <li><code>OpenKey</code>, <code>ActiveItemCode</code> là cột sinh <code>STORED</code>: map chỉ đọc (<code>ValueGeneratedOnAddOrUpdate</code>, không đưa vào INSERT/UPDATE). Ghi vào sẽ lỗi 3105. <span class="chip c-info">KIỂM</span> cách module đang map bảng (map-only hay migration) trước khi viết.</li>
+  <li><code>Version</code> là concurrency token: <code>UPDATE … WHERE Id = @id AND Version = @v</code>, 0 dòng ảnh hưởng ⇒ <code>STALE_VERSION</code>.</li>
+  <li>Bắt riêng MySQL lỗi 1062 trên <code>UX_AssetStocktake_Open</code> ở <code>start</code> (hai lời gọi cùng lúc): đọc lại và trả phiên đang có. Lỗi 1062 trên <code>UX_AssetStocktakeItem_Code</code> ở <code>save</code> ⇒ <code>DUPLICATE_ITEM_CODE</code>. Không dùng <code>INSERT IGNORE</code>.</li>
+  <li><code>DbFiles</code>: cùng định dạng <code>AssetItem.DbFiles</code> (mảng <code>AssetItemFileDto</code>). Lưu ý cột đó trên <code>AssetItem</code> đang ghi chú "Sẽ bỏ" — xem câu hỏi ở mục 15.</li>
+</ul>
+</section>
+
+<!-- ============================================================ 06 -->
+<section id="nghiep-vu">
+<h2><span class="n">06</span>Quy tắc nghiệp vụ</h2>
+
+<h3>Danh sách cần kiểm (khi <code>start</code> tạo phiên)</h3>
+<pre class="sql">SELECT … FROM AssetItem
+WHERE IsDeleted = 0 AND Status = 1
+  AND UsageStatus NOT IN (-20, -1, 5)        -- UsageStatusCode.Excluded: KhongTheoDoi, Mat, DaThanhLy
+  AND StaffCode = @staff                     -- BY_STAFF
+   -- hoặc StationZoneCode = @zone           -- BY_STATION_ZONE
+ORDER BY GroupCode, Code;</pre>
+<ul>
+  <li>Bộ lọc này đúng bằng tập V4 lọc từ 12/2025: V4 loại thêm mã 3 (Chờ thanh lý đang dùng), V5 đã bỏ mã 3. <code>LIKE 'TSHN%'</code> không mang sang: V5 chỉ có mã TSHN2 nên nó không lọc gì (v2).</li>
+  <li>Vùng phải đang hoạt động. <code>IStationZoneReader.GetActiveAsync</code> chỉ lọc <code>status = 1</code>; V4 còn kiểm hiệu lực <code>FromDate/ToDate</code>. <span class="chip c-info">KIỂM</span> bảng vùng trong <code>fl_core</code> có hai cột đó không; có thì thêm điều kiện.</li>
+  <li>Mỗi tài sản thành một dòng <code>Source = DANH_SACH</code>, chụp: <code>ItemDescription, GroupCode, UsageStatus, OwnerCompanyCode (= AssetItem.CompanyCode), CurrentStaffCode, CurrentManagerStaffCode, CurrentPositionCode, CurrentStationZoneCode</code>. <code>SortOrder</code> theo thứ tự trên.</li>
+</ul>
+
+<h3>Giá trị mặc định server điền khi client để trống</h3>
+<div class="tbl"><table>
+<tr><th>ActionType</th><th>NewGroupCode</th><th>NewDescription</th><th>NewUsageStatus</th></tr>
+<tr><td><code>CO</code></td><td>= GroupCode</td><td>= ItemDescription</td><td>= UsageStatus</td></tr>
+<tr><td><code>CO_HONG</code></td><td>= GroupCode</td><td>= ItemDescription</td><td><b>ép 0 (Hỏng)</b></td></tr>
+<tr><td><code>KHONG_CO</code></td><td>= GroupCode</td><td>= ItemDescription</td><td>= UsageStatus (đổi sang Mất là việc của GĐ2)</td></tr>
+<tr><td><code>THEM_CO_TON_TAI</code></td><td>= GroupCode (chụp lúc lưu)</td><td>= ItemDescription</td><td>= UsageStatus</td></tr>
+<tr><td><code>THEM_KHONG_TON_TAI</code></td><td colspan="3"><b>Bắt buộc client gửi cả ba</b> — không có gì để chụp</td></tr>
+</table></div>
+<p>Khác V4: V4 bắt client gửi nhóm và mô tả cho mọi dòng. V5 điền mặc định, app gửi ít hơn và không thể lỡ tay xoá giá trị.</p>
+
+<h3>Luật khi lưu — mỗi luật một mã lỗi</h3>
+<div class="tbl"><table>
+<tr><th>Mã</th><th>Luật</th><th>Ghi chú</th></tr>
+<tr><td><code>STOCKTAKE_NOT_EDITABLE</code></td><td>Phiên phải ở <code>DANG_KIEM</code></td><td></td></tr>
+<tr><td><code>EVENT_CLOSED</code></td><td>Đợt phải ở <code>DANG_KIEM_KE</code></td><td>Sửa lỗi V4 (is_complete)</td></tr>
+<tr><td><code>NOT_OWNER</code></td><td>Người gọi phải là <code>CheckStaffCode</code></td><td>V4 không kiểm</td></tr>
+<tr><td><code>STALE_VERSION</code></td><td><code>version</code> gửi lên phải bằng <code>Version</code> hiện tại</td><td>Trả kèm <code>currentVersion</code></td></tr>
+<tr><td><code>ITEM_NOT_IN_STOCKTAKE</code></td><td>Dòng <code>DANH_SACH</code> phải thuộc phiên này</td><td></td></tr>
+<tr><td><code>ACTION_NOT_ALLOWED</code></td><td><code>DANH_SACH</code> ⇒ NULL / CO / CO_HONG / KHONG_CO; <code>THEM</code> ⇒ THEM_CO_TON_TAI / THEM_KHONG_TON_TAI</td><td>DB CHECK là chốt cuối</td></tr>
+<tr><td><code>DUPLICATE_ITEM_CODE</code></td><td>Không trùng mã trong phiên</td><td>DB UNIQUE là chốt cuối</td></tr>
+<tr><td><code>ITEM_NOT_FOUND</code></td><td><code>THEM_CO_TON_TAI</code>: mã phải có trên <code>AssetItem</code>, <code>Status = 1</code></td><td></td></tr>
+<tr><td><code>ITEM_ALREADY_EXISTS</code></td><td><code>THEM_KHONG_TON_TAI</code> có mã mà mã đã có trên <code>AssetItem</code> ⇒ báo lỗi, bảo người kiểm chọn <code>THEM_CO_TON_TAI</code></td><td>V4 <code>:763</code> viết hỏng, để lọt 3 dòng <span class="chip c-ok">ĐO</span></td></tr>
+<tr><td><code>ITEM_CODE_INVALID</code></td><td>Mã của <code>THEM_KHONG_TON_TAI</code> (nếu có) đúng định dạng mã tài sản</td><td><span class="chip c-info">KIỂM</span> quy tắc định dạng ở <code>IAssetCodeGenerator</code></td></tr>
+<tr><td><code>FIELD_REQUIRED</code></td><td><code>THEM_KHONG_TON_TAI</code> phải có NewGroupCode, NewDescription, NewUsageStatus</td><td></td></tr>
+<tr><td><code>GROUP_NOT_LEAF</code></td><td>NewGroupCode không được là nhóm có nhóm con</td><td>Như V4. <code>AssetGroupDto.ParentCode</code> có sẵn để app lọc</td></tr>
+<tr><td><code>USAGE_STATUS_NOT_ALLOWED</code></td><td>NewUsageStatus ∈ {0, 1, 2, 4}</td><td><span class="chip c-warn">CHỐT</span> Kiểm kê không đặt Mất / Thanh lý / Không theo dõi. "Không thấy" đã có <code>KHONG_CO</code></td></tr>
+<tr><td><code>CO_HONG_ON_BROKEN</code></td><td>Tài sản đang Hỏng (UsageStatus = 0) không được chọn <code>CO_HONG</code></td><td>Như V4</td></tr>
+<tr><td><code>TOO_MANY_FILES</code></td><td>≤ 5 ảnh mỗi dòng</td><td>224/68.162 dòng V4 có ảnh <span class="chip c-ok">ĐO</span></td></tr>
+<tr><td><code>DELETE_NOT_ALLOWED</code></td><td>Chỉ xoá được dòng <code>THEM</code>; dòng <code>DANH_SACH</code> muốn bỏ thì đặt ActionType về NULL</td><td></td></tr>
+</table></div>
+<p>Lỗi gom lại trả một lần, mỗi lỗi kèm <code>itemId</code> và <code>itemCode</code> (sửa bug V4 <code>:676-677</code> in "True, False" thay cho mã). <b>Lưu là nguyên tử</b>: một dòng lỗi thì không dòng nào được ghi.</p>
+
+<h3>Giá trị server tự tính lại mỗi lần lưu — không nhận từ client</h3>
+<ul>
+  <li><b><code>IsDiscrepant</code></b> = 1 khi có ít nhất một điều: <code>ActionType</code> ∈ {KHONG_CO, CO_HONG, THEM_CO_TON_TAI, THEM_KHONG_TON_TAI}; <code>NewUsageStatus ≠ UsageStatus</code>; <code>NewGroupCode ≠ GroupCode</code>; <code>TRIM(NewDescription) ≠ TRIM(ItemDescription)</code>; <code>IsNeedReprintLabel = 1</code>. Dòng chưa kiểm luôn 0. Định nghĩa từ v2 mục 03: riêng dòng <code>CO</code> trên V4 đã có 122 đổi tình trạng, 267 đổi nhóm, 223 đổi mô tả <span class="chip c-ok">ĐO</span>.</li>
+  <li><b><code>IsNeedVerifierConfirm</code></b> = 1 khi (<code>CO_HONG</code> và UsageStatus ≠ 0) hoặc (<code>THEM_*</code> và NewUsageStatus = 0). Khi đó <code>VerifierStaffCode = IAssetVerifierResolver.ResolveAsync(NewGroupCode, OwnerCompanyCode ?? phiên.CompanyCode)</code>. Tính lại cả chiều tắt: V4 không bao giờ xoá cờ nên còn 72/410 cờ rác <span class="chip c-ok">ĐO</span>.</li>
+  <li><b><code>CheckedByStaffCode</code>, <code>CheckedAt</code></b>: ghi khi ActionType hoặc một ô New* đổi.</li>
+  <li><b>Ảnh chụp</b> của dòng <code>THEM_CO_TON_TAI</code>: lấy từ <code>AssetItem</code> lúc lưu lần đầu, không lấy từ client.</li>
+  <li><b>Log</b>: mỗi dòng tạo / sửa / xoá sinh một dòng <code>AssetStocktakeItemLog</code> trong cùng transaction, <code>ChangedFields</code> chỉ chứa cột đổi, kèm <code>SaveRequestId</code>.</li>
+</ul>
+</section>
+
+<!-- ============================================================ 07 -->
+<section id="api-quy-uoc">
+<h2><span class="n">07</span>API — quy ước (đọc từ code V5)</h2>
+<p>Đọc tại <code>fastlink-erp-api</code> HEAD <code>6fce8bf1</code>, ngày 15/11/2026 <span class="chip c-ok">ĐO</span>:</p>
+<div class="tbl"><table>
+<tr><th>Thứ</th><th>Quy ước đang chạy</th><th>Nguồn</th></tr>
+<tr><td>Framework</td><td>FastEndpoints (REPR), FluentValidation, EF Core + MySQL</td><td><code>CLAUDE.md</code></td></tr>
+<tr><td>Thư mục</td><td><code>Apps/AssetManagement.Api/Endpoints/&lt;Tài nguyên&gt;/&lt;Thao tác&gt;/</code>, mỗi thư mục một <code>*Endpoint.cs</code> + <code>*RequestValidator.cs</code> khi cần</td><td><code>Endpoints/AssetItem/Update/</code></td></tr>
+<tr><td>Route</td><td>Hằng trong <code>Endpoints/Constants/</code>, gốc <code>/api/v1/asset-management</code>, đuôi động từ: <code>/search</code>, <code>/create</code>, <code>/update</code>, <code>/delete</code></td><td><code>AssetItemConsts.cs</code>, <code>AssetManagementConsts.cs</code></td></tr>
+<tr><td>Kiểu endpoint</td><td><code>PostEndpointBase&lt;TRequest, ApiResult&lt;TResponse&gt;&gt;</code>; <code>Group = AssetManagementConsts.GroupKeyAdmin</code></td><td><code>UpdateAssetItemEndpoint.cs</code></td></tr>
+<tr><td>Lỗi nghiệp vụ</td><td>Nằm trong <code>ApiResult</code>, HTTP 200. Không dùng 409. Factory hay dùng: <code>Result.Ok / DataError / InvalidParameter / NotFound / AccessDenied / AlreadyExists</code></td><td><code>CLAUDE.md</code>; đếm <code>Result.*(</code> trong Modules + Apps</td></tr>
+<tr><td>Người gọi</td><td><code>this.GetUserName()</code> ở endpoint, truyền xuống service</td><td><code>UpdateAssetItemEndpoint.cs</code></td></tr>
+<tr><td>Xác thực</td><td><b>Hai kiểu đang cùng tồn tại:</b> <code>AssetItem/*</code> dùng <code>IsAuthenticationRequired =&gt; !Env.IsDevelopment()</code> (dev bỏ xác thực); <code>AssetTransfer/*</code> dùng <code>AuthSchemes(Cookie, JwtBearer)</code></td><td><code>StartAssetTransferEndpoint.cs</code></td></tr>
+<tr><td>Kiểm quyền</td><td><code>IAssetPermissionService.HasPermissionAsync(userName, resourceName)</code> trong service; tên quyền là hằng trong code</td><td><code>AssetTransferFlow.cs:533</code>, <code>AssetTransferConsts.cs:67</code></td></tr>
+<tr><td>Số chứng từ</td><td><code>ISequenceClient</code>, gói sau một interface hẹp như <code>IAssetCodeGenerator</code></td><td><code>AssetCodeGenerator.cs</code></td></tr>
+<tr><td>Tệp đính kèm</td><td>Upload base64 qua <code>POST /asset-item/files/upload</code> ⇒ tệp <code>Pending</code>; lưu bản ghi xong gọi <code>IAssetFileService.ConfirmAsync</code> ⇒ <code>Active</code>. Quên bước xác nhận thì tệp mất sau vài ngày</td><td><code>IAssetFileService.cs</code></td></tr>
+</table></div>
+<p><span class="chip c-warn">CHỐT</span> Endpoint kiểm kê dùng kiểu xác thực của <code>AssetTransfer</code> (Cookie + JWT, luôn bật). Kiểu <code>!Env.IsDevelopment()</code> làm <code>GetUserName()</code> rỗng ở dev, mà <code>CheckStaffCode</code> NOT NULL — dev sẽ không chạy được, hoặc tệ hơn, ai đó nới cột ra NULL. Mobile cần JWT.</p>
+</section>
+
+<!-- ============================================================ 08 -->
+<section id="api">
+<h2><span class="n">08</span>API — danh sách và hợp đồng</h2>
+<p>Gốc: <code>/api/v1/asset-management/stocktake</code>. Mọi endpoint là POST trừ khi ghi khác.</p>
+
+<h3>Danh sách</h3>
+<div class="tbl"><table>
+<tr><th>#</th><th>Route</th><th>Việc</th><th>Ai gọi</th><th>Quyền</th><th>GĐ</th><th>Thay cho V4</th></tr>
+<tr><td>M1</td><td><code>/event/open</code></td><td>Đợt đang <code>DANG_KIEM_KE</code></td><td>Mobile</td><td>phien:thuc_hien</td><td>1</td><td><code>AsCheckAssetGetNotCompleteEvent</code></td></tr>
+<tr><td>M2</td><td><code>/start</code></td><td>Mở phiên hoặc lấy lại phiên dở của mình; trả danh sách</td><td>Mobile</td><td>phien:thuc_hien</td><td>1</td><td><code>AsAdminCheckGetCheckAssetByStaffCode</code></td></tr>
+<tr><td>M3</td><td><code>/mine</code></td><td>Các phiên <code>DANG_KIEM</code> của chính người gọi (đổi máy vẫn làm tiếp được)</td><td>Mobile</td><td>phien:thuc_hien</td><td>1</td><td>—</td></tr>
+<tr><td>M4</td><td><code>/get</code></td><td>Một phiên kèm mọi dòng</td><td>Mobile, Web</td><td>chủ phiên, hoặc bao_cao:xem</td><td>1</td><td>—</td></tr>
+<tr><td>M5</td><td><code>/save</code></td><td>Lưu các dòng đã đổi</td><td>Mobile</td><td>chủ phiên</td><td>1</td><td><code>AsAdminCheckCustomCreateCommand</code></td></tr>
+<tr><td>M6</td><td><code>/complete</code></td><td>Chốt phiên</td><td>Mobile</td><td>chủ phiên</td><td>1</td><td>—</td></tr>
+<tr><td>M7</td><td>GET <code>/lookup-item/{code}?stocktakeId=</code></td><td>Tra một mã khi quét ngoài danh sách</td><td>Mobile</td><td>phien:thuc_hien</td><td>1</td><td><code>AsAdminCheckDetailGetAssetInfo</code></td></tr>
+<tr><td>—</td><td><code>/asset-item/files/upload</code> (có sẵn)</td><td>Tải ảnh</td><td>Mobile</td><td>như hiện tại</td><td>1</td><td>(ảnh nằm trong lệnh lưu)</td></tr>
+<tr><td>—</td><td>GET <code>/group</code>, GET <code>/usage-status</code> (có sẵn)</td><td>Danh mục cho app lưu đệm</td><td>Mobile</td><td>như hiện tại</td><td>1</td><td>—</td></tr>
+<tr><td>W1</td><td><code>/event/search</code>, <code>/event/create</code>, <code>/event/update</code></td><td>Quản lý đợt</td><td>Web</td><td>dot:quan_ly</td><td>1</td><td>Web.Office</td></tr>
+<tr><td>W2</td><td><code>/event/close</code>, <code>/event/reopen</code></td><td>Đóng / mở lại đợt</td><td>Web</td><td>dot:quan_ly</td><td>1</td><td>Sửa Status tay</td></tr>
+<tr><td>W3</td><td><code>/search</code></td><td>Tra phiên theo đợt, trạng thái, người kiểm, đối tượng, có lệch</td><td>Web</td><td>bao_cao:xem</td><td>1</td><td>—</td></tr>
+<tr><td>W4</td><td><code>/cancel</code>, <code>/reopen</code></td><td>Huỷ phiên treo; mở lại phiên đã chốt</td><td>Web</td><td>dot:quan_ly (huỷ: cả chủ phiên)</td><td>1</td><td>—</td></tr>
+<tr><td>W5</td><td><code>/report/by-event</code>, <code>/report/by-target</code>, <code>/report/by-asset</code>, <code>/report/reprint-label</code></td><td>Báo cáo (mục 10)</td><td>Web</td><td>bao_cao:xem</td><td>1</td><td>3 trang Web.Office</td></tr>
+<tr><td>W6</td><td><code>/movement/preview</code>, <code>/movement/generate</code>, <code>/movement/status</code></td><td>Xem trước, sinh phiếu điều chuyển, theo dõi</td><td>Web</td><td>dot:quan_ly</td><td><b>2</b></td><td><code>SyncCheckEvent</code> (chạy tay 2019)</td></tr>
+</table></div>
+<p>V4 <code>AsAdminCheckGetSoLanDaKiemKeCommand</code> bỏ: số lần đã kiểm của đối tượng trả kèm trong <code>start</code>.</p>
+
+<h3>M2 · <code>/start</code></h3>
+<pre class="json">// Request
+{ "eventCode": "KK2026-01", "checkType": "BY_STATION_ZONE", "staffCode": null, "stationZoneCode": "VN01_TANG_3" }
+
+// ApiResult.Data
+{
+  "stocktake": {
+    "id": "…", "docNo": "PKK-000123", "eventCode": "KK2026-01",
+    "checkType": "BY_STATION_ZONE", "staffCode": null, "stationZoneCode": "VN01_TANG_3",
+    "status": "DANG_KIEM", "version": 0, "startedAt": "2026-12-01T08:30:00",
+    "resumed": false,                      // true = trả lại phiên dở có sẵn
+    "previousCheckCount": 2,               // số phiên đã chốt của đối tượng này trong đợt
+    "otherOpenStocktakes": [ { "docNo": "PKK-000119", "checkStaffCode": "002288" } ]
+  },
+  "items": [ /* StocktakeItemDto, xem dưới */ ]
+}</pre>
+<p>Luật: đợt mở; đối tượng tồn tại (vùng đang hoạt động); người gọi có quyền. Có phiên <code>DANG_KIEM</code> của chính người gọi cho cùng (đợt, đối tượng) ⇒ trả lại nó (<code>resumed: true</code>). Chưa có ⇒ tạo phiên + chụp danh sách trong một transaction; gặp 1062 trên <code>OpenKey</code> ⇒ đọc lại và trả phiên vừa được tạo.</p>
+
+<h4>StocktakeItemDto — dùng chung cho start / get / save</h4>
+<pre class="json">{
+  "id": "…", "source": "DANH_SACH", "itemCode": "TSHN2-001234", "sortOrder": 17,
+  "itemDescription": "Bàn làm việc 1m2", "groupCode": "NTS-01-01-003", "usageStatus": 1,
+  "currentStaffCode": "001244", "currentPositionCode": "STAFF", "currentStationZoneCode": "VN01_TANG_3",
+  "actionType": null, "newGroupCode": null, "newDescription": null, "newUsageStatus": null,
+  "isNeedReprintLabel": false, "oldItemCode": null, "note": null, "files": [],
+  "isDiscrepant": false, "isNeedVerifierConfirm": false, "verifierStaffCode": null, "checkedAt": null
+}</pre>
+<p>Không trả tên (nhân viên, nhóm, vùng): app tra từ danh mục đã lưu đệm, như V4 đang nhân bản <code>staff_name</code>, <code>company_name</code> vào mọi dòng. Cỡ ước tính ~400 byte/dòng ⇒ phiên vùng trung bình (~390 dòng) ~160 KB; phiên lớn nhất V4 (3.511 dòng, có thể thổi lên vì trùng mã) ~1,4 MB. Không phân trang <code>start</code>. <span class="chip c-info">KIỂM</span> nén response: <code>fastlink-erp-api</code> không gọi <code>UseResponseCompression</code> (grep toàn repo, 0 kết quả); có thể đã nén ở BFF/gateway.</p>
+
+<h3>M5 · <code>/save</code></h3>
+<pre class="json">// Request
+{
+  "stocktakeId": "…",
+  "version": 7,
+  "requestId": "6f1c…",                    // UUID client sinh cho MỖI lần bấm lưu; gửi lại khi mạng lỗi thì giữ nguyên
+  "items": [
+    { "id": "srv-1", "actionType": "CO" },
+    { "id": "srv-2", "actionType": "CO", "newUsageStatus": 2, "newDescription": "Bàn gỗ 1m2" },
+    { "id": "2c1e…", "source": "THEM", "itemCode": "TSHN2-004567", "actionType": "THEM_CO_TON_TAI" },
+    { "id": "9a7b…", "source": "THEM", "itemCode": null, "actionType": "THEM_KHONG_TON_TAI",
+      "newGroupCode": "NTS-01-01-003", "newDescription": "Bàn", "newUsageStatus": 1,
+      "isNeedReprintLabel": true, "oldItemCode": "TS00-778",
+      "files": [ { /* AssetItemFileDto trả về từ /asset-item/files/upload */ } ] }
+  ],
+  "deletedItemIds": [ "…" ]                // chỉ dòng THEM
+}
+
+// ApiResult.Data khi thành công
+{ "version": 8, "items": [ /* StocktakeItemDto của các dòng vừa ghi, đã tính lại */ ],
+  "summary": { "total": 412, "checked": 230, "discrepant": 41 } }
+
+// ApiResult lỗi (InvalidParameter) — Data mang danh sách lỗi
+{ "errors": [ { "itemId": "9a7b…", "itemCode": null, "code": "FIELD_REQUIRED", "message": "Thiếu nhóm tài sản" } ],
+  "currentVersion": 8 }</pre>
+<ul>
+  <li><b>Mỗi phần tử <code>items</code> là trạng thái đầy đủ của các ô sửa được của dòng đó</b>, không phải vá từng ô. Ô không gửi = NULL (rồi server điền mặc định theo mục 06). App gửi đủ những gì đang hiện trên màn của dòng đó.</li>
+  <li>Dòng không có trong <code>items</code> không bị đụng.</li>
+  <li><code>id</code> chưa có trên server + <code>source: "THEM"</code> ⇒ tạo dòng. <code>id</code> chưa có mà không phải THEM ⇒ <code>ITEM_NOT_IN_STOCKTAKE</code>.</li>
+  <li><code>requestId</code> trùng <code>LastSaveRequestId</code> ⇒ không ghi gì, trả lại trạng thái hiện tại như thành công (lần trước đã ghi nhưng client không nhận được phản hồi).</li>
+  <li><code>version</code> lệch ⇒ <code>STALE_VERSION</code>. App gọi <code>/get</code>, đối chiếu, gửi lại. Hai máy cùng một người là ca hay gặp nhất.</li>
+  <li>Thành công ⇒ <code>Version + 1</code>, ghi log, rồi mới <code>ConfirmAsync</code> các tệp mới (lỗi xác nhận tệp chỉ ghi log, không làm hỏng lệnh lưu — theo <code>IAssetFileService</code>).</li>
+</ul>
+<p><span class="chip c-info">KIỂM</span> <code>ApiResult</code> khi lỗi có mang được <code>Data</code> không (đọc package <code>Framework.Common</code>). Không mang được thì trả <code>errors</code> trong một kiểu kết quả riêng, nhưng vẫn là lỗi nghiệp vụ HTTP 200 theo quy ước.</p>
+
+<h3>M6 · <code>/complete</code></h3>
+<pre class="json">// Request
+{ "stocktakeId": "…", "version": 8 }
+// ApiResult.Data
+{ "status": "DA_CHOT", "checkedAt": "2026-12-01T11:02:13",
+  "summary": { "total": 412, "checked": 405, "unchecked": 7, "discrepant": 41, "needVerifier": 3 },
+  "isMovementRequired": true }</pre>
+<p>Luật: phiên <code>DANG_KIEM</code>, chủ phiên, đợt mở, version khớp. Ghi trong một transaction: <code>Status = DA_CHOT</code>, <code>CheckedAt</code>, <code>IsMovementRequired</code>, <code>Version + 1</code>, rồi <code>AssetItem.LastCheckedAt / LastVerifiedByStaffCode</code> theo mục 04. <b>Không sinh phiếu.</b></p>
+
+<h3>M7 · GET <code>/lookup-item/{code}?stocktakeId=</code></h3>
+<pre class="json">{ "found": true,
+  "item": { /* ảnh chụp như StocktakeItemDto */ },
+  "suggestedActionType": "THEM_CO_TON_TAI",           // found=false ⇒ "THEM_KHONG_TON_TAI"
+  "warnings": [ "ALREADY_IN_STOCKTAKE", "MARKED_LOST", "OTHER_HOLDER", "NOT_TRACKED", "DISPOSED", "INACTIVE" ] }</pre>
+<p>Cảnh báo, không chặn. <code>MARKED_LOST</code> là ca "tài sản đang Mất mà gặp lại": V4 có 1.657 dòng <span class="chip c-ok">ĐO</span>, và V5 hôm nay không có đường nào trả nó về (v2 mục 06). GĐ1 vẫn cho ghi nhận để không mất dữ liệu.</p>
+
+<h3>Web — hợp đồng tóm tắt</h3>
+<div class="tbl"><table>
+<tr><th>Route</th><th>Request</th><th>Luật chính</th></tr>
+<tr><td><code>/event/create</code></td><td><code>{ name, note }</code></td><td>Sinh <code>Code</code> qua sequence</td></tr>
+<tr><td><code>/event/close</code></td><td><code>{ code }</code></td><td>Còn phiên <code>DANG_KIEM</code> ⇒ lỗi <code>OPEN_STOCKTAKES_EXIST</code>, trả danh sách để HC chốt hoặc huỷ</td></tr>
+<tr><td><code>/search</code></td><td><code>{ eventCode, status[], checkType, checkStaffCode, staffCode, stationZoneCode, isMovementRequired, pageIndex, pageSize }</code></td><td>Phân trang theo kiểu <code>/asset-item/search</code> đang dùng</td></tr>
+<tr><td><code>/cancel</code></td><td><code>{ stocktakeId, reason }</code></td><td>Chỉ <code>DANG_KIEM</code>; lý do bắt buộc</td></tr>
+<tr><td><code>/reopen</code></td><td><code>{ stocktakeId }</code></td><td>Chỉ <code>DA_CHOT</code>, đợt mở, không có dòng ở <code>AssetStocktakeTransfer</code>; trùng <code>OpenKey</code> với phiên dở khác của cùng người ⇒ lỗi</td></tr>
+</table></div>
+
+<h3>Những điểm tối ưu cho mobile, gom lại</h3>
+<ol>
+  <li>Một lời gọi <code>start</code> trả cả phiên lẫn danh sách; không có lời gọi đếm riêng.</li>
+  <li>Lưu chỉ gửi dòng đã đổi; server trả lại đúng các dòng đó đã tính lại.</li>
+  <li>Gửi lại an toàn: Id dòng THEM do client sinh, <code>requestId</code> cho mỗi lần lưu.</li>
+  <li>Không ghi đè lẫn nhau: <code>version</code>.</li>
+  <li>App không tự tính cờ nào: lệch, NVCM, mặc định đều do server.</li>
+  <li>Ảnh đi đường riêng, dùng lại endpoint upload sẵn có.</li>
+  <li>Danh mục nhóm / tình trạng lưu đệm; DTO dòng không mang tên.</li>
+  <li>Lưu dở offline là việc của app: hợp đồng trên đã đủ để gửi bù khi có mạng.</li>
+</ol>
+
+<h3>App mobile phải đổi gì so với V4</h3>
+<p><span class="chip c-warn">CHỐT</span> (Q6) App mobile viết lại phần kiểm kê theo cơ chế V5. Không giữ cách gọi command của V4, kể cả qua cầu nối <code>LegacyGateway</code>.</p>
+<div class="tbl"><table>
+<tr><th>Việc</th><th>V4 (app đang làm)</th><th>V5 (app phải làm)</th></tr>
+<tr><td>Kết nối, đăng nhập</td><td>Gửi <code>{ command, dữ liệu }</code> vào <code>/api/_gateway</code>, phiên V4. Không lệnh nào kiểm quyền.</td><td>Gọi từng endpoint REST mục 08 với JWT V5. Người gọi phải có quyền <code>kiem_ke:phien:thuc_hien</code> (mục 11).</td></tr>
+<tr><td>Lấy đợt</td><td><code>AsCheckAssetGetNotCompleteEventCommand</code></td><td>M1 <code>/event/open</code></td></tr>
+<tr><td>Mở phiên, nạp danh sách</td><td><code>AsAdminCheckGetCheckAssetByStaffCode</code>; app tự chọn "tạo kiểm kê mới" hay "làm tiếp"</td><td>M2 <code>/start</code>: server tự trả phiên dở của chính người gọi, chưa có thì tạo. App không còn cờ "tạo mới".</td></tr>
+<tr><td>Đếm số lần kiểm</td><td><code>AsAdminCheckGetSoLanDaKiemKeCommand</code></td><td>Bỏ. Trả kèm trong <code>start</code>. Danh sách phiên dở của mình: M3 <code>/mine</code>.</td></tr>
+<tr><td>Lưu</td><td><code>AsAdminCheckCustomCreateCommand</code> gửi cả danh sách; server xoá rồi ghi lại toàn bộ</td><td>M5 <code>/save</code> chỉ gửi dòng đã đổi, kèm <code>version</code> và <code>requestId</code> (UUID mới cho mỗi lần bấm lưu, giữ nguyên khi gửi lại vì mạng lỗi).</td></tr>
+<tr><td>Hai máy cùng sửa một phiên</td><td>Lần lưu sau ghi đè lần trước, không báo</td><td>Nhận <code>STALE_VERSION</code> ⇒ gọi M4 <code>/get</code>, đối chiếu, gửi lại.</td></tr>
+<tr><td>Thêm tài sản ngoài danh sách</td><td>Dòng không có Id ổn định</td><td>App sinh UUID cho dòng THEM ngay khi tạo; gửi lại không sinh dòng trùng.</td></tr>
+<tr><td>Tra một mã quét được</td><td><code>AsAdminCheckDetailGetAssetInfoCommand</code></td><td>M7 <code>GET /lookup-item/{code}</code></td></tr>
+<tr><td>Ảnh</td><td>Đi cùng dữ liệu chi tiết</td><td>Upload trước qua <code>/asset-item/files/upload</code>, đưa <code>AssetItemFileDto</code> nhận về vào dòng khi lưu; ≤5 ảnh mỗi dòng.</td></tr>
+<tr><td>Cờ lệch, NVCM, giá trị mặc định</td><td>—</td><td>App không gửi. Server tính và trả lại trong kết quả lưu (mục 06).</td></tr>
+<tr><td>Kết thúc</td><td>Không có bước chốt; lưu bao nhiêu lần cũng được</td><td>M6 <code>/complete</code>. Sau khi chốt, phiên không sửa được nữa (<code>STOCKTAKE_NOT_EDITABLE</code>).</td></tr>
+<tr><td>Đợt đã đóng</td><td>Vẫn ghi được (cờ chặn không có chỗ ghi)</td><td>Mọi lệnh ghi trả <code>EVENT_CLOSED</code>; app báo người dùng.</td></tr>
+<tr><td>Lỗi</td><td>Lỗi của command V4</td><td>Lỗi nghiệp vụ trả HTTP 200 trong <code>ApiResult</code>, kèm mã lỗi mục 06. App xử lý theo mã, không theo câu chữ.</td></tr>
+<tr><td>Danh mục nhóm, tình trạng</td><td>—</td><td>Lưu đệm từ <code>GET /group</code>, <code>GET /usage-status</code>; dòng trả về chỉ mang mã.</td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================ 09 -->
+<section id="dieu-chuyen">
+<h2><span class="n">09</span>GĐ2 — sinh phiếu điều chuyển</h2>
+<div class="warnbox">Chưa code được. Phụ thuộc câu 2 (mục 15). Phần dưới là khung kỹ thuật để GĐ2 không phải đổi GĐ1.</div>
+<ol>
+  <li><b><code>/movement/preview</code></b> (HC, phiên <code>DA_CHOT</code>, <code>IsMovementRequired = 1</code>): đọc các dòng <code>IsDiscrepant = 1</code>, tra bảng ánh xạ (v2 mục 06) ra kiểu phiếu, tách theo khoá <code>kiểu | nhóm | công ty | người quản lý | vị trí | người giữ</code> (bỏ hai thành phần cuối với <code>INTO_AREA</code>). Trả danh sách nhóm dự kiến và các dòng <b>không đi được qua phiếu</b> kèm lý do.</li>
+  <li><b><code>/movement/generate</code></b>: ghi trước mỗi nhóm một dòng <code>AssetStocktakeTransfer</code> (<code>DANG_TAO</code>), đặt <code>MovementRequestedAt</code>, rồi chạy nền: mỗi nhóm start một workflow <code>ASSET_TRANSFER</code> trong transaction riêng. Thành công ⇒ <code>DA_TAO</code> + <code>InstanceId</code> + <code>AssetStocktakeItem.TransferInstanceId</code>. Lỗi (vd tài sản đang bị khoá <code>ASSET:&lt;code&gt;</code> bởi phiếu khác) ⇒ <code>LOI</code> + thông báo.</li>
+  <li>Gọi lại <code>generate</code> chỉ xử lý nhóm <code>LOI</code> hoặc chưa có. UNIQUE <code>(StocktakeId, GroupKey)</code> bảo đảm không nhóm nào sinh hai phiếu.</li>
+  <li><b><code>/movement/status</code></b>: trạng thái từng nhóm, để web hiện tiến độ.</li>
+</ol>
+<p>Bốn loại hệ quả hiện chưa có đường đi: KHONG_CO → Mất; hỏng hoặc đổi tình trạng khi tài sản vẫn ở người dùng; thấy ở tay người khác (V5 không có USER_TO_USER); đổi nhóm/mô tả. Thêm ca "Mất gặp lại". Phương án và cái giá của từng loại: <code>ket-qua/2026-11-14-cau-hoi-kiem-ke-cho-anh-dat.md</code>.</p>
+</section>
+
+<!-- ============================================================ 10 -->
+<section id="bao-cao">
+<h2><span class="n">10</span>Báo cáo</h2>
+<p>Giữ ý nghĩa ba báo cáo V4, sửa các lỗi đếm v2 mục 07 đã chỉ ra, thêm một báo cáo in lại tem. Mọi báo cáo có tham số <code>includeOpen</code> (mặc định <code>false</code>): bật thì tính cả phiên <code>DANG_KIEM</code>, có cột đánh dấu. Bật lên thì số V5 so được với V4 (V4 tính mọi phiên); tắt thì chỉ số đã chốt.</p>
+<h3>"Phiên cuối" — một định nghĩa duy nhất</h3>
+<pre class="sql">-- Phiên cuối của mỗi (đợt, đối tượng) = phiên DA_CHOT có CheckedAt lớn nhất; hoà thì Id lớn hơn.
+SELECT s.*
+FROM AssetStocktake s
+WHERE s.IsDeleted = 0 AND s.Status = 'DA_CHOT' AND s.EventCode = @eventCode
+  AND NOT EXISTS (
+    SELECT 1 FROM AssetStocktake t
+    WHERE t.IsDeleted = 0 AND t.Status = 'DA_CHOT' AND t.EventCode = s.EventCode
+      AND t.CheckType = s.CheckType
+      AND IFNULL(t.StaffCode, '') = IFNULL(s.StaffCode, '')
+      AND IFNULL(t.StationZoneCode, '') = IFNULL(s.StationZoneCode, '')
+      AND (t.CheckedAt &gt; s.CheckedAt OR (t.CheckedAt = s.CheckedAt AND t.Id &gt; s.Id)));</pre>
+<div class="tbl"><table>
+<tr><th>Báo cáo</th><th>Mỗi dòng là</th><th>Định nghĩa V5</th></tr>
+<tr><td><code>by-event</code></td><td>Một tài sản trong phiên cuối</td><td>Gom theo mã đối tượng, không theo tên (V4 gộp nhầm hai vùng trùng tên)</td></tr>
+<tr><td><code>by-target</code></td><td>Một đối tượng (NV hoặc vùng)</td><td><code>PhaiKiemKe</code> = số dòng <code>Source = DANH_SACH</code> của phiên cuối (V4 đếm cả tài sản inactive và mã TS00). <code>CanXacNhan = PhaiKiemKe − Co − Khong − Hong</code>; <code>DaXacNhan = PhaiKiemKe − CanXacNhan</code></td></tr>
+<tr><td><code>by-asset</code></td><td>Một tài sản trên sổ</td><td>Duyệt <code>AssetItem</code> theo đúng bộ lọc danh sách ở mục 06; "đã kiểm" = có dòng <code>ActionType IS NOT NULL</code> trong một phiên cuối của đợt (V4 viết <code>||</code> thay cho <code>&amp;&amp;</code> nên 33.794 dòng chưa kiểm hiện là đã kiểm)</td></tr>
+<tr><td><code>reprint-label</code> (mới)</td><td>Một dòng cần in lại tem</td><td><code>IsNeedReprintLabel = 1</code> trong phiên cuối. V4 có 1.102 dòng, chưa báo cáo nào chở <span class="chip c-ok">ĐO</span></td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================ 11 -->
+<section id="quyen">
+<h2><span class="n">11</span>Quyền</h2>
+<pre class="sql">v5:asset:kiem_ke:dot:quan_ly       -- mở / sửa / đóng / mở lại đợt; huỷ, mở lại phiên; GĐ2: sinh phiếu
+v5:asset:kiem_ke:phien:thuc_hien   -- đi kiểm trên mobile (M1–M7)
+v5:asset:kiem_ke:bao_cao:xem       -- tra phiên, xem mọi phiên, báo cáo</pre>
+<ul>
+  <li>Khai thành hằng trong code, theo cách <code>AssetTransferConsts.QuyenDuyetHanhChinh</code>; kiểm bằng <code>IAssetPermissionService.HasPermissionAsync</code>.</li>
+  <li>"Chủ phiên" (<code>CheckStaffCode</code> = người gọi) là luật dữ liệu, kiểm thêm sau quyền.</li>
+  <li>Bỏ <code>kiem_ke:chuyen_mon:xac_nhan</code> của v2: không còn thao tác nào dùng nó.</li>
+  <li>Theo v2, chưa có resource <code>v5:</code> nào trên identity ở cả dev lẫn production — điều kiện tiên quyết dùng chung với <code>ASSET_TRANSFER</code>. Dữ kiện khi xin cấp: 28 người đã từng làm tiếp phiên trên V4 <span class="chip c-ok">ĐO</span>.</li>
+</ul>
+</section>
+
+<!-- ============================================================ 12 -->
+<section id="lich-su">
+<h2><span class="n">12</span>Dữ liệu V4</h2>
+<p><span class="chip c-warn">CHỐT</span> đề xuất, <span class="chip c-bad">CHỜ QUYẾT</span> (câu 4): <b>không chuyển lịch sử vào bảng V5.</b> Nếu cần tra cứu, giữ bản V4 chỉ-đọc hoặc chép nguyên 4 bảng sang một schema lưu trữ riêng, không ánh xạ. Lý do:</p>
+<ul>
+  <li>Phải dọn 2.648 nhóm mã trùng / 9.465 dòng (riêng CAS00024 có 2.501 nhóm) và gộp 25 phiên nhân bản <span class="chip c-ok">ĐO</span>.</li>
+  <li>Phải đổi <code>''</code> → NULL cho 1.970 dòng và dời <code>usage_status</code> sang <code>NewUsageStatus</code> cho 2.034 dòng <code>THEM_KHONG_TON_TAI</code>; 11 dòng mang mã tình trạng 3 đã bỏ.</li>
+  <li>V5 chỉ có mã TSHN2: phần lớn dòng mã TS00 sẽ mồ côi (riêng CAS00025 có 3.924 dòng TS00).</li>
+  <li>Báo cáo đợt cũ không so được với đợt mới: bộ lọc danh sách V4 đổi ngày 11–12/12/2025.</li>
+</ul>
+<details><summary>Ánh xạ cột, nếu vẫn chọn chuyển</summary>
+<div class="tbl" style="margin:0 12px 12px"><table>
+<tr><th>V4</th><th>V5</th><th>Biến đổi</th></tr>
+<tr><td><code>as_check_asset_event.*</code></td><td><code>AssetStocktakeEvent</code></td><td><code>status</code> giữ; <code>is_complete</code> bỏ; <code>ClosedAt</code> = <code>updated_time</code> khi DA_HOAN_THANH</td></tr>
+<tr><td><code>as_admin_check.data_code</code></td><td><code>AssetStocktake.DocNo</code></td><td>Gộp các master trùng data_code thành một phiên trước</td></tr>
+<tr><td><code>check_type, staff_code, station_zone_code, company_code, station_code, event_code, note</code></td><td>cùng tên</td><td><code>staff_code</code> chỉ giữ khi BY_STAFF, <code>station_zone_code</code> chỉ khi BY_STATION_ZONE (CHECK)</td></tr>
+<tr><td><code>check_staff_code, check_time</code></td><td><code>CheckStaffCode, CheckedAt</code></td><td><code>Status = DA_CHOT</code>, <code>StartedAt = created_time</code></td></tr>
+<tr><td><code>check_count, event_type, *_name</code></td><td>bỏ</td><td></td></tr>
+<tr><td><code>as_admin_check_detail.code</code></td><td><code>ItemCode</code></td><td><code>''</code> → NULL; khử trùng trong phiên</td></tr>
+<tr><td><code>action_type</code></td><td><code>ActionType</code>, <code>Source</code></td><td><code>''</code> → NULL; <code>THEM_*</code> → <code>Source = THEM</code>, còn lại <code>DANH_SACH</code></td></tr>
+<tr><td><code>description, group_code, usage_status</code></td><td><code>ItemDescription, GroupCode, UsageStatus</code></td><td>Riêng THEM_KHONG_TON_TAI: <code>UsageStatus</code> = NULL, giá trị cũ dời sang <code>NewUsageStatus</code></td></tr>
+<tr><td><code>as_company_code, manager_staff_code, position_code</code></td><td><code>OwnerCompanyCode, CurrentManagerStaffCode, CurrentPositionCode</code></td><td>V4 không chụp người giữ thật: <code>CurrentStaffCode</code>, <code>CurrentStationZoneCode</code> = NULL</td></tr>
+<tr><td><code>content</code> JSON</td><td><code>NewGroupCode, NewDescription, NewUsageStatus, IsNeedReprintLabel, OldItemCode, Note</code></td><td><code>JSON_EXTRACT</code> theo 6 khoá</td></tr>
+<tr><td><code>is_need_verifier_confirm, verifier_staff_code</code></td><td>cùng tên</td><td>Tính lại theo luật mục 06 (bỏ 72 cờ rác)</td></tr>
+<tr><td><code>db_files, check_staff_code, check_time, sort_order</code></td><td><code>DbFiles, CheckedByStaffCode, CheckedAt, SortOrder</code></td><td></td></tr>
+<tr><td><code>as_admin_check_detail_log</code></td><td>không chuyển</td><td>Bản sao cả dòng, không dựng lại được <code>ChangedFields</code> nếu không diff từng cặp</td></tr>
+</table></div>
+</details>
+</section>
+
+<!-- ============================================================ 13 -->
+<section id="bo-di">
+<h2><span class="n">13</span>V4 có, V5 cố ý bỏ</h2>
+<div class="tbl"><table>
+<tr><th>Thứ</th><th>Vì sao</th></tr>
+<tr><td>Cơ chế B (<code>ASSET_CHECK</code>), nút "tạo yêu cầu kiểm kê" trên màn đợt</td><td>1.529/1.530 phiếu bị huỷ tay; 0 dòng dữ liệu</td></tr>
+<tr><td>Luật đóng băng (còn phiếu kiểm kê chờ ⇒ chặn sửa tài sản và mọi điều chuyển)</td><td>Đi liền cơ chế B; mỗi năm IT gỡ tay</td></tr>
+<tr><td><code>is_complete</code></td><td>Không có writer; thay bằng <code>Status</code> được cưỡng chế</td></tr>
+<tr><td>Bảng <code>as_check_asset_attribute</code>, cột JSON <code>content</code></td><td>Hằng số; quyết định thành cột</td></tr>
+<tr><td>Xoá-rồi-ghi-lại khi làm tiếp</td><td>Mất dòng, phiên nhân bản, log phình 6,7 lần</td></tr>
+<tr><td><code>check_count</code>, lệnh đếm số lần kiểm</td><td>Đếm bằng truy vấn khi cần</td></tr>
+<tr><td><code>LIKE 'TSHN%'</code>, nhánh Miền Bắc / Miền Nam, kho <code>VN01_TANG_2_KHO_LUU_TRU</code></td><td>Không lọc gì trên V5; di chứng lần chạy tay 2019</td></tr>
+<tr><td>Tên nhân viên / công ty / đơn vị nhân bản vào từng dòng</td><td>Tra khi hiển thị</td></tr>
+<tr><td><code>getFakeContext</code> giả user</td><td>Lấy người dùng từ context thật</td></tr>
+</table></div>
+</section>
+
+<!-- ============================================================ 14 -->
+<section id="trien-khai">
+<h2><span class="n">14</span>Kế hoạch triển khai</h2>
+<h3>GĐ0 — trước khi code</h3>
+<ol>
+  <li>Câu 1 đã chốt (Q6: mobile gọi API V5). Đã có người làm app mobile; gửi họ bảng "App mobile phải đổi gì" (mục 08) và hợp đồng API.</li>
+  <li>Người phụ trách duyệt v3, nhất là Q4 (tách chốt khỏi sinh phiếu) và các mục <span class="chip c-warn">CHỐT</span>.</li>
+  <li>Cấp 3 resource quyền trên identity dev (bên mình tự cấp).</li>
+</ol>
+<h3>GĐ1 — ghi nhận + báo cáo</h3>
+<div class="tbl"><table>
+<tr><th>#</th><th>Việc</th><th>Repo</th><th>Xong khi</th></tr>
+<tr><td>1</td><td>Thay khối DDL trong <code>fl-asset-v5.sql</code>; áp lên dev bằng file áp-lên-DB-đã-có (theo skill <code>db-change-safety</code>)</td><td>api</td><td>information_schema khớp DDL; chốt chặn đã chạy</td></tr>
+<tr><td>2</td><td>Entity + cấu hình EF (cột sinh chỉ đọc, <code>Version</code> là concurrency token)</td><td>api</td><td>Test tích hợp MySQL: UNIQUE <code>OpenKey</code>, UNIQUE mã, các CHECK</td></tr>
+<tr><td>3</td><td>Hai mã sequence (đợt, phiên)</td><td>api + cấu hình</td><td>Sinh được số trên dev</td></tr>
+<tr><td>4</td><td><code>StocktakeRules</code>: mặc định, luật lưu, IsDiscrepant, NVCM</td><td>api</td><td>Unit test cho từng mã lỗi ở mục 06 và từng vế của định nghĩa lệch</td></tr>
+<tr><td>5</td><td><code>StocktakeService</code>: start / save / complete / cancel / reopen, log, xác nhận tệp</td><td>api</td><td>Test: gửi lại cùng requestId không ghi hai lần; version lệch bị từ chối; hai start cùng lúc ra một phiên</td></tr>
+<tr><td>6</td><td>Endpoint M1–M7, W1–W5 + hằng route + hằng quyền</td><td>api</td><td>Swagger đủ; gọi không quyền bị từ chối</td></tr>
+<tr><td>7</td><td>Báo cáo (mục 10)</td><td>api</td><td>Chạy trên dữ liệu dev, đối chiếu tay một đối tượng</td></tr>
+<tr><td>8</td><td>Web: màn đợt, tra phiên / chi tiết, 4 báo cáo</td><td>fe</td><td>Đóng đợt bị chặn khi còn phiên dở</td></tr>
+<tr><td>9</td><td>Mobile: viết lại phần kiểm kê theo cơ chế V5 (bảng "App mobile phải đổi gì" mục 08)</td><td>app mobile</td><td>Kiểm thử trên một vùng thật</td></tr>
+</table></div>
+<h3>GĐ2 — hệ quả lên tài sản</h3>
+<p>Sau câu 2: tạo <code>AssetStocktakeTransfer</code>, viết bảng ánh xạ thành code, <code>/movement/*</code>, màn xem trước trên web, và các đường còn thiếu (Mất, hỏng tại chỗ, người sang người, nhóm/mô tả) theo phương án được chọn.</p>
+</section>
+
+<!-- ============================================================ 15 -->
+<section id="phai-hoi">
+<h2><span class="n">15</span>Câu còn phải hỏi</h2>
+<p>Mỗi câu ghi tài liệu này đang giả định đáp án nào, và ở đâu — đổi đáp án thì sửa đúng chỗ đó.</p>
+
+<div class="ask"><div class="who">ĐÃ CHỐT 15/11/2026</div>
+<h4>1. Mobile gọi API nào?</h4>
+<p>Đã chốt: mobile gọi thẳng API V5 theo mục 08 (Q6). Không dựng lớp chuyển đổi cho 5 command V4. Đã có người làm app mobile; việc còn lại là báo họ (việc #9 mục 14).</p></div>
+
+<div class="ask"><div class="who">CHẶN GĐ2 · anh Đạt / HC</div>
+<h4>2. Kiểm kê xong, hệ có đổi tài sản không — từng loại lệch đổi thành gì? Ai duyệt? Chấp nhận một phiên ra hơn 20 phiếu không?</h4>
+<p>Đang giả định: có, qua <code>ASSET_TRANSFER</code> (mục 09, DDL <code>AssetStocktakeTransfer</code>). GĐ1 không phụ thuộc câu này.</p></div>
+
+<div class="ask"><div class="who">anh Đạt / sếp</div>
+<h4>4. Chuyển lịch sử kiểm kê V4 sang V5 không?</h4>
+<p>Đang giả định: không (mục 12).</p></div>
+
+<div class="ask"><div class="who">HC / người dùng báo cáo</div>
+<h4>10. Ba báo cáo V4 còn ai dùng không; có cần báo cáo in lại tem?</h4>
+<p>Đang giả định: giữ cả ba + thêm in lại tem (mục 10, W5).</p></div>
+
+<div class="ask"><div class="who">anh Đạt / HC</div>
+<h4>12. Nhân viên chuyên môn xác nhận hỏng vào lúc nào?</h4>
+<p>Đang giả định: ở bước chuyên môn của phiếu điều chuyển (GĐ2); kiểm kê chỉ ghi phân công (mục 06, cột <code>IsNeedVerifierConfirm</code>, <code>VerifierStaffCode</code>). Dòng "hỏng nhưng vẫn ở người giữ" sẽ không có ai xác nhận cho tới khi câu 2 có lời.</p></div>
+
+<div class="ask"><div class="who">HC · mới ở v3</div>
+<h4>13. Người kiểm được đặt tình trạng mới là những gì?</h4>
+<p>Đang giả định: Hỏng, Tốt-đang dùng, Tốt-không dùng, Chờ thanh lý-không dùng (mã 0, 1, 2, 4) — luật <code>USAGE_STATUS_NOT_ALLOWED</code> mục 06.</p></div>
+
+<div class="ask"><div class="who">dev phụ trách tệp · mới ở v3</div>
+<h4>14. Ảnh kiểm kê lưu dạng nào?</h4>
+<p>Đang giả định: cột <code>DbFiles</code> cùng định dạng <code>AssetItem.DbFiles</code> (DDL <code>AssetStocktakeItem</code>). Cột đó trên <code>AssetItem</code> ghi chú "Sẽ bỏ" — nếu sắp có bảng tệp chung thì kiểm kê dùng luôn bảng đó.</p></div>
+
+<div class="ask"><div class="who">HC · mới ở v3</div>
+<h4>15. Chốt phiên có ghi "ngày kiểm cuối" lên tài sản không?</h4>
+<p>Đang giả định: có, cho dòng Có / Có nhưng hỏng / Thêm tài sản có trên hệ (mục 04). Không làm đổi nghiệp vụ, chỉ là dữ liệu tham khảo, nhưng đây là lần đầu kiểm kê ghi vào <code>AssetItem</code>.</p></div>
+</section>
+
+<!-- ============================================================ 16 -->
+<section id="chua-kiem">
+<h2><span class="n">16</span>Chưa kiểm được</h2>
+<div class="tbl"><table>
+<tr><th>Chỗ</th><th>Cách kiểm</th></tr>
+<tr><td><code>ApiResult</code> khi lỗi có mang <code>Data</code> không</td><td>Đọc package <code>Framework.Common</code> (decompile nếu cần)</td></tr>
+<tr><td>Cách khai mã sequence mới</td><td>Đọc <code>AssetCodeGenerator.cs</code> và chỗ đăng ký sequence</td></tr>
+<tr><td>Định dạng mã tài sản hợp lệ (luật <code>ITEM_CODE_INVALID</code>)</td><td>Đọc <code>IAssetCodeGenerator</code> / validator tạo tài sản</td></tr>
+<tr><td>Hiệu lực ngày của vùng</td><td>Xem cột của bảng vùng trong <code>fl_core</code>; <code>IStationZoneReader</code> hiện chỉ lọc <code>status = 1</code></td></tr>
+<tr><td>Nén response</td><td>Gọi thử một endpoint lớn qua BFF, xem header <code>Content-Encoding</code></td></tr>
+<tr><td>Base entity của module có bắt buộc <code>Updated*</code> / <code>IsDeleted</code> không (log đã bỏ các cột này)</td><td>Đọc entity gốc của module; bắt buộc thì thêm lại cột cho log</td></tr>
+<tr><td>Module map bảng kiểu map-only hay migration</td><td>Đọc <code>AssetManagement.Infrastructure</code> / DbContext</td></tr>
+<tr><td>App mobile V4 đang gọi thẳng <code>/api/_gateway</code> của V4 hay qua cầu nối <code>LegacyGateway</code> của V5 (chỉ cần biết khi tắt đường cũ)</td><td>Xem log của <code>LegacyGateway.Api</code> tìm tên command <code>AsAdminCheck*</code>, hoặc hỏi bên mobile</td></tr>
+<tr><td>DDL chạy trên đúng phiên bản MySQL của dev / production</td><td>Đã chạy trên <code>mysql:8.0</code> sạch; xem <code>SELECT VERSION()</code> ở đích trước khi áp</td></tr>
+</table></div>
+</section>
+
+<footer>
+  Thiết kế kiểm kê CCDC cho FastLink V5 · v3 · 15/11/2026. Thay <code>kiem-ke-tai-san-v2.html</code> (11/11, sửa 14/11).<br>
+  Nguồn: <code>fl_asset_prod</code> dump 04/11/2026 (chỉ đọc) · <code>flink-webapi</code> main <code>c0c7f5e</code> · <code>fastlink-erp-api</code> HEAD <code>6fce8bf1</code> · số đo <code>ket-qua/2026-11-14-danh-gia-kiem-ke-v2-so-do/r1…r10</code>.
+</footer>
+</main>
+</div>
+
+<script>
+  (function () {
+    var dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    mermaid.initialize({ startOnLoad: true, theme: dark ? 'dark' : 'default', securityLevel: 'loose' });
+  })();
+  // Mục lục tự sáng theo mục đang đọc: mục CUỐI có mép trên đã qua vạch 30% khung nhìn; chạm đáy thì mục cuối.
+  (function () {
+    var links = [].slice.call(document.querySelectorAll('nav.toc a[href^="#"]'));
+    var secs = links.map(function (a) { return document.getElementById(a.hash.slice(1)); });
+    var cho = false;
+    function dongBo() {
+      cho = false;
+      var vach = window.innerHeight * 0.3, i = 0;
+      for (var j = 0; j < secs.length; j++) { if (secs[j] && secs[j].getBoundingClientRect().top <= vach) i = j; }
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) i = links.length - 1;
+      for (var k = 0; k < links.length; k++) {
+        if (k === i) links[k].setAttribute('aria-current', 'true'); else links[k].removeAttribute('aria-current');
+      }
+    }
+    function khiCuon() { if (!cho) { cho = true; requestAnimationFrame(dongBo); } }
+    addEventListener('scroll', khiCuon, { passive: true });
+    addEventListener('resize', khiCuon);
+    addEventListener('load', dongBo);
+    dongBo();
+  })();
+</script>
+</body>
+</html>

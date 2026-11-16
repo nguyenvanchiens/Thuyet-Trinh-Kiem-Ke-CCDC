@@ -10,3 +10,8 @@ Phím tắt:
 - Bấm vào 1/3 bên trái slide để lùi, phần còn lại để tiến. Trên cảm ứng thì vuốt.
 - Màn hình hẹp (điện thoại) hiện các slide xếp dọc.
 - In ra PDF (Ctrl+P): mỗi slide một trang.
+
+Tài liệu kèm theo:
+
+- `kiem-ke-tai-san-v3.html`: thiết kế v3 (database, API, luật nghiệp vụ, phân quyền, kế hoạch). Bản đang dùng.
+- `kiem-ke-tai-san-v2.html`: thiết kế v2, bản trước, giữ để đối chiếu.
