@@ -96,6 +96,8 @@ tr.pick td{background:var(--accent-soft)}
 .fig img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);background:#fff}
 .fig figcaption{font-size:13px;color:var(--muted);margin-top:6px}
 .figs{align-items:start}
+.phones .fig img{max-width:300px;margin:0 auto}
+.phones figcaption{text-align:center}
 footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
 a{color:var(--accent)}
 @media (max-width:760px){
@@ -220,13 +222,13 @@ a{color:var(--accent)}
 
 <!-- 6 -->
 <h2 id="luong"><span class="n">06</span>Luồng kiểm kê từ đầu đến cuối</h2>
-<p>Kể theo đúng thứ tự thao tác: trên web bấm gì, hệ làm gì, rồi tới mobile, tới người giữ, tới báo cáo. <span class="muted">Tên người, mã và số liệu là giả định, chỉ để minh hoạ. <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">Bấm thử đúng luồng này trên màn minh hoạ web.</a></span></p>
+<p>Kể theo đúng thứ tự thao tác: trên web bấm gì, hệ làm gì, rồi tới mobile, tới người giữ, tới báo cáo. <span class="muted">Tên người, mã và số liệu là giả định, chỉ để minh hoạ. <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">Bấm thử đúng luồng này trên màn minh hoạ</a> (web, và <a href="minh-hoa-tao-dot-kiem-ke.html?vai=app" target="_blank" rel="noopener">app mobile</a>).</span></p>
 
 <h3>Bối cảnh</h3>
 <div class="tbl"><table>
   <tr><th style="width:34%">Ai / chỗ nào</th><th>Đồ đang ghi trên hệ</th></tr>
   <tr><td><b>Anh Minh</b>, nhân viên</td><td>1 laptop, 1 màn hình</td></tr>
-  <tr><td><b>Anh Sơn</b>, trưởng phòng</td><td>1 laptop. Ngoài ra đứng tên 120 món bàn ghế, máy chiếu ở <b>Tầng 3</b></td></tr>
+  <tr><td><b>Anh Sơn</b>, trưởng phòng</td><td>6 món đồ cá nhân (laptop, màn hình, bàn phím, chuột, tai nghe, điện thoại bàn). Ngoài ra đứng tên 120 món bàn ghế, máy chiếu ở <b>Tầng 3</b></td></tr>
   <tr><td><b>Anh Tú</b>, nhân viên mới vào tuần trước</td><td><b>Không có gì</b>. Thực tế đã cầm 1 laptop lấy từ kho nhưng chưa ai lập phiếu</td></tr>
   <tr><td><b>Kho MB</b></td><td>300 món, trong đó có chiếc laptop anh Tú đang cầm</td></tr>
   <tr><td><b>Anh Nam</b>, đã nghỉ việc</td><td>Hệ vẫn ghi đang giữ 1 điện thoại</td></tr>
@@ -263,8 +265,9 @@ a{color:var(--accent)}
 <div class="fstep"><div class="no">4</div><div>
   <div class="who">Chị Lan · mobile</div>
   <h3>Hành chính đi kiểm từng phần</h3>
-  <p>Mở app, chọn đợt, thấy danh sách các phần cần kiểm (tab Người, tab Vùng/Kho).</p>
+  <p>Mở app, bấm vào đợt, thấy danh sách các phần đã chia sẵn (tab Tất cả, Người, Vùng, Kho). <b>Không phải chọn "theo nhân viên" hay "theo vùng"</b>: đứng trước ai thì bấm phần người đó, xuống kho thì bấm tab Kho. <a href="minh-hoa-tao-dot-kiem-ke.html?vai=app" target="_blank" rel="noopener">Bấm thử app</a>.</p>
   <ul>
+    <li><b>Anh Sơn:</b> bấm vào anh Sơn, app hiện 6 món anh đang giữ. Quét tem từng món, món nào quét trúng tự tick <b>Có</b>. Tai nghe không thấy thì bấm vào món, chọn <b>Không thấy</b>. Kiểm hết thì bấm <b>Xong phần</b>.</li>
     <li><b>Anh Minh:</b> app hiện sẵn 2 món anh Minh đang giữ. Quét tem laptop thì tự đánh <b>Có</b>. Màn hình bị sọc thì chọn <b>Hỏng</b> và chụp ảnh. Trên bàn còn con chuột có tem: quét vào, app báo <i>"món này đang ghi ở Kho MB"</i>, chị Lan thêm vào phần anh Minh. Hệ chỉ ghi nhận, không tự đổi người giữ.</li>
     <li><b>Anh Tú (người mới):</b> danh sách trống. Anh Tú đưa ra chiếc laptop lấy từ kho, quét vào thì hệ báo nó đang ghi ở kho. <b>Phát hiện được chiếc laptop chưa có phiếu giao.</b></li>
     <li><b>Tầng 3:</b> đi hết tầng, quét như thói quen V4. 115 món Có, 3 món không thấy. 2 chiếc ghế quét được ở phòng họp tầng 5 thì ghi <b>"Có, ở chỗ khác"</b>, không bị tính là mất.</li>
@@ -276,7 +279,7 @@ a{color:var(--accent)}
 <div class="fstep"><div class="no">5</div><div>
   <div class="who">Người giữ · app hoặc web</div>
   <h3>Nhân viên vào xác nhận</h3>
-  <p>Khi <b>mọi phần có đồ của một người</b> đã kiểm xong, hệ tự gửi yêu cầu cho người đó. Anh Minh nhận ngay sau khi phần của anh xong. Anh Sơn phải chờ cả phần của anh <b>và</b> phần Tầng 3 xong, rồi nhận <b>một</b> yêu cầu cho cả 121 món. Kho MB do chị Hoa xác nhận.</p>
+  <p>Khi <b>mọi phần có đồ của một người</b> đã kiểm xong, hệ tự gửi yêu cầu cho người đó. Anh Minh nhận ngay sau khi phần của anh xong. Anh Sơn phải chờ cả phần của anh <b>và</b> phần Tầng 3 xong, rồi nhận <b>một</b> yêu cầu cho cả 126 món. Kho MB do chị Hoa xác nhận.</p>
 
   <div class="sub-card">
     <b>Menu "NV xác nhận kiểm kê" của nhân viên</b> · bấm thử: <a href="minh-hoa-tao-dot-kiem-ke.html?vai=son" target="_blank" rel="noopener">danh sách phiếu</a>, <a href="minh-hoa-tao-dot-kiem-ke.html?vai=son&amp;phieu=XN0153" target="_blank" rel="noopener">chi tiết một phiếu</a>
@@ -286,7 +289,7 @@ a{color:var(--accent)}
       <li><b>Bấm vào một phiếu</b> để mở chi tiết, gồm các phần dưới đây.</li>
       <li><b>Đầu màn:</b> tên đợt, người kiểm, trạng thái của mình, và 4 con số: số món mình đứng tên, số Có, số Không thấy/Hỏng, số Có ở chỗ khác.</li>
       <li><b>Danh sách:</b> chia nhóm theo phần ("Phần của tôi" và "Tầng 3"). Món có vấn đề (không thấy, hỏng, ở chỗ khác, thêm từ chỗ khác) xếp lên đầu, kèm ghi chú như "thấy ở phần Phòng họp T5". Món "Có" thu gọn, bấm "Hiện cả 115 món Có" để xem hết.</li>
-      <li><b>Nút Đồng ý:</b> hệ hỏi lại "Anh xác nhận kết quả của 121 món là đúng?". Đồng ý xong thì kết quả bị khoá, hành chính không mở lại được nữa.</li>
+      <li><b>Nút Đồng ý:</b> hệ hỏi lại "Anh xác nhận kết quả của 126 món là đúng?". Đồng ý xong thì kết quả bị khoá, hành chính không mở lại được nữa.</li>
       <li><b>Nút Không đồng ý:</b> hiện ô tích ở từng món (tích món chưa đúng, không bắt buộc) và ô <b>lý do bắt buộc</b>. Gửi xong thì phần chứa món đó trả về hành chính kiểm lại.</li>
       <li><b>Lịch sử:</b> ghi lại mỗi lần đồng ý hoặc không đồng ý, kèm lý do và thời gian.</li>
     </ul>
@@ -300,8 +303,8 @@ a{color:var(--accent)}
   </div>
   <figure class="fig"><img src="anh-minh-hoa/web-nguoi-giu-ds-phieu.png" alt="Danh sách phiếu xác nhận của anh Sơn: XN0153 đang chờ xác nhận ở trên cùng, hai phiếu cũ đã xác nhận" loading="lazy">
   <figcaption>Menu "NV xác nhận kiểm kê": danh sách phiếu của anh Sơn, mới nhất lên đầu. Phiếu XN0153 đang chờ được tô nổi.</figcaption></figure>
-  <figure class="fig"><img src="anh-minh-hoa/web-nguoi-giu-man-xac-nhan.png" alt="Màn xác nhận của anh Sơn ở trạng thái Chờ xác nhận: 121 món, Phần của tôi và Tầng 3, món có vấn đề lên đầu, nút Không đồng ý và Đồng ý" loading="lazy">
-  <figcaption>Bấm phiếu XN0153: chi tiết phiếu khi đến lượt xác nhận. 121 món chia theo phần, món có vấn đề lên đầu, 115 món "Có" thu gọn, hai nút Không đồng ý và Đồng ý ở cuối.</figcaption></figure>
+  <figure class="fig"><img src="anh-minh-hoa/web-nguoi-giu-man-xac-nhan.png" alt="Màn xác nhận của anh Sơn ở trạng thái Chờ xác nhận: 126 món, Phần của tôi và Tầng 3, món có vấn đề lên đầu, nút Không đồng ý và Đồng ý" loading="lazy">
+  <figcaption>Bấm phiếu XN0153: chi tiết phiếu khi đến lượt xác nhận. 126 món chia theo phần, món có vấn đề lên đầu, món "Có" thu gọn, hai nút Không đồng ý và Đồng ý ở cuối.</figcaption></figure>
 </div></div>
 
 <div class="fstep"><div class="no">6</div><div>
@@ -368,36 +371,68 @@ a{color:var(--accent)}
 <!-- 7 -->
 <h2><span class="n">08</span>Thao tác trên mobile</h2>
 
-<h3>Hành chính đi kiểm</h3>
-<div class="grid-2">
-  <ol class="steps">
-    <li><b class="t">Chọn đợt</b>Chỉ hiện các đợt đang mở của công ty mình có quyền.</li>
-    <li><b class="t">Chọn phần</b>Hai tab <b>Người</b> và <b>Vùng/Kho</b>, có ô tìm. Phần chưa kiểm xếp lên đầu, mỗi phần có số món và trạng thái.</li>
-    <li><b class="t">Quét tem</b>Món có trong danh sách được đánh dấu <b>Có</b>. Chọn tình trạng nếu khác: Tốt đang dùng, Tốt không dùng, Hỏng (bắt buộc chụp ảnh), Chờ thanh lý.</li>
-    <li><b class="t">Tem hỏng hoặc mất</b>Tìm theo mã tay, chụp ảnh, hệ tự đánh dấu cần in lại tem.</li>
-    <li><b class="t">Quét được món không có trong danh sách</b>Hệ báo món đó thuộc phần nào ("đang ghi ở anh Y" / "thuộc Kho MB" / "ghi ở người đã nghỉ"). Hành chính thêm vào phần đang kiểm. Hệ chỉ ghi nhận, không đổi người giữ, và lưu vết ở cả hai phần.</li>
-    <li><b class="t">Mã không có trên hệ</b>Không thêm được. Quản lý phải tạo tài sản trước, sau đó mới thêm vào đợt.</li>
-    <li><b class="t">Bấm "Xong phần này"</b>Món chưa đụng tới phải được đánh dấu trước, có nút "đánh dấu còn lại là Không thấy". Người có 0 món: bấm "Không giữ tài sản nào".</li>
-  </ol>
-  <div>
-    <div class="screen">
-      <div class="bar">Kiểm kê T11/2026 · VN01</div>
-      <div class="row"><span><b>Người</b> · 412</span><span><b>Vùng/Kho</b> · 9</span></div>
-      <div class="row"><span>Tầng 3 · 120 món</span><span class="pill p-warn">Đang kiểm 64/120</span></div>
-      <div class="row"><span>Kho MB · 310 món</span><span class="pill p-info">Chưa kiểm</span></div>
-      <div class="row"><span>Phòng họp A · 30 món</span><span class="pill p-ok">Xong</span></div>
-    </div>
-    <div class="screen" style="margin-top:10px">
-      <div class="bar">Tầng 3 · quét</div>
-      <div class="row"><span>TSHN24-0153 Ghế xoay</span><span class="pill p-ok">Có</span></div>
-      <div class="row"><span>TSHN25-0420 Máy chiếu</span><span class="pill p-bad">Hỏng · ảnh</span></div>
-      <div class="row"><span>TSHN23-0077 Bàn họp<br><span class="note">Đang ghi ở anh Y · đã lưu vết</span></span><span class="pill p-warn">Thêm</span></div>
-      <div class="row"><span>[ Đánh dấu còn lại là Không thấy ]</span><span>[ Xong phần ]</span></div>
-    </div>
-    <p class="note" style="margin-top:8px">Hình minh hoạ bố cục, không phải thiết kế giao diện.</p>
-  </div>
+<div class="card summary" style="margin-bottom:16px">
+  <p><b>Điểm khác V4 cần nói đầu tiên:</b> trên mobile <b>không còn bước chọn "kiểm theo nhân viên" hay "kiểm theo vùng"</b>. Lúc tạo đợt trên web, hệ đã chia sẵn các phần (người, vùng, kho) và chụp danh sách món của từng phần. App chỉ hiện đúng danh sách đó. Người đi kiểm chọn phần mình đang đứng trước mặt rồi quét.</p>
+  <p style="margin:0"><a href="minh-hoa-tao-dot-kiem-ke.html?vai=app" target="_blank" rel="noopener"><b>Bấm thử app trên màn minh hoạ</b></a>: khung điện thoại bấm được, dùng chung dữ liệu với màn web. Kiểm xong anh Sơn trên app thì phiếu của anh Sơn bên web hiện ngay.</p>
 </div>
-<p>Mobile lưu từng món ngay khi quét. Mất mạng giữa chừng thì món đã lưu vẫn còn. Phần đã xong được mở lại khi đợt còn mở, có ghi lại ai mở và lúc nào.</p>
+
+<h3>Ví dụ: chị Lan đi kiểm đồ của anh Sơn</h3>
+<ol class="steps">
+  <li><b class="t">Bấm vào đợt</b>App chỉ hiện các đợt đang mở, ví dụ KK0012 · VN01. Đợt đã đóng không hiện.</li>
+  <li><b class="t">Hiện danh sách phần đã chia sẵn</b>Có các tab <b>Tất cả · Người · Vùng · Kho</b> và ô tìm. Mỗi dòng ghi số món, số đã kiểm, trạng thái. Danh sách này là bản chụp lúc mở đợt, không tính lại.</li>
+  <li><b class="t">Bấm vào anh Sơn</b>Hiện danh sách tài sản anh Sơn đang giữ, ví dụ 6 món, tất cả đang "Chưa kiểm".</li>
+  <li><b class="t">Quét tem từng món</b>Quét trúng món nào thì món đó tự thành <b>Có</b>, thanh tiến độ tăng 1/6, 2/6…</li>
+  <li><b class="t">Món tìm không thấy</b>Bấm vào món, chọn <b>Không thấy</b>, ghi thêm nếu cần ("anh Sơn nói đang mang đi sửa"). Hỏng thì chọn <b>Hỏng</b>, app bắt chụp ảnh.</li>
+  <li><b class="t">Quét phải món không thuộc anh Sơn</b>App báo món đó đang ghi ở đâu. Bấm <b>Ghi nhận ở đây</b>: hệ lưu vết ở cả hai phần, <b>không đổi người giữ</b>.</li>
+  <li><b class="t">Kiểm hết thì bấm Xong phần</b>Nút chỉ bấm được khi không còn món "Chưa kiểm". Có nút tắt "Đánh dấu còn lại là Không thấy".</li>
+  <li><b class="t">Sau đó là việc của anh Sơn</b>Khi <b>mọi phần</b> có đồ của anh Sơn đã xong (phần anh Sơn và Tầng 3), anh nhận phiếu, vào menu "NV xác nhận kiểm kê", bấm Đồng ý hoặc Không đồng ý (mục 06, bước 5).</li>
+</ol>
+
+<div class="grid-3 figs phones">
+  <figure class="fig"><img src="anh-minh-hoa/app-chon-phan.png" alt="App: danh sách phần của đợt KK0012, tab Người, mỗi dòng có số món và trạng thái" loading="lazy">
+  <figcaption>Bấm đợt: danh sách phần đã chia sẵn. Tab Người, Vùng, Kho.</figcaption></figure>
+  <figure class="fig"><img src="anh-minh-hoa/app-ds-mon.png" alt="App: 6 món của anh Sơn, 3 món Có, 1 Không thấy kèm ghi chú, 2 chưa kiểm, nút Quét tem và Xong phần" loading="lazy">
+  <figcaption>Bấm anh Sơn: 6 món anh đang giữ. Món chưa kiểm xếp lên đầu.</figcaption></figure>
+  <figure class="fig"><img src="anh-minh-hoa/app-quet.png" alt="App: màn quét, quét phải chiếc ghế thuộc Phòng họp T5, app hỏi có ghi nhận ở đây không" loading="lazy">
+  <figcaption>Quét phải món của phần khác: app báo đang ghi ở đâu, hỏi có ghi nhận không.</figcaption></figure>
+</div>
+
+<h3>Quét ra gì thì app làm gì</h3>
+<div class="tbl"><table>
+  <tr><th style="width:38%">Quét ra</th><th>App xử lý</th></tr>
+  <tr><td>Món có trong phần đang kiểm</td><td>Tự ghi <b>Có</b></td></tr>
+  <tr><td>Món có trong đợt nhưng thuộc phần khác (ví dụ đang ghi ở anh Tín, hay ở kho)</td><td>Báo "món này đang ghi ở …". Bấm <b>Ghi nhận ở đây</b>: món vẫn thuộc phần cũ, phần cũ tự hiện "thấy ở phần anh Sơn" để người kiểm phần đó không phải đi tìm.</td></tr>
+  <tr><td>Món ghi ở người đã nghỉ</td><td>Ghi nhận để hành chính thu hồi sau</td></tr>
+  <tr><td>Món có trên hệ nhưng không có trong đợt (tạo sau khi mở đợt)</td><td>Ghi nhận là món thêm</td></tr>
+  <tr><td>Mã không có trên hệ</td><td><b>Từ chối</b>. Quản lý phải tạo tài sản trên web trước.</td></tr>
+</table></div>
+
+<h3>Khác V4 ở đâu</h3>
+<div class="tbl"><table>
+  <tr><th style="width:22%"></th><th>V4</th><th>Mới</th></tr>
+  <tr><td>Bước đầu</td><td>Chọn chế độ: theo nhân viên <b>hoặc</b> theo vùng</td><td>Không có bước này</td></tr>
+  <tr><td>Sau đó</td><td>Chọn nhân viên hoặc vùng, app <b>truy vấn ngay lúc đó</b> xem có món gì</td><td>Chọn trong danh sách phần <b>đã chụp sẵn lúc mở đợt</b></td></tr>
+  <tr><td>Danh sách món</td><td>Tính lại mỗi lần mở, có thể đổi giữa chừng</td><td>Cố định từ lúc mở đợt, ai mở cũng thấy giống nhau</td></tr>
+  <tr><td>Một món có thể bị</td><td>Kiểm 2 lần (theo người và theo vùng) hoặc bị sót</td><td>Nằm trong đúng <b>một</b> phần</td></tr>
+</table></div>
+
+<h3>Xuống kho thì sao: người xác nhận kho</h3>
+<p>Trên app y hệt phần người: bấm tab <b>Kho</b>, chọn Kho MB, quét, đánh dấu Không thấy, Xong phần. Chỉ khác ở <b>người ký nhận kết quả</b>.</p>
+<p>Mỗi món phải có một người ký nhận rằng kết quả kiểm là đúng. Món đang có người cầm thì người cầm ký. Món nằm trong kho thì <b>không ai cầm</b>: nếu không chỉ định ai, người đi đếm tự đếm, tự bấm xong, thiếu món cũng không ai bị hỏi (V4 đang như vậy). Vì thế lúc mở đợt chọn sẵn <b>người xác nhận kho</b>, ký thay cho cái kho, giống thủ kho ký biên bản kiểm kho.</p>
+<div class="tbl"><table>
+  <tr><th style="width:30%">Tài sản</th><th>Ai đi kiểm</th><th>Ai ký nhận kết quả</th></tr>
+  <tr><td>Đồ nhân viên đang giữ</td><td>Hành chính (ai có quyền)</td><td>Chính nhân viên đó</td></tr>
+  <tr><td>Đồ để ở tầng, phòng (phần vùng)</td><td>Hành chính (ai có quyền)</td><td>Người đứng tên từng món</td></tr>
+  <tr><td>Đồ trong kho</td><td>Hành chính (ai có quyền)</td><td><b>Người xác nhận kho</b>, chọn lúc mở đợt</td></tr>
+</table></div>
+<p class="note">Người xác nhận kho <b>chỉ ký cho các món trong kho</b>, ký một lần cho cả danh sách, không bấm từng món. Món nằm trong kho nhưng đang ghi tên một người thì thuộc phần người đó. Ai là người ký cho kho (thủ kho, trưởng tổ hành chính, hay không cần ai) là câu 1 ở <a href="#cau-hoi">mục 12</a>.</p>
+
+<h3>Các thao tác khác</h3>
+<ul>
+  <li><b>Tem hỏng hoặc mất:</b> tìm theo mã tay, chụp ảnh, hệ tự đánh dấu cần in lại tem.</li>
+  <li><b>Người không giữ món nào</b> (ví dụ người mới): danh sách trống. Hỏi có đang cầm đồ công ty không; có thì quét để ghi nhận, không thì bấm "Không giữ món nào · Xong phần".</li>
+  <li><b>Phần đã xong</b> thì app chỉ cho xem. Muốn sửa, quản lý mở lại trên web (bắt buộc ghi lý do). Phần bị mở lại do nhân viên không đồng ý cũng hiện lại trên app để kiểm lại.</li>
+</ul>
 
 <h3>Người được kiểm xác nhận</h3>
 <ol class="steps">
@@ -438,18 +473,19 @@ a{color:var(--accent)}
   </div>
   <div class="card">
     <h3 style="margin-top:0">Người giữ xác nhận trên web</h3>
-    <p>Màn "Xác nhận kiểm kê": cùng nội dung như trên app, có nút Đồng ý / Không đồng ý. Mô tả chi tiết ở <a href="#luong">mục 06, bước 5</a>.</p>
+    <p>Màn "NV xác nhận kiểm kê": cùng nội dung như trên app, có nút Đồng ý / Không đồng ý. Mô tả chi tiết ở <a href="#luong">mục 06, bước 5</a>.</p>
   </div>
 </div>
 
 <h3 id="minh-hoa">Màn minh hoạ web</h3>
 <div class="card summary" style="margin-bottom:14px">
-  <p><b>Bấm thử được:</b> <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">mở màn minh hoạ web</a>. Dữ liệu giả, chưa nối API. Ở thanh vàng trên cùng đổi vai giữa <b>Quản lý / hành chính</b> và <b>anh Sơn</b> (nhân viên được kiểm). Muốn xem ngay màn của nhân viên: <a href="minh-hoa-tao-dot-kiem-ke.html?vai=son" target="_blank" rel="noopener">mở menu NV xác nhận kiểm kê</a> (danh sách phiếu của anh Sơn), hoặc bấm menu đó ở cột trái trên màn minh hoạ. Kịch bản theo đúng luồng ở <a href="#luong">mục 06</a>:</p>
+  <p><b>Bấm thử được:</b> <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">mở màn minh hoạ web</a>. Dữ liệu giả, chưa nối API. Menu bên trái có ba màn dùng chung dữ liệu: <b>Kiểm kê</b> (quản lý / hành chính), <b>NV xác nhận kiểm kê</b> (anh Sơn, nhân viên được kiểm) và <b>App kiểm kê (mobile)</b> (chị Lan đi kiểm, <a href="minh-hoa-tao-dot-kiem-ke.html?vai=app" target="_blank" rel="noopener">mở thẳng</a>). Muốn xem ngay màn của nhân viên: <a href="minh-hoa-tao-dot-kiem-ke.html?vai=son" target="_blank" rel="noopener">mở menu NV xác nhận kiểm kê</a> (danh sách phiếu của anh Sơn), hoặc bấm menu đó ở cột trái trên màn minh hoạ. Kịch bản theo đúng luồng ở <a href="#luong">mục 06</a>:</p>
   <ol style="margin:0">
-    <li>Quản lý bấm đợt <b>KK0012</b> để xem chi tiết, bấm một phần để xem từng món.</li>
-    <li>Đổi vai <b>anh Sơn</b>: bấm Không đồng ý, tích Máy chiếu, ghi lý do.</li>
-    <li>Đổi lại <b>Quản lý</b>: Tầng 3 thành "Mở lại". Bấm "Giả lập: chị Lan kiểm lại xong".</li>
-    <li>Đổi vai <b>anh Sơn</b>: xác nhận lần hai, bấm Đồng ý, kết quả bị khoá.</li>
+    <li>Quản lý bấm đợt <b>KK0012</b> để xem chi tiết. Phần anh Sơn đang "Chưa kiểm".</li>
+    <li><b>App kiểm kê</b>: bấm KK0012, tab Người, bấm anh Sơn, quét từng món, thử một món Không thấy, bấm Xong phần.</li>
+    <li><b>NV xác nhận kiểm kê</b> hiện số 1: mở phiếu XN0153, bấm Không đồng ý, tích Máy chiếu, ghi lý do.</li>
+    <li>Tầng 3 thành "Mở lại": kiểm lại trên <b>App</b> (Máy chiếu chọn "Có, nhưng đang ở chỗ khác", Xong phần), hoặc trên web bấm "Giả lập: chị Lan kiểm lại xong".</li>
+    <li><b>NV xác nhận kiểm kê</b>: xác nhận lần hai, bấm Đồng ý, kết quả bị khoá.</li>
     <li><b>Quản lý</b>: thử Thêm nhân viên, Nhắc xác nhận, Đóng đợt, tạo đợt mới.</li>
   </ol>
 </div>

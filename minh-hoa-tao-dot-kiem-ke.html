@@ -125,6 +125,49 @@ h3{font-size:13px;margin:16px 0 8px}
 .sumline{display:flex;gap:6px;flex-wrap:wrap}
 .stick{position:sticky;bottom:0;background:var(--surface);border-top:1px solid var(--border);padding:12px 16px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;border-radius:0 0 10px 10px}
 .ck{width:16px;height:16px;vertical-align:middle}
+/* app mobile */
+.app-wrap{display:grid;grid-template-columns:380px minmax(0,1fr);gap:20px;align-items:start}
+.phone{width:360px;max-width:100%;height:740px;border:10px solid #1b2130;border-radius:36px;background:#f5f6f8;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:0 18px 40px rgba(20,30,50,.18);margin:0 auto}
+.ph-status{flex:0 0 24px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:11px;color:#fff;background:#1d48a8}
+.ph-top{flex:0 0 auto;background:var(--primary);color:#fff;padding:8px 12px 10px;display:flex;align-items:center;gap:8px;min-height:52px}
+.ph-top .bk{border:0;background:rgba(255,255,255,.18);color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1;flex:0 0 30px}
+.ph-top b{display:block;font-size:14px;line-height:1.3}
+.ph-top small{display:block;opacity:.85;font-size:11px}
+.ph-body{flex:1;overflow-y:auto;min-height:0}
+.ph-foot{flex:0 0 auto;padding:10px 12px;border-top:1px solid var(--border);background:#fff;display:flex;flex-direction:column;gap:6px}
+.ph-btn{min-height:40px;border-radius:10px;border:1px solid var(--border);background:#fff;font-weight:600;cursor:pointer;width:100%;padding:0 10px}
+.ph-btn:hover{background:var(--muted-bg)}
+.ph-btn.pri{background:var(--primary);border-color:var(--primary);color:#fff}
+.ph-btn.okb{background:var(--ok);border-color:var(--ok);color:#fff}
+.ph-btn.pri:hover,.ph-btn.okb:hover{filter:brightness(1.08)}
+.ph-btn:disabled{opacity:.5;cursor:not-allowed;filter:none}
+.ph-seg{display:flex;gap:4px;padding:8px 10px 6px;background:#fff;border-bottom:1px solid var(--border);overflow-x:auto}
+.ph-seg button{border:1px solid var(--border);background:#fff;border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer;white-space:nowrap}
+.ph-seg button.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.ph-search{padding:6px 10px 8px;background:#fff;border-bottom:1px solid var(--border)}
+.ph-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:#fff;border-bottom:1px solid var(--border);cursor:pointer}
+.ph-row:hover{background:#fafbfd}
+.ph-row > div:first-child{min-width:0}
+.ph-row .r{text-align:right;flex:0 0 auto}
+.ph-sub{font-size:11px;color:var(--muted)}
+.ph-card{background:#fff;border:1px solid var(--border);border-radius:12px;margin:10px;padding:10px 12px}
+.ph-card.ok{background:var(--ok-soft);border-color:#bfe3cc} .ph-card.warn{background:var(--warn-soft);border-color:#f0dca8} .ph-card.bad{background:var(--bad-soft);border-color:#f3c1bd}
+.ph-ic{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;font-size:12px;font-weight:700;flex:0 0 22px;margin-right:8px;background:var(--muted-bg);color:var(--muted)}
+.ph-ic.ok{background:var(--ok-soft);color:var(--ok)} .ph-ic.bad{background:var(--bad-soft);color:var(--bad)} .ph-ic.warn{background:var(--warn-soft);color:var(--warn)}
+.ph-info{padding:8px 12px;background:#fff;border-bottom:1px solid var(--border);font-size:12px}
+.ph-note{padding:8px 12px;font-size:11px;color:var(--muted)}
+.cam{height:160px;background:#0f1420;border-radius:12px;margin:10px;position:relative;display:grid;place-items:center;color:#8b95a8;font-size:12px;overflow:hidden}
+.cam::before{content:"";position:absolute;inset:26px 60px;border:2px solid rgba(255,255,255,.55);border-radius:10px}
+.cam::after{content:"";position:absolute;left:60px;right:60px;height:2px;background:#ff5a4f;top:28px;animation:quet 1.6s ease-in-out infinite alternate}
+@keyframes quet{to{top:130px}}
+@media (prefers-reduced-motion:reduce){.cam::after{animation:none;top:80px}}
+.ph-sheet{position:absolute;inset:0;background:rgba(15,20,35,.45);display:flex;align-items:flex-end;z-index:2}
+.ph-sheet .in{background:#fff;border-radius:16px 16px 0 0;padding:14px 14px 16px;width:100%;display:flex;flex-direction:column;gap:6px;max-height:88%;overflow-y:auto}
+.app-side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.app-side .guide{margin:0}
+.app-side .giai p{margin:0 0 8px}
+.app-side .giai p:last-child{margin:0}
+@media (max-width:1000px){ .app-wrap{grid-template-columns:1fr} }
 @media (max-width:760px){
   .shell{grid-template-columns:1fr} aside{display:none}
   .grid,.stats{grid-template-columns:1fr 1fr}
@@ -140,6 +183,7 @@ h3{font-size:13px;margin:16px 0 8px}
     <select id="vai">
       <option value="ql">Quản lý / hành chính</option>
       <option value="son">anh Sơn (nhân viên được kiểm)</option>
+      <option value="app">chị Lan (hành chính, app mobile)</option>
     </select>
   </label>
   <button class="link" id="btnReset">Làm lại từ đầu</button>
@@ -151,9 +195,10 @@ h3{font-size:13px;margin:16px 0 8px}
     <a>Tài sản</a><a>Điều chuyển</a><a>Điều chuyển liên công ty</a>
     <a data-act="ve-ds" id="mnKiemKe">Kiểm kê</a>
     <a data-act="ve-xn" id="mnXacNhan">NV xác nhận kiểm kê <span class="badge" id="badgeNv">1</span></a>
+    <a data-act="ve-app" id="mnApp">App kiểm kê (mobile)</a>
     <a>Báo cáo</a>
     <div class="grp" style="margin-top:14px">Ghi chú minh hoạ</div>
-    <div style="font-size:11px;color:#8d97ab;padding:0 10px">"Kiểm kê" là màn của quản lý / hành chính. "NV xác nhận kiểm kê" là màn mỗi nhân viên thấy: danh sách phiếu xác nhận của chính mình. Bản minh hoạ xem như anh Sơn.</div>
+    <div style="font-size:11px;color:#8d97ab;padding:0 10px">"Kiểm kê" là màn của quản lý / hành chính. "NV xác nhận kiểm kê" là màn mỗi nhân viên thấy: danh sách phiếu xác nhận của chính mình, bản minh hoạ xem như anh Sơn. "App kiểm kê" là app điện thoại của người đi kiểm (chị Lan). Ba màn dùng chung dữ liệu.</div>
   </aside>
 
   <main>
@@ -163,11 +208,12 @@ h3{font-size:13px;margin:16px 0 8px}
       <details class="guide" open>
         <summary>Kịch bản demo (bấm theo thứ tự)</summary>
         <ol>
-          <li>Bấm đợt <b>KK0012</b> để xem màn chi tiết: các tab Phần kiểm, Xác nhận, Tài sản, Ngoại lệ, In lại tem. Bấm một dòng ở tab Phần kiểm để xem chi tiết phần.</li>
-          <li>Bấm menu <b>NV xác nhận kiểm kê</b> bên trái (màn của nhân viên, đang xem như anh Sơn): danh sách phiếu, mới nhất ở trên. Bấm phiếu <b>XN0153</b>, bấm <b>Không đồng ý</b>, tích món <i>Máy chiếu</i>, ghi lý do, gửi.</li>
-          <li>Bấm menu <b>Kiểm kê</b>, vào KK0012. Tab Xác nhận: anh Sơn "Không đồng ý". Tab Phần kiểm: Tầng 3 "Mở lại". Bấm Tầng 3, chọn <b>Giả lập: chị Lan kiểm lại xong</b>.</li>
-          <li>Bấm menu <b>NV xác nhận kiểm kê</b> (hoặc nút "Xem phiếu của anh Sơn" ở tab Xác nhận), mở phiếu XN0153: danh sách đã cập nhật, bấm <b>Đồng ý</b>. Kết quả bị khoá.</li>
-          <li>Bấm menu <b>Kiểm kê</b>: thử <b>Thêm nhân viên</b>, <b>Nhắc xác nhận</b>, rồi <b>Đóng đợt</b>. Có thể tạo đợt mới cho VN02 bằng nút <b>+ Tạo đợt</b>.</li>
+          <li>Bấm đợt <b>KK0012</b> để xem màn chi tiết: các tab Phần kiểm, Xác nhận, Tài sản, Ngoại lệ, In lại tem. Phần <b>anh Sơn</b> đang "Chưa kiểm".</li>
+          <li>Bấm menu <b>App kiểm kê (mobile)</b> (chị Lan đi kiểm): chọn KK0012, tab <b>Người</b>, bấm <b>anh Sơn</b>. Bấm <b>Quét tem</b> vài lần, thử một món "Không thấy", rồi <b>Xong phần</b>.</li>
+          <li>Menu <b>NV xác nhận kiểm kê</b> hiện số 1 (đang xem như anh Sơn): bấm phiếu <b>XN0153</b>, bấm <b>Không đồng ý</b>, tích <i>Máy chiếu</i>, ghi lý do, gửi.</li>
+          <li>Tầng 3 thành "Mở lại". Kiểm lại trên <b>App</b> (bấm Tầng 3, bấm Máy chiếu, chọn "Có, nhưng đang ở chỗ khác", Xong phần), hoặc trên web: menu Kiểm kê, bấm Tầng 3, <b>Giả lập: chị Lan kiểm lại xong</b>.</li>
+          <li>Menu <b>NV xác nhận kiểm kê</b>, mở phiếu XN0153: danh sách đã cập nhật, bấm <b>Đồng ý</b>. Kết quả bị khoá.</li>
+          <li>Menu <b>Kiểm kê</b>: thử <b>Thêm nhân viên</b> (người mới hiện ngay trên app), <b>Nhắc xác nhận</b>, rồi <b>Đóng đợt</b>. Có thể tạo đợt mới cho VN02 bằng nút <b>+ Tạo đợt</b>.</li>
         </ol>
       </details>
       <div class="head">
@@ -214,6 +260,36 @@ h3{font-size:13px;margin:16px 0 8px}
       <div class="crumb" id="cCrumb"></div>
       <div class="head"><h1 id="cTitle"></h1><span class="hint">Màn của nhân viên · đang xem như <b>anh Sơn</b></span></div>
       <div id="cBody"></div>
+    </section>
+
+    <!-- ===== APP MOBILE (người đi kiểm) ===== -->
+    <section id="vApp" hidden>
+      <div class="crumb">App mobile · người đi kiểm</div>
+      <div class="head"><h1>App kiểm kê (mobile)</h1><span class="hint">Đang xem như <b>chị Lan</b>, hành chính đi kiểm · dùng chung dữ liệu với web</span></div>
+      <div class="app-wrap">
+        <div class="phone" id="phone"></div>
+        <div class="app-side">
+          <div class="card pad giai"><div class="lbl" id="appBuoc"></div><h3 id="appTen" style="margin:2px 0 8px;font-size:15px"></h3><div id="appGiai"></div></div>
+          <details class="guide" open>
+            <summary>Kịch bản demo app (bấm theo thứ tự)</summary>
+            <ol>
+              <li>Bấm đợt <b>KK0012</b>.</li>
+              <li>Tab <b>Người</b>, bấm <b>anh Sơn</b>: hiện 6 món anh Sơn đang giữ, tất cả "Chưa kiểm".</li>
+              <li>Bấm <b>Quét tem</b>, bấm "Quét món tiếp theo" vài lần. Thử "Quét một món đang ghi ở phần khác" rồi <b>Ghi nhận</b>. Thử mã <span class="mono">ABC-123</span>: bị từ chối.</li>
+              <li>Về danh sách, bấm một món chưa kiểm, chọn <b>Không thấy</b>. Hoặc bấm "Đánh dấu còn lại là Không thấy".</li>
+              <li>Bấm <b>Xong phần</b>: anh Sơn nhận phiếu XN0153, menu "NV xác nhận kiểm kê" hiện số 1.</li>
+              <li>Xuống kho: quay lại, tab <b>Kho</b>, bấm <b>Kho chưa rõ</b>, quét 2 món rồi Xong phần. Người xác nhận kho (chị Linh) nhận phiếu, không phải chị Lan.</li>
+            </ol>
+          </details>
+          <div class="card pad">
+            <b>Xem kết quả bên web</b>
+            <div class="acts" style="margin-top:8px">
+              <button class="btn sm" data-act="ve-xn" data-phieu="XN0153">Phiếu XN0153 của anh Sơn</button>
+              <button class="btn sm" data-act="ve-dot">Chi tiết đợt KK0012</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 </div>
@@ -350,7 +426,8 @@ function khoiTao() {
   it({ ma:'TSHN24-0877', ten:'Màn hình 24"', phan:'p-minh', giu:'anh Minh', kq:'HONG', tinhTrang:'Hỏng', anh:true, luc:'16/11 09:07', tem:true, vet:'Màn hình bị sọc; tem mờ, cần in lại' });
   it({ ma:'TSHN26-0045', ten:'Chuột không dây', phan:'p-minh', nguon:'THEM', giu:'anh Minh', kq:'THEM', luc:'16/11 09:09', vet:'Đang ghi ở Kho MB · đã báo sang phần Kho MB' });
   // anh Sơn
-  it({ ma:'TSHN25-0102', ten:'Laptop HP', phan:'p-son', giu:'anh Sơn', luc:'16/11 09:30' });
+  [['TSHN25-0102','Laptop HP'],['TSHN25-0103','Màn hình 27"'],['TSHN25-0104','Bàn phím không dây'],['TSHN25-0105','Chuột không dây'],['TSHN24-0388','Tai nghe họp'],['TSHN23-0291','Điện thoại bàn']]
+    .forEach(([ma, ten]) => it({ ma, ten, phan:'p-son', giu:'anh Sơn', kq:'CHUA', tinhTrang:'', quet:'', luc:'' }));
   // anh Tú
   it({ ma:'TSHN26-0012', ten:'Laptop Lenovo', phan:'p-tu', nguon:'THEM', giu:'anh Tú', kq:'THEM', luc:'16/11 10:02', tem:true, vet:'Đang ghi ở Kho MB · đã báo sang phần Kho MB · chưa dán tem' });
   // chị Hà
@@ -391,7 +468,7 @@ function khoiTao() {
     ],
     soMa: 13,
     phan: [
-      P('p-minh','anh Minh','Người','Xong','16/11 09:10'), P('p-son','anh Sơn','Người','Xong','16/11 09:31'),
+      P('p-minh','anh Minh','Người','Xong','16/11 09:10'), P('p-son','anh Sơn','Người','Chưa kiểm'),
       P('p-tu','anh Tú','Người','Xong','16/11 10:03'), P('p-ha','chị Hà','Người','Xong','13/11 15:23'),
       P('p-van','chị Vân','Người','Chưa kiểm'), P('p-dong','anh Đông','Người','Chưa kiểm'),
       P('v-t3','Tầng 3','Vùng','Xong','16/11 14:22'), P('v-t4','Tầng 4','Vùng','Đang kiểm','16/11 10:30'),
@@ -409,7 +486,8 @@ function khoiTao() {
       { id:'x-linh', ai:'chị Linh', loai:'Kho', ghiChu:'Kho chưa rõ', phanIds:['k-cr'], xacNhanLuc:'', tu:'', lichSu:[] }
     ],
     nghi: [{ ma:'TSHN23-0412', ten:'Điện thoại Samsung', ai:'anh Nam', nghi:'09/2026' }],
-    son: { moRong: {}, phanDoi: false, chon: {}, view: 'list', phieu: null }
+    son: { moRong: {}, phanDoi: false, chon: {}, view: 'list', phieu: null },
+    app: { man:'dot', loai:'', q:'', phan:null, loc:'', mon:null, kq:null }
   };
 }
 
@@ -457,16 +535,19 @@ const kqPill = i => pill(KQ[i.kq][0], KQ[i.kq][1]);
 function tienDo(a, b) { const p = b ? Math.round(a * 100 / b) : 0; return `<span class="bar"><i style="width:${p}%"></i></span>${fmt(a)}/${fmt(b)}`; }
 
 /* ================= ĐIỀU HƯỚNG ================= */
-function ve() {
-  $('mnKiemKe').classList.toggle('on', S.vai === 'ql'); $('mnXacNhan').classList.toggle('on', S.vai === 'son');
+function capNhatMenu() {
+  $('mnKiemKe').classList.toggle('on', S.vai === 'ql'); $('mnXacNhan').classList.toggle('on', S.vai === 'son'); $('mnApp').classList.toggle('on', S.vai === 'app');
   const cho = phieuSon().filter(p => p.tt === 'Chờ xác nhận').length;
   $('badgeNv').textContent = cho; $('badgeNv').hidden = !cho;
+}
+function ve() {
+  capNhatMenu();
   $('vList').hidden = !(S.vai === 'ql' && S.view === 'list');
   $('vDetail').hidden = !(S.vai === 'ql' && S.view === 'detail');
-  $('vConfirm').hidden = S.vai !== 'son';
-  if (S.vai === 'son') veConfirm(); else if (S.view === 'detail') veDetail(); else veDs();
+  $('vConfirm').hidden = S.vai !== 'son'; $('vApp').hidden = S.vai !== 'app';
+  if (S.vai === 'app') veApp(); else if (S.vai === 'son') veConfirm(); else if (S.view === 'detail') veDetail(); else veDs();
 }
-$('vai').onchange = () => { S.vai = $('vai').value; dongDrawer(); S.son.phanDoi = false; S.son.chon = {}; S.son.view = 'list'; ve(); window.scrollTo(0, 0); };
+$('vai').onchange = () => { S.vai = $('vai').value; dongDrawer(); S.son.phanDoi = false; S.son.chon = {}; S.son.view = 'list'; S.app.mon = null; ve(); window.scrollTo(0, 0); };
 $('btnReset').onclick = () => { khoiTao(); $('vai').value = 'ql'; dongDrawer(); ve(); toast('Đã đặt lại dữ liệu demo'); };
 
 /* ================= DANH SÁCH ================= */
@@ -640,7 +721,8 @@ function veChiTietPhieu() {
   const dem = k => its.filter(i => i.kq === k).length;
   let banner = '';
   if (t.tt === 'Chờ xác nhận' && !dong) banner = `<div class="alert info">Hành chính đã kiểm xong mọi phần có tài sản của anh. Anh xem danh sách bên dưới rồi bấm <b>Đồng ý</b> hoặc <b>Không đồng ý</b>.${x.phanDoi ? ' <b>Đây là lần xác nhận thứ hai</b>, sau khi hành chính kiểm lại theo phản hồi của anh.' : ''}</div>`;
-  if (t.tt === 'Chờ kiểm xong') banner = `<div class="alert info">Đang chờ hành chính kiểm xong: ${t.chua.map(p => p.ten).join(', ')}. Anh chưa cần làm gì.</div>`;
+  if (t.tt === 'Chờ kiểm xong') banner = `<div class="alert info">Đang chờ hành chính kiểm xong: ${t.chua.map(p => p.ten).join(', ')}. Anh chưa cần làm gì.</div>`
+    + (!dong ? `<div class="acts" style="margin:-4px 0 12px">${t.chua.map(p => `<button class="btn sm" data-act="ve-app-phan" data-id="${p.id}">Minh hoạ: mở app kiểm ${esc(p.ten)}</button>`).join('')}${t.chua.some(p => p.id === 'p-son') ? '<button class="btn sm" data-act="gia-lap-son">Giả lập: chị Lan kiểm xong phần anh Sơn</button>' : ''}</div>` : '');
   if (t.tt === 'Không đồng ý') banner = `<div class="alert warn">Anh đã <b>không đồng ý</b> lúc ${x.phanDoi.luc}. Lý do: "${esc(x.phanDoi.lyDo)}". Đang chờ hành chính kiểm lại: ${t.chua.map(p => p.ten).join(', ')}.</div>`;
   if (t.tt === 'Đã xác nhận') banner = `<div class="alert ok">Anh đã <b>đồng ý</b> lúc ${x.xacNhanLuc}. Kết quả của ${its.length} món đã khoá.</div>`;
   if (dong && !x.xacNhanLuc) banner = `<div class="alert warn">Đợt đã đóng khi anh chưa xác nhận. Báo cáo ghi nhận anh "chưa xác nhận".</div>`;
@@ -685,6 +767,205 @@ function veChiTietPhieu() {
       : `<div class="card"><div class="stick"><button class="btn" data-act="pd">Không đồng ý</button><button class="btn ok" data-act="dong-y">Đồng ý</button></div></div>`) : ''}`;
 }
 
+/* ================= APP MOBILE (chị Lan đi kiểm) ================= */
+const NGOAI_DOT = { 'TSHN26-0300': { ten:'Máy tính bảng Samsung', ghi:'Có trên hệ nhưng tạo ngày 14/11, sau khi mở đợt, nên không nằm trong danh sách đã chụp' } };
+const THU_TU_APP = { CHUA:0, KHONG_THAY:1, HONG:2, SAI_CHO:3, THEM:4, CO:5 };
+const ICON = { CHUA:['○',''], CO:['✓','ok'], HONG:['!','bad'], KHONG_THAY:['✕','bad'], SAI_CHO:['↪','warn'], THEM:['+','warn'] };
+const mk = o => Object.assign({ nguon:'DS', kq:'CO', tinhTrang:'Tốt đang dùng', giu:'', quet:'chị Lan', luc:'', anh:false, vet:'', tem:false }, o);
+const nguoiKy = p => { const x = S.xn.find(v => v.loai === 'Kho' && v.phanIds.includes(p.id)); return x ? x.ai : '—'; };
+const suaDuoc = p => !dongDot() && p.trangThai !== 'Xong';
+const monApp = () => S.app.mon && S.items.find(v => v.phan === S.app.phan && v.ma === S.app.mon.ma && v.nguon === S.app.mon.nguon);
+function batDau(p) { if (p.trangThai === 'Chưa kiểm') { p.trangThai = 'Đang kiểm'; p.nguoiKiem = 'chị Lan'; } p.capNhat = bayGio(); }
+function ghiKq(i, kq, tinhTrang, ghiChu) {
+  Object.assign(i, { kq, quet:'chị Lan', luc: bayGio(), tinhTrang: kq === 'KHONG_THAY' ? '' : kq === 'HONG' ? 'Hỏng' : (tinhTrang || 'Tốt đang dùng'), anh: kq === 'HONG' || i.anh });
+  if (ghiChu) i.vet = ghiChu; else if (kq === 'HONG') i.vet = 'Đã chụp ảnh trên app';
+  batDau(phanById(i.phan));
+}
+function timMa(raw) {
+  const A = S.app, p = phanById(A.phan), ma = String(raw || '').trim().toUpperCase();
+  if (!ma) { toast('Gõ mã tem trước'); return; }
+  const cua = S.items.find(i => i.phan === p.id && i.ma === ma);
+  if (cua) { if (cua.nguon === 'DS' && cua.kq === 'CHUA') { ghiKq(cua, 'CO'); A.kq = { loai:'ok', ma, ten:cua.ten }; } else A.kq = { loai:'da', ma, ten:cua.ten, kq:cua.kq }; return; }
+  const goc = S.items.find(i => i.ma === ma && i.nguon === 'DS');
+  if (goc) { const p2 = phanById(goc.phan);
+    A.kq = { loai:'khac', ma, ten:goc.ten, goc, txt:`Món này thuộc phần <b>${esc(p2.ten)}</b>${goc.giu && p2.loai !== 'Người' ? ` (đứng tên ${esc(goc.giu)})` : ''}${p2.loai === 'Kho' ? ', đang ghi ở kho' : ''}. Ghi nhận ở đây thì hệ lưu vết ở cả hai phần, <b>không đổi người giữ</b>.` }; return; }
+  const n = S.nghi.find(v => v.ma === ma);
+  if (n) { A.kq = { loai:'nghi', ma, ten:n.ten, n, txt:`Món này đang ghi ở <b>${esc(n.ai)}</b>, người đã nghỉ ${n.nghi}, nên không thuộc phần nào. Ghi nhận ở đây để hành chính thu hồi sau.` }; return; }
+  if (NGOAI_DOT[ma]) { A.kq = { loai:'ngoai', ma, ten:NGOAI_DOT[ma].ten, txt:esc(NGOAI_DOT[ma].ghi) + '. Ghi nhận là món thêm.' }; return; }
+  A.kq = { loai:'khong', ma };
+}
+function quetKhac() {
+  const p = phanById(S.app.phan);
+  const g = S.items.find(i => i.nguon === 'DS' && i.kq === 'CHUA' && i.phan !== p.id && ['v-t5','v-t4','v-ph5','p-dong','p-van'].includes(i.phan) && !S.items.some(t => t.phan === p.id && t.ma === i.ma));
+  if (!g) { toast('Hết món mẫu để giả lập'); return; }
+  timMa(g.ma);
+}
+function ghiNhan() {
+  const A = S.app, p = phanById(A.phan), r = A.kq, luc = bayGio();
+  if (r.loai === 'khac') { const g = r.goc, p2 = phanById(g.phan);
+    S.items.push(mk({ ma:r.ma, ten:r.ten, phan:p.id, nguon:'THEM', giu:g.giu, kq:'THEM', luc, vet:`Đang ghi ở ${p2.ten} · đã báo sang phần ${p2.ten}` }));
+    if (g.kq === 'CHUA') Object.assign(g, { kq:'SAI_CHO', tinhTrang:'Tốt đang dùng', quet:'chị Lan', luc, vet:`Thấy ở phần ${p.ten} (chị Lan, ${luc})` });
+    else g.vet = (g.vet ? g.vet + ' · ' : '') + `Cũng thấy ở phần ${p.ten} (${luc})`;
+    A.kq = { loai:'ghi', ten:r.ten, txt:`Phần ${p2.ten} tự hiện "thấy ở phần ${p.ten}", người kiểm phần đó không phải đi tìm.` };
+  }
+  if (r.loai === 'nghi') { S.items.push(mk({ ma:r.ma, ten:r.ten, phan:p.id, nguon:'THEM', giu:r.n.ai, kq:'THEM', luc, vet:`Ghi ở ${r.n.ai} (đã nghỉ ${r.n.nghi}) · cần thu hồi` })); A.kq = { loai:'ghi', ten:r.ten, txt:'Báo cáo ngoại lệ có dòng cần thu hồi.' }; }
+  if (r.loai === 'ngoai') { S.items.push(mk({ ma:r.ma, ten:r.ten, phan:p.id, nguon:'THEM', giu:'', kq:'THEM', luc, vet:'Có trên hệ nhưng tạo sau khi mở đợt · ghi nhận thêm' })); A.kq = { loai:'ghi', ten:r.ten, txt:'' }; }
+  batDau(p);
+}
+function xongPhan() {
+  const A = S.app, p = phanById(A.phan), luc = bayGio();
+  if (dsCua(p.id).some(i => i.kq === 'CHUA')) return;
+  const truoc = new Map(S.xn.map(x => [x.id, ttXn(x).tt]));
+  const lai = p.trangThai === 'Mở lại';
+  p.trangThai = 'Xong'; p.capNhat = luc; p.nguoiKiem = 'chị Lan'; p.log.push([luc, lai ? 'chị Lan kiểm lại xong trên app' : 'chị Lan bấm Xong phần trên app']);
+  const x2 = S.xn.find(v => v.phanDoi && !v.phanDoi.xong && v.phanDoi.phanMo.includes(p.id));
+  if (x2 && x2.phanDoi.phanMo.every(id => phanById(id).trangThai === 'Xong')) { x2.phanDoi.xong = true; x2.lichSu.push([luc, 'Hành chính kiểm lại xong, gửi yêu cầu xác nhận lần 2']); }
+  const moi = S.xn.filter(x => truoc.get(x.id) !== 'Chờ xác nhận' && ttXn(x).tt === 'Chờ xác nhận');
+  moi.forEach(x => x.tu = luc);
+  Object.assign(A, { man:'phan', kq:null, mon:null });
+  ve();
+  const cho = xnLienQuan(p.id).filter(x => ttXn(x).tt === 'Chờ kiểm xong');
+  toast(`Đã xong phần ${p.ten}.` + (moi.length ? ` ${moi.map(x => x.ai + (x.id === 'x-son' ? ' (phiếu XN0153)' : '')).join(', ')} nhận yêu cầu xác nhận.` : '')
+    + (cho.length ? ` ${cho.map(x => x.ai).join(', ')} chưa nhận vì còn phần khác có đồ của họ chưa xong.` : ''));
+}
+function giaLapXongSon(luc) {
+  const p = phanById('p-son');
+  dsCua('p-son').filter(i => i.kq === 'CHUA').forEach(i => Object.assign(i, { kq:'CO', tinhTrang:'Tốt đang dùng', quet:'chị Lan', luc: luc || '16/11 09:30' }));
+  p.trangThai = 'Xong'; p.nguoiKiem = 'chị Lan'; p.capNhat = luc || '16/11 09:31';
+  const x = xnSon(); if (ttXn(x).tt === 'Chờ xác nhận') x.tu = luc || '16/11 14:22';
+}
+function veApp() {
+  const A = S.app, cu = document.querySelector('#phone .ph-body'), cuon = cu && A._key === A.man + A.phan ? cu.scrollTop : 0;
+  const bk = '<button class="bk" data-act="a-back" aria-label="Quay lại">‹</button>';
+  let back = '', tt = '', sub = '', body = '', foot = '', sheet = '', buoc = '', ten = '', giai = '';
+  if (A.man === 'dot') {
+    tt = 'Kiểm kê'; sub = 'chị Lan · Tổ hành chính MB';
+    const s = soLieu(), khac = S.khac.filter(d => d.tt === 'Đang kiểm');
+    body = '<div class="ph-note">Đợt đang mở</div>'
+      + (!dongDot() ? `<div class="ph-row" data-act="a-dot"><div><b>${S.dot.ma} · ${esc(S.dot.ten)}</b><div class="ph-sub">Công ty ${S.dot.cty} · mở ${S.dot.mo} · hạn ${S.dot.kt}</div></div><div class="r">${pill('Đang kiểm','p-info')}<div class="ph-sub">${fmt(s.phanXong)}/${fmt(s.phanTong)} phần</div></div></div>` : '')
+      + khac.map(d => `<div class="ph-row" data-act="a-dot-khac"><div><b>${d.ma} · ${esc(d.ten)}</b><div class="ph-sub">Công ty ${d.cty} · mở ${d.mo}</div></div><div class="r">${pill('Đang kiểm','p-info')}</div></div>`).join('')
+      + (dongDot() && !khac.length ? '<div class="ph-card">Không có đợt nào đang mở.</div>' : '')
+      + '<div class="ph-note">Chỉ hiện đợt đang mở của công ty mình có quyền. Đợt đã đóng không hiện.</div>';
+    buoc = 'Bước 1'; ten = 'Chọn đợt';
+    giai = '<p>Mở app thì chỉ thấy các đợt <b>đang mở</b>. Đợt do quản lý tạo trên web. Lúc bấm "Mở đợt", hệ đã chia sẵn các phần (người, vùng, kho) và chụp danh sách món của từng phần.</p>';
+  }
+  if (A.man === 'phan') {
+    back = bk; tt = `${S.dot.ma} · ${S.dot.cty}`; sub = 'Chọn phần cần kiểm';
+    const q = A.q.trim().toLowerCase(), ds = S.phan.filter(p => (!A.loai || p.loai === A.loai) && (!q || p.ten.toLowerCase().includes(q)));
+    const dem = l => S.phan.filter(p => !l || p.loai === l).length;
+    body = `<div class="ph-seg">${[['','Tất cả'],['Người','Người'],['Vùng','Vùng'],['Kho','Kho']].map(([v, t]) => `<button class="${A.loai === v ? 'on' : ''}" data-act="a-loai" data-v="${v}">${t} ${dem(v)}</button>`).join('')}</div>
+      <div class="ph-search"><input class="input" data-app="q" value="${esc(A.q)}" placeholder="Tìm tên người, vùng, kho"></div>`
+      + ds.map(p => { const li = dsCua(p.id), n = li.length, them = itemsCua(p.id).length - n;
+        return `<div class="ph-row" data-act="a-phan" data-id="${p.id}"><div><b>${esc(p.ten)}</b><div class="ph-sub">${p.loai} · ${n} món${them ? ` · +${them} thêm` : ''}${p.loai === 'Kho' ? ` · ${esc(nguoiKy(p))} ký` : ''}</div></div><div class="r">${pill(p.trangThai, TT_PHAN[p.trangThai])}<div class="ph-sub">${li.filter(daKiem).length}/${n}</div></div></div>`; }).join('')
+      + (ds.length ? '' : '<div class="ph-card">Không có phần nào khớp.</div>')
+      + `<div class="ph-note">Bản minh hoạ chỉ hiện ${S.phan.length} phần. Đợt thật có thêm ${fmt(AN.phanTong)} phần người khác.</div>`;
+    buoc = 'Bước 2'; ten = 'Chọn phần cần kiểm';
+    giai = `<p>Đây là danh sách phần <b>đã chia sẵn lúc mở đợt</b> trên web. Không có bước chọn "kiểm theo nhân viên" hay "kiểm theo vùng" như V4.</p>
+      <p>Đứng trước ai thì bấm phần người đó (tab <b>Người</b>, gõ tên). Đi theo tầng, phòng thì tab <b>Vùng</b>. Xuống kho thì tab <b>Kho</b>.</p>
+      <p>App đọc từ bản chụp của đợt, không tính lại. Ai mở cũng thấy cùng một danh sách.</p>`;
+  }
+  if (A.man === 'ds') {
+    const p = phanById(A.phan), its = itemsCua(p.id), ds = its.filter(i => i.nguon === 'DS'), con = ds.filter(i => i.kq === 'CHUA').length, sua = suaDuoc(p);
+    back = bk; tt = p.ten; sub = `${p.loai} · ${S.dot.ma} · ${pill(p.trangThai, TT_PHAN[p.trangThai])}`;
+    const loc = A.loc || '';
+    const vd = i => i.kq !== 'CO' && i.kq !== 'CHUA';
+    const rows = its.filter(i => !loc || (loc === 'CHUA' ? i.kq === 'CHUA' : vd(i))).sort((x, y) => THU_TU_APP[x.kq] - THU_TU_APP[y.kq]);
+    const dungTen = [...new Set(ds.map(i => i.giu).filter(Boolean))];
+    const ai = p.loai === 'Người' ? `Đồ <b>${esc(p.ten)}</b> đang giữ · ${esc(p.ten)} tự xác nhận`
+      : p.loai === 'Vùng' ? `Đồ trong vùng · người đứng tên xác nhận: ${dungTen.map(esc).join(', ') || '—'}`
+      : `Đồ trong kho, không ai giữ · người xác nhận kho: <b>${esc(nguoiKy(p))}</b>`;
+    let banner = '';
+    if (p.trangThai === 'Mở lại') banner = `<div class="ph-card warn">Phần được mở lại. ${esc((p.log[p.log.length - 1] || [])[1] || '')}. Kiểm lại món liên quan rồi bấm Xong phần.</div>`;
+    if (p.trangThai === 'Xong') banner = `<div class="ph-card ok">Đã xong lúc ${p.capNhat}. Muốn sửa phải nhờ quản lý mở lại trên web.</div>`;
+    if (dongDot()) banner = '<div class="ph-card">Đợt đã đóng, không ghi được nữa.</div>';
+    body = `<div class="ph-info">${ai}<div style="margin-top:6px">${tienDo(ds.filter(daKiem).length, ds.length)} đã kiểm</div></div>${banner}`
+      + (its.length ? `<div class="ph-seg">${[['','Tất cả', its.length],['CHUA','Chưa kiểm', con],['VD','Có vấn đề', its.filter(vd).length]].map(([v, t, n]) => `<button class="${loc === v ? 'on' : ''}" data-act="a-loc" data-v="${v}">${t} ${n}</button>`).join('')}</div>`
+        + rows.slice(0, 80).map(i => `<div class="ph-row" data-act="a-mon" data-ma="${i.ma}" data-nguon="${i.nguon}"><div style="display:flex;align-items:flex-start"><span class="ph-ic ${ICON[i.kq][1]}">${ICON[i.kq][0]}</span><div style="min-width:0"><b>${esc(i.ten)}</b><div class="ph-sub mono">${i.ma}</div>${i.vet ? `<div class="ph-sub">${esc(i.vet)}</div>` : ''}</div></div><div class="r">${kqPill(i)}</div></div>`).join('')
+        + (rows.length > 80 ? `<div class="ph-note">Hiện 80/${rows.length} món. Lọc "Chưa kiểm" để đi vòng cuối.</div>` : '')
+        + (rows.length ? '' : '<div class="ph-card">Không có món nào khớp bộ lọc.</div>')
+        : `<div class="ph-card"><b>${esc(p.ten)} không giữ món nào trên hệ.</b><br>Hỏi xem có đang cầm đồ công ty không. Có thì bấm Quét để ghi nhận. Không thì bấm Xong phần.</div>`)
+      + (sua && con ? `<div class="ph-note"><button class="link" data-act="a-con-lai">Đánh dấu ${con} món còn lại là Không thấy</button></div>` : '');
+    if (sua) foot = `<button class="ph-btn pri" data-act="a-quet">📷 Quét tem</button><button class="ph-btn okb" data-act="a-xong" ${con ? 'disabled' : ''}>${con ? `Xong phần (còn ${con} món chưa kiểm)` : its.length ? 'Xong phần' : 'Không giữ món nào · Xong phần'}</button>`;
+    buoc = 'Bước 3'; ten = `Danh sách món của phần ${p.ten}`;
+    giai = (p.loai === 'Người'
+      ? `<p>Đây là đồ <b>${esc(p.ten)}</b> đang giữ, lấy từ bản chụp lúc mở đợt.</p><p>Quét tem từng món: quét trúng thì món tự thành <b>Có</b>. Món tìm không thấy thì bấm vào món, chọn <b>Không thấy</b>. Hỏng thì chọn <b>Hỏng</b>, app bắt chụp ảnh.</p><p>Kiểm hết thì bấm <b>Xong phần</b>. Khi <b>mọi phần</b> có đồ của ${esc(p.ten)} đã xong, ${esc(p.ten)} nhận phiếu xác nhận.</p>`
+      : p.loai === 'Vùng'
+      ? `<p>Đồ để ở ${esc(p.ten)}. Đi hết vùng và quét, giống thói quen kiểm theo vùng của V4.</p><p>Khác V4: mỗi món vẫn do <b>người đứng tên</b> xác nhận (${dungTen.map(esc).join(', ') || '—'}), không phải người đi kiểm.</p>`
+      : `<p>Đồ nằm trong kho, không ai giữ. Thao tác giống hệt phần người: quét, đánh dấu Không thấy, Xong phần.</p><p>Bấm Xong phần thì <b>người xác nhận kho (${esc(nguoiKy(p))})</b> nhận phiếu và ký cho cả phần kho. Người đi kiểm không tự ký.</p>`)
+      + '<p class="hint">Bấm vào một món để đổi kết quả hoặc tình trạng.</p>';
+    const i = monApp();
+    if (i) {
+      const nut = (kq, tinh, txt, cls) => `<button class="ph-btn ${cls || ''}" data-act="a-kq" data-kq="${kq}" data-tinh="${tinh}">${txt}</button>`;
+      sheet = `<div class="ph-sheet" data-act="a-sheet-bg"><div class="in">
+        <b>${esc(i.ten)}</b><div class="ph-sub mono">${i.ma}${i.giu ? ' · đang ghi ở ' + esc(i.giu) : p.loai === 'Kho' ? ' · ở kho' : ''}</div>
+        <div>Kết quả hiện tại: ${kqPill(i)}</div>
+        ${i.nguon === 'THEM' ? `<div class="ph-sub">${esc(i.vet)}</div><p class="ph-sub" style="margin:0">Món thêm từ chỗ khác: chỉ ghi nhận, không đổi người giữ.</p>`
+          : sua ? `<input class="input" id="appGhiChu" placeholder="Ghi chú (không bắt buộc)" style="height:36px">${nut('CO', 'Tốt đang dùng', '✓ Có · Tốt đang dùng', 'okb')}${nut('CO', 'Tốt không dùng', '✓ Có · Tốt không dùng')}${nut('HONG', '', '! Hỏng · chụp ảnh')}${nut('KHONG_THAY', '', '✕ Không thấy')}${nut('SAI_CHO', '', '↪ Có, nhưng đang ở chỗ khác')}`
+          : '<p class="ph-sub" style="margin:0">Phần đã xong, chỉ xem.</p>'}
+        <button class="ph-btn" data-act="a-sheet-x">Đóng</button></div></div>`;
+    }
+  }
+  if (A.man === 'quet') {
+    const p = phanById(A.phan), ds = dsCua(p.id), r = A.kq;
+    back = bk; tt = 'Quét tem'; sub = `${esc(p.ten)} · ${ds.filter(daKiem).length}/${ds.length} đã kiểm`;
+    let card = '';
+    if (r && r.loai === 'ok') card = `<div class="ph-card ok"><b>✓ ${esc(r.ten)}</b> <span class="ph-sub mono">${r.ma}</span><div style="margin-top:4px">Đã ghi <b>Có · Tốt đang dùng</b>. Tình trạng khác thì bấm vào món ở danh sách để sửa.</div></div>`;
+    if (r && r.loai === 'da') card = `<div class="ph-card">${esc(r.ten)} <span class="mono">${r.ma}</span> đã quét rồi (${KQ[r.kq][0]}).</div>`;
+    if (r && r.loai === 'het') card = '<div class="ph-card ok">Đã quét hết món trong danh sách. Về danh sách để bấm Xong phần.</div>';
+    if (r && ['khac', 'nghi', 'ngoai'].includes(r.loai)) card = `<div class="ph-card warn"><b>⚠ ${esc(r.ten)}</b> <span class="ph-sub mono">${r.ma}</span><div style="margin:4px 0 8px">${r.txt}</div><div style="display:flex;gap:6px"><button class="ph-btn" data-act="a-bo">Bỏ qua</button><button class="ph-btn pri" data-act="a-ghi-nhan">Ghi nhận ở đây</button></div></div>`;
+    if (r && r.loai === 'khong') card = `<div class="ph-card bad"><b>✕ Mã ${esc(r.ma)} không có trên hệ</b><div style="margin-top:4px">Không thêm được. Quản lý phải tạo tài sản trên web trước, rồi mới thêm vào đợt.</div></div>`;
+    if (r && r.loai === 'ghi') card = `<div class="ph-card ok">Đã ghi nhận <b>${esc(r.ten)}</b> vào ${esc(p.ten)}. ${esc(r.txt)}</div>`;
+    body = `<div class="cam">Đưa tem vào khung</div>${card}
+      <div class="ph-note">Bản minh hoạ không có camera. Bấm nút để giả lập một lần quét:</div>
+      <div style="padding:0 10px;display:flex;flex-direction:column;gap:6px">
+        <button class="ph-btn" data-act="a-quet-tiep">Quét món tiếp theo trong danh sách</button>
+        <button class="ph-btn" data-act="a-quet-khac">Quét một món đang ghi ở phần khác</button>
+        <div style="display:flex;gap:6px"><input class="input mono" id="appMa" placeholder="Hoặc gõ mã tem" style="height:40px"><button class="ph-btn" style="width:76px;flex:0 0 76px" data-act="a-tim">Tìm</button></div>
+      </div>
+      <div class="ph-note">Mã thử: <button class="link mono" data-act="a-thu" data-ma="TSHN26-0300">TSHN26-0300</button> (mua sau khi mở đợt) · <button class="link mono" data-act="a-thu" data-ma="TSHN23-0412">TSHN23-0412</button> (ghi ở người đã nghỉ) · <button class="link mono" data-act="a-thu" data-ma="ABC-123">ABC-123</button> (không có trên hệ)</div>`;
+    foot = '<button class="ph-btn" data-act="a-ve-ds">← Về danh sách</button>';
+    buoc = 'Bước 4'; ten = 'Quét tem';
+    giai = `<p>App tra mã trong <b>bản chụp của đợt</b>:</p>
+      <div class="mini tblwrap"><table><tbody>
+        <tr><td class="wrap" style="min-width:120px">Món thuộc phần đang kiểm</td><td class="wrap">Tự ghi <b>Có</b></td></tr>
+        <tr><td class="wrap">Món thuộc phần khác</td><td class="wrap">Báo món đang ghi ở đâu. Bấm <b>Ghi nhận</b> thì lưu vết ở cả hai phần, không đổi người giữ.</td></tr>
+        <tr><td class="wrap">Món ghi ở người đã nghỉ</td><td class="wrap">Ghi nhận để thu hồi sau</td></tr>
+        <tr><td class="wrap">Có trên hệ nhưng không có trong đợt</td><td class="wrap">Ghi nhận là món thêm</td></tr>
+        <tr><td class="wrap">Mã không có trên hệ</td><td class="wrap"><b>Từ chối</b>, không ghi</td></tr>
+      </tbody></table></div>
+      <p class="hint" style="margin-top:8px">Mỗi lần quét lưu ngay lên hệ. Mất mạng giữa chừng thì món đã lưu vẫn còn.</p>`;
+  }
+  $('phone').innerHTML = `<div class="ph-status"><span>9:41</span><span>FastLink</span><span>4G ▮▮▮</span></div>
+    <div class="ph-top">${back}<div style="min-width:0"><b>${esc(tt)}</b><small>${sub}</small></div></div>
+    <div class="ph-body">${body}</div>${foot ? `<div class="ph-foot">${foot}</div>` : ''}${sheet}`;
+  const nb = document.querySelector('#phone .ph-body'); if (nb) nb.scrollTop = cuon; A._key = A.man + A.phan;
+  $('appBuoc').textContent = buoc; $('appTen').textContent = ten; $('appGiai').innerHTML = giai;
+}
+function appAct(a, el, e) {
+  const A = S.app;
+  if (a === 'a-dot') A.man = 'phan';
+  if (a === 'a-dot-khac') { toast('Bản minh hoạ chỉ có dữ liệu chi tiết cho đợt ' + S.dot.ma); return; }
+  if (a === 'a-back') { A.mon = null; A.kq = null; A.man = A.man === 'quet' ? 'ds' : A.man === 'ds' ? 'phan' : 'dot'; }
+  if (a === 'a-loai') { A.loai = el.dataset.v; A.q = ''; }
+  if (a === 'a-phan') Object.assign(A, { man:'ds', phan:el.dataset.id, loc:'', mon:null, kq:null });
+  if (a === 'a-loc') A.loc = el.dataset.v;
+  if (a === 'a-mon') A.mon = { ma:el.dataset.ma, nguon:el.dataset.nguon };
+  if (a === 'a-sheet-x') A.mon = null;
+  if (a === 'a-sheet-bg') { if (e.target !== el) return; A.mon = null; }
+  if (a === 'a-kq') { const i = monApp(); if (i) ghiKq(i, el.dataset.kq, el.dataset.tinh, (($('appGhiChu') || {}).value || '').trim()); A.mon = null; }
+  if (a === 'a-quet') Object.assign(A, { man:'quet', kq:null });
+  if (a === 'a-ve-ds') Object.assign(A, { man:'ds', kq:null });
+  if (a === 'a-quet-tiep') { const i = dsCua(A.phan).find(v => v.kq === 'CHUA'); if (i) timMa(i.ma); else A.kq = { loai:'het' }; }
+  if (a === 'a-quet-khac') quetKhac();
+  if (a === 'a-tim') timMa($('appMa').value);
+  if (a === 'a-thu') timMa(el.dataset.ma);
+  if (a === 'a-bo') A.kq = null;
+  if (a === 'a-ghi-nhan') ghiNhan();
+  if (a === 'a-con-lai') dsCua(A.phan).filter(i => i.kq === 'CHUA').forEach(i => ghiKq(i, 'KHONG_THAY'));
+  if (a === 'a-xong') { xongPhan(); return; }
+  veApp(); capNhatMenu();
+}
+
 /* ================= HỘP THOẠI DÙNG CHUNG ================= */
 let mOk = null;
 function modal(title, html, okText, ok, okCls) {
@@ -722,6 +1003,11 @@ document.addEventListener('click', e => {
   if (a === 'huy-pd') { S.son.phanDoi = false; S.son.chon = {}; veConfirm(); }
   if (a === 'gui-pd') guiPhanDoi();
   if (a === 'dong-y') dongYHop();
+  if (a === 've-app') { S.vai = 'app'; $('vai').value = 'app'; S.app.mon = null; dongDrawer(); ve(); window.scrollTo(0, 0); }
+  if (a === 've-app-phan') { S.vai = 'app'; $('vai').value = 'app'; Object.assign(S.app, { man:'ds', phan:el.dataset.id, loc:'', mon:null, kq:null }); dongDrawer(); ve(); window.scrollTo(0, 0); }
+  if (a === 've-dot') { S.vai = 'ql'; $('vai').value = 'ql'; S.view = 'detail'; S.tab = 'phan'; dongDrawer(); ve(); window.scrollTo(0, 0); }
+  if (a === 'gia-lap-son') { giaLapXongSon(bayGio()); ve(); toast('Đã giả lập: phần anh Sơn kiểm xong. Phiếu XN0153 chờ anh Sơn xác nhận.'); }
+  if (a.startsWith('a-')) appAct(a, el, e);
 });
 document.addEventListener('change', e => {
   const t = e.target;
@@ -731,10 +1017,13 @@ document.addEventListener('change', e => {
 });
 document.addEventListener('input', e => {
   const t = e.target;
+  if (t.dataset.app === 'q') { S.app.q = t.value; const pos = t.selectionStart; veApp(); const n = document.querySelector('[data-app="q"]'); n.focus(); n.setSelectionRange(pos, pos); }
   if (t.dataset.locts === 'q') { S.locTs = Object.assign({ kq:'', q:'' }, S.locTs, { q: t.value }); const pos = t.selectionStart; tabTs(); const n = document.querySelector('[data-locts="q"]'); n.focus(); n.setSelectionRange(pos, pos); }
 });
 document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.id === 'appMa') { timMa(e.target.value); veApp(); return; }
   if (e.key !== 'Escape') return;
+  if (S.vai === 'app' && S.app.mon) { S.app.mon = null; veApp(); return; }
   if ($('ovM').classList.contains('open')) dongModal();
   else if ($('ov').classList.contains('open')) dongHop();
   else if (S.drawer) dongDrawer();
@@ -888,9 +1177,11 @@ $('btnMo').onclick = () => {
 };
 
 khoiTao();
-// ?vai=son mở thẳng màn nhân viên xác nhận
+// ?vai=son mở thẳng màn nhân viên xác nhận, ?vai=app mở thẳng app mobile
 { const q = new URLSearchParams(location.search);
-  if (q.get('vai') === 'son') { S.vai = 'son'; $('vai').value = 'son'; if (q.get('phieu')) { S.son.view = 'detail'; S.son.phieu = q.get('phieu'); } } }
+  // link thẳng tới màn anh Sơn: coi như chị Lan đã kiểm xong phần anh Sơn, để phiếu ở trạng thái chờ xác nhận
+  if (q.get('vai') === 'son') { giaLapXongSon(); S.vai = 'son'; $('vai').value = 'son'; if (q.get('phieu')) { S.son.view = 'detail'; S.son.phieu = q.get('phieu'); } }
+  if (q.get('vai') === 'app') { S.vai = 'app'; $('vai').value = 'app'; } }
 ve();
 </script>
 </body>
