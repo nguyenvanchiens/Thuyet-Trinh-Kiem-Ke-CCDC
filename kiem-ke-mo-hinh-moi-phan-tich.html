@@ -279,9 +279,11 @@ a{color:var(--accent)}
   <p>Khi <b>mọi phần có đồ của một người</b> đã kiểm xong, hệ tự gửi yêu cầu cho người đó. Anh Minh nhận ngay sau khi phần của anh xong. Anh Sơn phải chờ cả phần của anh <b>và</b> phần Tầng 3 xong, rồi nhận <b>một</b> yêu cầu cho cả 121 món. Kho MB do chị Hoa xác nhận.</p>
 
   <div class="sub-card">
-    <b>Màn "Xác nhận kiểm kê" của nhân viên</b> · <a href="minh-hoa-tao-dot-kiem-ke.html?vai=son" target="_blank" rel="noopener">mở thẳng màn này trên bản minh hoạ</a>
+    <b>Menu "NV xác nhận kiểm kê" của nhân viên</b> · bấm thử: <a href="minh-hoa-tao-dot-kiem-ke.html?vai=son" target="_blank" rel="noopener">danh sách phiếu</a>, <a href="minh-hoa-tao-dot-kiem-ke.html?vai=son&amp;phieu=XN0153" target="_blank" rel="noopener">chi tiết một phiếu</a>
     <ul>
-      <li><b>Vào bằng đâu:</b> thông báo trên app/web, hoặc menu <b>Xác nhận kiểm kê</b> (có chấm đỏ khi đang chờ mình). Đăng nhập bằng tài khoản của chính mình.</li>
+      <li><b>Vào bằng đâu:</b> thông báo trên app/web, hoặc menu <b>NV xác nhận kiểm kê</b> (có số đỏ = số phiếu đang chờ mình). Đăng nhập bằng tài khoản của chính mình.</li>
+      <li><b>Danh sách phiếu:</b> mỗi đợt kiểm kê có đồ của mình thì có <b>một phiếu</b>. Phiếu xếp theo ngày gửi, <b>mới nhất lên đầu</b>; phiếu đang chờ xác nhận được tô nổi. Mỗi dòng: mã phiếu, đợt, ngày gửi, số món, kết quả tóm tắt, trạng thái. Phiếu cũ đã xác nhận vẫn xem lại được.</li>
+      <li><b>Bấm vào một phiếu</b> để mở chi tiết, gồm các phần dưới đây.</li>
       <li><b>Đầu màn:</b> tên đợt, người kiểm, trạng thái của mình, và 4 con số: số món mình đứng tên, số Có, số Không thấy/Hỏng, số Có ở chỗ khác.</li>
       <li><b>Danh sách:</b> chia nhóm theo phần ("Phần của tôi" và "Tầng 3"). Món có vấn đề (không thấy, hỏng, ở chỗ khác, thêm từ chỗ khác) xếp lên đầu, kèm ghi chú như "thấy ở phần Phòng họp T5". Món "Có" thu gọn, bấm "Hiện cả 115 món Có" để xem hết.</li>
       <li><b>Nút Đồng ý:</b> hệ hỏi lại "Anh xác nhận kết quả của 121 món là đúng?". Đồng ý xong thì kết quả bị khoá, hành chính không mở lại được nữa.</li>
@@ -296,8 +298,10 @@ a{color:var(--accent)}
       <tr><td><span class="pill p-ok">Đã xác nhận</span></td><td>Kết quả của mình đã khoá.</td></tr>
     </table></div>
   </div>
+  <figure class="fig"><img src="anh-minh-hoa/web-nguoi-giu-ds-phieu.png" alt="Danh sách phiếu xác nhận của anh Sơn: XN0153 đang chờ xác nhận ở trên cùng, hai phiếu cũ đã xác nhận" loading="lazy">
+  <figcaption>Menu "NV xác nhận kiểm kê": danh sách phiếu của anh Sơn, mới nhất lên đầu. Phiếu XN0153 đang chờ được tô nổi.</figcaption></figure>
   <figure class="fig"><img src="anh-minh-hoa/web-nguoi-giu-man-xac-nhan.png" alt="Màn xác nhận của anh Sơn ở trạng thái Chờ xác nhận: 121 món, Phần của tôi và Tầng 3, món có vấn đề lên đầu, nút Không đồng ý và Đồng ý" loading="lazy">
-  <figcaption>Màn của anh Sơn khi đến lượt xác nhận: 121 món chia theo phần, món có vấn đề lên đầu, 115 món "Có" thu gọn, hai nút Không đồng ý và Đồng ý ở cuối.</figcaption></figure>
+  <figcaption>Bấm phiếu XN0153: chi tiết phiếu khi đến lượt xác nhận. 121 món chia theo phần, món có vấn đề lên đầu, 115 món "Có" thu gọn, hai nút Không đồng ý và Đồng ý ở cuối.</figcaption></figure>
 </div></div>
 
 <div class="fstep"><div class="no">6</div><div>
@@ -440,7 +444,7 @@ a{color:var(--accent)}
 
 <h3 id="minh-hoa">Màn minh hoạ web</h3>
 <div class="card summary" style="margin-bottom:14px">
-  <p><b>Bấm thử được:</b> <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">mở màn minh hoạ web</a>. Dữ liệu giả, chưa nối API. Ở thanh vàng trên cùng đổi vai giữa <b>Quản lý / hành chính</b> và <b>anh Sơn</b> (nhân viên được kiểm). Muốn xem ngay màn nhân viên xác nhận: <a href="minh-hoa-tao-dot-kiem-ke.html?vai=son" target="_blank" rel="noopener">mở thẳng với vai anh Sơn</a>. Kịch bản theo đúng luồng ở <a href="#luong">mục 06</a>:</p>
+  <p><b>Bấm thử được:</b> <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">mở màn minh hoạ web</a>. Dữ liệu giả, chưa nối API. Ở thanh vàng trên cùng đổi vai giữa <b>Quản lý / hành chính</b> và <b>anh Sơn</b> (nhân viên được kiểm). Muốn xem ngay màn của nhân viên: <a href="minh-hoa-tao-dot-kiem-ke.html?vai=son" target="_blank" rel="noopener">mở menu NV xác nhận kiểm kê</a> (danh sách phiếu của anh Sơn), hoặc bấm menu đó ở cột trái trên màn minh hoạ. Kịch bản theo đúng luồng ở <a href="#luong">mục 06</a>:</p>
   <ol style="margin:0">
     <li>Quản lý bấm đợt <b>KK0012</b> để xem chi tiết, bấm một phần để xem từng món.</li>
     <li>Đổi vai <b>anh Sơn</b>: bấm Không đồng ý, tích Máy chiếu, ghi lý do.</li>
