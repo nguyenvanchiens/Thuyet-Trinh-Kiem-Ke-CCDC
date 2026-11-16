@@ -108,14 +108,14 @@ a{color:var(--accent)}
   </div>
   <div class="meta">
     Ngày lập: <b>16/11/2026</b><br>
-    Trạng thái: <b>đề xuất, chờ duyệt</b><br>
+    Trạng thái: <b>hướng đã thống nhất, chờ anh Đạt chốt mục 12</b><br>
     Thay cho phần mô hình của thiết kế v3.1
   </div>
 </header>
 
 <div class="status">
   <div class="card"><div class="k">Đọc code V4</div><div class="v"><span class="pill p-ok">Xong</span></div></div>
-  <div class="card"><div class="k">Mô hình mới</div><div class="v"><span class="pill p-warn">Chờ duyệt</span></div></div>
+  <div class="card"><div class="k">Mô hình mới</div><div class="v"><span class="pill p-ok">Đã thống nhất hướng</span></div></div>
   <div class="card"><div class="k">DB + API theo mô hình mới</div><div class="v"><span class="pill p-warn">Chưa làm</span></div></div>
   <div class="card"><div class="k">Code</div><div class="v"><span class="pill p-warn">Chưa bắt đầu</span></div></div>
 </div>
@@ -425,33 +425,43 @@ a{color:var(--accent)}
 </table></div>
 
 <!-- 11 -->
-<h2><span class="n">12</span>Đã chốt và còn chờ</h2>
-<div class="grid-2">
-  <div class="card done">
-    <h3 style="margin-top:0">Đã chốt</h3>
-    <ul>
-      <li>Kiểm kê không sinh phiếu và không sửa bảng tài sản (16/11, anh Đạt).</li>
-      <li>Một đợt cho một công ty. Danh sách được chụp lúc mở đợt.</li>
-      <li>Người giữ bắt buộc xác nhận. Ai cũng đăng nhập được.</li>
-      <li>Tài sản không có người giữ thì ở kho. Có kho MB và kho MN.</li>
-      <li>Chỉ nạp nhân viên đang làm. Duyệt hộ cho người nghỉ việc sẽ bổ sung sau.</li>
-      <li>Thêm món của phần khác chỉ là ghi nhận, có cảnh báo hai chiều và lưu vết (anh Đạt).</li>
-      <li>Mã không có trên hệ thì không thêm được.</li>
-      <li><code>TSHN</code> là tiền tố mã, không dùng để lọc.</li>
-    </ul>
-  </div>
-  <div class="card ask">
-    <h3 style="margin-top:0">Còn chờ</h3>
-    <ul>
-      <li><b>Duyệt mô hình trong tài liệu này</b>: kiểm theo nơi đặt, xác nhận theo người giữ.</li>
-      <li>Ai xác nhận kho MB và kho MN: gợi ý người trong tổ hành chính của miền, chọn lúc mở đợt.</li>
-      <li>MB là công ty VN01, MN là VN02: đúng không?</li>
-      <li>Nhân viên công ty A giữ tài sản công ty B: đề xuất người tính theo công ty của nhân viên, tài sản theo công ty sở hữu, có cảnh báo.</li>
-      <li>Hỏi hành chính: đồ dùng chung ở các tầng/phòng đang đứng tên ai?</li>
-      <li>Đếm trên dữ liệu thật (chỉ đọc): số món theo từng nhóm ở bảng chia phần, top vùng, số món không bắt đầu bằng <code>TSHN</code>.</li>
-    </ul>
-  </div>
+<h2 id="cau-hoi"><span class="n">12</span>Đã chốt và câu hỏi cho anh Đạt</h2>
+<div class="card done">
+  <h3 style="margin-top:0">Đã chốt</h3>
+  <ul>
+    <li>Kiểm kê không sinh phiếu và không sửa bảng tài sản (16/11, anh Đạt).</li>
+    <li><b>Hướng đi: kiểm theo nơi đặt, xác nhận theo người giữ</b> (16/11, đã thống nhất trong nhóm; trình anh Đạt).</li>
+    <li>Một đợt cho một công ty. Danh sách được chụp lúc mở đợt.</li>
+    <li><b>Người giữ bắt buộc xác nhận</b>, đợt nào cũng vậy, không có ô bật/tắt. Ai cũng đăng nhập được. Luồng "NV duyệt kiểm kê" của V4 bị huỷ vì quy trình cũ làm lộn xộn, không phải vì bỏ yêu cầu xác nhận.</li>
+    <li>Không giao trước ai đi kiểm phần nào. Ai có quyền thì kiểm, hệ ghi lại ai đã kiểm.</li>
+    <li>Tài sản không có người giữ thì ở kho. Có kho MB và kho MN.</li>
+    <li>Chỉ nạp nhân viên đang làm. Duyệt hộ cho người nghỉ việc sẽ bổ sung sau.</li>
+    <li>Thêm món của phần khác chỉ là ghi nhận, có cảnh báo hai chiều và lưu vết (anh Đạt).</li>
+    <li>Mã không có trên hệ thì không thêm được.</li>
+    <li><code>TSHN</code> là tiền tố mã, không dùng để lọc.</li>
+  </ul>
 </div>
+
+<h3>Câu hỏi cần anh Đạt chốt</h3>
+<div class="tbl"><table>
+  <tr><th style="width:4%">#</th><th style="width:30%">Câu hỏi</th><th>Vì sao cần, kèm ví dụ</th><th style="width:26%">Đề xuất</th></tr>
+  <tr><td>1</td><td><b>Ai xác nhận Kho MB và Kho MN?</b> Thủ kho, trưởng tổ hành chính, hay người khác? Mỗi đợt chọn lại hay cố định một người?</td>
+    <td>Người thì ai giữ đồ người đó xác nhận, còn kho không có ai giữ. Ví dụ: chị Lan kiểm Kho MB xong, có 297 món, 1 món không thấy. Phải có một người bấm "đúng, kho có những món này" và chịu trách nhiệm nếu sau này kho thiếu đồ.</td>
+    <td>Khi tạo đợt, chọn người xác nhận cho từng kho. Hệ gợi ý người trong tổ hành chính của miền (V5 đã có danh sách) và người của đợt trước.</td></tr>
+  <tr><td>2</td><td><b>Nhân viên công ty này cầm tài sản công ty kia thì ai kiểm?</b></td>
+    <td>Ví dụ: anh X là nhân viên VN01, nhưng chiếc laptop anh X cầm ghi là tài sản VN02. Đợt VN01 chỉ lấy tài sản VN01, nên không có chiếc laptop. Đợt VN02 có chiếc laptop, nhưng anh X không phải nhân viên VN02, nên không có phần của anh X. Chiếc laptop lọt giữa hai đợt.</td>
+    <td>Theo người: đợt VN01 lấy thêm đồ công ty khác mà nhân viên VN01 đang cầm, đánh dấu "tài sản của VN02". Đếm dữ liệu trước xem có bao nhiêu món như vậy.</td></tr>
+  <tr><td>3</td><td><b>Đồ dùng chung ở các tầng và phòng họp đang đứng tên ai?</b> Người đó có chịu xác nhận cả danh sách không?</td>
+    <td>Trên V5 mỗi món phải ghi ở một người hoặc ở kho, nên bàn ghế, máy chiếu, điều hoà cũng đang ghi tên ai đó. Ví dụ: 120 món ở Tầng 3 đứng tên anh Sơn, thì anh Sơn phải xác nhận cả 120 món. Nếu cả trăm món của nhiều tầng cùng ghi tên một người hành chính, việc xác nhận dễ thành hình thức.</td>
+    <td>Đồ chung nên đứng tên người thật sự chịu trách nhiệm khu đó, ví dụ trưởng bộ phận của tầng. Đếm dữ liệu trước: mỗi vùng ai đứng tên, mỗi người bao nhiêu món.</td></tr>
+  <tr><td>4</td><td><b>Kho MB thuộc VN01, Kho MN thuộc VN02</b>, đúng không?</td>
+    <td>Mã kho trong V4 gợi ý như vậy (<code>VN01_TANG_2_KHO_LUU_TRU</code>, <code>VN02_KHO_LUU_TRU_CCDC</code>). Nếu đúng thì "một đợt một công ty" tự cho ra mỗi đợt một kho.</td>
+    <td>Xác nhận nhanh, không cần thảo luận.</td></tr>
+  <tr><td>5</td><td><b>Ba luật đang làm theo đề xuất</b> trong màn minh hoạ, có đồng ý không?</td>
+    <td>(a) Người giữ không đồng ý thì tích các món chưa đúng (không bắt buộc). Chỉ phần chứa các món đó bị mở lại cho hành chính kiểm lại. (b) Đã có người xác nhận thì phần đó không mở lại được nữa. (c) Đóng đợt khi còn người chưa xác nhận thì người đó bị ghi "chưa xác nhận", không tự coi là đồng ý.</td>
+    <td>Giữ cả ba.</td></tr>
+</table></div>
+<p class="note">Câu 2 và câu 3 nên kèm số liệu: tôi đếm được trên dữ liệu thật (chỉ đọc, cần nạp dump hoặc kết nối DB chỉ đọc).</p>
 
 <footer>
   Lập 16/11/2026 từ việc đọc code V4 (<code>flink-webapi/AssetManagement</code>) và V5 (<code>fastlink-erp-api</code>), chỉ đọc. Khi mô hình được duyệt sẽ cập nhật thiết kế DB và API (v3.1 → v4), DDL, bộ chạy thử, báo cáo chuyển đổi và slide.

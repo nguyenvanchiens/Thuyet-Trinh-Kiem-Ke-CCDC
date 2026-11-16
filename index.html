@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Kiểm kê V4 sang V5</title>
-<meta name="description" content="Thuyết trình chuyển đổi kiểm kê tài sản từ V4 sang V5">
+<title>Kiểm kê CCDC mô hình mới</title>
+<meta name="description" content="Thuyết trình mô hình kiểm kê tài sản V5: kiểm theo nơi đặt, xác nhận theo người giữ">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,16 +12,19 @@
 :root{
   --paper:#e9eeeb; --sheet:#ffffff; --sheet-2:#f3f6f4; --ink:#17201d; --muted:#56635e; --rule:#d2dad6;
   --stamp:#0e7c66; --stamp-soft:#dcefe9; --red:#b23c27; --red-soft:#f7e2dc; --amber:#9a600a; --amber-soft:#f5e9d2;
+  --blue:#2f5fb3; --blue-soft:#e3ebf8;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --paper:#0f1513; --sheet:#18201d; --sheet-2:#1f2926; --ink:#e3ebe7; --muted:#97a6a0; --rule:#2c3833;
     --stamp:#4cc7a6; --stamp-soft:#163029; --red:#f08a73; --red-soft:#3a1f19; --amber:#e5b05a; --amber-soft:#33280f;
+    --blue:#86a9ec; --blue-soft:#1b2740;
   }
 }
 :root[data-theme="dark"]{
   --paper:#0f1513; --sheet:#18201d; --sheet-2:#1f2926; --ink:#e3ebe7; --muted:#97a6a0; --rule:#2c3833;
   --stamp:#4cc7a6; --stamp-soft:#163029; --red:#f08a73; --red-soft:#3a1f19; --amber:#e5b05a; --amber-soft:#33280f;
+  --blue:#86a9ec; --blue-soft:#1b2740;
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%}
@@ -32,9 +35,10 @@ b{font-weight:700}
 /* ---------- stage ---------- */
 .viewport{position:fixed;inset:0;display:grid;place-items:center}
 .stage{position:relative;width:1280px;height:720px;transform-origin:center center;flex:none}
-.slide{position:absolute;inset:0;background:var(--sheet);border-radius:14px;padding:64px 80px 70px;display:none;flex-direction:column;box-shadow:0 1px 0 var(--rule),0 18px 40px -24px rgba(0,0,0,.25);overflow:hidden}
+.slide{position:absolute;inset:0;background:var(--sheet);border-radius:14px;padding:56px 80px 70px;display:none;flex-direction:column;box-shadow:0 1px 0 var(--rule),0 18px 40px -24px rgba(0,0,0,.25);overflow:hidden}
 .slide.active{display:flex}
-.slide h2{font-size:42px;line-height:1.15;font-weight:800;letter-spacing:-.015em;margin:0 0 28px;max-width:26ch}
+.kicker{font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--stamp);margin:0 0 8px}
+.slide h2{font-size:40px;line-height:1.15;font-weight:800;letter-spacing:-.015em;margin:0 0 24px;max-width:30ch}
 .slide p{margin:0 0 14px;max-width:62ch}
 .lead{font-size:24px;color:var(--muted)}
 .small{font-size:17px;color:var(--muted)}
@@ -43,11 +47,12 @@ b{font-weight:700}
 
 /* ---------- title slide: asset tag ---------- */
 .title-slide{justify-content:center}
-.title-slide h1{font-size:68px;line-height:1.05;font-weight:800;letter-spacing:-.025em;margin:0 0 22px;max-width:15ch}
+.title-slide h1{font-size:64px;line-height:1.05;font-weight:800;letter-spacing:-.025em;margin:0 0 22px;max-width:14ch}
+.title-slide .lead{max-width:30ch}
 .tag{position:absolute;right:80px;top:50%;transform:translateY(-50%) rotate(-3deg);width:360px;border:2.5px solid var(--ink);border-radius:14px;padding:22px 24px 18px;background:var(--sheet)}
 .tag::before{content:"";position:absolute;left:18px;top:18px;width:14px;height:14px;border-radius:50%;border:2.5px solid var(--ink)}
 .tag .org{font-size:15px;font-weight:600;text-align:right;color:var(--muted)}
-.tag .code{font-size:40px;font-weight:800;letter-spacing:.02em;margin:18px 0 6px;font-variant-numeric:tabular-nums}
+.tag .code{font-size:38px;font-weight:800;letter-spacing:.02em;margin:18px 0 6px;font-variant-numeric:tabular-nums}
 .barcode{height:62px;margin:10px 0 8px;background:repeating-linear-gradient(90deg,var(--ink) 0 3px,transparent 3px 5px,var(--ink) 5px 6px,transparent 6px 10px,var(--ink) 10px 14px,transparent 14px 16px,var(--ink) 16px 17px,transparent 17px 21px)}
 .tag .rows{font-size:16px;border-top:1.5px dashed var(--rule);padding-top:10px;margin-top:10px}
 .tag .rows div{display:flex;justify-content:space-between;padding:2px 0}
@@ -56,58 +61,98 @@ b{font-weight:700}
 
 /* ---------- blocks ---------- */
 .grid{display:grid;gap:18px}
-.g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .g4{grid-template-columns:repeat(4,1fr)}
-.box{background:var(--sheet-2);border-radius:10px;padding:20px 22px}
+.g2{grid-template-columns:1fr 1fr} .g3{grid-template-columns:repeat(3,1fr)} .wide-l{grid-template-columns:1.35fr 1fr}
+.box{background:var(--sheet-2);border-radius:12px;padding:18px 22px}
 .box h3{font-size:22px;margin:0 0 8px;line-height:1.25}
 .box p,.box li{font-size:18px;line-height:1.45}
+.box p:last-child{margin-bottom:0}
 .box ul{margin:0;padding-left:20px}
 .box li{margin:3px 0}
-.big{font-size:52px;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-bottom:10px}
-.bad .big{color:var(--red)}
-.box.bad{background:var(--red-soft)}
+.big{font-size:46px;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-bottom:10px}
+.box.bad{background:var(--red-soft)} .box.bad .big{color:var(--red)}
 .box.good{background:var(--stamp-soft)}
 .box.warn{background:var(--amber-soft)}
-.label{font-size:15px;font-weight:700;color:var(--muted);margin-bottom:6px}
-
-/* steps (real sequences only) */
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:10px;counter-reset:s}
-.step{position:relative;padding:26px 20px 0 0;border-top:4px solid var(--stamp)}
-.step.todo{border-top-color:var(--rule)}
-.step::before{counter-increment:s;content:counter(s);position:absolute;top:-19px;left:0;width:34px;height:34px;border-radius:50%;background:var(--stamp);color:var(--sheet);font-weight:800;font-size:17px;display:grid;place-items:center}
-.step.todo::before{background:var(--sheet);color:var(--muted);border:3px solid var(--rule)}
-.step h3{font-size:22px;margin:0 0 6px}
-.step p{font-size:17px;color:var(--muted);margin:0}
-
-.flow{display:flex;align-items:stretch;gap:10px;margin:8px 0 18px}
-.flow div{flex:1;background:var(--sheet-2);border-radius:10px;padding:14px 16px;font-size:17px;line-height:1.35;position:relative}
-.flow div b{display:block;font-size:15px;color:var(--stamp);margin-bottom:4px}
-.flow div:last-child{background:var(--stamp-soft)}
+.box.blue{background:var(--blue-soft)}
+.label{font-size:14px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--stamp);color:var(--sheet);font-weight:800;font-size:16px;margin-right:8px;vertical-align:2px}
+.q3 .box{padding:22px 24px}
+.q3 .box h3{font-size:24px}
 
 table{border-collapse:collapse;width:100%;font-size:18px}
 th,td{text-align:left;vertical-align:top;padding:9px 12px;border-bottom:1.5px solid var(--rule)}
-th{font-size:15px;color:var(--muted);font-weight:700}
-td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+th{font-size:14px;color:var(--muted);font-weight:700;letter-spacing:.03em;text-transform:uppercase}
 td.v4{color:var(--red)}
-td.v5{color:var(--ink)}
 tr:last-child td{border-bottom:0}
+.pill{display:inline-block;font-size:14px;font-weight:700;border-radius:999px;padding:1px 10px;white-space:nowrap}
+.pill.g{background:var(--stamp-soft);color:var(--stamp)} .pill.b{background:var(--blue-soft);color:var(--blue)}
+.pill.a{background:var(--amber-soft);color:var(--amber)} .pill.r{background:var(--red-soft);color:var(--red)}
 
-.choice{border:2px solid var(--rule);border-radius:12px;padding:20px 22px}
-.choice h3{font-size:24px;margin:0 0 8px}
-.choice p{font-size:19px;margin:0}
-.closing{justify-content:center}
-.closing h2{font-size:50px;max-width:22ch}
-.ask-list{list-style:none;margin:10px 0 0;padding:0;font-size:26px}
-.ask-list li{padding:14px 0 14px 52px;position:relative;border-top:1.5px solid var(--rule)}
-.ask-list li::before{content:"";position:absolute;left:6px;top:20px;width:26px;height:26px;border-radius:6px;border:3px solid var(--stamp)}
-.ask-list li.done::before{background:var(--stamp);box-shadow:inset 0 0 0 4px var(--sheet)}
+/* two layers */
+.layers{display:grid;grid-template-columns:1fr 70px 1fr;align-items:stretch;margin-top:4px}
+.layer{border:2.5px solid var(--stamp);border-radius:16px;padding:22px 24px;background:var(--sheet)}
+.layer.c{border-color:var(--blue)}
+.layer h3{font-size:28px;margin:4px 0 6px}
+.layer p{font-size:18px;color:var(--muted);margin:0 0 14px}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{font-size:18px;font-weight:600;border-radius:10px;padding:8px 14px;background:var(--sheet-2)}
+.chip small{display:block;font-size:14px;font-weight:500;color:var(--muted)}
+.arrow{display:grid;place-items:center;font-size:40px;color:var(--muted)}
+.rule-line{display:flex;gap:16px;margin-top:22px}
+.rule-line div{flex:1;border-top:3px solid var(--rule);padding-top:10px;font-size:19px}
+.rule-line b{color:var(--stamp)}
 
 /* diagram */
 .diagram{width:100%;height:auto;display:block}
-.diagram rect{fill:var(--sheet-2);stroke:var(--rule);stroke-width:2}
-.diagram rect.v5{stroke:var(--stamp)}
-.diagram text{fill:var(--ink);font-family:inherit;font-size:19px}
-.diagram .sub{fill:var(--muted);font-size:15px}
-.diagram path{stroke:var(--stamp);stroke-width:2.5;fill:none;marker-end:url(#ah)}
+.diagram .lane{fill:var(--sheet-2)}
+.diagram .lane-l{fill:var(--muted);font-size:15px;font-weight:700;letter-spacing:.04em}
+.diagram .node{fill:var(--sheet);stroke:var(--stamp);stroke-width:2.2}
+.diagram .node.sys{stroke:var(--blue)}
+.diagram .node.ng{stroke:var(--amber)}
+.diagram .node.ql{stroke:var(--ink)}
+.diagram text{fill:var(--ink);font-family:inherit;font-size:16px}
+.diagram .t{font-weight:700;font-size:16px}
+.diagram .s{fill:var(--muted);font-size:13px}
+.diagram .ar{stroke:var(--stamp);stroke-width:2.4;fill:none;marker-end:url(#ah)}
+.diagram .ar.no{stroke:var(--red);stroke-dasharray:6 5;marker-end:url(#ahr)}
+.diagram .ar.soft{stroke:var(--muted);stroke-dasharray:3 5;marker-end:url(#ahm)}
+.diagram .el{font-size:13px;font-weight:700}
+.diagram .el.ok{fill:var(--stamp)} .diagram .el.no{fill:var(--red)}
+.diagram .badge{fill:var(--stamp)} .diagram .badge-t{fill:var(--sheet);font-size:13px;font-weight:800}
+
+/* phone */
+.phone-row{display:grid;grid-template-columns:300px 1fr;gap:44px;align-items:start}
+.phone{width:300px;height:452px;border:3px solid var(--ink);border-radius:34px;padding:16px 12px;background:var(--sheet);position:relative}
+.phone::before{content:"";position:absolute;top:8px;left:50%;transform:translateX(-50%);width:70px;height:6px;border-radius:3px;background:var(--rule)}
+.scr{height:100%;border-radius:20px;background:var(--sheet-2);padding:12px 11px;font-size:13.5px;line-height:1.32;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.scr .top{font-weight:800;font-size:15px}
+.scr .sub{color:var(--muted);font-size:12px;margin-top:-5px}
+.scr .it{background:var(--sheet);border-radius:9px;padding:7px 10px;display:flex;justify-content:space-between;gap:6px;align-items:center}
+.scr .it .m{font-size:11px;color:var(--muted)}
+.scr .it.add{outline:2px dashed var(--amber)}
+.scr .pop{background:var(--sheet);border:2px solid var(--amber);border-radius:10px;padding:8px 10px;font-size:12.5px}
+.scr .btn{margin-top:auto;background:var(--stamp);color:var(--sheet);border-radius:10px;text-align:center;font-weight:800;padding:9px}
+.scr .btn2{background:transparent;color:var(--stamp);border:2px solid var(--stamp);border-radius:10px;text-align:center;font-weight:700;padding:6px}
+.ol{list-style:none;margin:0;padding:0;counter-reset:o}
+.ol li{counter-increment:o;position:relative;padding:0 0 13px 46px;font-size:19px;line-height:1.4}
+.ol li::before{content:counter(o);position:absolute;left:0;top:-1px;width:32px;height:32px;border-radius:50%;background:var(--stamp-soft);color:var(--stamp);font-weight:800;font-size:16px;display:grid;place-items:center}
+.ol li b{display:block}
+.ol li span{color:var(--muted);font-size:17px}
+
+/* example timeline */
+.ex{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.ex .box{padding:14px 18px}
+.ex .box h3{font-size:19px;margin-bottom:6px}
+.ex .box p{font-size:16px;line-height:1.4;margin:0}
+.ex .who{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--stamp);margin-bottom:4px}
+
+.closing{justify-content:center}
+.closing h2{font-size:46px;max-width:22ch}
+.ask-list{list-style:none;margin:6px 0 0;padding:0;font-size:24px}
+.ask-list li{padding:12px 0 12px 52px;position:relative;border-top:1.5px solid var(--rule)}
+.ask-list li::before{content:"";position:absolute;left:6px;top:17px;width:26px;height:26px;border-radius:6px;border:3px solid var(--stamp)}
+.ask-list li.done::before{background:var(--stamp);box-shadow:inset 0 0 0 4px var(--sheet)}
+.doc-links{display:flex;flex-wrap:wrap;gap:14px;margin-top:26px;font-size:19px}
+.doc-links a{border:2px solid var(--stamp);border-radius:8px;padding:8px 16px;text-decoration:none}
 
 /* ---------- chrome ---------- */
 .bar{position:fixed;left:0;top:0;height:4px;background:var(--stamp);transition:width .25s ease}
@@ -118,8 +163,6 @@ tr:last-child td{border-bottom:0}
 .hint a:hover,.hint button:hover{border-color:var(--stamp);color:var(--stamp)}
 .slide a{color:var(--stamp);font-weight:600;text-underline-offset:3px}
 .slide a:focus-visible{outline:2px solid var(--stamp);outline-offset:2px;border-radius:3px}
-.doc-links{display:flex;gap:14px;margin-top:30px;font-size:19px}
-.doc-links a{border:2px solid var(--stamp);border-radius:8px;padding:8px 16px;text-decoration:none}
 .notes{position:fixed;left:50%;bottom:44px;transform:translateX(-50%);width:min(900px,calc(100vw - 32px));max-height:38vh;overflow:auto;background:var(--sheet);border:1.5px solid var(--stamp);border-radius:12px;padding:16px 20px;font-size:17px;line-height:1.55;box-shadow:0 18px 40px -20px rgba(0,0,0,.45);display:none}
 .notes.show{display:block}
 .notes .label{color:var(--stamp)}
@@ -134,16 +177,20 @@ tr:last-child td{border-bottom:0}
   .slide h2{font-size:26px;margin-bottom:16px}
   .title-slide h1{font-size:36px}
   .tag{position:relative;right:auto;top:auto;transform:rotate(-2deg);width:100%;max-width:320px;margin:20px auto 0}
-  .g2,.g3,.g4,.steps{grid-template-columns:1fr}
-  .steps{gap:26px}
-  .flow{flex-direction:column}
-  .big{font-size:38px}
+  .g2,.g3,.ex,.layers,.phone-row{grid-template-columns:1fr}
+  .arrow{transform:rotate(90deg);height:50px}
+  .phone{margin:0 auto}
+  .rule-line{flex-direction:column}
+  .big{font-size:34px}
   .lead{font-size:18px}
   table{font-size:15px}
   .tbl{overflow-x:auto}
+  .stage{width:100%!important;max-width:100%}
+  .slide{min-width:0;max-width:100%}
+  .dg{overflow-x:auto;max-width:100%;min-width:0} .dg .diagram{min-width:760px}
   .foot{left:20px;right:20px;bottom:14px}
   .closing h2{font-size:30px}
-  .ask-list{font-size:19px}
+  .ask-list{font-size:18px}
   .bar,.hint,.notes{display:none!important}
 }
 @media (prefers-reduced-motion:reduce){.bar{transition:none}}
@@ -163,210 +210,338 @@ tr:last-child td{border-bottom:0}
 
 <!-- 1 -->
 <section class="slide title-slide">
-  <p class="lead" style="margin-bottom:10px">Quản lý tài sản, phần kiểm kê</p>
-  <h1>Chuyển kiểm kê tài sản từ V4 sang V5</h1>
-  <p class="lead">Phân tích hệ cũ, thiết kế hệ mới và những gì cần quyết</p>
-  <p class="small" style="margin-top:26px">Tháng 11/2026</p>
+  <p class="kicker">Quản lý tài sản · Kiểm kê CCDC trên V5</p>
+  <h1>Kiểm theo nơi đặt,<br>xác nhận theo<br>người giữ</h1>
+  <p class="lead">Cách kiểm kê mới: biết chắc ai chưa được kiểm, món nào chưa được kiểm, và ai chịu trách nhiệm.</p>
+  <p class="small" style="margin-top:22px">Tháng 11/2026</p>
   <div class="tag" aria-hidden="true">
     <div class="org">Tem kiểm kê</div>
-    <div class="code">KK-V4→V5</div>
+    <div class="code">KK-V5</div>
     <div class="barcode"></div>
     <div class="rows">
-      <div><span>Phân tích V4</span><span class="ok">Xong</span></div>
-      <div><span>Thiết kế v3</span><span class="ok">Xong</span></div>
-      <div><span>Chạy thử DDL</span><span class="ok">28/28</span></div>
-      <div><span>Code</span><span class="no">Chưa bắt đầu</span></div>
+      <div><span>Đọc code V4</span><span class="ok">Xong</span></div>
+      <div><span>Mô hình mới</span><span class="ok">Thống nhất</span></div>
+      <div><span>Màn minh hoạ web</span><span class="ok">Xong</span></div>
+      <div><span>Thiết kế DB + API</span><span class="no">Sau khi chốt</span></div>
     </div>
   </div>
-  <aside>Mở đầu: hôm nay em báo cáo việc chuyển phần kiểm kê tài sản từ V4 sang V5. Em đã phân tích xong V4, có thiết kế V5 đủ để code, và cần anh chị duyệt thiết kế.</aside>
+  <aside>Mở đầu: hôm nay em trình bày cách kiểm kê mới trên V5. Ý chính nằm ở tên bài: hành chính đi kiểm theo nơi đặt đồ, còn người giữ đồ là người xác nhận và chịu trách nhiệm. Cuối bài em cần anh chốt 5 câu.</aside>
 </section>
 
 <!-- 2 -->
 <section class="slide">
-  <h2>Đang ở đâu</h2>
-  <div class="steps">
-    <div class="step"><h3>Phân tích V4</h3><p>Đọc mã nguồn kiểm kê V4 và đo trên dữ liệu thật: 4 bảng, khoảng 529.000 dòng.</p></div>
-    <div class="step"><h3><a href="kiem-ke-tai-san-v3.html" target="_blank" rel="noopener">Thiết kế v3.1</a></h3><p>Database 4 bảng, 7 API mobile, API web, phân quyền, kế hoạch triển khai.</p></div>
-    <div class="step"><h3>Chạy thử DDL</h3><p>Trên MySQL 8.0 sạch, không chạm DB dùng chung: 28/28 ca cho kết quả đúng.</p></div>
-    <div class="step todo"><h3>Code</h3><p>Chưa bắt đầu. Chờ duyệt thiết kế.</p></div>
+  <p class="kicker">Bài toán</p>
+  <h2>Sau mỗi đợt kiểm kê, phải trả lời được ba câu</h2>
+  <div class="grid g3 q3">
+    <div class="box"><span class="num">1</span><h3 style="display:inline">Ai chưa được kiểm?</h3><p style="margin-top:12px">Kể cả nhân viên mới chưa có tài sản trên hệ, và người tưởng không giữ gì.</p></div>
+    <div class="box"><span class="num">2</span><h3 style="display:inline">Món nào chưa được kiểm?</h3><p style="margin-top:12px">Và món nào kiểm rồi nhưng không thấy, hỏng, hoặc đang ở chỗ khác.</p></div>
+    <div class="box"><span class="num">3</span><h3 style="display:inline">Ai chịu trách nhiệm?</h3><p style="margin-top:12px">Người giữ đã đồng ý với kết quả chưa. Nếu sau này thiếu đồ thì hỏi ai.</p></div>
   </div>
-  <p class="small" style="margin-top:52px">Mọi con số trong bài đo trên dữ liệu online <code>fl_asset</code> (dump 14/11/2026). Dữ liệu kiểm kê không đổi kể từ lần ghi cuối 26/12/2025.</p>
-  <aside>Nói nhanh: phân tích xong, thiết kế xong, đã chạy thử thật phần database. Chưa viết dòng code nào. Số liệu lấy từ dữ liệu online, không phải số ước lượng.</aside>
+  <div class="box warn" style="margin-top:22px"><p><b>Đã chốt với anh Đạt (16/11):</b> kiểm kê chỉ ghi nhận và báo cáo. Không sinh phiếu điều chuyển, không tự sửa người giữ, vị trí hay tình trạng trên bảng tài sản. Hành chính muốn sửa thì tự lập phiếu.</p></div>
+  <aside>Ba câu này là thước đo cho mọi thứ phía sau. V4 hiện không trả lời chắc được câu nào. Nhắc lại điều đã chốt: kiểm kê chỉ ghi nhận, không đụng vào bảng tài sản.</aside>
 </section>
 
 <!-- 3 -->
 <section class="slide">
-  <h2>V4 vẫn chạy, nhưng dữ liệu kiểm kê không đáng tin</h2>
-  <div class="grid g2">
-    <div class="box bad"><div class="big">43 bản</div><p>Một lần kiểm bị lưu trùng tới 43 bản. 25 phiên bị nhân bản, nên cùng một tài sản bị đếm nhiều lần.</p></div>
-    <div class="box bad"><div class="big">458.403 dòng</div><p>Bảng lịch sử gấp gần 7 lần dữ liệu thật (68.162 dòng). Mỗi lần "làm tiếp" ghi lại cả danh sách, vùng 390 tài sản thì ghi lại cả 390.</p></div>
-    <div class="box bad"><div class="big">Không khoá</div><p>Đợt đã bấm "hoàn thành", mobile vẫn ghi thêm được. Cờ mà mobile kiểm tra không có chỗ nào trong code ghi.</p></div>
-    <div class="box bad"><div class="big">Ghi đè</div><p>Hai máy cùng sửa một phiên thì lần lưu sau xoá lần trước, không báo. Không lệnh nào của mobile kiểm quyền.</p></div>
+  <p class="kicker">V4 hôm nay</p>
+  <h2>V4 có hai cách kiểm, và không ai xác nhận</h2>
+  <div class="grid g3">
+    <div class="box"><div class="label">Kiểm theo nhân viên</div><div class="big">2.037</div><p>phiên, trung bình 14 món mỗi phiên. Danh sách là đồ đang ghi tên người đó.</p></div>
+    <div class="box good"><div class="label">Kiểm theo vùng (kho, tầng, phòng)</div><div class="big" style="color:var(--stamp)">66%</div><p>số dòng kiểm kê. 509 phiên, trung bình 390 món: hành chính quen đi từng phòng mà quét.</p></div>
+    <div class="box bad"><div class="label">Nhân viên duyệt kiểm kê</div><div class="big">1.529</div><p>trên 1.530 phiếu bị huỷ, 5 năm liền (2021–2025). Quy trình cũ lộn xộn nên bỏ.</p></div>
   </div>
-  <aside>Đây là slide quan trọng nhất phần V4. Bốn ý: một lần kiểm bị lưu thành nhiều bản; sửa một tài sản mà ghi lại cả danh sách; đóng đợt nhưng không khoá; hai máy ghi đè nhau và không kiểm quyền.</aside>
+  <p class="small" style="margin-top:22px">Số đo trên dữ liệu online <code>fl_asset</code> (dump 14/11/2026). Code V4 chỉ đọc, không sửa.</p>
+  <aside>Hai cách kiểm trên mobile V4: theo nhân viên và theo vùng. Kho cũng là một vùng. Hai phần ba công việc là đi theo vùng, nên cách mới phải giữ được thói quen này. V4 từng có luồng nhân viên duyệt nhưng năm nào cũng bị huỷ hàng loạt vì quy trình cũ lộn xộn. Giờ mình làm lại đúng: nhân viên bắt buộc xác nhận.</aside>
 </section>
 
 <!-- 4 -->
 <section class="slide">
-  <h2>Và vài lỗi khác</h2>
-  <div class="tbl"><table>
-    <tr><th style="width:44%">Hiện trạng V4</th><th>Hệ quả</th></tr>
-    <tr><td>1.529 / 1.530 phiếu của cơ chế kiểm kê thứ hai (<code>ASSET_CHECK</code>) bị huỷ tay trong DB</td><td>Cơ chế này còn khoá việc sửa và điều chuyển tài sản</td></tr>
-    <tr><td>72 / 410 cờ "cần nhân viên chuyên môn xác nhận" là cờ rác</td><td>Không có bước xác nhận; cờ bật rồi không bao giờ tắt</td></tr>
-    <tr><td>Không lệnh nào của mobile kiểm quyền</td><td>Ai đăng nhập được đều gọi được</td></tr>
-    <tr><td>Hai máy cùng sửa một phiên</td><td>Lần lưu sau ghi đè lần trước, không báo</td></tr>
-    <tr><td>Không có bước chốt phiên</td><td>Không biết phiên nào đã xong; số báo cáo còn có thể đổi</td></tr>
-    <tr><td>1.102 dòng đánh dấu "cần in lại tem"</td><td>Chưa báo cáo nào lấy ra được</td></tr>
-  </table></div>
-  <aside>Nhân viên chuyên môn là người IT hoặc kỹ thuật phụ trách một nhóm tài sản. Khi người kiểm báo hỏng, V4 bật cờ để người đó xác nhận, nhưng không có màn nào để xác nhận và cờ không bao giờ tắt. Slide này chỉ cần lướt.</aside>
+  <p class="kicker">V4 sai ở đâu</p>
+  <h2>Sáu lỗi gốc trong cách V4 kiểm kê</h2>
+  <div class="grid g3" style="gap:14px">
+    <div class="box bad"><h3>Một món ở hai danh sách</h3><p>Giao từ kho cho người mà vẫn mang mã kho: kho ghi "Không thấy", người ghi "Có".</p></div>
+    <div class="box bad"><h3>Danh sách đổi theo ngày</h3><p>Nạp lúc mở từng phiên, nên không biết tổng phải kiểm là bao nhiêu.</p></div>
+    <div class="box bad"><h3>Sót nhân viên mới</h3><p>Chỉ lấy người đang có đồ trên hệ. Người mới cầm laptop chưa gán thì không ai đến.</p></div>
+    <div class="box bad"><h3>Kiểm vùng không ghi ai giữ</h3><p>Món "không thấy" ở tầng 3 không biết là trách nhiệm của ai.</p></div>
+    <div class="box bad"><h3>Lưu là ghi đè cả phiên</h3><p>Bảng log gấp 6,7 lần dữ liệu thật. Hai máy cùng kiểm thì xoá kết quả của nhau.</p></div>
+    <div class="box bad"><h3>Không ai xác nhận</h3><p>Người giữ không biết mình bị ghi gì. Kho không có người chịu trách nhiệm.</p></div>
+  </div>
+  <aside>Lướt nhanh sáu lỗi, mỗi lỗi đều chỉ ra được dòng code V4 gây ra. Ba lỗi đầu làm sai con số "còn bao nhiêu chưa kiểm", ba lỗi sau làm mất trách nhiệm.</aside>
 </section>
 
 <!-- 5 -->
 <section class="slide">
-  <h2>V5 làm lại cả database lẫn API mobile</h2>
-  <svg class="diagram" viewBox="0 0 1120 330" role="img" aria-label="App mobile và web gọi API kiểm kê V5; API ghi vào DB V5">
-    <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--stamp)" stroke="none"/></marker></defs>
-    <rect class="v5" x="10" y="30" width="250" height="96" rx="12"/>
-    <text x="135" y="72" text-anchor="middle" font-weight="700">App mobile (viết lại)</text>
-    <text class="sub" x="135" y="100" text-anchor="middle">mở phiên, lưu phần đổi, chốt</text>
-    <rect class="v5" x="10" y="200" width="250" height="96" rx="12"/>
-    <text x="135" y="242" text-anchor="middle" font-weight="700">Web V5</text>
-    <text class="sub" x="135" y="270" text-anchor="middle">quản lý đợt, báo cáo</text>
-    <rect class="v5" x="430" y="100" width="260" height="126" rx="12"/>
-    <text x="560" y="145" text-anchor="middle" font-weight="700">API kiểm kê V5</text>
-    <text class="sub" x="560" y="173" text-anchor="middle">phân quyền, luật nghiệp vụ</text>
-    <text class="sub" x="560" y="197" text-anchor="middle">server tự tính cờ lệch</text>
-    <rect class="v5" x="860" y="30" width="250" height="96" rx="12"/>
-    <text x="985" y="72" text-anchor="middle" font-weight="700">DB V5</text>
-    <text class="sub" x="985" y="100" text-anchor="middle">4 bảng kiểm kê mới</text>
-    <path d="M260,78 C350,78 350,140 428,140"/>
-    <path d="M260,248 C350,248 350,190 428,190"/>
-    <path d="M690,163 C780,163 780,78 858,78"/>
-  </svg>
-  <p class="small" style="margin-top:14px">Đường cũ bỏ hẳn: mobile không còn gửi command V4, kể cả qua cầu nối <code>LegacyGateway</code> của V5, vì cầu nối đó ghi vào bảng V4. Kiểm kê không sinh phiếu điều chuyển.</p>
-  <aside>Mobile và web đều gọi API V5. API là chỗ duy nhất giữ luật nghiệp vụ và phân quyền, cờ lệch do server tính chứ không tin app gửi lên.</aside>
+  <p class="kicker">Ý tưởng chính</p>
+  <h2>Tách kiểm kê thành hai việc mà V4 đang gộp làm một</h2>
+  <div class="layers">
+    <div class="layer">
+      <div class="label" style="color:var(--stamp)">Việc 1 · Hành chính</div>
+      <h3>Kiểm theo nơi đặt</h3>
+      <p>Lúc mở đợt, mọi tài sản được chia vào các <b>phần kiểm</b>. Hành chính chọn phần nào thì kiểm phần đó.</p>
+      <div class="chips"><div class="chip">Phần người<small>đồ cá nhân</small></div><div class="chip">Phần vùng<small>tầng, phòng họp</small></div><div class="chip">Phần kho<small>Kho MB, Kho MN</small></div></div>
+    </div>
+    <div class="arrow" aria-hidden="true">→</div>
+    <div class="layer c">
+      <div class="label" style="color:var(--blue)">Việc 2 · Người giữ</div>
+      <h3>Xác nhận theo người giữ</h3>
+      <p>Khi mọi phần có đồ của mình đã kiểm xong, người giữ xác nhận <b>một lần</b> cho toàn bộ đồ mình đứng tên.</p>
+      <div class="chips"><div class="chip">Đồng ý<small>kết quả bị khoá</small></div><div class="chip">Không đồng ý<small>ghi lý do, kiểm lại</small></div><div class="chip">Kho<small>người được giao xác nhận</small></div></div>
+    </div>
+  </div>
+  <div class="rule-line">
+    <div><b>Mỗi món</b> thuộc đúng một phần</div>
+    <div><b>Mỗi người</b> xác nhận một lần</div>
+    <div><b>Kiểm kê</b> không sửa bảng tài sản</div>
+  </div>
+  <aside>Đây là slide quan trọng nhất. Việc đi kiểm vẫn theo thói quen: theo người, theo phòng hoặc theo kho. Nhưng trách nhiệm luôn thuộc về người giữ. Ví dụ anh Sơn có laptop riêng và đứng tên 120 món ở tầng 3: laptop kiểm ở phần của anh Sơn, 120 món kiểm ở phần Tầng 3, và anh Sơn xác nhận một lần cho cả 121 món.</aside>
 </section>
 
 <!-- 6 -->
 <section class="slide">
-  <h2>Khác nhau ở đâu</h2>
-  <div class="tbl"><table>
-    <tr><th style="width:24%">Việc</th><th style="width:34%">V4</th><th>V5</th></tr>
-    <tr><td>Lưu kết quả</td><td class="v4">Gửi lại cả danh sách, server xoá rồi ghi lại</td><td>Chỉ gửi dòng đã đổi, một lần lưu là một giao dịch trọn vẹn</td></tr>
-    <tr><td>Hai máy cùng sửa</td><td class="v4">Ghi đè, không báo</td><td>Có số phiên bản; lần lưu cũ bị từ chối, app tải lại</td></tr>
-    <tr><td>Mạng chập, bấm lưu hai lần</td><td class="v4">Có thể ghi hai lần</td><td>Mỗi lần lưu có mã riêng; gửi lại không ghi thêm</td></tr>
-    <tr><td>Mở phiên trùng</td><td class="v4">25 phiên bị nhân bản</td><td>Database chặn, kể cả hai lời gọi cùng lúc</td></tr>
-    <tr><td>Chốt phiên</td><td class="v4">Không có</td><td>Đang kiểm, Đã chốt, Đã huỷ; chốt rồi không sửa được</td></tr>
-    <tr><td>Đóng đợt</td><td class="v4">Không chặn được mobile</td><td>Mọi lệnh ghi trong đợt đã đóng bị từ chối</td></tr>
-    <tr><td>Phân quyền</td><td class="v4">Không kiểm</td><td>3 quyền: quản lý đợt, đi kiểm, xem báo cáo</td></tr>
-    <tr><td>Sửa bảng tài sản</td><td class="v4">Không</td><td>Không (đã chốt); hành chính tự lập phiếu</td></tr>
-  </table></div>
-  <aside>Mỗi dòng V5 là câu trả lời cho một lỗi ở slide trước. Không cần đọc hết, chỉ ra hai dòng: mở phiên trùng (database chặn) và đóng đợt (chặn thật).</aside>
+  <p class="kicker">Sơ đồ quy trình</p>
+  <h2>Một đợt kiểm kê đi qua những bước nào</h2>
+  <div class="dg">
+  <svg class="diagram" style="max-height:404px" viewBox="0 0 1120 450" role="img" aria-label="Quy trình: quản lý mở đợt, hệ thống chụp danh sách, hành chính kiểm từng phần, người giữ xác nhận hoặc không đồng ý để kiểm lại, quản lý theo dõi báo cáo và đóng đợt">
+    <defs>
+      <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--stamp)"/></marker>
+      <marker id="ahr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--red)"/></marker>
+      <marker id="ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--muted)"/></marker>
+    </defs>
+    <!-- lanes -->
+    <rect class="lane" x="0" y="0" width="1120" height="104" rx="10"/>
+    <rect class="lane" x="0" y="114" width="1120" height="104" rx="10" style="opacity:.55"/>
+    <rect class="lane" x="0" y="228" width="1120" height="104" rx="10"/>
+    <rect class="lane" x="0" y="342" width="1120" height="104" rx="10" style="opacity:.55"/>
+    <text class="lane-l" x="16" y="46">QUẢN LÝ</text><text class="lane-l" x="16" y="66" style="font-weight:500">web</text>
+    <text class="lane-l" x="16" y="160">HỆ THỐNG</text><text class="lane-l" x="16" y="180" style="font-weight:500">tự động</text>
+    <text class="lane-l" x="16" y="274">HÀNH CHÍNH</text><text class="lane-l" x="16" y="294" style="font-weight:500">mobile</text>
+    <text class="lane-l" x="16" y="388">NGƯỜI GIỮ</text><text class="lane-l" x="16" y="408" style="font-weight:500">app hoặc web</text>
+
+    <!-- nodes -->
+    <rect class="node ql" x="140" y="17" width="180" height="70" rx="12"/>
+    <text class="t" x="230" y="47" text-anchor="middle">1 · Mở đợt</text><text class="s" x="230" y="68" text-anchor="middle">chọn công ty và kho</text>
+
+    <rect class="node sys" x="290" y="131" width="210" height="70" rx="12"/>
+    <text class="t" x="395" y="161" text-anchor="middle">2 · Chụp danh sách</text><text class="s" x="395" y="182" text-anchor="middle">chia phần người, vùng, kho</text>
+
+    <rect class="node" x="470" y="245" width="200" height="70" rx="12"/>
+    <text class="t" x="570" y="275" text-anchor="middle">3 · Quét từng phần</text><text class="s" x="570" y="296" text-anchor="middle">Có · Hỏng · Không thấy · Thêm</text>
+
+    <rect class="node sys" x="650" y="131" width="190" height="70" rx="12"/>
+    <text class="t" x="745" y="161" text-anchor="middle">4 · Gửi yêu cầu</text><text class="s" x="745" y="182" text-anchor="middle">khi đủ phần của người giữ</text>
+
+    <rect class="node ng" x="650" y="359" width="190" height="70" rx="12"/>
+    <text class="t" x="745" y="389" text-anchor="middle">5 · Xác nhận</text><text class="s" x="745" y="410" text-anchor="middle">xem đồ mình đứng tên</text>
+
+    <rect class="node sys" x="910" y="131" width="190" height="70" rx="12"/>
+    <text class="t" x="1005" y="161" text-anchor="middle">6 · Khoá kết quả</text><text class="s" x="1005" y="182" text-anchor="middle">của người đó</text>
+
+    <rect class="node ql" x="560" y="17" width="250" height="70" rx="12" style="stroke-dasharray:6 5"/>
+    <text class="t" x="685" y="47" text-anchor="middle">Theo dõi 2 báo cáo</text><text class="s" x="685" y="68" text-anchor="middle">chưa kiểm · chưa xác nhận</text>
+
+    <rect class="node ql" x="910" y="17" width="190" height="70" rx="12"/>
+    <text class="t" x="1005" y="47" text-anchor="middle">7 · Đóng đợt</text><text class="s" x="1005" y="68" text-anchor="middle">khoá toàn bộ, ra ngoại lệ</text>
+
+    <!-- arrows -->
+    <path class="ar" d="M320,52 C360,52 360,110 372,129"/>
+    <path class="ar" d="M490,180 C540,190 545,230 560,243"/>
+    <path class="ar" d="M670,262 C700,250 700,215 718,203"/>
+    <path class="ar" d="M745,201 L745,357"/>
+    <path class="ar" d="M840,380 C900,370 960,260 990,203"/>
+    <text class="el ok" x="905" y="300">Đồng ý</text>
+    <path class="ar no" d="M650,404 C560,404 540,360 556,317"/>
+    <text class="el no" x="470" y="400">Không đồng ý:</text><text class="el no" x="470" y="417">mở lại phần, kiểm lại</text>
+    <path class="ar" d="M810,52 L908,52"/>
+    <!-- step 3 repeats -->
+    <circle class="badge" cx="672" cy="247" r="13"/><text class="badge-t" x="672" y="252" text-anchor="middle">↻</text>
+  </svg>
+  </div>
+  <p class="small" style="margin-top:8px">Mobile và web đều đọc bản chụp tạo ở bước 2, không đọc lại bảng tài sản. Mỗi lần quét được lưu ngay một món.</p>
+  <aside>Đi theo số: 1 quản lý mở đợt trên web. 2 hệ thống chụp danh sách và chia phần. 3 hành chính quét từng phần trên mobile, lặp cho tới hết. 4 khi mọi phần có đồ của một người đã xong, hệ tự gửi yêu cầu xác nhận cho người đó. 5 người giữ xác nhận. Đồng ý thì 6 khoá kết quả của người đó. Không đồng ý thì ghi lý do, phần liên quan mở lại để hành chính kiểm lại, rồi người đó xác nhận lần nữa. Quản lý theo dõi hai báo cáo suốt đợt, và 7 đóng đợt khi xong.</aside>
 </section>
 
 <!-- 7 -->
 <section class="slide">
-  <h2>Được gì khi chuyển</h2>
-  <div class="grid g2">
-    <div class="box good"><h3>Dữ liệu tin được</h3><ul><li>Hết phiên nhân bản: database chặn</li><li>Không mất kết quả khi hai người cùng sửa hay mạng chập</li><li>Số báo cáo là số đã chốt</li></ul></div>
-    <div class="box good"><h3>Mobile nhẹ hơn</h3><ul><li>Mỗi lần lưu gửi vài dòng thay vì khoảng 390 dòng</li><li>Đổi máy vẫn làm tiếp phiên dở của mình</li><li>Đủ để lưu offline và gửi bù khi có mạng</li></ul></div>
-    <div class="box good"><h3>Kiểm soát</h3><ul><li>Phân quyền theo vai trò</li><li>Đóng đợt là chặn thật</li><li>Log ghi rõ ai đổi gì, ở lần lưu nào</li></ul></div>
-    <div class="box good"><h3>Báo cáo</h3><ul><li>Giữ 3 báo cáo cũ, thêm báo cáo "cần in lại tem"</li><li>Log gọn hơn nhiều so với 458.403 dòng</li><li>Lọc được phiên có lệch để lập phiếu</li></ul></div>
+  <p class="kicker">Bước 2 · Mở đợt</p>
+  <h2>Lúc mở đợt, hệ chụp danh sách và chia phần</h2>
+  <div class="grid g2 wide-l" style="gap:26px">
+    <div class="tbl"><table>
+      <tr><th>Tài sản trên hệ</th><th style="width:40%">Vào phần</th></tr>
+      <tr><td>Đang ở kho</td><td><span class="pill a">Kho</span> theo mã kho</td></tr>
+      <tr><td>Có người giữ, có vùng (tầng, phòng)</td><td><span class="pill b">Vùng</span> đó</td></tr>
+      <tr><td>Có người giữ, không có vùng</td><td><span class="pill g">Người</span> giữ</td></tr>
+      <tr><td>Ghi ở người đã nghỉ</td><td>Nhóm riêng trong báo cáo</td></tr>
+    </table></div>
+    <div>
+      <div class="box" style="margin-bottom:14px"><div class="label">Danh sách người</div><p><b>Mọi nhân viên đang làm</b> của công ty, lấy từ nhân sự. Kể cả người có 0 món, nên nhân viên mới không bị sót.</p></div>
+      <div class="box good"><div class="label">Vì sao chụp</div><p>Tổng phải kiểm cố định, nên "còn bao nhiêu chưa kiểm" luôn có đáp án. Có phiếu điều chuyển giữa đợt cũng không làm món biến mất hay bị kiểm hai lần.</p></div>
+    </div>
   </div>
-  <p class="small" style="margin-top:16px">Lợi ích dự kiến theo thiết kế, chưa đo trên hệ đã triển khai.</p>
-  <aside>Nhấn: đây là lợi ích dự kiến theo thiết kế, chưa đo trên hệ chạy thật.</aside>
+  <p class="small" style="margin-top:18px">Một đợt = một công ty. Lấy dữ liệu từ những gì V5 đã có: API nhân sự, bảng tài sản, danh mục vùng (cờ kho). Khoảng 400 người và 2.000 món: vài giây, một lần.</p>
+  <aside>Đây là thay đổi lớn nhất so với V4. V4 nạp danh sách mỗi lần mở phiên trên mobile, nên con số thay đổi liên tục. Cách mới chụp một lần lúc mở đợt. Nhãn kho chỉ có nghĩa khi đồ đang ở kho: món đã giao cho người mà vẫn mang mã kho thì vào phần người giữ, nên hết lỗi một món hai danh sách.</aside>
 </section>
 
 <!-- 8 -->
 <section class="slide">
-  <h2>Kiểm kê chỉ ghi nhận và báo cáo</h2>
-  <div class="grid g2" style="gap:24px">
-    <div class="box good"><div class="label">Kiểm kê làm</div><h3>Ghi lại thực tế</h3><p>Người kiểm ghi tài sản nào có, không thấy, hỏng hay đang ở người khác, rồi chốt phiên. Web xem báo cáo và lọc ra các phiên có lệch.</p></div>
-    <div class="box warn"><div class="label">Kiểm kê không làm (chốt 16/11 với anh Đạt)</div><h3>Không đụng tới tài sản</h3><p>Không sinh phiếu điều chuyển, không sửa người giữ, vị trí hay tình trạng trên bảng tài sản. Hành chính muốn sửa thì tự lập phiếu tay như V4.</p></div>
+  <p class="kicker">Bước 3 · Mobile</p>
+  <h2>Hành chính chọn phần, thấy danh sách, quét tem</h2>
+  <div class="phone-row">
+    <div class="phone" aria-hidden="true"><div class="scr">
+      <div class="top">← anh Minh</div><div class="sub">Phòng Kinh doanh · đã kiểm 2/2</div>
+      <div class="it"><span>Laptop Dell<br><span class="m">TSHN25-0101</span></span><span class="pill g">Có</span></div>
+      <div class="it"><span>Màn hình 24"<br><span class="m">TSHN24-0877 · 📷</span></span><span class="pill r">Hỏng</span></div>
+      <div class="it add"><span>Chuột không dây<br><span class="m">đang ghi ở Kho MB</span></span><span class="pill a">Thêm</span></div>
+      <div class="pop"><b>Quét TSHN26-0045:</b> món này thuộc phần Kho MB. Thêm vào phần anh Minh? Hệ chỉ ghi nhận, không đổi người giữ.</div>
+      <div class="btn">📷 Quét tem</div>
+      <div class="btn2">Xong phần này</div>
+    </div></div>
+    <ol class="ol">
+      <li><b>Chọn đợt, chọn phần</b><span>Tab Người hoặc Vùng/Kho, có ô tìm. Phần chưa kiểm lên đầu.</span></li>
+      <li><b>Quét tem từng món</b><span>Món trong danh sách tự đánh dấu Có. Hỏng thì bắt chụp ảnh.</span></li>
+      <li><b>Quét món của phần khác</b><span>Hệ báo món đó thuộc ai, thêm vào và lưu vết ở cả hai phần. Mã lạ không thêm được.</span></li>
+      <li><b>Tem hỏng thì bấm tay</b><span>Chụp ảnh, hệ đánh dấu cần in lại tem.</span></li>
+      <li><b>Xong phần</b><span>Món còn lại đánh "Không thấy". Mỗi lần quét lưu ngay, mất mạng không mất kết quả.</span></li>
+    </ol>
   </div>
-  <div class="flow" style="margin-top:26px">
-    <div><b>Bước 1</b>Người kiểm ghi kết quả trên mobile</div>
-    <div><b>Bước 2</b>Chốt phiên, kết quả bị khoá</div>
-    <div><b>Bước 3</b>Web báo cáo, lọc phiên có lệch</div>
-    <div><b>Ngoài kiểm kê</b>Hành chính tự lập phiếu nếu cần sửa</div>
-  </div>
-  <aside>Đã chốt với anh Đạt: kiểm kê không liên quan tới phiếu điều chuyển. Bảng tài sản là bảng Item, as_item ở V4 và AssetItem ở V5: mỗi dòng là một món CCDC, ai giữ, ở đâu, tình trạng gì. Kiểm kê chỉ ghi lại thực tế và báo cáo, không sửa bảng này. Nhờ vậy bỏ được cả phần sinh phiếu và mọi câu hỏi đi kèm.</aside>
+  <aside>Thao tác chính chỉ là quét. Danh sách hiện sẵn nên hành chính biết phải tìm gì. Phần vùng như Tầng 3 cũng y hệt, chỉ dài hơn và có bộ lọc chưa kiểm để đi vòng cuối. Con chuột trên bàn anh Minh đang ghi ở kho: quét là hệ báo ngay, và phía kho cũng tự hiện "đã thấy ở phần anh Minh".</aside>
 </section>
 
 <!-- 9 -->
 <section class="slide">
-  <h2>App mobile viết lại theo cơ chế V5</h2>
-  <div class="tbl"><table>
-    <tr><th style="width:24%">Việc</th><th style="width:34%">V4 (app đang làm)</th><th>V5 (app phải làm)</th></tr>
-    <tr><td>Kết nối</td><td class="v4">Gửi command vào <code>/api/_gateway</code>, không kiểm quyền</td><td>Gọi REST API V5 bằng JWT, phải có quyền đi kiểm</td></tr>
-    <tr><td>Mở phiên</td><td class="v4">App tự chọn "tạo mới" hay "làm tiếp"</td><td>Server tự trả phiên dở của người gọi, chưa có thì tạo</td></tr>
-    <tr><td>Lưu</td><td class="v4">Gửi cả danh sách</td><td>Chỉ gửi dòng đã đổi, kèm số phiên bản và mã lần lưu</td></tr>
-    <tr><td>Thêm tài sản ngoài danh sách</td><td class="v4">Dòng không có mã ổn định</td><td>App sinh mã cho dòng mới; gửi lại không sinh dòng trùng</td></tr>
-    <tr><td>Kết thúc</td><td class="v4">Không có bước chốt</td><td>Gọi chốt phiên; chốt rồi không sửa được</td></tr>
-    <tr><td>Đợt đã đóng</td><td class="v4">Vẫn ghi được</td><td>Server từ chối, app báo người dùng</td></tr>
-  </table></div>
-  <p class="small" style="margin-top:14px">Bảng đủ 14 điểm và 7 API mobile có trong <a href="kiem-ke-tai-san-v3.html#api" target="_blank" rel="noopener">thiết kế v3, mục 08</a>. Đã gửi cho bên làm app.</p>
-  <aside>Đã chốt 15/11: app viết lại theo V5, không giữ cách gọi command. Em đã có người làm app và gửi họ bảng thay đổi cùng hợp đồng API.</aside>
+  <p class="kicker">Bước 5 · Người giữ</p>
+  <h2>Người giữ xác nhận một lần cho mọi đồ mình đứng tên</h2>
+  <div class="phone-row">
+    <div class="phone" aria-hidden="true"><div class="scr">
+      <div class="top">Xác nhận kiểm kê</div><div class="sub">KK0012 · anh Sơn · 121 món</div>
+      <div class="it"><span><b>Của tôi</b> · 1 món</span><span class="pill g">Có 1</span></div>
+      <div class="it"><span><b>Tầng 3</b> · 120 món</span><span class="pill g">Có 115</span></div>
+      <div class="it"><span>Máy chiếu Epson</span><span class="pill r">Không thấy</span></div>
+      <div class="it"><span>Ghế xoay ×2<br><span class="m">thấy ở Phòng họp T5</span></span><span class="pill a">Chỗ khác</span></div>
+      <div class="pop" style="border-color:var(--red)"><b>Không đồng ý:</b> "Máy chiếu đang để ở phòng giám đốc, không phải mất."</div>
+      <div class="btn">Đồng ý</div>
+      <div class="btn2" style="color:var(--red);border-color:var(--red)">Không đồng ý</div>
+    </div></div>
+    <div>
+      <div class="grid" style="gap:14px">
+        <div class="box blue"><div class="label">Khi nào nhận</div><p>Khi <b>mọi phần</b> có đồ của mình đã kiểm xong. Ví dụ anh Sơn chờ cả phần của anh Sơn và phần Tầng 3.</p></div>
+        <div class="box good"><div class="label">Đồng ý</div><p>Kết quả bị khoá. Hành chính không mở lại được phần đó nữa.</p></div>
+        <div class="box bad"><div class="label">Không đồng ý</div><p>Bắt buộc ghi lý do, có thể tích món chưa đúng. Phần chứa món đó mở lại, hành chính kiểm lại, rồi người giữ xác nhận lần hai.</p></div>
+        <div class="box warn"><div class="label">Kho</div><p>Không ai giữ, nên người được chọn lúc mở đợt xác nhận thay.</p></div>
+      </div>
+    </div>
+  </div>
+  <aside>Đây là chỗ trả lời câu 3: ai chịu trách nhiệm. Ai cũng đăng nhập được nên xác nhận bằng tài khoản của chính mình. Không đồng ý không làm hỏng quy trình: chỉ phần liên quan được mở lại. Ví dụ anh Sơn báo máy chiếu ở phòng giám đốc, chị Lan kiểm lại thấy, máy chiếu thành "Có, ở chỗ khác", anh Sơn đồng ý.</aside>
 </section>
 
 <!-- 10 -->
 <section class="slide">
-  <h2>Lộ trình</h2>
-  <div class="grid g3">
-    <div class="box warn"><div class="label">Đang làm</div><h3>Chuẩn bị</h3><ul><li>Duyệt thiết kế v3.1</li><li>Cấp 3 quyền kiểm kê trên dev (bên mình tự làm)</li><li>Gửi bên app bảng thay đổi và hợp đồng API</li></ul></div>
-    <div class="box good"><div class="label">Sẵn sàng code</div><h3>Ghi nhận và báo cáo</h3><ul><li>Áp DDL lên dev</li><li>Logic kiểm kê, 7 API mobile, API web</li><li>Màn đợt, tra phiên, 4 báo cáo</li><li>App mobile làm song song</li><li>Kiểm thử trên một vùng thật</li></ul></div>
-    <div class="box"><div class="label">Đã bỏ (16/11)</div><h3>Sinh phiếu điều chuyển</h3><ul><li>Kiểm kê không liên quan tới phiếu</li><li>Hành chính tự lập phiếu tay như V4</li><li>Bỏ 1 bảng, 2 cột, 3 API web</li></ul></div>
+  <p class="kicker">Ví dụ</p>
+  <h2>Một đợt kiểm kê từ đầu đến cuối</h2>
+  <div class="ex">
+    <div class="box"><div class="who">Quản lý · web</div><h3>Mở đợt VN01</h3><p>Hệ tạo phần cho mọi nhân viên đang làm. <b>Anh Tú mới vào</b>, trên hệ không giữ gì, vẫn có phần.</p></div>
+    <div class="box"><div class="who">Chị Lan · mobile</div><h3>Kiểm anh Minh</h3><p>Laptop Có. Màn hình Hỏng (ảnh). Chuột đang ghi ở Kho MB: thêm vào, kho tự nhận cảnh báo.</p></div>
+    <div class="box"><div class="who">Chị Lan · mobile</div><h3>Kiểm Tầng 3</h3><p>115 Có, 3 Không thấy. 2 ghế thấy ở phòng họp T5: <b>Có, ở chỗ khác</b>, không bị tính là mất.</p></div>
+    <div class="box"><div class="who">Chị Lan · mobile</div><h3>Kiểm anh Tú và Kho MB</h3><p>Anh Tú đưa laptop lấy từ kho. Kho MB: 2 món đã thấy ở người, 297 Có, 1 Không thấy.</p></div>
+    <div class="box"><div class="who">Người giữ</div><h3>Xác nhận</h3><p>Anh Minh, anh Tú, chị Hoa (kho) đồng ý. Anh Sơn không đồng ý, Tầng 3 được kiểm lại, rồi anh Sơn đồng ý.</p></div>
+    <div class="box good"><div class="who">Quản lý · web</div><h3>Báo cáo và đóng đợt</h3><p>Ngoại lệ: màn hình hỏng, laptop của anh Tú chưa có phiếu… Hành chính tự lập phiếu sau đợt.</p></div>
   </div>
-  <aside>Còn một giai đoạn duy nhất là ghi nhận và báo cáo. Phần sinh phiếu đã bỏ, API mobile không bị ảnh hưởng.</aside>
+  <p class="small" style="margin-top:16px">Tên người và số liệu là giả định. Bấm thử đúng kịch bản này ở <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">màn minh hoạ</a>.</p>
+  <aside>Kể nhanh theo sáu ô. Điểm cần nhấn: anh Tú không bị sót; chuột và laptop của kho được tìm thấy ở người chứ không thành "mất"; 2 ghế sai chỗ không bị tính là mất; anh Sơn có quyền phản đối và phản đối được xử lý gọn.</aside>
 </section>
 
 <!-- 11 -->
 <section class="slide">
-  <h2>Vài câu còn lại, không chặn việc code</h2>
+  <p class="kicker">Web</p>
+  <h2>Ba màn web, và hai báo cáo chính</h2>
+  <div class="grid g3">
+    <div class="box"><div class="label">Tạo đợt · 2 bước</div><ul><li>Tên, công ty, ngày, ghi chú</li><li>Xem trước: số người, vùng, kho, cảnh báo</li><li>Chọn người xác nhận kho</li><li>Mỗi công ty một đợt đang mở</li></ul></div>
+    <div class="box"><div class="label">Chi tiết đợt</div><ul><li>4 con số: phần đã kiểm, tài sản đã kiểm, đã xác nhận, ngoại lệ</li><li>5 tab báo cáo</li><li>Thêm nhân viên, nhắc xác nhận, mở lại phần, đóng đợt</li></ul></div>
+    <div class="box"><div class="label">Người giữ xác nhận</div><ul><li>Đồ của tôi, chia theo phần</li><li>Món có vấn đề xếp lên đầu</li><li>Đồng ý hoặc Không đồng ý kèm lý do</li></ul></div>
+  </div>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="box good"><h3>Báo cáo 1 · Tiến độ kiểm</h3><p>Người nào, phòng nào, kho nào chưa được kiểm.</p></div>
+    <div class="box blue"><h3>Báo cáo 2 · Tiến độ xác nhận</h3><p>Ai đã được kiểm mà chưa xác nhận, ai không đồng ý. Có nút nhắc.</p></div>
+  </div>
+  <p class="small" style="margin-top:14px">Thêm: theo tài sản, ngoại lệ, in lại tem. <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">Mở màn minh hoạ web</a> (đổi vai quản lý / nhân viên ở thanh trên cùng).</p>
+  <aside>Hai báo cáo chính đúng như hành chính đã yêu cầu: biết ai và chỗ nào chưa được kiểm, biết ai chưa xác nhận. Nếu có thời gian, mở màn minh hoạ và bấm thử kịch bản không đồng ý rồi kiểm lại.</aside>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <p class="kicker">So sánh</p>
+  <h2>Khác V4 ở đâu</h2>
   <div class="tbl"><table>
-    <tr><th style="width:46%">Câu</th><th style="width:16%">Hỏi ai</th><th>Thiết kế đang giả định</th></tr>
-    <tr><td>Kiểm thấy hỏng, nhân viên chuyên môn có cần xác nhận không?</td><td>anh Đạt / HC</td><td>Không cần; chỉ ghi ai phụ trách để báo cáo</td></tr>
-    <tr><td>Chốt phiên có ghi "ngày kiểm cuối" lên tài sản không?</td><td>HC</td><td>Có, chỉ để tham khảo</td></tr>
-    <tr><td>Có cần báo cáo "tài sản lệch cần xử lý" để lập phiếu tay?</td><td>HC</td><td>Chưa làm riêng; lọc phiên có lệch</td></tr>
-    <tr><td>Chuyển lịch sử kiểm kê V4 sang V5?</td><td>anh Đạt</td><td>Không chuyển</td></tr>
-    <tr><td>Ba báo cáo V4 còn ai dùng?</td><td>HC</td><td>Giữ cả ba, thêm báo cáo in lại tem</td></tr>
-    <tr><td>Người kiểm được đặt tình trạng mới nào?</td><td>HC</td><td>Hỏng, Tốt-đang dùng, Tốt-không dùng, Chờ thanh lý</td></tr>
+    <tr><th style="width:30%">Tình huống</th><th style="width:33%">V4</th><th>Cách mới</th></tr>
+    <tr><td>Nhân viên mới, trên hệ chưa giữ gì</td><td class="v4">Không ai kiểm</td><td>Có phần riêng, đồ đang cầm được phát hiện</td></tr>
+    <tr><td>Món giao từ kho nhưng vẫn mang mã kho</td><td class="v4">Kho ghi "Không thấy"</td><td>Nằm ở phần người giữ; kho thấy "đã thấy ở phần anh Tú"</td></tr>
+    <tr><td>Đồ để sai phòng</td><td class="v4">"Không thấy"</td><td>"Có, ở chỗ khác", biết đang ở đâu</td></tr>
+    <tr><td>Đồ chung ở các tầng</td><td class="v4">Không ghi ai giữ, không ai xác nhận</td><td>Kiểm theo vùng, người đứng tên xác nhận</td></tr>
+    <tr><td>Hai người cùng kiểm một phần</td><td class="v4">Lần lưu sau xoá lần trước</td><td>Mỗi món lưu riêng</td></tr>
+    <tr><td>Đợt đã xong chưa</td><td class="v4">Phải tự dò nhiều bản ghi</td><td>Báo cáo 1 và 2 trả lời thẳng</td></tr>
   </table></div>
-  <p class="small" style="margin-top:12px">Mỗi câu đã có giả định trong <a href="kiem-ke-tai-san-v3.html#phai-hoi" target="_blank" rel="noopener">thiết kế v3.1, mục 15</a>; đổi đáp án chỉ sửa đúng chỗ đó.</p>
-  <aside>Ba câu đầu sinh ra từ quyết định bỏ phiếu: việc xác nhận hỏng trước định đặt ở phiếu nên nay không còn chỗ; ngày kiểm cuối là chỗ duy nhất kiểm kê còn ghi vào bảng tài sản; và hành chính cần biết tài sản nào lệch để tự lập phiếu. Không câu nào chặn việc code.</aside>
+  <aside>Mỗi dòng là một tình huống có thật trong ví dụ. Cột V4 là hành vi đọc từ code V4.</aside>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <p class="kicker">Đánh giá</p>
+  <h2>Được gì, và phải trả giá gì</h2>
+  <div class="grid g2" style="gap:24px">
+    <div class="box good"><h3>Được</h3><ul>
+      <li>Trả lời chắc ba câu: ai chưa kiểm, món nào chưa kiểm, ai chịu trách nhiệm</li>
+      <li>Giữ thói quen đi theo phòng của hành chính</li>
+      <li>Không sót người, không có kết quả mâu thuẫn</li>
+      <li>Không ghi đè, không nhiều bản</li>
+      <li>An toàn: không đụng bảng tài sản</li>
+      <li>Làm bằng những gì V5 đã có: API nhân sự, bảng tài sản, danh mục vùng</li>
+    </ul></div>
+    <div class="box warn"><h3>Phải trả</h3><ul>
+      <li>Thêm phần xác nhận, phức tạp hơn "chỉ theo người"</li>
+      <li>Người giữ phải chờ mọi phần có đồ của mình xong</li>
+      <li>Ban đầu có thể nhiều món "ở chỗ khác" vì nhãn vùng cũ. Đây là phát hiện đúng, gom vào báo cáo ngoại lệ</li>
+      <li>API mobile đổi nhiều so với thiết kế v3.1, phải báo bên app sớm</li>
+    </ul></div>
+  </div>
+  <aside>Nói thẳng phần giá phải trả. Việc chờ đủ phần được báo cáo 2 hiện rõ đang chờ phần nào, nên hành chính biết ưu tiên đi đâu.</aside>
 </section>
 
 <!-- 14 -->
 <section class="slide">
-  <h2>Rủi ro và cách xử lý</h2>
+  <p class="kicker">Cần anh Đạt chốt</p>
+  <h2>Năm câu hỏi</h2>
   <div class="tbl"><table>
-    <tr><th style="width:48%">Rủi ro</th><th>Cách xử lý</th></tr>
-    <tr><td>App mobile chưa sửa xong thì kiểm kê V5 chưa lên production được</td><td>Đã gửi bên app tài liệu từ bước chuẩn bị; API và web làm song song</td></tr>
-    <tr><td>DB dev có bảng kiểm kê cũ (rỗng); chạy thẳng DDL mới thì bảng cũ giữ nguyên, không báo lỗi</td><td>Chạy script chuyển trước; script tự dừng nếu bảng cũ có dữ liệu</td></tr>
-    <tr><td>Một số chi tiết kỹ thuật V5 chưa xác minh</td><td>Đã liệt kê kèm cách kiểm trong <a href="kiem-ke-tai-san-v3.html#chua-kiem" target="_blank" rel="noopener">v3 mục 16</a></td></tr>
-    <tr><td>DDL mới chỉ chạy thử trên MySQL 8.0 sạch</td><td>Xem phiên bản ở dev và production trước khi áp</td></tr>
-    <tr><td>V4 vẫn chạy song song trong thời gian chuyển</td><td>Kiểm thử V5 trên một vùng thật rồi mới tắt đường cũ</td></tr>
+    <tr><th style="width:4%">#</th><th style="width:44%">Câu hỏi</th><th>Đề xuất</th></tr>
+    <tr><td>1</td><td><b>Ai xác nhận Kho MB và Kho MN?</b> Cố định hay mỗi đợt chọn lại?</td><td>Chọn lúc mở đợt, hệ gợi ý người trong tổ hành chính của miền và người của đợt trước</td></tr>
+    <tr><td>2</td><td><b>Nhân viên công ty này cầm tài sản công ty kia</b> thì ai kiểm?</td><td>Đợt của công ty nhân viên kiểm luôn, đánh dấu "tài sản công ty khác"</td></tr>
+    <tr><td>3</td><td><b>Đồ chung ở các tầng đang đứng tên ai?</b> Người đó có chịu xác nhận cả danh sách?</td><td>Nên đứng tên người thật sự phụ trách khu đó</td></tr>
+    <tr><td>4</td><td><b>Kho MB thuộc VN01, Kho MN thuộc VN02</b>, đúng không?</td><td>Xác nhận nhanh</td></tr>
+    <tr><td>5</td><td><b>Ba luật xác nhận</b>: tích món khi không đồng ý; đã xác nhận thì khoá; đóng đợt khi còn người chưa xác nhận thì ghi "chưa xác nhận"</td><td>Giữ cả ba</td></tr>
   </table></div>
-  <aside>Rủi ro lớn nhất là tiến độ app mobile, nên tài liệu đã gửi bên app sớm.</aside>
+  <p class="small" style="margin-top:12px">Giải thích kèm ví dụ cho từng câu: <a href="kiem-ke-mo-hinh-moi-phan-tich.html#cau-hoi" target="_blank" rel="noopener">trang phân tích, mục 12</a>. Câu 2 và 3 sẽ kèm số liệu đếm trên dữ liệu thật.</p>
+  <aside>Đọc từng câu và xin chốt tại chỗ. Câu 2: ví dụ anh X là nhân viên VN01 cầm laptop của VN02, nếu không xử lý thì chiếc laptop lọt giữa hai đợt. Câu 3: ví dụ 120 món ở tầng 3 đứng tên anh Sơn, anh Sơn phải xác nhận cả 120.</aside>
 </section>
 
 <!-- 15 -->
 <section class="slide closing">
-  <h2>Tóm lại, em cần anh chị duyệt thiết kế</h2>
+  <h2>Đề nghị</h2>
   <ul class="ask-list">
-    <li>Duyệt thiết kế v3.1 để bắt đầu code</li>
-    <li class="done">Đã chốt với anh Đạt: kiểm kê chỉ ghi nhận và báo cáo</li>
-    <li class="done">Quyền trên dev: em đã cấp; app mobile: em đã trao đổi</li>
-    <li>Vài câu nhỏ còn lại trả lời trong lúc code cũng được</li>
+    <li class="done">Kiểm kê chỉ ghi nhận và báo cáo (đã chốt 16/11)</li>
+    <li class="done">Người giữ bắt buộc xác nhận; không giao trước người kiểm</li>
+    <li>Duyệt hướng: kiểm theo nơi đặt, xác nhận theo người giữ</li>
+    <li>Chốt 5 câu hỏi, sau đó em làm thiết kế DB và API, gửi bên app, rồi code</li>
   </ul>
-  <div class="doc-links"><a href="kiem-ke-tai-san-v3.html" target="_blank" rel="noopener">Mở thiết kế v3.1</a><a href="kiem-ke-tai-san-v2.html" target="_blank" rel="noopener">Mở thiết kế v2 (bản trước)</a></div>
-  <aside>Câu chốt: "Tóm lại em cần anh chị duyệt thiết kế. Kiểm kê chỉ ghi nhận và báo cáo như đã chốt với anh Đạt. Quyền trên dev em đã cấp, phần app em đã trao đổi với bên làm app. Mấy câu nhỏ còn lại anh chị trả lời trong lúc em code cũng được."</aside>
+  <div class="doc-links">
+    <a href="kiem-ke-mo-hinh-moi-phan-tich.html" target="_blank" rel="noopener">Trang phân tích</a>
+    <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">Màn minh hoạ web</a>
+    <a href="thuyet-trinh-v31.html" target="_blank" rel="noopener">Bộ slide v3.1 (cũ)</a>
+  </div>
+  <aside>Câu chốt: "Em xin anh duyệt hướng kiểm theo nơi đặt, xác nhận theo người giữ, và chốt 5 câu. Có câu trả lời là em làm thiết kế DB và API, gửi bên app làm song song."</aside>
 </section>
 
 </div></div>
 
 <div class="notes" id="notes" role="region" aria-label="Ghi chú người trình bày"><div class="label">Ghi chú</div><div id="notesText"></div></div>
-<div class="hint"><span id="count"></span><a href="kiem-ke-tai-san-v3.html" target="_blank" rel="noopener">Thiết kế v3.1</a><a href="kiem-ke-tai-san-v2.html" target="_blank" rel="noopener">Thiết kế v2</a><button type="button" id="btnNotes" title="Ghi chú (N)">Ghi chú</button><button type="button" id="btnFull" title="Toàn màn hình (F)">Toàn màn hình</button></div>
+<div class="hint"><span id="count"></span><a href="kiem-ke-mo-hinh-moi-phan-tich.html" target="_blank" rel="noopener">Phân tích</a><a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">Minh hoạ web</a><button type="button" id="btnNotes" title="Ghi chú (N)">Ghi chú</button><button type="button" id="btnFull" title="Toàn màn hình (F)">Toàn màn hình</button></div>
 
 <script>
 (function(){
@@ -377,7 +552,7 @@ tr:last-child td{border-bottom:0}
   var i=0;
   slides.forEach(function(s,k){
     var f=document.createElement('div'); f.className='foot';
-    f.innerHTML='<span>Kiểm kê tài sản, V4 sang V5</span><span class="code-no">KK-'+String(k+1).padStart(2,'0')+' / '+slides.length+'</span>';
+    f.innerHTML='<span>Kiểm kê CCDC · mô hình mới</span><span class="code-no">KK-'+String(k+1).padStart(2,'0')+' / '+slides.length+'</span>';
     s.appendChild(f);
   });
   function fit(){
