@@ -141,6 +141,8 @@ h3{font-size:13px;margin:16px 0 8px}
 .ph-btn.okb{background:var(--ok);border-color:var(--ok);color:#fff}
 .ph-btn.pri:hover,.ph-btn.okb:hover{filter:brightness(1.08)}
 .ph-btn:disabled{opacity:.5;cursor:not-allowed;filter:none}
+.ph-btn.on{background:var(--primary);border-color:var(--primary);color:#fff}
+.ph-btn.on:hover{filter:brightness(1.08)}
 .ph-seg{display:flex;gap:4px;padding:8px 10px 6px;background:#fff;border-bottom:1px solid var(--border);overflow-x:auto}
 .ph-seg button{border:1px solid var(--border);background:#fff;border-radius:999px;padding:3px 10px;font-size:12px;cursor:pointer;white-space:nowrap}
 .ph-seg button.on{background:var(--primary);border-color:var(--primary);color:#fff}
@@ -997,14 +999,16 @@ function veApp() {
       + '<p class="hint">Bấm vào một món để đổi kết quả hoặc tình trạng.</p>';
     const i = monApp();
     if (i) {
-      const nut = (kq, tinh, txt, cls) => `<button class="ph-btn ${cls || ''}" data-act="a-kq" data-kq="${kq}" data-tinh="${tinh}">${txt}</button>`;
+      // nút khớp kết quả + tình trạng hiện tại của món thì được tô (đang chọn); món chưa kiểm thì không tô nút nào
+      const dangChon = (kq, tinh) => i.kq === kq && (kq !== 'CO' || (i.tinhTrang || 'Tốt đang dùng') === tinh);
+      const nut = (kq, tinh, txt) => { const on = dangChon(kq, tinh); return `<button class="ph-btn ${on ? 'on' : ''}" aria-pressed="${on}" data-act="a-kq" data-kq="${kq}" data-tinh="${tinh}">${on ? '● ' : ''}${txt}</button>`; };
       let noi = '';
       if (i.nguon === 'THEM') noi = `<div class="ph-sub">${esc(i.vet)}</div><p class="ph-sub" style="margin:0">Món thêm từ chỗ khác: chỉ ghi nhận, không đổi người giữ.</p>${sua ? '<button class="ph-btn" data-act="a-bo-them">Bỏ khỏi phần này (thêm nhầm)</button>' : ''}`;
       else if (!sua) noi = '<p class="ph-sub" style="margin:0">Phần đã xong, chỉ xem.</p>';
       else if (A.hong) noi = `<div class="ph-card bad" style="margin:0">Hỏng thì <b>bắt buộc chụp ảnh</b> trước khi lưu.</div><button class="ph-btn" data-act="a-chup">${A.anh ? '✓ Đã chụp 1 ảnh · chụp lại' : '📷 Chụp ảnh (giả lập)'}</button><button class="ph-btn" style="background:var(--bad);border-color:var(--bad);color:#fff" data-act="a-luu-hong" ${A.anh ? '' : 'disabled'}>Lưu: Hỏng</button><button class="ph-btn" data-act="a-hong-huy">← Chọn kết quả khác</button>`;
       else noi = `<input class="input" id="appGhiChu" value="${esc(A.ghiChu || '')}" placeholder="Ghi chú (không bắt buộc)" style="height:36px">
         <label style="display:flex;gap:8px;align-items:center;font-size:12px"><input type="checkbox" class="ck" id="appTem" ${(A.tem ?? i.tem) ? 'checked' : ''}> Tem hỏng hoặc mất, cần in lại tem</label>
-        ${nut('CO', 'Tốt đang dùng', '✓ Có · Tốt đang dùng', 'okb')}${nut('CO', 'Tốt không dùng', '✓ Có · Tốt không dùng')}${nut('CO', 'Chờ thanh lý', '✓ Có · Chờ thanh lý')}${nut('HONG', '', '! Hỏng · phải chụp ảnh')}${nut('KHONG_THAY', '', '✕ Không thấy')}${nut('SAI_CHO', '', '↪ Có, nhưng đang ở chỗ khác')}`;
+        ${nut('CO', 'Tốt đang dùng', '✓ Có · Tốt đang dùng')}${nut('CO', 'Tốt không dùng', '✓ Có · Tốt không dùng')}${nut('CO', 'Chờ thanh lý', '✓ Có · Chờ thanh lý')}${nut('HONG', '', '! Hỏng · phải chụp ảnh')}${nut('KHONG_THAY', '', '✕ Không thấy')}${nut('SAI_CHO', '', '↪ Có, nhưng đang ở chỗ khác')}`;
       sheet = `<div class="ph-sheet" data-act="a-sheet-bg"><div class="in">
         <b>${esc(i.ten)}</b><div class="ph-sub mono">${i.ma}${i.giu ? ' · đang ghi ở ' + esc(i.giu) : p.loai === 'Kho' ? ' · ở kho' : ''}</div>
         <div>Kết quả hiện tại: ${kqPill(i)}${i.tinhTrang && i.kq !== 'CHUA' ? ' · ' + esc(i.tinhTrang) : ''}${i.anh ? ' · 📷' : ''}${i.tem ? ' · <span class="pill p-warn">in lại tem</span>' : ''}</div>
