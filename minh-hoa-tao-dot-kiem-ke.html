@@ -898,8 +898,8 @@ const CAU_HOI = [
   { so:6, nho:'câu nhỏ', tieu:'Đóng đợt có ghi ngày kiểm cuối lên tài sản không?', hoi:'Chỉ ghi hai cột "lần kiểm cuối" và "người xác nhận cuối" có sẵn trên bảng tài sản V5.',
     vi:'Đã chốt "kiểm kê không sửa bảng tài sản". Hai cột này chỉ để tra cứu, không đụng người giữ, vị trí, tình trạng.',
     sl:'Chỉ 192/3.557 món có ngày kiểm cuối trong 2025–2026; 655 món mang ngày giả.', dx:'Ghi, chỉ hai cột đó, lúc đóng đợt.', demo:[['Hộp đóng đợt KK0012','dong']] },
-  { so:7, nho:'câu nhỏ', tieu:'Món "chờ thanh lý, đang sử dụng" có kiểm không?', hoi:'V4 bỏ qua trạng thái này, V5 thì không.',
-    vi:'Đồ còn đang dùng thì vẫn có thể mất.', sl:'0 món ở trạng thái này. 19 món "chờ thanh lý, không sử dụng" vẫn kiểm như V4.', dx:'Vẫn kiểm. Hiện không ảnh hưởng món nào.', demo:[] },
+  { so:7, nho:'chỉ báo', tieu:'Món "chờ thanh lý, không sử dụng" vẫn kiểm như V4?', hoi:'Thực tế chỉ còn trạng thái này: "chờ thanh lý, đang sử dụng" đã bị bỏ khỏi giao diện V4, V5 không có, dữ liệu 0 món.',
+    vi:'V4 vẫn kiểm các món này. Đồ chờ thanh lý vẫn là tài sản công ty, có thể mất trước khi thanh lý.', sl:'19 món, đều của VN02.', dx:'Vẫn kiểm, giữ như V4. Không cần anh quyết, chỉ báo.', demo:[] },
   { so:8, nho:'phạm vi mới', tieu:'Có làm Báo cáo kiểm kê và Tài sản của tôi không?', hoi:'(a) Menu riêng Báo cáo kiểm kê: theo tài sản và theo nhân viên, chọn nhiều công ty, nhiều đợt. (b) Màn Tài sản của tôi cho nhân viên, trên web và app.',
     vi:'Hiện chỉ xem được trong từng đợt. Không có chỗ nào cho biết món nào lâu rồi chưa kiểm, nhân viên nào nhiều đợt không được kiểm; nhân viên cũng không tự xem được mình đứng tên gì.',
     sl:'Chỉ 192 món có ngày kiểm cuối trong 2025–2026.', dx:'Làm cả hai.', demo:[['Báo cáo theo tài sản','bc'],['Báo cáo theo nhân viên','bcnv'],['Tài sản của tôi (web)','toi'],['Tài sản của tôi (app)','app-toi']] }
