@@ -233,7 +233,7 @@ h3{font-size:13px;margin:16px 0 8px}
     <a data-act="ve-app" id="mnApp">App kiểm kê (mobile)</a>
     <a>Báo cáo</a>
     <div class="grp" style="margin-top:14px">Họp với anh Đạt</div>
-    <a data-act="ve-cau" id="mnCauHoi">Câu hỏi cần chốt <span class="badge" id="badgeCau">9</span></a>
+    <a data-act="ve-cau" id="mnCauHoi">Câu hỏi cần chốt <span class="badge" id="badgeCau">10</span></a>
     <div class="grp" style="margin-top:14px">Ghi chú minh hoạ</div>
     <div style="font-size:11px;color:#8d97ab;padding:0 10px">"Kiểm kê" là màn của quản lý / hành chính. "NV xác nhận kiểm kê" là màn mỗi nhân viên thấy: danh sách phiếu xác nhận của chính mình, bản minh hoạ xem như anh Sơn. "App kiểm kê" là app điện thoại của người đi kiểm (chị Lan). "Báo cáo kiểm kê" xem nhiều công ty, nhiều đợt cùng lúc; "Tài sản của tôi" là màn nhân viên tự xem đồ mình đứng tên (câu 8). Mọi màn dùng chung dữ liệu.</div>
   </aside>
@@ -902,7 +902,11 @@ const CAU_HOI = [
     vi:'V4 vẫn kiểm các món này. Đồ chờ thanh lý vẫn là tài sản công ty, có thể mất trước khi thanh lý.', sl:'19 món, đều của VN02.', dx:'Vẫn kiểm, giữ như V4. Không cần anh quyết, chỉ báo.', demo:[] },
   { so:8, nho:'phạm vi mới', tieu:'Có làm Báo cáo kiểm kê và Tài sản của tôi không?', hoi:'(a) Menu riêng Báo cáo kiểm kê: theo tài sản và theo nhân viên, chọn nhiều công ty, nhiều đợt. (b) Màn Tài sản của tôi cho nhân viên, trên web và app.',
     vi:'Hiện chỉ xem được trong từng đợt. Không có chỗ nào cho biết món nào lâu rồi chưa kiểm, nhân viên nào nhiều đợt không được kiểm; nhân viên cũng không tự xem được mình đứng tên gì.',
-    sl:'Chỉ 192 món có ngày kiểm cuối trong 2025–2026.', dx:'Làm cả hai.', demo:[['Báo cáo theo tài sản','bc'],['Báo cáo theo nhân viên','bcnv'],['Tài sản của tôi (web)','toi'],['Tài sản của tôi (app)','app-toi']] }
+    sl:'Chỉ 192 món có ngày kiểm cuối trong 2025–2026.', dx:'Làm cả hai.', demo:[['Báo cáo theo tài sản','bc'],['Báo cáo theo nhân viên','bcnv'],['Tài sản của tôi (web)','toi'],['Tài sản của tôi (app)','app-toi']] },
+  { so:9, nho:'dọn dữ liệu', tieu:'Duyệt dọn dữ liệu trước đợt kiểm đầu tiên', hoi:'Duyệt file rà soát dữ liệu (7 nhóm, gửi riêng vì có mã nhân viên). Nhóm A sửa bằng script một lần, nhóm B hành chính lập phiếu điều chuyển. Kèm sửa phiếu điều chuyển kho → người để nhãn sai không sinh lại.',
+    vi:'Không dọn thì kiểm kê vẫn chạy, nhưng: 140 món ghi ở người đã nghỉ không có ai ký; một người hành chính phải ký 543 món đồ chung; sổ ghi Kho MB 1.134 món trong khi thực tế 449 món ở kho.',
+    sl:'Cần trước đợt đầu: A1 794 món ở người mang mã kho (đã chạy thử trên dev, đạt), B1 147 món ở người đã nghỉ / tạm nghỉ, B2 1.251 món đồ chung đứng tên 8 người. Nên làm: A2 656 ngày kiểm giả, B3 19 món sai kho, B4 21 món khác công ty. Lúc nào cũng được: A3 379 tên thừa ký tự.',
+    dx:'Duyệt nhóm "Cần trước đợt đầu", chạy A1 trên Online theo script đã thử. Đồ còn ghi ở người đã nghỉ lúc mở đợt: người được chỉ định lúc tạo đợt ký thay. Sửa phiếu điều chuyển: bắt buộc chọn vùng hoặc tự xoá mã kho khi đồ ra khỏi kho.', demo:[] }
 ];
 const KHOA_TL = 'kk-tra-loi-anh-dat-v1';
 let TL = (() => { try { return JSON.parse(localStorage.getItem(KHOA_TL)) || {}; } catch (e) { return {}; } })();
@@ -914,7 +918,7 @@ function veCauHoi() {
   $('vCauHoi').innerHTML = `<div class="crumb">Họp với anh Đạt / Câu hỏi cần chốt</div>
     <div class="head"><div><h1>Câu hỏi cần anh Đạt chốt</h1><div class="hint">Đã có câu trả lời <b>${daTl()}/${CAU_HOI.length}</b>. Câu trả lời lưu ngay trong trình duyệt này.</div></div>
       <div class="acts"><button class="btn" data-act="tl-xoa">Xoá câu trả lời</button><button class="btn primary" data-act="tl-chep">Chép câu trả lời</button></div></div>
-    <div class="alert info">Hỏi theo thứ tự: duyệt hướng trước (câu 0), rồi câu 1–5, câu nhỏ 6–7, cuối cùng câu 8 (phạm vi mới). Mỗi câu có nút mở đúng màn minh hoạ để chỉ cho anh Đạt. Ghi câu trả lời ngay dưới mỗi câu; họp xong bấm <b>Chép câu trả lời</b> rồi gửi lại.</div>
+    <div class="alert info">Hỏi theo thứ tự: duyệt hướng trước (câu 0), rồi câu 1–5, câu nhỏ 6–7, câu 8 (phạm vi mới), cuối cùng câu 9 (duyệt dọn dữ liệu, đưa file rà soát). Mỗi câu có nút mở đúng màn minh hoạ để chỉ cho anh Đạt. Ghi câu trả lời ngay dưới mỗi câu; họp xong bấm <b>Chép câu trả lời</b> rồi gửi lại.</div>
     ${CAU_HOI.map(c => { const t = TL[c.so] || {}; return `<div class="card cau ${S.cauMo === c.so ? 'on' : ''}" id="cau-${c.so}">
       <div class="cau-h"><span class="cau-so">${c.so}</span><div class="t"><b>${esc(c.tieu)}</b>${c.nho ? ` ${pill(c.nho, 'p-mute')}` : ''}</div><div>${t.chon ? pill(...TT_TL[t.chon]) : pill('Chưa hỏi', 'p-mute')}</div></div>
       <div class="cau-b"><p>${esc(c.hoi)}</p>
