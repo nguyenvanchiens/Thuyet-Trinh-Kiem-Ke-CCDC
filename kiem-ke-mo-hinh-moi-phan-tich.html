@@ -161,7 +161,7 @@ a{color:var(--accent)}
 <div class="card">
   <p>Sau mỗi đợt kiểm kê, công ty cần trả lời được:</p>
   <ol>
-    <li><b>Nhân viên nào chưa được kiểm</b>, kể cả nhân viên mới chưa có tài sản trên hệ.</li>
+    <li><b>Nhân viên nào chưa được kiểm</b>, kể cả nhân viên mới chưa có tài sản trên hệ. Trong một đợt: báo cáo 2 ở mục 10. Nhiều đợt cùng lúc: <a href="#tong-quat">Báo cáo kiểm kê, tab Theo nhân viên</a>.</li>
     <li><b>Tài sản nào chưa được kiểm</b>, và tài sản nào kiểm rồi nhưng không thấy, hỏng hoặc sai chỗ.</li>
     <li><b>Ai chịu trách nhiệm</b> cho từng món: người giữ đã đồng ý với kết quả chưa.</li>
     <li><b>Nhìn tổng quát, ngoài từng đợt:</b> món nào lâu rồi chưa kiểm hoặc chưa bao giờ kiểm; nhân viên tự xem mình đang đứng tên những gì. V5 và V4 đều chưa có màn nào cho hai việc này. <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></li>
@@ -517,9 +517,10 @@ a{color:var(--accent)}
   </div>
 </div>
 
-<h3 id="tong-quat">Báo cáo kiểm kê: xem tổng quát mọi tài sản <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></h3>
+<h3 id="tong-quat">Báo cáo kiểm kê: theo tài sản và theo nhân viên <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></h3>
 <p>Báo cáo trong chi tiết đợt chỉ trả lời "món này đã kiểm <b>trong đợt này</b> chưa". Muốn biết món nào <b>lâu rồi chưa kiểm</b>, hay so kết quả giữa các đợt, thì phải mở từng đợt. Đề xuất một <b>menu riêng "Báo cáo kiểm kê"</b>, không nhét vào danh sách tài sản: đây là báo cáo, và mỗi công ty có nhiều đợt nên phải chọn được nhiều.</p>
 <ul>
+  <li>Hai tab: <b>Theo tài sản</b> (món nào chưa kiểm, có vấn đề, lâu rồi chưa kiểm) và <b>Theo nhân viên</b> (nhân viên nào chưa được kiểm, chưa xác nhận, không đồng ý). Hai tab dùng chung bộ chọn công ty và đợt.</li>
   <li><b>Công ty</b> và <b>Đợt kiểm kê</b> đều chọn nhiều (dropdown có ô tích). Chọn thêm công ty thì tự chọn đợt mới nhất của công ty đó; bỏ công ty thì bỏ luôn các đợt của nó.</li>
   <li>Mỗi tài sản một dòng, <b>mỗi đợt đã chọn một cột</b> kết quả: có · đã xác nhận, có · chờ xác nhận, không thấy, không được kiểm, không có trong đợt. Món của công ty khác đợt thì để "—".</li>
   <li>Cột <b>Lần kiểm cuối</b>: lấy từ đợt gần nhất có món đó; món chưa qua đợt nào trên V5 thì lấy ngày cũ chuyển từ V4. Nếu chốt câu 6 = có thì ngày này cũng được ghi lên bảng tài sản. <a class="ask-tag" href="#cau-6">❓ Hỏi anh Đạt · câu 6</a></li>
@@ -527,7 +528,10 @@ a{color:var(--accent)}
 </ul>
 <p>Danh sách tài sản V5 giữ nguyên, không phải sửa.</p>
 <figure class="fig"><img src="anh-minh-hoa/web-bao-cao-kiem-ke.png" alt="Báo cáo kiểm kê: chọn hai công ty VN01, VN02 và ba đợt KK0012, KK0010, KK0009 trong dropdown có ô tích; 4 ô số; bảng mỗi tài sản một dòng, mỗi đợt một cột kết quả, cột lần kiểm cuối" loading="lazy">
-<figcaption>Menu Báo cáo kiểm kê: chọn nhiều công ty, nhiều đợt, mỗi đợt một cột. <a href="minh-hoa-tao-dot-kiem-ke.html?man=bc" target="_blank" rel="noopener">Mở thẳng</a>.</figcaption></figure>
+<figcaption>Tab Theo tài sản: chọn nhiều công ty, nhiều đợt, mỗi đợt một cột. <a href="minh-hoa-tao-dot-kiem-ke.html?man=bc" target="_blank" rel="noopener">Mở thẳng</a>.</figcaption></figure>
+<p><b>Tab Theo nhân viên</b> trả lời câu "nhân viên nào chưa được kiểm" cho nhiều đợt cùng lúc. Mỗi nhân viên một dòng, mỗi đợt một cột. Nhân viên <b>đã được kiểm</b> khi mọi phần chứa đồ của họ đã kiểm xong, kể cả đồ chung ở vùng; ô kết quả ghi rõ còn chờ phần nào. Ví dụ chị Vân: "Chờ: chị Vân, Tầng 4, Phòng họp T5". Người không giữ món nào (nhân viên mới) vẫn có phần kiểm riêng nên vẫn hiện. Lọc: chưa được kiểm, đã kiểm chưa xác nhận, không đồng ý, đã xác nhận, không có trong đợt, không giữ món nào.</p>
+<figure class="fig"><img src="anh-minh-hoa/web-bao-cao-theo-nhan-vien.png" alt="Báo cáo kiểm kê tab Theo nhân viên: VN01 và VN02, đợt KK0012 và KK0009; mỗi nhân viên một dòng với số món đứng tên, trạng thái từng đợt: đã xác nhận, chưa được kiểm xong kèm phần đang chờ, đã kiểm chờ xác nhận, không được kiểm hết" loading="lazy">
+<figcaption>Tab Theo nhân viên: ai chưa được kiểm, đang chờ phần nào. <a href="minh-hoa-tao-dot-kiem-ke.html?man=bcnv" target="_blank" rel="noopener">Mở thẳng</a>.</figcaption></figure>
 <figure class="fig"><img src="anh-minh-hoa/web-tai-san-cua-toi.png" alt="Màn Tài sản của tôi của anh Sơn trên web: thẻ đợt KK0012 đang mở với nút Mở phiếu XN0153, 4 ô số, dropdown lọc, bảng 126 món với nơi đặt, lần kiểm cuối, trạng thái trong đợt" loading="lazy">
 <figcaption>Menu Tài sản của tôi (nhân viên, web): cùng nội dung với tab trên app. <a href="minh-hoa-tao-dot-kiem-ke.html?man=toi" target="_blank" rel="noopener">Mở thẳng</a>.</figcaption></figure>
 
@@ -540,7 +544,7 @@ a{color:var(--accent)}
     <li><b>NV xác nhận kiểm kê</b> hiện số 1: mở phiếu XN0153, bấm Không đồng ý, tích Máy chiếu, ghi lý do.</li>
     <li>Tầng 3 thành "Mở lại": kiểm lại trên <b>App</b> (Máy chiếu chọn "Có, nhưng đang ở chỗ khác", Xong phần), hoặc trên web bấm "Giả lập: chị Lan kiểm lại xong".</li>
     <li><b>NV xác nhận kiểm kê</b>: xác nhận lần hai, bấm Đồng ý, kết quả bị khoá.</li>
-    <li><b>Báo cáo kiểm kê</b>: chọn thêm công ty VN02 và đợt cũ KK0010 (chọn nhiều), lọc "Chưa kiểm", "Có vấn đề", "Chưa bao giờ kiểm". <b>Tài sản của tôi</b>: anh Sơn xem 126 món đang đứng tên.</li>
+    <li><b>Báo cáo kiểm kê</b>: chọn thêm công ty VN02 và đợt cũ KK0010 (chọn nhiều), lọc "Chưa kiểm", "Có vấn đề", "Chưa bao giờ kiểm"; tab <b>Theo nhân viên</b>: lọc "Chưa được kiểm". <b>Tài sản của tôi</b>: anh Sơn xem 126 món đang đứng tên.</li>
     <li><b>Quản lý</b>: thử Thêm nhân viên, Nhắc xác nhận, Đóng đợt, tạo đợt mới. Sau khi đóng đợt, mở lại menu <b>Báo cáo kiểm kê</b>: lần kiểm cuối của các món đã kiểm đổi thành ngày đóng đợt.</li>
   </ol>
 </div>
@@ -554,7 +558,7 @@ a{color:var(--accent)}
   <tr><td><b>3. Theo tài sản</b></td><td>Tài sản nào chưa được kiểm, và kết quả của từng món?</td><td>Mỗi món một dòng: phần, kết quả (Có / Hỏng / Không thấy / Sai chỗ / Chưa kiểm), tình trạng mới, người giữ, đã xác nhận chưa.</td></tr>
   <tr><td><b>4. Ngoại lệ</b></td><td>Cần xử lý gì sau kiểm kê?</td><td>Món không thấy, hỏng, sai chỗ, thấy ở phần khác, nhóm "ghi ở người đã nghỉ", và dữ liệu thiếu: "thiếu mã vùng", "thiếu mã công ty". Để hành chính tự lập phiếu hoặc bổ sung dữ liệu nếu cần.</td></tr>
   <tr><td><b>5. In lại tem</b></td><td>Món nào cần dán tem mới?</td><td>Các món được đánh dấu tem hỏng hoặc mất trong lúc kiểm.</td></tr>
-  <tr><td><b>6. Báo cáo kiểm kê (tổng quát)</b> <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></td><td>Món nào lâu rồi chưa kiểm, chưa bao giờ kiểm? Kết quả của một món qua các đợt?</td><td>Menu riêng, không thuộc một đợt: chọn nhiều công ty, nhiều đợt, mỗi đợt một cột, kèm lần kiểm cuối. Xem <a href="#tong-quat">mục 09</a>.</td></tr>
+  <tr><td><b>6. Báo cáo kiểm kê (tổng quát)</b> <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></td><td>Món nào lâu rồi chưa kiểm, chưa bao giờ kiểm? Nhân viên nào chưa được kiểm, qua nhiều đợt?</td><td>Menu riêng, không thuộc một đợt: hai tab Theo tài sản và Theo nhân viên, chọn nhiều công ty, nhiều đợt, mỗi đợt một cột. Xem <a href="#tong-quat">mục 09</a>.</td></tr>
 </table></div>
 <p class="note" style="margin-top:8px">Báo cáo 1 và 2 là hai báo cáo chính đã thống nhất với hành chính. Ba báo cáo kiểm kê cũ của V4 sẽ được thay bằng các báo cáo này. Hình chi tiết đợt ở <a href="#luong">mục 06, bước 7</a>.</p>
 <!-- 10 -->
@@ -584,6 +588,12 @@ a{color:var(--accent)}
     <li>Mã không có trên hệ thì không thêm được.</li>
     <li><code>TSHN</code> là tiền tố mã, không dùng để lọc.</li>
   </ul>
+</div>
+
+<div class="card summary" style="margin:14px 0">
+  <p style="margin-top:0"><b>Trong buổi họp:</b> mở menu <a href="minh-hoa-tao-dot-kiem-ke.html?man=cau" target="_blank" rel="noopener">Câu hỏi cần chốt</a> của màn minh hoạ. Có đủ 9 câu (câu 0 là duyệt hướng đi), mỗi câu kèm lý do, số liệu thật, đề xuất và nút mở đúng màn minh hoạ để chỉ cho anh Đạt. Câu trả lời ghi ngay dưới mỗi câu, lưu trong trình duyệt; họp xong bấm <b>Chép câu trả lời</b> rồi gửi lại. Các nhãn "Chờ anh Đạt chốt" trong màn minh hoạ cũng bấm được để nhảy tới câu tương ứng.</p>
+  <figure class="fig" style="margin:0"><img src="anh-minh-hoa/web-cau-hoi-anh-dat.png" alt="Menu Câu hỏi cần anh Đạt chốt: mỗi câu có vì sao cần, số liệu thật, đề xuất, nút mở màn minh hoạ, và ô ghi câu trả lời Đồng ý đề xuất, Trả lời khác, Để sau" loading="lazy">
+  <figcaption>Menu Câu hỏi cần chốt: hỏi và ghi câu trả lời ngay trong màn minh hoạ.</figcaption></figure>
 </div>
 
 <h3 id="so-lieu">Số liệu thật</h3>

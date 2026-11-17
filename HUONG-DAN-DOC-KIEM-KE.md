@@ -150,7 +150,8 @@ Mở Slide, chuyển slide bằng phím ←/→. Bấm **N** để hiện ghi ch
 2. **Trong buổi gặp anh Đạt:**
    - trình bày theo slide, demo theo bảng ở B2;
    - xin anh Đạt **duyệt hướng đi** trước;
-   - hỏi lần lượt 8 câu ở mục 12, ghi lại câu trả lời.
+   - hỏi lần lượt 8 câu ở mục 12. Cách tiện nhất: mở màn minh hoạ, menu **Câu hỏi cần chốt** (`minh-hoa-tao-dot-kiem-ke.html?man=cau`). Mỗi câu có nút mở đúng màn demo; ghi câu trả lời ngay dưới mỗi câu, họp xong bấm **Chép câu trả lời** rồi gửi tôi.
+   - Nếu anh Đạt hỏi "nhân viên nào chưa được kiểm": trong một đợt là tab **Xác nhận** ở chi tiết đợt; nhiều đợt là menu **Báo cáo kiểm kê**, tab **Theo nhân viên**.
 3. **Sau buổi gặp:** gửi tôi câu trả lời của anh Đạt cho từng câu. Tôi sẽ:
    - cập nhật trang phân tích: chuyển các câu đã có trả lời sang "Đã chốt" và gỡ nhãn ❓;
    - sửa Màn minh hoạ theo đúng câu trả lời (ví dụ "kho chưa rõ");
