@@ -104,14 +104,15 @@ Ràng buộc đã chốt: kiểm kê **không sinh phiếu** và **không sửa*
 
 **C6. Mục 12 · Đã chốt và câu hỏi cho anh Đạt.** Đọc kỹ.
 - "Đã chốt": những gì không cần hỏi lại.
+- "Số liệu thật": đếm từ dữ liệu nạp V5 (3.557 món thuộc diện kiểm). Nhớ 3 con số để nói: một người đứng tên 543 món (câu 3), 13 món VN02 nằm ở Kho MB (câu 4), chỉ 192 món có ngày kiểm cuối trong 2025–2026 (câu 6, 8).
 - 8 câu hỏi, mỗi câu có ví dụ và đề xuất. Câu 1–5 là câu chính, câu 6–7 là câu nhỏ, hỏi nhanh, câu 8 là phạm vi mới.
-  1. Ai xác nhận Kho MB, Kho MN; món ở kho mà thiếu mã vùng thì ai ký.
+  1. Ai xác nhận Kho MB, Kho MN (số liệu: "kho chưa rõ" 0 món, không cần hỏi phần đó).
   2. Nhân viên công ty này cầm tài sản công ty kia.
-  3. Đồ chung ở các tầng đứng tên ai.
+  3. Đồ chung ở các tầng đứng tên ai (số liệu: một người đứng tên 543 món ở 20 vùng, 8 người từ 50 món).
   4. Kho MB thuộc VN01, Kho MN thuộc VN02. Tài sản không có mã công ty thì tính vào đợt VN01 như V4 (đề xuất: có, và liệt kê ở báo cáo ngoại lệ "thiếu mã công ty").
   5. Ba luật xác nhận.
   6. Đóng đợt có ghi ngày kiểm cuối lên tài sản không.
-  7. Món chờ thanh lý nhưng đang dùng có kiểm không.
+  7. Món chờ thanh lý nhưng đang dùng có kiểm không (số liệu: 0 món, chỉ báo để biết).
   8. Có làm hai màn xem tổng quát không: danh sách tài sản thêm cột lần kiểm cuối (cần câu 6 = có), và "Tài sản của tôi" cho nhân viên trên web, app. Demo: menu **Tài sản**, **Tài sản của tôi**.
 
 → **Đọc xong:** ghi sẵn ra giấy 8 câu này kèm đề xuất của mình, để trong buổi gặp hỏi lần lượt và ghi câu trả lời của anh Đạt bên cạnh.
