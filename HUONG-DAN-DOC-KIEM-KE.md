@@ -113,7 +113,7 @@ Ràng buộc đã chốt: kiểm kê **không sinh phiếu** và **không sửa*
   5. Ba luật xác nhận.
   6. Đóng đợt có ghi ngày kiểm cuối lên tài sản không.
   7. Món chờ thanh lý nhưng đang dùng có kiểm không (số liệu: 0 món, chỉ báo để biết).
-  8. Có làm hai màn xem tổng quát không: danh sách tài sản thêm cột lần kiểm cuối (cần câu 6 = có), và "Tài sản của tôi" cho nhân viên trên web, app. Demo: menu **Tài sản**, **Tài sản của tôi**.
+  8. Có làm hai màn xem tổng quát không: menu riêng **Báo cáo kiểm kê** (chọn nhiều công ty, nhiều đợt, mỗi đợt một cột, kèm lần kiểm cuối), và "Tài sản của tôi" cho nhân viên trên web, app. Demo: menu **Báo cáo kiểm kê**, **Tài sản của tôi**.
 
 → **Đọc xong:** ghi sẵn ra giấy 8 câu này kèm đề xuất của mình, để trong buổi gặp hỏi lần lượt và ghi câu trả lời của anh Đạt bên cạnh.
 

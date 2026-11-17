@@ -172,6 +172,14 @@ h3{font-size:13px;margin:16px 0 8px}
 .tem{border:1px dashed #9aa3b5;background:#fff;border-radius:8px;padding:6px 9px;cursor:pointer;text-align:left;font-size:12px;line-height:1.3;max-width:100%}
 .tem:hover{border-color:var(--primary);background:var(--primary-soft)}
 .tem .mono{display:block;font-size:11px;color:var(--muted)}
+.ms{position:relative}
+.ms summary{list-style:none;cursor:pointer;display:flex;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:26px;position:relative}
+.ms summary::-webkit-details-marker{display:none}
+.ms summary::after{content:'▾';position:absolute;right:10px;color:var(--muted)}
+.ms-pop{position:absolute;z-index:30;top:calc(100% + 4px);left:0;min-width:100%;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(16,24,40,.14);padding:6px}
+.ms-pop label{display:flex;gap:8px;align-items:center;padding:6px 8px;border-radius:6px;white-space:nowrap;cursor:pointer;font-size:13px}
+.ms-pop label:hover{background:var(--primary-soft)}
+.ms-pop .hint{padding:4px 8px;display:block}
 .app-side{display:flex;flex-direction:column;gap:12px;min-width:0}
 .app-side .guide{margin:0}
 .app-side .giai p{margin:0 0 8px}
@@ -201,14 +209,15 @@ h3{font-size:13px;margin:16px 0 8px}
   <aside>
     <div class="brand">FastLink ERP</div>
     <div class="grp">CCDC</div>
-    <a data-act="ve-ts" id="mnTaiSan">Tài sản</a><a>Điều chuyển</a><a>Điều chuyển liên công ty</a>
+    <a>Tài sản</a><a>Điều chuyển</a><a>Điều chuyển liên công ty</a>
     <a data-act="ve-ds" id="mnKiemKe">Kiểm kê</a>
+    <a data-act="ve-bc" id="mnBaoCaoKk">Báo cáo kiểm kê</a>
     <a data-act="ve-xn" id="mnXacNhan">NV xác nhận kiểm kê <span class="badge" id="badgeNv">1</span></a>
     <a data-act="ve-cua-toi" id="mnCuaToi">Tài sản của tôi</a>
     <a data-act="ve-app" id="mnApp">App kiểm kê (mobile)</a>
     <a>Báo cáo</a>
     <div class="grp" style="margin-top:14px">Ghi chú minh hoạ</div>
-    <div style="font-size:11px;color:#8d97ab;padding:0 10px">"Kiểm kê" là màn của quản lý / hành chính. "NV xác nhận kiểm kê" là màn mỗi nhân viên thấy: danh sách phiếu xác nhận của chính mình, bản minh hoạ xem như anh Sơn. "App kiểm kê" là app điện thoại của người đi kiểm (chị Lan). "Tài sản" là danh sách tài sản V5 thêm cột lần kiểm cuối; "Tài sản của tôi" là màn nhân viên tự xem đồ mình đứng tên (câu 8). Mọi màn dùng chung dữ liệu.</div>
+    <div style="font-size:11px;color:#8d97ab;padding:0 10px">"Kiểm kê" là màn của quản lý / hành chính. "NV xác nhận kiểm kê" là màn mỗi nhân viên thấy: danh sách phiếu xác nhận của chính mình, bản minh hoạ xem như anh Sơn. "App kiểm kê" là app điện thoại của người đi kiểm (chị Lan). "Báo cáo kiểm kê" xem nhiều công ty, nhiều đợt cùng lúc; "Tài sản của tôi" là màn nhân viên tự xem đồ mình đứng tên (câu 8). Mọi màn dùng chung dữ liệu.</div>
   </aside>
 
   <main>
@@ -223,8 +232,8 @@ h3{font-size:13px;margin:16px 0 8px}
           <li>Menu <b>NV xác nhận kiểm kê</b> hiện số 1 (đang xem như anh Sơn): bấm phiếu <b>XN0153</b>, bấm <b>Không đồng ý</b>, tích <i>Máy chiếu</i>, ghi lý do, gửi.</li>
           <li>Tầng 3 thành "Mở lại". Kiểm lại trên <b>App</b> (bấm Tầng 3, bấm Máy chiếu, chọn "Có, nhưng đang ở chỗ khác", Xong phần), hoặc trên web: menu Kiểm kê, bấm Tầng 3, <b>Giả lập: chị Lan kiểm lại xong</b>.</li>
           <li>Menu <b>NV xác nhận kiểm kê</b>, mở phiếu XN0153: danh sách đã cập nhật, bấm <b>Đồng ý</b>. Kết quả bị khoá.</li>
-          <li>Menu <b>Tài sản</b>: lọc "Chưa kiểm trong đợt", "Lần kiểm cuối trước năm 2026", "Chưa bao giờ kiểm". Menu <b>Tài sản của tôi</b>: anh Sơn tự xem 126 món đang đứng tên và trạng thái trong đợt.</li>
-          <li>Menu <b>Kiểm kê</b>: thử <b>Thêm nhân viên</b> (người mới hiện ngay trên app), <b>Nhắc xác nhận</b>, rồi <b>Đóng đợt</b>. Mở lại menu <b>Tài sản</b>: cột "Lần kiểm cuối" của các món đã kiểm đổi thành ngày đóng đợt. Có thể tạo đợt mới cho VN02 bằng nút <b>+ Tạo đợt</b>.</li>
+          <li>Menu <b>Báo cáo kiểm kê</b>: chọn thêm công ty VN02 và các đợt cũ (chọn nhiều), lọc "Chưa kiểm", "Có vấn đề", "Chưa bao giờ kiểm". Menu <b>Tài sản của tôi</b>: anh Sơn tự xem 126 món đang đứng tên và trạng thái trong đợt.</li>
+          <li>Menu <b>Kiểm kê</b>: thử <b>Thêm nhân viên</b> (người mới hiện ngay trên app), <b>Nhắc xác nhận</b>, rồi <b>Đóng đợt</b>. Mở lại menu <b>Báo cáo kiểm kê</b>: cột "Lần kiểm cuối" của các món đã kiểm đổi thành ngày đóng đợt. Có thể tạo đợt mới cho VN02 bằng nút <b>+ Tạo đợt</b>.</li>
         </ol>
       </details>
       <div class="head">
@@ -273,8 +282,8 @@ h3{font-size:13px;margin:16px 0 8px}
       <div id="cBody"></div>
     </section>
 
-    <!-- ===== DANH SÁCH TÀI SẢN (màn V5 đã có, thêm cột kiểm kê) ===== -->
-    <section id="vTaiSan" hidden></section>
+    <!-- ===== BÁO CÁO KIỂM KÊ (menu riêng, nhiều công ty, nhiều đợt) ===== -->
+    <section id="vBaoCao" hidden></section>
 
     <!-- ===== TÀI SẢN CỦA TÔI (nhân viên) ===== -->
     <section id="vCuaToi" hidden></section>
@@ -486,10 +495,21 @@ function khoiTao() {
     const n = +i.ma.slice(-4) % 10, ai = i.giu || 'chị Hoa';
     [i.lanCuoi, i.xnCuoi] = n <= 6 ? ['16/05/2026', ai] : n <= 8 ? ['03/12/2025', ai] : ['', ''];
   }
+  // kết quả đợt cũ KK0010 (05/2026): món có ngày 16/05/2026 là đã kiểm; món tạo năm 2026 chưa có lúc đó
+  for (const i of items) if (i.nguon === 'DS') i.ls = { KK0010: i.lanCuoi === '16/05/2026' ? 'CO' : /^TSHN26/.test(i.ma) ? null : 'CHUA' };
+  // mẫu tài sản VN02 cho báo cáo nhiều công ty (đợt KK0009, 05/2026); 2 món VN02 đang nằm ở Kho MB
+  const vn02 = [], NOI2 = [['chị Ngân','Tầng 2 VN02'],['chị Ngân','Phòng họp VN02'],['anh Tín','Sảnh VN02'],['chị Ngân','Tầng 2 VN02']];
+  for (let k = 0; k < 40; k++) {
+    const [giu, noi] = k % 5 === 4 ? ['Kho', k < 10 ? 'Kho MB' : 'Kho MN'] : NOI2[k % 5];
+    const kq = k % 9 === 8 ? 'KHONG_THAY' : k % 7 === 6 ? 'CHUA' : 'CO';
+    vn02.push({ ma:`TSHN2${4 + k % 3}-${2000 + k}`, ten:TEN_DS[k % TEN_DS.length], cty:'VN02', giu, noi, ls:{ KK0009: kq },
+      lanCuoi: kq === 'CO' ? '15/05/2026' : k % 2 ? '03/12/2025' : '', xnCuoi: kq === 'CO' ? (giu === 'Kho' ? 'chị Thảo' : giu) : (k % 2 ? giu : '') });
+  }
 
   const P = (id, ten, loai, trangThai, capNhat) => ({ id, ten, loai, trangThai, nguoiKiem: trangThai === 'Chưa kiểm' ? '' : 'chị Lan', capNhat: capNhat || '', log: [] });
   S = {
-    vai: 'ql', view: 'list', tab: 'phan', drawer: null, items,
+    vai: 'ql', view: 'list', tab: 'phan', drawer: null, items, vn02,
+    bc: { cty:['VN01'], dot:['KK0012'], loc:'', q:'', mo:null },
     dot: { ma:'KK0012', ten:'Kiểm kê T11/2026 - VN01', cty:'VN01', mo:'12/11/2026', kt:'26/11/2026', tt:'Đang kiểm', tao:'chị Lan', khoXn:'chị Hoa (Kho MB), chị Linh (Kho chưa rõ)' },
     khac: [
       { ma:'KK0010', ten:'Kiểm kê T05/2026 - VN01', cty:'VN01', mo:'03/05/2026', kt:'20/05/2026', tt:'Đã đóng', kiem:[418,420], xn:[405,412], tao:'chị Lan' },
@@ -566,7 +586,7 @@ function tienDo(a, b) { const p = b ? Math.round(a * 100 / b) : 0; return `<span
 
 /* ================= ĐIỀU HƯỚNG ================= */
 function capNhatMenu() {
-  $('mnKiemKe').classList.toggle('on', S.vai === 'ql' && S.view !== 'ts'); $('mnTaiSan').classList.toggle('on', S.vai === 'ql' && S.view === 'ts');
+  $('mnKiemKe').classList.toggle('on', S.vai === 'ql' && S.view !== 'bc'); $('mnBaoCaoKk').classList.toggle('on', S.vai === 'ql' && S.view === 'bc');
   $('mnXacNhan').classList.toggle('on', S.vai === 'son' && S.son.man !== 'toi'); $('mnCuaToi').classList.toggle('on', S.vai === 'son' && S.son.man === 'toi');
   $('mnApp').classList.toggle('on', S.vai === 'app');
   const cho = phieuSon().filter(p => p.tt === 'Chờ xác nhận').length;
@@ -576,13 +596,13 @@ function ve() {
   capNhatMenu();
   $('vList').hidden = !(S.vai === 'ql' && S.view === 'list');
   $('vDetail').hidden = !(S.vai === 'ql' && S.view === 'detail');
-  $('vTaiSan').hidden = !(S.vai === 'ql' && S.view === 'ts');
+  $('vBaoCao').hidden = !(S.vai === 'ql' && S.view === 'bc');
   $('vConfirm').hidden = !(S.vai === 'son' && S.son.man !== 'toi'); $('vCuaToi').hidden = !(S.vai === 'son' && S.son.man === 'toi');
   $('vApp').hidden = S.vai !== 'app';
   if (S.vai === 'app') veApp(); else if (S.vai === 'son') { if (S.son.man === 'toi') veCuaToi(); else veConfirm(); }
-  else if (S.view === 'ts') veTaiSan(); else if (S.view === 'detail') veDetail(); else veDs();
+  else if (S.view === 'bc') veBaoCao(); else if (S.view === 'detail') veDetail(); else veDs();
 }
-$('vai').onchange = () => { S.vai = $('vai').value; dongDrawer(); S.son.phanDoi = false; S.son.chon = {}; S.son.view = 'list'; S.son.man = 'xn'; if (S.view === 'ts') S.view = 'list'; S.app.mon = null; ve(); window.scrollTo(0, 0); };
+$('vai').onchange = () => { S.vai = $('vai').value; dongDrawer(); S.son.phanDoi = false; S.son.chon = {}; S.son.view = 'list'; S.son.man = 'xn'; if (S.view === 'bc') S.view = 'list'; S.app.mon = null; ve(); window.scrollTo(0, 0); };
 $('btnReset').onclick = () => { khoiTao(); $('vai').value = 'ql'; dongDrawer(); ve(); toast('Đã đặt lại dữ liệu demo'); };
 
 /* ================= DANH SÁCH ================= */
@@ -722,38 +742,65 @@ function ttDot(i) {
   const x = xnCuaMon(i), t = x && ttXn(x);
   const xn = !x ? '' : x.xacNhanLuc ? 'đã xác nhận' : dongDot() ? 'chưa xác nhận' : t.tt === 'Không đồng ý' ? 'người giữ không đồng ý'
     : t.tt === 'Chờ xác nhận' ? 'chờ xác nhận' : 'chờ kiểm xong phần khác';
-  return { txt: KQ[i.kq][0] + (xn ? ' · ' + xn : ''), cls: KQ[i.kq][1], nhom: x && x.xacNhanLuc ? 'xn' : 'chua-xn' };
+  return { txt: KQ[i.kq][0] + (xn ? ' · ' + xn : ''), cls: KQ[i.kq][1], nhom: x && x.xacNhanLuc ? 'xn' : 'chua-xn', van: ['KHONG_THAY','HONG','SAI_CHO'].includes(i.kq) };
 }
-function dsTaiSan() {
-  const rows = S.items.filter(i => i.nguon === 'DS').map(i => ({ ma:i.ma, ten:i.ten, giu:i.giu || 'Kho', noi:noiDat(i), lanCuoi:i.lanCuoi, xnCuoi:i.xnCuoi, dot:ttDot(i) }));
-  S.nghi.forEach(n => rows.push({ ma:n.ma, ten:n.ten, giu:n.ai + ' (đã nghỉ)', noi:'—', lanCuoi:'16/05/2026', xnCuoi:n.ai, dot:ttDot({ ngoai:'Không thuộc đợt: người giữ đã nghỉ' }) }));
-  Object.entries(NGOAI_DOT).forEach(([ma, v]) => rows.push({ ma, ten:v.ten, giu:'Kho', noi:'Kho MB', lanCuoi:'', xnCuoi:'', dot:ttDot({ ngoai:'Không thuộc đợt: tạo sau khi mở đợt' }) }));
-  return rows;
+/* ---- Báo cáo kiểm kê: menu riêng, chọn nhiều công ty và nhiều đợt (câu 8) ---- */
+const dsDotBc = () => [
+  { ma:S.dot.ma, cty:S.dot.cty, ten:S.dot.ten, tt:S.dot.tt },
+  { ma:'KK0010', cty:'VN01', ten:'Kiểm kê T05/2026 - VN01', tt:'Đã đóng' },
+  { ma:'KK0009', cty:'VN02', ten:'Kiểm kê T05/2026 - VN02', tt:'Đã đóng' }
+];
+const KQ_CU = { CO:['Có · đã xác nhận','p-ok'], KHONG_THAY:['Không thấy · đã xác nhận','p-bad'], CHUA:['Không được kiểm','p-bad'] };
+function ketQuaDot(r, d) { // kết quả của món r trong đợt d; null = món không có trong đợt
+  if (r.cty !== d.cty) return null;
+  if (d.ma === S.dot.ma) return r.i ? ttDot(r.i) : r.ngoai ? { txt:r.ngoai, cls:'p-mute', nhom:'ngoai' } : null;
+  const k = r.ls && r.ls[d.ma]; if (!k) return null;
+  return { txt:KQ_CU[k][0], cls:KQ_CU[k][1], nhom: k === 'CHUA' ? 'chua' : 'xn', van: k === 'KHONG_THAY' };
+}
+function dsBaoCao() {
+  const rows = S.items.filter(i => i.nguon === 'DS').map(i => ({ ma:i.ma, ten:i.ten, cty:'VN01', giu:i.giu || 'Kho', noi:noiDat(i), lanCuoi:i.lanCuoi, ls:i.ls, i }));
+  S.nghi.forEach(n => rows.push({ ma:n.ma, ten:n.ten, cty:'VN01', giu:n.ai + ' (đã nghỉ)', noi:'—', lanCuoi:'16/05/2026', ls:{ KK0010:'CO' }, ngoai:'Không thuộc đợt: người giữ đã nghỉ' }));
+  Object.entries(NGOAI_DOT).forEach(([ma, v]) => rows.push({ ma, ten:v.ten, cty:'VN01', giu:'Kho', noi:'Kho MB', lanCuoi:'', ls:{}, ngoai:'Không thuộc đợt: tạo sau khi mở đợt' }));
+  return rows.concat(S.vn02);
 }
 const truoc2026 = d => !!d && +d.slice(-4) < 2026;
-const LOC_TS = [['','Tất cả'],['chua','Chưa kiểm trong đợt'],['chua-xn','Đã kiểm, người giữ chưa xác nhận'],['xn','Đã kiểm và đã xác nhận'],['cu','Lần kiểm cuối trước năm 2026'],['chua-bao-gio','Chưa bao giờ kiểm'],['ngoai','Không thuộc đợt nào']];
-const locTs = (r, k) => !k || (k === 'cu' ? truoc2026(r.lanCuoi) : k === 'chua-bao-gio' ? !r.lanCuoi : r.dot.nhom === k);
 const tenLocTs = (v, t) => v === 'chua' ? `${dongDot() ? 'Không được kiểm' : 'Chưa kiểm'} trong đợt ${S.dot.ma}` : t;
 const ngayKiem = d => d || '<span class="hint">chưa bao giờ</span>';
-function veTaiSan() {
-  const f = S.locTs5 || { k:'', q:'' }, all = dsTaiSan(), q = f.q.trim().toLowerCase();
-  const rows = all.filter(r => locTs(r, f.k) && (!q || (r.ma + ' ' + r.ten + ' ' + r.giu).toLowerCase().includes(q)));
-  const dem = k => all.filter(r => locTs(r, k)).length;
-  $('vTaiSan').innerHTML = `<div class="crumb">CCDC / Tài sản</div>
-    <div class="head"><h1>Tài sản</h1><span class="hint">Màn danh sách tài sản V5 đã có · thêm cột và bộ lọc kiểm kê</span></div>
-    <div class="alert info">Không làm màn mới: dùng lại danh sách tài sản của V5, thêm cột <b>Lần kiểm cuối</b>, <b>Người xác nhận cuối</b> (bảng tài sản V5 đã có sẵn hai cột này, màn Báo cáo đang hiện) và cột trạng thái trong <b>đợt ${S.dot.ma}</b>. Hai cột đầu chỉ được cập nhật khi đóng đợt ghi ngày kiểm lên tài sản. <span class="pill p-warn">Chờ anh Đạt chốt: câu 6, câu 8</span></div>
-    <div class="stats">${[['Tài sản (bản minh hoạ)', all.length], [tenLocTs('chua'), dem('chua')], ['Lần kiểm cuối trước 2026', dem('cu')], ['Chưa bao giờ kiểm', dem('chua-bao-gio')]]
+const LOC_BC = [['','Tất cả'],['chua','Chưa kiểm / không được kiểm'],['chua-xn','Đã kiểm, người giữ chưa xác nhận'],['van-de','Không thấy, hỏng, ở chỗ khác'],['ngoai','Không có trong đợt đã chọn'],['cu','Lần kiểm cuối trước năm 2026'],['chua-bao-gio','Chưa bao giờ kiểm']];
+function locBc(r, k, dots) {
+  if (!k) return true;
+  if (k === 'cu') return truoc2026(r.lanCuoi);
+  if (k === 'chua-bao-gio') return !r.lanCuoi;
+  const kq = dots.map(d => ketQuaDot(r, d)).filter(Boolean);
+  if (k === 'ngoai') return !kq.length || kq.every(x => x.nhom === 'ngoai');
+  if (k === 'van-de') return kq.some(x => x.van);
+  return kq.some(x => x.nhom === k);
+}
+const msChon = (key, nhan, opts, chon, rong) => `<div class="f" style="min-width:${key === 'dot' ? 300 : 210}px"><span class="lbl">${nhan}</span>
+  <details class="ms" data-ms-box="${key}" ${S.bc.mo === key ? 'open' : ''}><summary class="input">${chon.length ? esc(opts.filter(o => chon.includes(o[0])).map(o => o[2]).join(', ')) : `<span class="hint">${rong}</span>`}</summary>
+  <div class="ms-pop">${opts.length ? opts.map(([v, t]) => `<label><input type="checkbox" data-ms="${key}" value="${v}" ${chon.includes(v) ? 'checked' : ''}> ${esc(t)}</label>`).join('') : `<span class="hint">${rong}</span>`}</div></details></div>`;
+function veBaoCao() {
+  const B = S.bc, all = dsBaoCao().filter(r => B.cty.includes(r.cty)), q = B.q.trim().toLowerCase();
+  const dotOpts = dsDotBc().filter(d => B.cty.includes(d.cty)), dots = dotOpts.filter(d => B.dot.includes(d.ma)).sort((x, y) => y.ma.localeCompare(x.ma));
+  const rows = all.filter(r => locBc(r, B.loc, dots) && (!q || (r.ma + ' ' + r.ten + ' ' + r.giu).toLowerCase().includes(q)));
+  const dem = k => all.filter(r => locBc(r, k, dots)).length;
+  const o = (r, d) => { if (r.cty !== d.cty) return '<span class="hint">—</span>'; const k = ketQuaDot(r, d); return k ? pill(k.txt, k.cls) : '<span class="hint">không có trong đợt</span>'; };
+  $('vBaoCao').innerHTML = `<div class="crumb">CCDC / Báo cáo kiểm kê</div>
+    <div class="head"><h1>Báo cáo kiểm kê</h1><div class="acts"><button class="btn sm" data-act="xuat">Xuất Excel</button></div></div>
+    <div class="alert info">Báo cáo riêng, không nằm trong danh sách tài sản. Chọn <b>nhiều công ty</b> và <b>nhiều đợt</b> để xem tình trạng kiểm kê của mọi tài sản: mỗi đợt một cột. <b>Lần kiểm cuối</b> lấy từ đợt gần nhất có món đó; món chưa qua đợt nào trên V5 thì lấy ngày cũ chuyển từ V4. <span class="pill p-warn">Chờ anh Đạt chốt: câu 8</span></div>
+    <div class="stats">${[['Tài sản của công ty đã chọn', all.length], ['Chưa kiểm / không được kiểm', dem('chua')], ['Không thấy, hỏng, ở chỗ khác', dem('van-de')], ['Chưa bao giờ kiểm', dem('chua-bao-gio')]]
       .map(([t, n]) => `<div class="stat"><div class="n">${fmt(n)}</div><div class="t">${t}</div></div>`).join('')}</div>
     <div class="card"><div class="filters">
-      <div class="f"><span class="lbl">Công ty</span><select class="input" disabled><option>VN01 · Miền Bắc</option></select></div>
-      <div class="f" style="min-width:270px"><span class="lbl">Kiểm kê</span><select class="input" data-ts5="k">${LOC_TS.map(([v, t]) => `<option value="${v}" ${v === f.k ? 'selected' : ''}>${tenLocTs(v, t)} (${fmt(v ? dem(v) : all.length)})</option>`).join('')}</select></div>
-      <div class="f" style="flex:1"><span class="lbl">Tìm</span><input class="input" data-ts5="q" value="${esc(f.q)}" placeholder="Mã, tên, người giữ"></div>
+      ${msChon('cty', 'Công ty (chọn nhiều)', Object.entries(CONG_TY).map(([k, v]) => [k, v.ten, k]), B.cty, 'Chọn công ty')}
+      ${msChon('dot', 'Đợt kiểm kê (chọn nhiều)', dotOpts.map(d => [d.ma, `${d.ma} · ${d.ten}${d.tt === 'Đang kiểm' ? ' (đang mở)' : ''}`, d.ma]), B.dot, B.cty.length ? 'Chọn đợt' : 'Chọn công ty trước')}
+      <div class="f" style="min-width:250px"><span class="lbl">Trạng thái kiểm kê</span><select class="input" data-bc="loc">${LOC_BC.map(([v, t]) => `<option value="${v}" ${v === B.loc ? 'selected' : ''}>${t} (${fmt(v ? dem(v) : all.length)})</option>`).join('')}</select></div>
+      <div class="f" style="flex:1;min-width:180px"><span class="lbl">Tìm</span><input class="input" data-bc="q" value="${esc(B.q)}" placeholder="Mã, tên, người giữ"></div>
     </div>
-    <div class="tblwrap"><table><thead><tr><th>Mã</th><th>Tên</th><th>Người giữ</th><th>Nơi đặt</th><th>Lần kiểm cuối</th><th>Người xác nhận cuối</th><th>Đợt ${S.dot.ma}</th></tr></thead><tbody>
-    ${rows.slice(0, 100).map(r => `<tr><td class="mono">${r.ma}</td><td>${esc(r.ten)}</td><td>${esc(r.giu)}</td><td>${esc(r.noi)}</td><td>${ngayKiem(r.lanCuoi)}</td>
-      <td>${r.lanCuoi ? (esc(r.xnCuoi) || '<span class="hint">chưa xác nhận</span>') : '—'}</td><td>${pill(r.dot.txt, r.dot.cls)}</td></tr>`).join('') || '<tr><td colspan="7" class="hint">Không có tài sản nào khớp bộ lọc</td></tr>'}
+    <div class="tblwrap"><table><thead><tr><th>Mã</th><th>Tên</th><th>Công ty</th><th>Người giữ</th><th>Nơi đặt</th><th>Lần kiểm cuối</th>${dots.map(d => `<th>Đợt ${d.ma}</th>`).join('')}</tr></thead><tbody>
+    ${rows.slice(0, 100).map(r => `<tr><td class="mono">${r.ma}</td><td>${esc(r.ten)}</td><td>${r.cty}</td><td>${esc(r.giu)}</td><td>${esc(r.noi)}</td><td>${ngayKiem(r.lanCuoi)}</td>${dots.map(d => `<td>${o(r, d)}</td>`).join('')}</tr>`).join('')
+      || `<tr><td colspan="${6 + dots.length}" class="hint">${B.cty.length ? 'Không có tài sản nào khớp bộ lọc' : 'Chọn ít nhất một công ty'}</td></tr>`}
     </tbody></table></div>
-    <div class="foot">Hiện ${Math.min(rows.length, 100)}/${rows.length} dòng khớp bộ lọc. Bản minh hoạ chỉ có ${all.length} món của VN01. Đóng đợt ${S.dot.ma} thì "Lần kiểm cuối" của các món đã kiểm thấy đổi thành ngày đóng đợt, "Người xác nhận cuối" là người đã xác nhận (để trống nếu chưa xác nhận).</div></div>`;
+    <div class="foot">Hiện ${Math.min(rows.length, 100)}/${rows.length} dòng khớp bộ lọc. Bản minh hoạ có ${dsBaoCao().filter(r => r.cty === 'VN01').length} món VN01 và ${S.vn02.length} món mẫu VN02; VN03 chưa có đợt nào. "Trạng thái kiểm kê" xét trên các đợt đã chọn.</div></div>`;
 }
 const monCuaToi = () => S.items.filter(i => i.nguon === 'DS' && i.giu === 'anh Sơn');
 const LOC_TOI = [['','Tất cả'],['cam','Đồ tôi đang cầm'],['chung','Đồ chung tôi đứng tên'],['chua','Chưa kiểm trong đợt'],['van-de','Không thấy hoặc ở chỗ khác']];
@@ -1220,7 +1267,7 @@ document.addEventListener('click', e => {
   const el = e.target.closest('[data-act]'); if (!el) return;
   const a = el.dataset.act;
   if (a === 've-ds') { S.vai = 'ql'; $('vai').value = 'ql'; S.view = 'list'; dongDrawer(); ve(); window.scrollTo(0, 0); }
-  if (a === 've-ts') { S.vai = 'ql'; $('vai').value = 'ql'; S.view = 'ts'; dongDrawer(); ve(); window.scrollTo(0, 0); }
+  if (a === 've-bc') { S.vai = 'ql'; $('vai').value = 'ql'; S.view = 'bc'; dongDrawer(); ve(); window.scrollTo(0, 0); }
   if (a === 've-cua-toi') { S.vai = 'son'; $('vai').value = 'son'; S.son.man = 'toi'; dongDrawer(); ve(); window.scrollTo(0, 0); }
   if (a === 've-xn') { S.vai = 'son'; $('vai').value = 'son'; S.son.man = 'xn'; S.son.phanDoi = false; S.son.chon = {};
     S.son.view = el.dataset.phieu ? 'detail' : 'list'; S.son.phieu = el.dataset.phieu || null; dongDrawer(); ve(); window.scrollTo(0, 0); }
@@ -1250,11 +1297,26 @@ document.addEventListener('click', e => {
   if (a === 'gia-lap-son') { giaLapXongSon(bayGio()); ve(); toast('Đã giả lập: phần anh Sơn kiểm xong. Phiếu XN0153 chờ anh Sơn xác nhận.'); }
   if (a.startsWith('a-') || a.startsWith('s-')) appAct(a, el, e);
 });
+document.addEventListener('toggle', e => {
+  const d = e.target; if (!d.classList || !d.classList.contains('ms') || !S.bc) return;
+  if (d.open) { S.bc.mo = d.dataset.msBox; document.querySelectorAll('details.ms[open]').forEach(x => { if (x !== d) x.open = false; }); }
+  else if (S.bc.mo === d.dataset.msBox) S.bc.mo = null;
+}, true);
+document.addEventListener('mousedown', e => { if (!e.target.closest('details.ms')) document.querySelectorAll('details.ms[open]').forEach(x => x.open = false); });
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.dataset.loc) { S.locPhan = Object.assign({ tt:'', loai:'' }, S.locPhan, { [t.dataset.loc]: t.value }); tabPhan(); }
   if (t.dataset.locts === 'kq') { S.locTs = Object.assign({ kq:'', q:'' }, S.locTs, { kq: t.value }); tabTs(); }
-  if (t.dataset.ts5 === 'k') { S.locTs5 = Object.assign({ k:'', q:'' }, S.locTs5, { k: t.value }); veTaiSan(); }
+  if (t.dataset.bc === 'loc') { S.bc.loc = t.value; veBaoCao(); }
+  if (t.dataset.ms) {
+    const B = S.bc, k = t.dataset.ms, ds = B[k].filter(v => v !== t.value); B[k] = t.checked ? ds.concat(t.value) : ds;
+    if (k === 'cty') { // bỏ công ty thì bỏ đợt của nó; chọn thêm công ty thì tự chọn đợt mới nhất của nó
+      const cuaCty = dsDotBc().filter(d => B.cty.includes(d.cty)).map(d => d.ma);
+      B.dot = B.dot.filter(m => cuaCty.includes(m));
+      if (t.checked) { const moi = dsDotBc().filter(d => d.cty === t.value).sort((x, y) => y.ma.localeCompare(x.ma))[0]; if (moi && !B.dot.includes(moi.ma)) B.dot.push(moi.ma); }
+    }
+    B.mo = k; veBaoCao();
+  }
   if (t.dataset.toi) { S.son.locToi = t.value; veCuaToi(); }
   if (t.dataset.chon) S.son.chon[t.dataset.chon] = t.checked;
   if (t.dataset.schon) S.app.sonChon[t.dataset.schon] = t.checked;
@@ -1265,7 +1327,7 @@ document.addEventListener('input', e => {
   const t = e.target;
   if (t.dataset.app) { const k = t.dataset.app; S.app[k] = t.value; if (k === 'qthem') S.app.kq = null; const pos = t.selectionStart; veApp(); const n = document.querySelector(`[data-app="${k}"]`); n.focus(); n.setSelectionRange(pos, pos); }
   if (t.id === 'sonLyDo') S.app.sonLyDo = t.value;
-  if (t.dataset.ts5 === 'q') { S.locTs5 = Object.assign({ k:'', q:'' }, S.locTs5, { q: t.value }); const pos = t.selectionStart; veTaiSan(); const n = document.querySelector('[data-ts5="q"]'); n.focus(); n.setSelectionRange(pos, pos); }
+  if (t.dataset.bc === 'q') { S.bc.q = t.value; const pos = t.selectionStart; veBaoCao(); const n = document.querySelector('[data-bc="q"]'); n.focus(); n.setSelectionRange(pos, pos); }
   if (t.dataset.locts === 'q') { S.locTs = Object.assign({ kq:'', q:'' }, S.locTs, { q: t.value }); const pos = t.selectionStart; tabTs(); const n = document.querySelector('[data-locts="q"]'); n.focus(); n.setSelectionRange(pos, pos); }
 });
 document.addEventListener('keydown', e => {
@@ -1430,7 +1492,7 @@ khoiTao();
   if (q.get('vai') === 'son') { giaLapXongSon(); S.vai = 'son'; $('vai').value = 'son'; if (q.get('phieu')) { S.son.view = 'detail'; S.son.phieu = q.get('phieu'); } }
   if (q.get('vai') === 'app') { S.vai = 'app'; $('vai').value = 'app'; if (q.get('tk') === 'son') { S.app.tk = 'son'; if (q.get('man') === 'ts') S.app.sonMan = 'ts'; } }
   if (q.get('man') === 'toi') { S.vai = 'son'; $('vai').value = 'son'; S.son.man = 'toi'; }
-  if (q.get('man') === 'ts' && !q.get('vai')) S.view = 'ts'; }
+  if (['bc','ts'].includes(q.get('man')) && !q.get('vai')) S.view = 'bc'; }
 ve();
 </script>
 </body>

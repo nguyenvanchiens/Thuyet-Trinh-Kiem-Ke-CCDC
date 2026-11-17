@@ -517,16 +517,17 @@ a{color:var(--accent)}
   </div>
 </div>
 
-<h3 id="tong-quat">Xem tổng quát mọi tài sản <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></h3>
-<p>Báo cáo trong đợt chỉ trả lời "món này đã kiểm <b>trong đợt này</b> chưa". Muốn biết món nào <b>lâu rồi chưa kiểm</b> thì phải mở từng đợt cũ. Đề xuất: <b>không làm màn mới</b>, dùng lại danh sách tài sản V5 và thêm:</p>
+<h3 id="tong-quat">Báo cáo kiểm kê: xem tổng quát mọi tài sản <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></h3>
+<p>Báo cáo trong chi tiết đợt chỉ trả lời "món này đã kiểm <b>trong đợt này</b> chưa". Muốn biết món nào <b>lâu rồi chưa kiểm</b>, hay so kết quả giữa các đợt, thì phải mở từng đợt. Đề xuất một <b>menu riêng "Báo cáo kiểm kê"</b>, không nhét vào danh sách tài sản: đây là báo cáo, và mỗi công ty có nhiều đợt nên phải chọn được nhiều.</p>
 <ul>
-  <li>Cột <b>Lần kiểm cuối</b> và <b>Người xác nhận cuối</b>. Bảng tài sản V5 đã có sẵn hai cột này (<code>LastCheckedAt</code>, <code>LastVerifiedByStaffCode</code>), khoảng 5.183 món đã có ngày từ V4, màn Báo cáo CCDC đang hiển thị. Đóng đợt thì hệ ghi hai cột này cho các món đã kiểm thấy. <a class="ask-tag" href="#cau-6">❓ Hỏi anh Đạt · câu 6</a></li>
-  <li>Cột <b>trạng thái trong đợt đang mở</b>: chưa kiểm, có · chờ xác nhận, không thấy · đã xác nhận…</li>
-  <li>Bộ lọc <b>Kiểm kê</b> (dropdown): chưa kiểm trong đợt, đã kiểm nhưng người giữ chưa xác nhận, đã xác nhận, lần kiểm cuối trước một mốc, chưa bao giờ kiểm, không thuộc đợt nào.</li>
+  <li><b>Công ty</b> và <b>Đợt kiểm kê</b> đều chọn nhiều (dropdown có ô tích). Chọn thêm công ty thì tự chọn đợt mới nhất của công ty đó; bỏ công ty thì bỏ luôn các đợt của nó.</li>
+  <li>Mỗi tài sản một dòng, <b>mỗi đợt đã chọn một cột</b> kết quả: có · đã xác nhận, có · chờ xác nhận, không thấy, không được kiểm, không có trong đợt. Món của công ty khác đợt thì để "—".</li>
+  <li>Cột <b>Lần kiểm cuối</b>: lấy từ đợt gần nhất có món đó; món chưa qua đợt nào trên V5 thì lấy ngày cũ chuyển từ V4. Nếu chốt câu 6 = có thì ngày này cũng được ghi lên bảng tài sản. <a class="ask-tag" href="#cau-6">❓ Hỏi anh Đạt · câu 6</a></li>
+  <li>Lọc <b>Trạng thái kiểm kê</b> (xét trên các đợt đã chọn): chưa kiểm hoặc không được kiểm, đã kiểm nhưng chưa xác nhận, có vấn đề (không thấy, hỏng, ở chỗ khác), không có trong đợt, lần kiểm cuối trước một mốc, chưa bao giờ kiểm. Có nút Xuất Excel.</li>
 </ul>
-<p>Nếu anh Đạt chọn câu 6 = <b>không</b> ghi gì lên tài sản thì màn này phải ghép dữ liệu của mọi đợt mỗi lần mở. Nặng hơn và chậm hơn, nên câu 8 phụ thuộc câu 6.</p>
-<figure class="fig"><img src="anh-minh-hoa/web-tai-san-tong-quat.png" alt="Danh sách tài sản VN01: 4 ô số (616 tài sản, 139 chưa kiểm trong đợt, 121 kiểm cuối trước 2026, 63 chưa bao giờ kiểm), bộ lọc Kiểm kê, bảng có cột Lần kiểm cuối, Người xác nhận cuối, Đợt KK0012" loading="lazy">
-<figcaption>Menu Tài sản: danh sách V5 thêm cột và bộ lọc kiểm kê. <a href="minh-hoa-tao-dot-kiem-ke.html?man=ts" target="_blank" rel="noopener">Mở thẳng</a>.</figcaption></figure>
+<p>Danh sách tài sản V5 giữ nguyên, không phải sửa.</p>
+<figure class="fig"><img src="anh-minh-hoa/web-bao-cao-kiem-ke.png" alt="Báo cáo kiểm kê: chọn hai công ty VN01, VN02 và ba đợt KK0012, KK0010, KK0009 trong dropdown có ô tích; 4 ô số; bảng mỗi tài sản một dòng, mỗi đợt một cột kết quả, cột lần kiểm cuối" loading="lazy">
+<figcaption>Menu Báo cáo kiểm kê: chọn nhiều công ty, nhiều đợt, mỗi đợt một cột. <a href="minh-hoa-tao-dot-kiem-ke.html?man=bc" target="_blank" rel="noopener">Mở thẳng</a>.</figcaption></figure>
 <figure class="fig"><img src="anh-minh-hoa/web-tai-san-cua-toi.png" alt="Màn Tài sản của tôi của anh Sơn trên web: thẻ đợt KK0012 đang mở với nút Mở phiếu XN0153, 4 ô số, dropdown lọc, bảng 126 món với nơi đặt, lần kiểm cuối, trạng thái trong đợt" loading="lazy">
 <figcaption>Menu Tài sản của tôi (nhân viên, web): cùng nội dung với tab trên app. <a href="minh-hoa-tao-dot-kiem-ke.html?man=toi" target="_blank" rel="noopener">Mở thẳng</a>.</figcaption></figure>
 
@@ -539,8 +540,8 @@ a{color:var(--accent)}
     <li><b>NV xác nhận kiểm kê</b> hiện số 1: mở phiếu XN0153, bấm Không đồng ý, tích Máy chiếu, ghi lý do.</li>
     <li>Tầng 3 thành "Mở lại": kiểm lại trên <b>App</b> (Máy chiếu chọn "Có, nhưng đang ở chỗ khác", Xong phần), hoặc trên web bấm "Giả lập: chị Lan kiểm lại xong".</li>
     <li><b>NV xác nhận kiểm kê</b>: xác nhận lần hai, bấm Đồng ý, kết quả bị khoá.</li>
-    <li><b>Tài sản</b>: lọc "Chưa kiểm trong đợt", "Lần kiểm cuối trước năm 2026", "Chưa bao giờ kiểm". <b>Tài sản của tôi</b>: anh Sơn xem 126 món đang đứng tên.</li>
-    <li><b>Quản lý</b>: thử Thêm nhân viên, Nhắc xác nhận, Đóng đợt, tạo đợt mới. Sau khi đóng đợt, mở lại menu <b>Tài sản</b>: lần kiểm cuối của các món đã kiểm đổi thành ngày đóng đợt.</li>
+    <li><b>Báo cáo kiểm kê</b>: chọn thêm công ty VN02 và đợt cũ KK0010 (chọn nhiều), lọc "Chưa kiểm", "Có vấn đề", "Chưa bao giờ kiểm". <b>Tài sản của tôi</b>: anh Sơn xem 126 món đang đứng tên.</li>
+    <li><b>Quản lý</b>: thử Thêm nhân viên, Nhắc xác nhận, Đóng đợt, tạo đợt mới. Sau khi đóng đợt, mở lại menu <b>Báo cáo kiểm kê</b>: lần kiểm cuối của các món đã kiểm đổi thành ngày đóng đợt.</li>
   </ol>
 </div>
 
@@ -553,7 +554,7 @@ a{color:var(--accent)}
   <tr><td><b>3. Theo tài sản</b></td><td>Tài sản nào chưa được kiểm, và kết quả của từng món?</td><td>Mỗi món một dòng: phần, kết quả (Có / Hỏng / Không thấy / Sai chỗ / Chưa kiểm), tình trạng mới, người giữ, đã xác nhận chưa.</td></tr>
   <tr><td><b>4. Ngoại lệ</b></td><td>Cần xử lý gì sau kiểm kê?</td><td>Món không thấy, hỏng, sai chỗ, thấy ở phần khác, nhóm "ghi ở người đã nghỉ", và dữ liệu thiếu: "thiếu mã vùng", "thiếu mã công ty". Để hành chính tự lập phiếu hoặc bổ sung dữ liệu nếu cần.</td></tr>
   <tr><td><b>5. In lại tem</b></td><td>Món nào cần dán tem mới?</td><td>Các món được đánh dấu tem hỏng hoặc mất trong lúc kiểm.</td></tr>
-  <tr><td><b>6. Tổng quát tài sản</b> <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></td><td>Món nào lâu rồi chưa kiểm, hoặc chưa bao giờ kiểm?</td><td>Không phải báo cáo của đợt: là danh sách tài sản V5 thêm cột lần kiểm cuối, người xác nhận cuối, trạng thái trong đợt đang mở. Xem <a href="#tong-quat">mục 09</a>.</td></tr>
+  <tr><td><b>6. Báo cáo kiểm kê (tổng quát)</b> <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></td><td>Món nào lâu rồi chưa kiểm, chưa bao giờ kiểm? Kết quả của một món qua các đợt?</td><td>Menu riêng, không thuộc một đợt: chọn nhiều công ty, nhiều đợt, mỗi đợt một cột, kèm lần kiểm cuối. Xem <a href="#tong-quat">mục 09</a>.</td></tr>
 </table></div>
 <p class="note" style="margin-top:8px">Báo cáo 1 và 2 là hai báo cáo chính đã thống nhất với hành chính. Ba báo cáo kiểm kê cũ của V4 sẽ được thay bằng các báo cáo này. Hình chi tiết đợt ở <a href="#luong">mục 06, bước 7</a>.</p>
 <!-- 10 -->
@@ -620,13 +621,13 @@ a{color:var(--accent)}
     <td>Giữ cả ba.</td></tr>
   <tr id="cau-6"><td>6</td><td><b>Đóng đợt có ghi ngày kiểm cuối lên tài sản không?</b> <span class="pill p-mute">câu nhỏ</span></td>
     <td>Đã chốt "kiểm kê không sửa bảng tài sản". Nhưng bảng tài sản V5 có sẵn cột ngày kiểm cuối và người xác nhận cuối. Ví dụ: tra chiếc laptop TSHN25-0102 thấy ngay "kiểm lần cuối 16/11/2026, anh Sơn đã xác nhận" mà không phải mở từng đợt. Ghi hai cột này vẫn là sửa bảng tài sản, dù không đụng người giữ, vị trí hay tình trạng.</td>
-    <td>Ghi, chỉ hai cột đó, lúc đóng đợt. Nếu anh muốn giữ tuyệt đối "không sửa" thì bỏ, tra qua báo cáo của đợt. Màn tổng quát ở câu 8 dựa vào hai cột này.</td></tr>
+    <td>Ghi, chỉ hai cột đó, lúc đóng đợt. Nếu anh muốn giữ tuyệt đối "không sửa" thì bỏ, tra qua báo cáo của đợt. Báo cáo kiểm kê ở câu 8 vẫn làm được nếu không ghi, chỉ là cột lần kiểm cuối phải tính từ dữ liệu các đợt.</td></tr>
   <tr id="cau-7"><td>7</td><td><b>Món "chờ thanh lý, đang sử dụng" có kiểm không?</b> <span class="pill p-mute">câu nhỏ</span></td>
     <td>V4 bỏ qua 4 trạng thái: không theo dõi, mất, chờ thanh lý đang sử dụng (mã 3), đã thanh lý; vẫn kiểm "chờ thanh lý, không sử dụng" (mã 4). Danh sách loại trừ của V5 không bỏ mã 3. <b>Số liệu:</b> dữ liệu nạp V5 có <b>0 món</b> mã 3, 19 món mã 4.</td>
     <td>Vẫn kiểm. Hiện không ảnh hưởng món nào, chỉ báo để anh biết.</td></tr>
-  <tr id="cau-8"><td>8</td><td><b>Có làm hai màn xem tổng quát không?</b> <span class="pill p-mute">phạm vi mới</span> (a) Danh sách tài sản thêm cột lần kiểm cuối và bộ lọc kiểm kê. (b) Màn "Tài sản của tôi" cho nhân viên, trên web và app.</td>
-    <td>Hiện chưa có màn nào trả lời "món nào lâu rồi chưa kiểm", trừ khi mở từng đợt cũ. Nhân viên cũng không có chỗ xem mình đang đứng tên những gì, chỉ biết khi có phiếu xác nhận. Ví dụ: anh Sơn đứng tên 120 món ở Tầng 3 mà không biết, tới đợt kiểm mới thấy. Đây là phạm vi mới, ngoài luồng kiểm kê. Màn (a) phụ thuộc câu 6.</td>
-    <td>Làm cả hai. (a) không phải màn mới, chỉ thêm cột và bộ lọc vào danh sách tài sản V5. (b) dùng chung dữ liệu với phiếu xác nhận. Màn minh hoạ đã có cả hai: menu <a href="minh-hoa-tao-dot-kiem-ke.html?man=ts" target="_blank" rel="noopener">Tài sản</a> và <a href="minh-hoa-tao-dot-kiem-ke.html?man=toi" target="_blank" rel="noopener">Tài sản của tôi</a>.</td></tr>
+  <tr id="cau-8"><td>8</td><td><b>Có làm hai màn xem tổng quát không?</b> <span class="pill p-mute">phạm vi mới</span> (a) Menu riêng "Báo cáo kiểm kê": chọn nhiều công ty, nhiều đợt, xem tình trạng kiểm kê mọi tài sản. (b) Màn "Tài sản của tôi" cho nhân viên, trên web và app.</td>
+    <td>Hiện chưa có màn nào trả lời "món nào lâu rồi chưa kiểm", trừ khi mở từng đợt cũ. Nhân viên cũng không có chỗ xem mình đang đứng tên những gì, chỉ biết khi có phiếu xác nhận. Ví dụ: anh Sơn đứng tên 120 món ở Tầng 3 mà không biết, tới đợt kiểm mới thấy. Đây là phạm vi mới, ngoài luồng kiểm kê.</td>
+    <td>Làm cả hai. (a) tách menu riêng vì là báo cáo và mỗi công ty có nhiều đợt; danh sách tài sản V5 giữ nguyên. (b) dùng chung dữ liệu với phiếu xác nhận. Màn minh hoạ đã có cả hai: menu <a href="minh-hoa-tao-dot-kiem-ke.html?man=bc" target="_blank" rel="noopener">Báo cáo kiểm kê</a> và <a href="minh-hoa-tao-dot-kiem-ke.html?man=toi" target="_blank" rel="noopener">Tài sản của tôi</a>.</td></tr>
 </table></div>
 <p class="note">Số liệu ở <a href="#so-lieu">bảng trên</a>. Câu 2 còn thiếu bảng nhân viên từ HR mới đếm được.</p>
 
