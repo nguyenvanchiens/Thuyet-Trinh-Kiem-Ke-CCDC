@@ -104,7 +104,7 @@ Ràng buộc đã chốt: kiểm kê **không sinh phiếu** và **không sửa*
 
 **C6. Mục 12 · Đã chốt và câu hỏi cho anh Đạt.** Đọc kỹ.
 - "Đã chốt": những gì không cần hỏi lại.
-- 7 câu hỏi, mỗi câu có ví dụ và đề xuất. Câu 1–5 là câu chính, câu 6–7 là câu nhỏ, hỏi nhanh.
+- 8 câu hỏi, mỗi câu có ví dụ và đề xuất. Câu 1–5 là câu chính, câu 6–7 là câu nhỏ, hỏi nhanh, câu 8 là phạm vi mới.
   1. Ai xác nhận Kho MB, Kho MN; món ở kho mà thiếu mã vùng thì ai ký.
   2. Nhân viên công ty này cầm tài sản công ty kia.
   3. Đồ chung ở các tầng đứng tên ai.
@@ -112,8 +112,9 @@ Ràng buộc đã chốt: kiểm kê **không sinh phiếu** và **không sửa*
   5. Ba luật xác nhận.
   6. Đóng đợt có ghi ngày kiểm cuối lên tài sản không.
   7. Món chờ thanh lý nhưng đang dùng có kiểm không.
+  8. Có làm hai màn xem tổng quát không: danh sách tài sản thêm cột lần kiểm cuối (cần câu 6 = có), và "Tài sản của tôi" cho nhân viên trên web, app. Demo: menu **Tài sản**, **Tài sản của tôi**.
 
-→ **Đọc xong:** ghi sẵn ra giấy 7 câu này kèm đề xuất của mình, để trong buổi gặp hỏi lần lượt và ghi câu trả lời của anh Đạt bên cạnh.
+→ **Đọc xong:** ghi sẵn ra giấy 8 câu này kèm đề xuất của mình, để trong buổi gặp hỏi lần lượt và ghi câu trả lời của anh Đạt bên cạnh.
 
 ## D. Tập trình bày (Slide)
 
@@ -148,7 +149,7 @@ Mở Slide, chuyển slide bằng phím ←/→. Bấm **N** để hiện ghi ch
 2. **Trong buổi gặp anh Đạt:**
    - trình bày theo slide, demo theo bảng ở B2;
    - xin anh Đạt **duyệt hướng đi** trước;
-   - hỏi lần lượt 7 câu ở mục 12, ghi lại câu trả lời.
+   - hỏi lần lượt 8 câu ở mục 12, ghi lại câu trả lời.
 3. **Sau buổi gặp:** gửi tôi câu trả lời của anh Đạt cho từng câu. Tôi sẽ:
    - cập nhật trang phân tích: chuyển các câu đã có trả lời sang "Đã chốt" và gỡ nhãn ❓;
    - sửa Màn minh hoạ theo đúng câu trả lời (ví dụ "kho chưa rõ");

@@ -142,7 +142,7 @@ a{color:var(--accent)}
   <div class="card"><div class="k">Code</div><div class="v"><span class="pill p-warn">Chưa bắt đầu</span></div></div>
 </div>
 
-<div class="ask" style="margin-top:16px"><span class="lb">❓ Cách đọc trang này:</span> chỗ nào có nhãn <a class="ask-tag" href="#cau-hoi">❓ Hỏi anh Đạt</a> là <b>chưa chốt</b>, cần hỏi lại anh Đạt. Bấm nhãn để nhảy tới câu hỏi tương ứng ở <a href="#cau-hoi">mục 12</a>. Có 7 câu: 5 câu chính (1–5) và 2 câu nhỏ hỏi nhanh (6–7), ngoài việc duyệt hướng đi.</div>
+<div class="ask" style="margin-top:16px"><span class="lb">❓ Cách đọc trang này:</span> chỗ nào có nhãn <a class="ask-tag" href="#cau-hoi">❓ Hỏi anh Đạt</a> là <b>chưa chốt</b>, cần hỏi lại anh Đạt. Bấm nhãn để nhảy tới câu hỏi tương ứng ở <a href="#cau-hoi">mục 12</a>. Có 8 câu: 5 câu chính (1–5), 2 câu nhỏ hỏi nhanh (6–7) và 1 câu về phạm vi mới (8), ngoài việc duyệt hướng đi.</div>
 
 <!-- 1 -->
 <h2><span class="n">01</span>Tóm tắt</h2>
@@ -153,7 +153,7 @@ a{color:var(--accent)}
     <li><b>Xác nhận</b> là việc của <b>người giữ</b>: mỗi người xác nhận một lần cho mọi món mình đứng tên, dù món đó được kiểm ở phần nào. Đồ trong kho do người được giao cho kho xác nhận. <a class="ask-tag" href="#cau-1">❓ Hỏi anh Đạt · câu 1</a></li>
   </ul>
   <p>Cách này giữ được thói quen hiện tại của hành chính: 66% số dòng kiểm kê trên V4 là đi theo vùng. Nó sửa ba lỗi gốc của V4: một món nằm trong hai danh sách, kiểm theo vùng không ghi ai giữ, và không ai xác nhận kết quả. Web trả lời được hai câu hỏi chính: <b>ai/chỗ nào chưa được kiểm</b>, và <b>ai chưa xác nhận</b>.</p>
-  <div class="ask" style="margin-bottom:0"><span class="lb">❓ Hỏi anh Đạt trước tiên:</span> có đi theo hướng này không. Đồng ý hướng thì mới chốt 7 câu ở <a href="#cau-hoi">mục 12</a>, rồi làm thiết kế DB và API.</div>
+  <div class="ask" style="margin-bottom:0"><span class="lb">❓ Hỏi anh Đạt trước tiên:</span> có đi theo hướng này không. Đồng ý hướng thì mới chốt 8 câu ở <a href="#cau-hoi">mục 12</a>, rồi làm thiết kế DB và API.</div>
 </div>
 
 <!-- 2 -->
@@ -164,6 +164,7 @@ a{color:var(--accent)}
     <li><b>Nhân viên nào chưa được kiểm</b>, kể cả nhân viên mới chưa có tài sản trên hệ.</li>
     <li><b>Tài sản nào chưa được kiểm</b>, và tài sản nào kiểm rồi nhưng không thấy, hỏng hoặc sai chỗ.</li>
     <li><b>Ai chịu trách nhiệm</b> cho từng món: người giữ đã đồng ý với kết quả chưa.</li>
+    <li><b>Nhìn tổng quát, ngoài từng đợt:</b> món nào lâu rồi chưa kiểm hoặc chưa bao giờ kiểm; nhân viên tự xem mình đang đứng tên những gì. V5 và V4 đều chưa có màn nào cho hai việc này. <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></li>
   </ol>
   <p class="muted">Ràng buộc đã chốt: kiểm kê chỉ ghi nhận và báo cáo. Kiểm kê không sinh phiếu điều chuyển và không sửa người giữ, vị trí hay tình trạng trên bảng tài sản (chốt 16/11/2026 với anh Đạt).</p>
 </div>
@@ -464,6 +465,22 @@ a{color:var(--accent)}
   <li><b class="t">Đồng ý hoặc Không đồng ý</b>Không đồng ý thì bắt buộc ghi lý do. Phần liên quan trả về hành chính xem lại. Đồng ý thì kết quả của người đó bị khoá.</li>
 </ol>
 
+<h3>Tài sản của tôi (nhân viên) <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></h3>
+<div class="grid-2" style="align-items:start">
+  <div>
+    <p>App của nhân viên có hai tab: <b>Phiếu xác nhận</b> và <b>Tài sản của tôi</b>. Tab sau liệt kê <b>mọi món đang đứng tên mình</b>, kể cả đồ chung ở vùng. Ví dụ anh Sơn: 126 món, gồm 6 món đang cầm và 120 món ở Tầng 3.</p>
+    <ul>
+      <li>Mỗi món ghi: đang cầm hay ở vùng nào, <b>lần kiểm cuối</b>, và trạng thái trong đợt đang mở (chưa kiểm, có, không thấy…).</li>
+      <li>Lọc bằng dropdown: đồ đang cầm, đồ chung, chưa kiểm, không thấy hoặc ở chỗ khác. Món chưa kiểm và món có vấn đề xếp lên đầu.</li>
+      <li>Đang có đợt mở thì dòng trên cùng dẫn sang phiếu xác nhận của đợt đó.</li>
+      <li>Lợi ích: nhân viên phát hiện sớm món ghi nhầm tên mình, hoặc món đang cầm mà hệ không ghi, rồi báo hành chính ngay. Không phải đợi tới đợt kiểm kê.</li>
+    </ul>
+    <p>Web có cùng màn này ở menu <b>Tài sản của tôi</b>. <a href="minh-hoa-tao-dot-kiem-ke.html?vai=app&amp;tk=son&amp;man=ts" target="_blank" rel="noopener">Mở thẳng trên app</a> · <a href="minh-hoa-tao-dot-kiem-ke.html?man=toi" target="_blank" rel="noopener">mở trên web</a>.</p>
+  </div>
+  <div class="phones"><figure class="fig"><img src="anh-minh-hoa/app-tai-san-cua-toi.png" alt="App đăng nhập bằng anh Sơn, tab Tài sản của tôi: 126 món đứng tên, dòng đợt KK0012 đang mở, ô tìm và dropdown lọc, từng món có nơi đặt, lần kiểm cuối và kết quả trong đợt" loading="lazy">
+  <figcaption>Tab Tài sản của tôi trên app của anh Sơn.</figcaption></figure></div>
+</div>
+
 <!-- 8 -->
 <h2><span class="n">09</span>Thao tác trên web</h2>
 <div class="grid-2">
@@ -500,6 +517,19 @@ a{color:var(--accent)}
   </div>
 </div>
 
+<h3 id="tong-quat">Xem tổng quát mọi tài sản <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></h3>
+<p>Báo cáo trong đợt chỉ trả lời "món này đã kiểm <b>trong đợt này</b> chưa". Muốn biết món nào <b>lâu rồi chưa kiểm</b> thì phải mở từng đợt cũ. Đề xuất: <b>không làm màn mới</b>, dùng lại danh sách tài sản V5 và thêm:</p>
+<ul>
+  <li>Cột <b>Lần kiểm cuối</b> và <b>Người xác nhận cuối</b>. Bảng tài sản V5 đã có sẵn hai cột này (<code>LastCheckedAt</code>, <code>LastVerifiedByStaffCode</code>), khoảng 5.183 món đã có ngày từ V4, màn Báo cáo CCDC đang hiển thị. Đóng đợt thì hệ ghi hai cột này cho các món đã kiểm thấy. <a class="ask-tag" href="#cau-6">❓ Hỏi anh Đạt · câu 6</a></li>
+  <li>Cột <b>trạng thái trong đợt đang mở</b>: chưa kiểm, có · chờ xác nhận, không thấy · đã xác nhận…</li>
+  <li>Bộ lọc <b>Kiểm kê</b> (dropdown): chưa kiểm trong đợt, đã kiểm nhưng người giữ chưa xác nhận, đã xác nhận, lần kiểm cuối trước một mốc, chưa bao giờ kiểm, không thuộc đợt nào.</li>
+</ul>
+<p>Nếu anh Đạt chọn câu 6 = <b>không</b> ghi gì lên tài sản thì màn này phải ghép dữ liệu của mọi đợt mỗi lần mở. Nặng hơn và chậm hơn, nên câu 8 phụ thuộc câu 6.</p>
+<figure class="fig"><img src="anh-minh-hoa/web-tai-san-tong-quat.png" alt="Danh sách tài sản VN01: 4 ô số (616 tài sản, 139 chưa kiểm trong đợt, 121 kiểm cuối trước 2026, 63 chưa bao giờ kiểm), bộ lọc Kiểm kê, bảng có cột Lần kiểm cuối, Người xác nhận cuối, Đợt KK0012" loading="lazy">
+<figcaption>Menu Tài sản: danh sách V5 thêm cột và bộ lọc kiểm kê. <a href="minh-hoa-tao-dot-kiem-ke.html?man=ts" target="_blank" rel="noopener">Mở thẳng</a>.</figcaption></figure>
+<figure class="fig"><img src="anh-minh-hoa/web-tai-san-cua-toi.png" alt="Màn Tài sản của tôi của anh Sơn trên web: thẻ đợt KK0012 đang mở với nút Mở phiếu XN0153, 4 ô số, dropdown lọc, bảng 126 món với nơi đặt, lần kiểm cuối, trạng thái trong đợt" loading="lazy">
+<figcaption>Menu Tài sản của tôi (nhân viên, web): cùng nội dung với tab trên app. <a href="minh-hoa-tao-dot-kiem-ke.html?man=toi" target="_blank" rel="noopener">Mở thẳng</a>.</figcaption></figure>
+
 <h3 id="minh-hoa">Màn minh hoạ web</h3>
 <div class="card summary" style="margin-bottom:14px">
   <p><b>Bấm thử được:</b> <a href="minh-hoa-tao-dot-kiem-ke.html" target="_blank" rel="noopener">mở màn minh hoạ web</a>. Dữ liệu giả, chưa nối API. Menu bên trái có ba màn dùng chung dữ liệu: <b>Kiểm kê</b> (quản lý / hành chính), <b>NV xác nhận kiểm kê</b> (anh Sơn, nhân viên được kiểm) và <b>App kiểm kê (mobile)</b> (chị Lan đi kiểm, <a href="minh-hoa-tao-dot-kiem-ke.html?vai=app" target="_blank" rel="noopener">mở thẳng</a>). Muốn xem ngay màn của nhân viên: <a href="minh-hoa-tao-dot-kiem-ke.html?vai=son" target="_blank" rel="noopener">mở menu NV xác nhận kiểm kê</a> (danh sách phiếu của anh Sơn), hoặc bấm menu đó ở cột trái trên màn minh hoạ. Kịch bản theo đúng luồng ở <a href="#luong">mục 06</a>:</p>
@@ -509,7 +539,8 @@ a{color:var(--accent)}
     <li><b>NV xác nhận kiểm kê</b> hiện số 1: mở phiếu XN0153, bấm Không đồng ý, tích Máy chiếu, ghi lý do.</li>
     <li>Tầng 3 thành "Mở lại": kiểm lại trên <b>App</b> (Máy chiếu chọn "Có, nhưng đang ở chỗ khác", Xong phần), hoặc trên web bấm "Giả lập: chị Lan kiểm lại xong".</li>
     <li><b>NV xác nhận kiểm kê</b>: xác nhận lần hai, bấm Đồng ý, kết quả bị khoá.</li>
-    <li><b>Quản lý</b>: thử Thêm nhân viên, Nhắc xác nhận, Đóng đợt, tạo đợt mới.</li>
+    <li><b>Tài sản</b>: lọc "Chưa kiểm trong đợt", "Lần kiểm cuối trước năm 2026", "Chưa bao giờ kiểm". <b>Tài sản của tôi</b>: anh Sơn xem 126 món đang đứng tên.</li>
+    <li><b>Quản lý</b>: thử Thêm nhân viên, Nhắc xác nhận, Đóng đợt, tạo đợt mới. Sau khi đóng đợt, mở lại menu <b>Tài sản</b>: lần kiểm cuối của các món đã kiểm đổi thành ngày đóng đợt.</li>
   </ol>
 </div>
 
@@ -522,6 +553,7 @@ a{color:var(--accent)}
   <tr><td><b>3. Theo tài sản</b></td><td>Tài sản nào chưa được kiểm, và kết quả của từng món?</td><td>Mỗi món một dòng: phần, kết quả (Có / Hỏng / Không thấy / Sai chỗ / Chưa kiểm), tình trạng mới, người giữ, đã xác nhận chưa.</td></tr>
   <tr><td><b>4. Ngoại lệ</b></td><td>Cần xử lý gì sau kiểm kê?</td><td>Món không thấy, hỏng, sai chỗ, thấy ở phần khác, nhóm "ghi ở người đã nghỉ", và dữ liệu thiếu: "thiếu mã vùng", "thiếu mã công ty". Để hành chính tự lập phiếu hoặc bổ sung dữ liệu nếu cần.</td></tr>
   <tr><td><b>5. In lại tem</b></td><td>Món nào cần dán tem mới?</td><td>Các món được đánh dấu tem hỏng hoặc mất trong lúc kiểm.</td></tr>
+  <tr><td><b>6. Tổng quát tài sản</b> <a class="ask-tag" href="#cau-8">❓ Hỏi anh Đạt · câu 8</a></td><td>Món nào lâu rồi chưa kiểm, hoặc chưa bao giờ kiểm?</td><td>Không phải báo cáo của đợt: là danh sách tài sản V5 thêm cột lần kiểm cuối, người xác nhận cuối, trạng thái trong đợt đang mở. Xem <a href="#tong-quat">mục 09</a>.</td></tr>
 </table></div>
 <p class="note" style="margin-top:8px">Báo cáo 1 và 2 là hai báo cáo chính đã thống nhất với hành chính. Ba báo cáo kiểm kê cũ của V4 sẽ được thay bằng các báo cáo này. Hình chi tiết đợt ở <a href="#luong">mục 06, bước 7</a>.</p>
 <!-- 10 -->
@@ -574,10 +606,13 @@ a{color:var(--accent)}
     <td>Giữ cả ba.</td></tr>
   <tr id="cau-6"><td>6</td><td><b>Đóng đợt có ghi ngày kiểm cuối lên tài sản không?</b> <span class="pill p-mute">câu nhỏ</span></td>
     <td>Đã chốt "kiểm kê không sửa bảng tài sản". Nhưng bảng tài sản V5 có sẵn cột ngày kiểm cuối và người xác nhận cuối. Ví dụ: tra chiếc laptop TSHN25-0102 thấy ngay "kiểm lần cuối 16/11/2026, anh Sơn đã xác nhận" mà không phải mở từng đợt. Ghi hai cột này vẫn là sửa bảng tài sản, dù không đụng người giữ, vị trí hay tình trạng.</td>
-    <td>Ghi, chỉ hai cột đó, lúc đóng đợt. Nếu anh muốn giữ tuyệt đối "không sửa" thì bỏ, tra qua báo cáo của đợt.</td></tr>
+    <td>Ghi, chỉ hai cột đó, lúc đóng đợt. Nếu anh muốn giữ tuyệt đối "không sửa" thì bỏ, tra qua báo cáo của đợt. Màn tổng quát ở câu 8 dựa vào hai cột này.</td></tr>
   <tr id="cau-7"><td>7</td><td><b>Món "chờ thanh lý, đang sử dụng" có kiểm không?</b> <span class="pill p-mute">câu nhỏ</span></td>
     <td>V4 bỏ qua 4 trạng thái: không theo dõi, mất, chờ thanh lý đang sử dụng, đã thanh lý. Danh sách loại trừ có sẵn trong code V5 chỉ bỏ 3, vẫn kiểm món chờ thanh lý. Ví dụ: chiếc máy in cũ đã đề nghị thanh lý nhưng vẫn đang dùng: V4 không kiểm, cách mới có kiểm.</td>
     <td>Vẫn kiểm, vì đồ còn đang dùng thì vẫn có thể mất.</td></tr>
+  <tr id="cau-8"><td>8</td><td><b>Có làm hai màn xem tổng quát không?</b> <span class="pill p-mute">phạm vi mới</span> (a) Danh sách tài sản thêm cột lần kiểm cuối và bộ lọc kiểm kê. (b) Màn "Tài sản của tôi" cho nhân viên, trên web và app.</td>
+    <td>Hiện chưa có màn nào trả lời "món nào lâu rồi chưa kiểm", trừ khi mở từng đợt cũ. Nhân viên cũng không có chỗ xem mình đang đứng tên những gì, chỉ biết khi có phiếu xác nhận. Ví dụ: anh Sơn đứng tên 120 món ở Tầng 3 mà không biết, tới đợt kiểm mới thấy. Đây là phạm vi mới, ngoài luồng kiểm kê. Màn (a) phụ thuộc câu 6.</td>
+    <td>Làm cả hai. (a) không phải màn mới, chỉ thêm cột và bộ lọc vào danh sách tài sản V5. (b) dùng chung dữ liệu với phiếu xác nhận. Màn minh hoạ đã có cả hai: menu <a href="minh-hoa-tao-dot-kiem-ke.html?man=ts" target="_blank" rel="noopener">Tài sản</a> và <a href="minh-hoa-tao-dot-kiem-ke.html?man=toi" target="_blank" rel="noopener">Tài sản của tôi</a>.</td></tr>
 </table></div>
 <p class="note">Câu 2 và câu 3 nên kèm số liệu: tôi đếm được trên dữ liệu thật (chỉ đọc, cần nạp dump hoặc kết nối DB chỉ đọc).</p>
 
