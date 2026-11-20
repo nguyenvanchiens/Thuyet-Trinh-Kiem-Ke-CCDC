@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiểm kê theo vùng</title>
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --surface-2:#f1f3f6; --text:#1c2230; --muted:#5d6678;
+  --line:#dfe3ea; --accent:#2457c5; --accent-soft:#e7eefc;
+  --ok:#1e7a46; --ok-soft:#e3f4ea; --warn:#9a6200; --warn-soft:#fdf1dc; --bad:#b3261e; --bad-soft:#fbe7e5;
+  --shadow:0 1px 2px rgba(20,30,50,.06),0 2px 8px rgba(20,30,50,.04);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11141a; --surface:#181c24; --surface-2:#1f2430; --text:#e6e9ef; --muted:#9aa3b5;
+    --line:#2c3341; --accent:#7aa2ff; --accent-soft:#1f2a44;
+    --ok:#5fcf8f; --ok-soft:#163223; --warn:#f0b54a; --warn-soft:#3a2c12; --bad:#ff8a80; --bad-soft:#3d1c1a;
+    --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11141a; --surface:#181c24; --surface-2:#1f2430; --text:#e6e9ef; --muted:#9aa3b5;
+  --line:#2c3341; --accent:#7aa2ff; --accent-soft:#1f2a44;
+  --ok:#5fcf8f; --ok-soft:#163223; --warn:#f0b54a; --warn-soft:#3a2c12; --bad:#ff8a80; --bad-soft:#3d1c1a;
+  --shadow:none;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.6 "Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:32px 16px 64px}
+header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:20px;margin-bottom:28px}
+.eyebrow{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 6px}
+h1{font-size:28px;line-height:1.25;margin:0}
+.meta{font-size:13px;color:var(--muted);text-align:right}
+.meta b{color:var(--text);font-weight:600}
+h2{font-size:20px;margin:40px 0 14px;display:flex;align-items:baseline;gap:10px}
+h2 .n{font-size:13px;color:var(--accent);font-weight:700;font-variant-numeric:tabular-nums}
+h3{font-size:16px;margin:22px 0 8px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin:4px 0}
+.muted{color:var(--muted)}
+code{font-family:Consolas,"Cascadia Mono",monospace;font-size:.88em;background:var(--surface-2);padding:1px 5px;border-radius:4px;overflow-wrap:anywhere}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px 20px;box-shadow:var(--shadow)}
+.card > :last-child{margin-bottom:0}
+.status{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.status .card{padding:14px 16px}
+.status .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.status .v{font-size:16px;font-weight:600;margin-top:2px}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.p-ok{background:var(--ok-soft);color:var(--ok)}
+.p-warn{background:var(--warn-soft);color:var(--warn)}
+.p-bad{background:var(--bad-soft);color:var(--bad)}
+.p-info{background:var(--accent-soft);color:var(--accent)}
+.p-mute{background:var(--surface-2);color:var(--muted)}
+.summary{border-left:4px solid var(--accent)}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.stat .num{font-size:26px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2}
+.stat .lbl{font-size:13px;color:var(--muted);margin-top:4px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{background:var(--surface-2);font-weight:600;font-size:13px;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.note{font-size:13px;color:var(--muted)}
+.flow{display:flex;flex-direction:column;gap:12px;margin-top:14px}
+.fstep{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;box-shadow:var(--shadow)}
+.fstep .no{width:34px;height:34px;border-radius:50%;background:var(--accent);color:#fff;display:grid;place-items:center;font-weight:700}
+.fstep h3{margin:2px 0 6px}
+.fstep .who{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--accent);font-weight:600}
+.fstep ul{margin:6px 0 8px;padding-left:20px}
+.ask{border:1px solid var(--warn);border-left-width:4px;background:var(--warn-soft);border-radius:8px;padding:8px 12px;margin:10px 0 12px;font-size:14px}
+.ask .lb{font-weight:700;color:var(--warn);margin-right:2px}
+a.ask-tag{display:inline-block;font-size:12px;font-weight:600;line-height:1.5;padding:0 8px;border-radius:999px;background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn);text-decoration:none;white-space:nowrap;vertical-align:1px}
+.tbl tr:target td{background:var(--warn-soft)}
+.tbl tr[id]{scroll-margin-top:16px}
+.states{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:8px 0 12px}
+.states .arr{color:var(--muted)}
+.cta{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.cta a{display:inline-block;padding:8px 14px;border-radius:8px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+.cta a.sec{background:var(--surface-2);color:var(--accent);border:1px solid var(--line)}
+footer{margin-top:48px;padding-top:16px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+a{color:var(--accent)}
+@media (max-width:760px){
+  .status,.grid-3,.grid-2{grid-template-columns:1fr}
+  .meta{text-align:left}
+  h1{font-size:23px}
+}
+@media print{
+  body{background:#fff}
+  .card,.tbl{box-shadow:none;break-inside:avoid}
+  h2{break-after:avoid}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div>
+    <p class="eyebrow">CCDC · Quản lý tài sản · Kiểm kê V5</p>
+    <h1>Kiểm kê CCDC: kiểm theo vùng và theo nhân viên</h1>
+  </div>
+  <div class="meta">
+    Ngày lập: <b>20/11/2026</b><br>
+    Theo luồng thống nhất ở buổi họp <b>19/11/2026</b><br>
+    Thay cho trang "Mô hình kiểm kê mới" (16/11)
+  </div>
+</header>
+
+<div class="status">
+  <div class="card"><div class="k">Luồng nghiệp vụ</div><div class="v"><span class="pill p-ok">Thống nhất 19/11</span></div></div>
+  <div class="card"><div class="k">Anh Đạt duyệt</div><div class="v"><span class="pill p-warn">Chờ duyệt</span></div></div>
+  <div class="card"><div class="k">DB + API</div><div class="v"><span class="pill p-warn">Chưa làm</span></div></div>
+  <div class="card"><div class="k">Code</div><div class="v"><span class="pill p-warn">Chưa bắt đầu</span></div></div>
+</div>
+
+<div class="cta">
+  <a href="minh-hoa-kiem-ke-theo-vung.html">Mở màn minh hoạ</a>
+  <a class="sec" href="#cau-hoi">Câu hỏi còn mở (6)</a>
+  <a class="sec" href="#so-lieu">Số liệu thật</a>
+</div>
+
+<!-- 1 -->
+<h2><span class="n">01</span>Tóm tắt</h2>
+<div class="card summary">
+  <ul>
+    <li><b>Tài sản chia hai loại: Chung và Riêng.</b> Người dùng tự tích trên danh sách CCDC. Đồ riêng là đồ của một nhân viên, đồ chung là đồ đặt ở vùng.</li>
+    <li><b>Đợt kiểm vẫn mở theo công ty.</b> Trong đợt có hai loại kiểm: <b>theo nhân viên</b> (chỉ đồ riêng) và <b>theo vùng</b> (kho cũng là một vùng).</li>
+    <li><b>Kiểm vùng bắt đầu từ danh sách trắng.</b> Người kiểm thấy món nào thì thêm món đó vào vùng. Không so với sổ cũ: lần kiểm này chính là lần gắn tài sản vào vùng.</li>
+    <li><b>Phiếu xác nhận tự sinh khi chốt vùng</b>, mỗi người quản lý nhóm CCDC nhận một phiếu cho các món thuộc nhóm mình trong vùng đó. Đồ riêng: phiếu cho chính nhân viên.</li>
+    <li><b>Ba trường hợp có cảnh báo</b> (đồ riêng, khác công ty, đã ở vùng khác). Người kiểm vẫn thêm được, hệ thống lưu vết để báo cáo lọc ra.</li>
+  </ul>
+</div>
+
+<!-- 2 -->
+<h2><span class="n">02</span>Khác gì so với mô hình 16/11</h2>
+<div class="tbl"><table>
+  <tr><th style="width:24%">Điểm</th><th>Mô hình 16/11 (bỏ)</th><th>Luồng 19/11 (dùng)</th></tr>
+  <tr><td><b>Chia phần kiểm</b></td><td>Hệ tự chia theo 4 bước dựa vào người giữ và mã vùng hiện có.</td><td>Người dùng tự tích Chung / Riêng. Riêng vào phần nhân viên, Chung đi theo vùng.</td></tr>
+  <tr><td><b>Danh sách vùng</b></td><td>Lấy sẵn từ sổ, người kiểm đánh dấu Có / Không thấy.</td><td>Bắt đầu trắng, người kiểm thêm từng món. Không so với sổ.</td></tr>
+  <tr><td><b>Ai xác nhận</b></td><td>Người giữ, gom một lần cho mọi món mình đứng tên.</td><td>Đồ riêng: nhân viên. Đồ ở vùng: người quản lý chính của nhóm CCDC.</td></tr>
+  <tr><td><b>Đồ chung đứng tên một người</b> (câu 3 cũ)</td><td>Phải hỏi anh Đạt, một người có thể phải ký 543 món.</td><td>Không còn câu hỏi: đồ chung không vào phần nhân viên.</td></tr>
+  <tr><td><b>Bảng vùng</b></td><td>Dùng bảng vùng hiện có, 18 vùng chưa có công ty.</td><td>Tạo mới, mỗi vùng bắt buộc thuộc một công ty.</td></tr>
+  <tr><td><b>Kiểm kê có đổi tài sản không</b></td><td>Không, chỉ ghi nhận và báo cáo.</td><td>Có đổi vùng: món thêm vào vùng nào thì gắn với vùng đó. <a class="ask-tag" href="#cau-1">❓ câu 1</a></td></tr>
+</table></div>
+
+<!-- 3 -->
+<h2><span class="n">03</span>Chuẩn bị trước đợt đầu</h2>
+<p>Người dùng tự làm, một lần. Chưa xong thì chưa mở được đợt đầu.</p>
+<div class="tbl"><table>
+  <tr><th style="width:30%">Việc</th><th>Số liệu thật (dump Online 16/11)</th><th style="width:24%">Ai làm</th></tr>
+  <tr><td><b>1. Làm sạch dữ liệu</b><br>không còn đồ đứng tên người đã nghỉ</td><td>140 món đứng tên 16 người đã nghỉ, 7 món của 3 người tạm nghỉ. File rà soát gửi riêng (có mã nhân viên).</td><td>Hành chính, lập phiếu điều chuyển</td></tr>
+  <tr><td><b>2. Tích Chung / Riêng</b></td><td>3.557 món phải có giá trị (VN01 2.578, VN02 979). Gợi ý: 794 món đang ở người mà không có phòng có thể là đồ riêng (VN01 697 món / 53 người, VN02 97 món / 50 người). Chỉ là gợi ý, người dùng quyết.</td><td>Người dùng trên danh sách CCDC</td></tr>
+  <tr><td><b>3. Tạo bảng vùng mới</b><br>vùng nào cũng có công ty, kho là vùng</td><td>Bảng hiện có 80 vùng: VN01 37, VN02 25, <b>18 vùng chưa có công ty</b> (đồ trong đó đều của VN01). Mỗi công ty có 1 kho.</td><td>Hành chính</td></tr>
+  <tr><td><b>4. Người quản lý nhóm CCDC</b></td><td>Bảng người quản lý nhóm có 4 dòng còn hiệu lực, đều ở nhóm gốc. <b>VN02 chỉ có người cho nhóm NTS-03</b>, nên 494 món VN02 (nhóm NTS-01, NTS-02) chưa có ai nhận phiếu. <a class="ask-tag" href="#cau-2">❓ câu 2</a></td><td>Quản trị danh mục nhóm</td></tr>
+</table></div>
+
+<!-- 4 -->
+<h2><span class="n">04</span>Luồng</h2>
+<div class="flow">
+  <div class="fstep"><div class="no">1</div><div>
+    <div class="who">Hành chính · web</div>
+    <h3>Tạo đợt kiểm kê theo công ty</h3>
+    <ul>
+      <li>Chọn công ty, hệ tự lấy <b>đủ các vùng của công ty</b> (kể cả kho) và <b>các nhân viên có đồ riêng</b>.</li>
+      <li>Mở đợt ra có hai tab: <b>Theo vùng</b> và <b>Theo nhân viên</b>, mỗi tab có tiến độ.</li>
+    </ul>
+  </div></div>
+  <div class="fstep"><div class="no">2</div><div>
+    <div class="who">Nhân viên · điện thoại hoặc web</div>
+    <h3>Kiểm theo nhân viên: chỉ đồ riêng</h3>
+    <ul>
+      <li>Mỗi người chỉ thấy đồ riêng của mình. Ví dụ đứng tên 100 món, 2 riêng, 98 chung thì chỉ thấy 2.</li>
+      <li>Đánh dấu từng món Có / Không thấy, rồi bấm xác nhận. Phiếu đứng tên chính nhân viên đó.</li>
+    </ul>
+  </div></div>
+  <div class="fstep"><div class="no">3</div><div>
+    <div class="who">Người đi kiểm · điện thoại</div>
+    <h3>Kiểm theo vùng: bắt đầu trắng, thêm từng món</h3>
+    <ul>
+      <li>Mỗi vùng do <b>một người hoặc một nhóm</b> đi kiểm lần lượt, không chia nhiều người kiểm cùng lúc một vùng.</li>
+      <li>Quét hoặc nhập mã, món được thêm vào vùng. <b>Lưu dần</b>: thoát ra vào lại vẫn làm tiếp.</li>
+      <li>Ba trường hợp hiện cảnh báo (mục 05). Vẫn thêm thì hệ lưu vết.</li>
+    </ul>
+  </div></div>
+  <div class="fstep"><div class="no">4</div><div>
+    <div class="who">Người đi kiểm · điện thoại</div>
+    <h3>Chốt vùng, hệ tự sinh phiếu</h3>
+    <ul>
+      <li>Gom các món theo <b>người quản lý chính của nhóm CCDC</b>: mỗi người một phiếu cho vùng đó. Vùng có đồ của 3 người quản lý thì sinh 3 phiếu.</li>
+      <li>Đồ riêng được thêm vào vùng cũng vào phiếu của người quản lý nhóm. Phiếu của nhân viên ở bước 2 vẫn giữ.</li>
+      <li><b>Vùng trống vẫn phải chốt</b>, không sinh phiếu, để biết đợt đã đi đủ vùng.</li>
+    </ul>
+  </div></div>
+  <div class="fstep"><div class="no">5</div><div>
+    <div class="who">Người quản lý nhóm CCDC · web</div>
+    <h3>Xác nhận phiếu ở "Phiếu duyệt của tôi"</h3>
+    <ul>
+      <li>Xem các món trong phiếu, xác nhận. Món không đúng thì xử lý theo <a class="ask-tag" href="#cau-4">❓ câu 4</a>.</li>
+    </ul>
+  </div></div>
+  <div class="fstep"><div class="no">6</div><div>
+    <div class="who">Hành chính · web</div>
+    <h3>Theo dõi báo cáo, đóng đợt</h3>
+    <ul>
+      <li>Báo cáo đầy đủ, bấm vào xem chi tiết (mục 07). Đóng đợt theo <a class="ask-tag" href="#cau-5">❓ câu 5</a>.</li>
+    </ul>
+  </div></div>
+</div>
+
+<!-- 5 -->
+<h2><span class="n">05</span>Kiểm theo vùng: trạng thái, cảnh báo, lưu vết</h2>
+<h3>Trạng thái của một vùng trong đợt</h3>
+<div class="states">
+  <span class="pill p-mute">Chưa kiểm</span><span class="arr">→</span>
+  <span class="pill p-info">Đang kiểm (đã lưu dở)</span><span class="arr">→</span>
+  <span class="pill p-ok">Đã chốt · N phiếu</span>
+  <span class="muted">hoặc</span>
+  <span class="pill p-ok">Đã chốt · vùng trống</span>
+</div>
+<h3>Ba cảnh báo khi thêm món</h3>
+<div class="tbl"><table>
+  <tr><th style="width:24%">Trường hợp</th><th>Câu hỏi hiện ra</th><th>Nếu vẫn thêm</th></tr>
+  <tr><td><b>Món là đồ riêng</b></td><td>"Đây là đồ riêng của [tên nhân viên]. Có thêm vào vùng này không?"</td><td>Món vẫn nằm trong phần kiểm của nhân viên đó, đồng thời có mặt ở vùng. Vào phiếu của người quản lý nhóm.</td></tr>
+  <tr><td><b>Món thuộc công ty khác</b></td><td>"Món này thuộc công ty [mã]. Có thêm vào vùng này không?"</td><td>Lưu vết. Phiếu đi theo <a class="ask-tag" href="#cau-3">❓ câu 3</a>.</td></tr>
+  <tr><td><b>Món đã được thêm ở vùng khác</b> trong cùng đợt</td><td>"Món này đang được kiểm ở vùng [tên vùng]. Có thêm vào đây không?"</td><td>Lưu vết, món nằm ở hai phiếu. Gần như không xảy ra vì mỗi vùng chỉ một người kiểm. Sau đợt món gắn với vùng chốt sau cùng.</td></tr>
+</table></div>
+<p class="note" style="margin-top:8px">Mã không có trên hệ thì không thêm được, hiện "Không tìm thấy mã". Lưu vết gồm: mã món, vùng, người thêm, thời điểm, loại cảnh báo, nội dung cảnh báo lúc đó (tên nhân viên, công ty, vùng kia).</p>
+
+<!-- 6 -->
+<h2><span class="n">06</span>Phiếu xác nhận</h2>
+<div class="tbl"><table>
+  <tr><th style="width:24%">Loại phiếu</th><th>Sinh khi nào</th><th>Gửi cho ai</th><th>Gồm những món nào</th></tr>
+  <tr><td><b>Phiếu nhân viên</b></td><td>Nhân viên bấm xác nhận phần của mình</td><td>Chính nhân viên đó</td><td>Đồ riêng của nhân viên trong công ty của đợt</td></tr>
+  <tr><td><b>Phiếu vùng</b></td><td>Người kiểm chốt vùng</td><td>Người quản lý chính của nhóm CCDC <a class="ask-tag" href="#cau-2">❓ câu 2</a></td><td>Các món đã thêm vào vùng, thuộc nhóm người đó quản lý (tính theo cây nhóm)</td></tr>
+  <tr><td><b>Vùng trống</b></td><td>Người kiểm chốt vùng không có món</td><td>Không sinh phiếu</td><td>Chỉ ghi vùng đã chốt, ai chốt, lúc nào</td></tr>
+</table></div>
+<p class="note" style="margin-top:8px">Ước số phiếu vùng mỗi đợt nếu đồ vẫn ở vùng như hiện nay: VN01 khoảng 81 phiếu cho 55 vùng có đồ, VN02 khoảng 44 phiếu cho 25 vùng (1–3 phiếu mỗi vùng). Đếm theo người quản lý nhóm, kể cả nhóm chưa có người quản lý.</p>
+
+<!-- 7 -->
+<h2><span class="n">07</span>Màn web và báo cáo</h2>
+<div class="tbl"><table>
+  <tr><th style="width:30%">Màn</th><th>Trả lời câu hỏi gì</th></tr>
+  <tr><td><b>Công cụ dụng cụ</b>: thêm cột và bộ lọc Chung / Riêng, tích hàng loạt</td><td>Món nào chưa phân loại. Chưa đủ thì không mở được đợt.</td></tr>
+  <tr><td><b>Đợt kiểm kê</b>: danh sách, tạo đợt, chi tiết đợt (tab Theo vùng, Theo nhân viên)</td><td>Vùng nào chưa kiểm / đang kiểm / đã chốt; nhân viên nào chưa xác nhận; phiếu nào chưa duyệt.</td></tr>
+  <tr><td><b>Báo cáo kiểm kê</b>: chọn nhiều công ty, nhiều đợt</td><td>Bấm vào vùng / nhân viên / phiếu để xem chi tiết từng món.</td></tr>
+  <tr><td><b>Báo cáo "Món thêm có cảnh báo"</b></td><td>Lọc theo loại: đồ riêng, khác công ty, ở hai vùng. Có người thêm và thời điểm.</td></tr>
+  <tr><td><b>Báo cáo "Món chung chưa gắn vùng"</b></td><td>Món Chung mà hết đợt không ai thêm vào vùng nào. Đây là chỗ duy nhất phát hiện đồ thất lạc, vì kiểm vùng không so với sổ.</td></tr>
+  <tr><td><b>Phiếu duyệt của tôi</b></td><td>Phiếu đang chờ mình xác nhận (người quản lý nhóm, nhân viên).</td></tr>
+</table></div>
+
+<!-- 8 -->
+<h2 id="so-lieu"><span class="n">08</span>Số liệu thật</h2>
+<p class="note">Nguồn: script nạp dữ liệu CCDC V5 production (16/11/2026), bảng vùng <code>org_station_zone</code> (17/11). Chỉ tính món đang theo dõi (bỏ mất, đã thanh lý, không theo dõi).</p>
+<div class="grid-3">
+  <div class="card stat"><div class="num">3.557</div><div class="lbl">món phải kiểm: VN01 2.578, VN02 979. Ở kho 578, ở người 2.979.</div></div>
+  <div class="card stat"><div class="num">80 vùng</div><div class="lbl">VN01 37, VN02 25, chưa có công ty 18. Vùng đang không có món: 10.</div></div>
+  <div class="card stat"><div class="num">593 món</div><div class="lbl">đang nằm ở vùng của công ty khác hoặc vùng chưa có công ty.</div></div>
+</div>
+<div class="tbl" style="margin-top:12px"><table>
+  <tr><th>Chỉ số</th><th class="num">Số</th><th>Ghi chú</th></tr>
+  <tr><td>Món VN01 ở 18 vùng chưa có công ty</td><td class="num">380</td><td>Gán 18 vùng cho VN01 lúc tạo bảng vùng mới là hết.</td></tr>
+  <tr><td>Món VN01 ở vùng của VN02</td><td class="num">198</td><td>Sẽ hiện cảnh báo "khác công ty" khi kiểm vùng VN02. <a class="ask-tag" href="#cau-3">❓ câu 3</a></td></tr>
+  <tr><td>Món VN02 ở vùng của VN01</td><td class="num">15</td><td>Như trên, chiều ngược lại.</td></tr>
+  <tr><td>Dòng người quản lý nhóm còn hiệu lực</td><td class="num">4</td><td>VN01 đủ 3 nhóm gốc NTS-01, NTS-02, NTS-03. VN02 chỉ NTS-03.</td></tr>
+  <tr><td>Món chưa tìm được người quản lý nhóm</td><td class="num">494</td><td>Đều là VN02, nhóm NTS-01 và NTS-02.</td></tr>
+  <tr><td>Cột "người quản lý" trên từng tài sản</td><td class="num">3 người</td><td>Có giá trị ở cả 3.557 món, nhưng chỉ 90 món trùng người quản lý nhóm. <a class="ask-tag" href="#cau-2">❓ câu 2</a></td></tr>
+  <tr><td>Đồ đứng tên người đã nghỉ / tạm nghỉ</td><td class="num">140 / 7</td><td>Phải làm sạch trước đợt đầu.</td></tr>
+</table></div>
+
+<!-- 9 -->
+<h2 id="cau-hoi"><span class="n">09</span>Câu hỏi còn mở</h2>
+<p>Luồng đã thống nhất. Đây là các điểm luồng chưa nói tới, mỗi câu có đề xuất sẵn để anh Đạt chỉ cần đồng ý hoặc sửa.</p>
+<div class="tbl"><table>
+  <tr><th style="width:5%">#</th><th style="width:30%">Câu hỏi</th><th>Vì sao phải hỏi</th><th style="width:30%">Đề xuất</th></tr>
+  <tr id="cau-1"><td>1</td><td><b>Gắn vùng ghi vào đâu?</b> Chỉ ghi vào dữ liệu kiểm kê, hay cập nhật luôn vùng trên hồ sơ tài sản?</td><td>Buổi 16/11 đã chốt "kiểm kê không sửa tài sản". Luồng mới nói "món thêm vào vùng nào thì gắn với vùng đó", tức là có sửa vùng.</td><td>Cập nhật vùng trên hồ sơ tài sản <b>khi người quản lý xác nhận phiếu</b>, ghi lịch sử là "kiểm kê đợt X". Không đổi người giữ, tình trạng.</td></tr>
+  <tr id="cau-2"><td>2</td><td><b>Phiếu vùng gửi theo trường nào?</b></td><td>Có hai nơi ghi "người quản lý": bảng người quản lý nhóm (V5 dùng cho bước Chuyên môn của phiếu điều chuyển, leo cây nhóm tới nhóm gần nhất có người) và cột "người quản lý" trên từng tài sản (V4 dùng cột này để chọn người duyệt kiểm kê; hiện 3 người, chỉ khớp 90 món). VN02 thiếu người quản lý nhóm NTS-01, NTS-02.</td><td>Theo <b>bảng người quản lý nhóm</b>, giống quy trình điều chuyển. Bổ sung người quản lý VN02 cho NTS-01, NTS-02 trước đợt đầu.</td></tr>
+  <tr id="cau-3"><td>3</td><td><b>Món khác công ty được thêm vào vùng: phiếu cho ai, tính vào đợt nào?</b></td><td>198 món VN01 đang ở vùng VN02. Đợt VN01 không có vùng VN02 nên không ai kiểm chúng trong đợt VN01.</td><td>Phiếu cho người quản lý nhóm <b>của công ty của món</b>. Báo cáo "Món chung chưa gắn vùng" coi món đã được gắn nếu được thêm ở đợt bất kỳ đang mở.</td></tr>
+  <tr id="cau-4"><td>4</td><td><b>Người quản lý không đồng ý một món trong phiếu thì sao?</b></td><td>Ví dụ món không thuộc nhóm mình, hoặc đã báo hỏng.</td><td>Bỏ tích món đó, ghi lý do, xác nhận phần còn lại. Món bị bỏ quay về "chưa gắn vùng" và lên báo cáo.</td></tr>
+  <tr id="cau-5"><td>5</td><td><b>Khi nào đóng đợt?</b></td><td>Có ba thứ có thể còn dở: vùng chưa chốt, nhân viên chưa xác nhận, phiếu chưa duyệt.</td><td>Hành chính bấm đóng. Hệ hiện số còn dở trước khi đóng, vẫn cho đóng. Báo cáo giữ nguyên các mục dở.</td></tr>
+  <tr id="cau-6"><td>6</td><td><b>Lúc kiểm có ghi tình trạng (tốt / hỏng) không?</b></td><td>Luồng chưa nhắc. V4 có ghi tình trạng quan sát nhưng không sửa tài sản.</td><td>Có ô tình trạng tuỳ chọn, chỉ để báo cáo. Đổi tình trạng thật vẫn qua phiếu điều chuyển.</td></tr>
+</table></div>
+
+<!-- 10 -->
+<h2><span class="n">10</span>Những gì giữ, những gì bỏ</h2>
+<div class="grid-2">
+  <div class="card"><h3 style="margin-top:0"><span class="pill p-ok">Giữ</span></h3>
+    <ul>
+      <li>Dọn dữ liệu trước đợt đầu (file rà soát): A1 xoá mã kho ở đồ đang ở người đã chạy thử đạt trên dev; B1 đồ ở người đã nghỉ.</li>
+      <li>Phiếu điều chuyển kho → người bắt buộc chọn vùng (đã code 19/11, đang chờ merge), để nhãn sai không sinh lại.</li>
+      <li>Báo cáo chọn nhiều công ty, nhiều đợt; màn "Tài sản của tôi".</li>
+    </ul>
+  </div>
+  <div class="card"><h3 style="margin-top:0"><span class="pill p-mute">Bỏ</span></h3>
+    <ul>
+      <li>Luật tự chia phần 4 bước.</li>
+      <li>Câu "đồ chung đứng tên một người" (câu 3 cũ) và nhóm B2 trong file rà soát: chuyển thành gợi ý tích Chung.</li>
+      <li>Danh sách vùng lấy sẵn từ sổ, đánh dấu Có / Không thấy.</li>
+    </ul>
+  </div>
+</div>
+
+<footer>
+  Lập từ mô tả luồng của chủ dự án sau buổi họp 19/11/2026 và số đo trên dữ liệu production. Trang này không chứa mã hay tên nhân viên.
+  Danh sách việc cho V5 gửi riêng cho đội code.
+</footer>
+
+</div>
+</body>
+</html>
