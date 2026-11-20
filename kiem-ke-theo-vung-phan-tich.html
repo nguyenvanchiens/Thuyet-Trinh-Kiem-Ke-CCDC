@@ -106,14 +106,14 @@ a{color:var(--accent)}
   </div>
   <div class="meta">
     Ngày lập: <b>20/11/2026</b><br>
-    Theo luồng thống nhất ở buổi họp <b>19/11/2026</b><br>
-    Thay cho trang "Mô hình kiểm kê mới" (16/11)
+    Luồng họp <b>19/11/2026</b>, anh Đạt <b>đã duyệt</b><br>
+    Còn 6 câu chi tiết ở mục 08
   </div>
 </header>
 
 <div class="status">
-  <div class="card"><div class="k">Luồng nghiệp vụ</div><div class="v"><span class="pill p-ok">Thống nhất 19/11</span></div></div>
-  <div class="card"><div class="k">Anh Đạt duyệt</div><div class="v"><span class="pill p-warn">Chờ duyệt</span></div></div>
+  <div class="card"><div class="k">Luồng nghiệp vụ</div><div class="v"><span class="pill p-ok">Anh Đạt đã duyệt</span></div></div>
+  <div class="card"><div class="k">Câu hỏi chi tiết</div><div class="v"><span class="pill p-warn">Còn 6 câu</span></div></div>
   <div class="card"><div class="k">DB + API</div><div class="v"><span class="pill p-warn">Chưa làm</span></div></div>
   <div class="card"><div class="k">Code</div><div class="v"><span class="pill p-warn">Chưa bắt đầu</span></div></div>
 </div>
@@ -137,19 +137,7 @@ a{color:var(--accent)}
 </div>
 
 <!-- 2 -->
-<h2><span class="n">02</span>Khác gì so với mô hình 16/11</h2>
-<div class="tbl"><table>
-  <tr><th style="width:24%">Điểm</th><th>Mô hình 16/11 (bỏ)</th><th>Luồng 19/11 (dùng)</th></tr>
-  <tr><td><b>Chia phần kiểm</b></td><td>Hệ tự chia theo 4 bước dựa vào người giữ và mã vùng hiện có.</td><td>Người dùng tự tích Chung / Riêng. Riêng vào phần nhân viên, Chung đi theo vùng.</td></tr>
-  <tr><td><b>Danh sách vùng</b></td><td>Lấy sẵn từ sổ, người kiểm đánh dấu Có / Không thấy.</td><td>Bắt đầu trắng, người kiểm thêm từng món. Không so với sổ.</td></tr>
-  <tr><td><b>Ai xác nhận</b></td><td>Người giữ, gom một lần cho mọi món mình đứng tên.</td><td>Đồ riêng: nhân viên. Đồ ở vùng: người quản lý chính của nhóm CCDC.</td></tr>
-  <tr><td><b>Đồ chung đứng tên một người</b> (câu 3 cũ)</td><td>Phải hỏi anh Đạt, một người có thể phải ký 543 món.</td><td>Không còn câu hỏi: đồ chung không vào phần nhân viên.</td></tr>
-  <tr><td><b>Bảng vùng</b></td><td>Dùng bảng vùng hiện có, 18 vùng chưa có công ty.</td><td>Tạo mới, mỗi vùng bắt buộc thuộc một công ty.</td></tr>
-  <tr><td><b>Kiểm kê có đổi tài sản không</b></td><td>Không, chỉ ghi nhận và báo cáo.</td><td>Có đổi vùng: món thêm vào vùng nào thì gắn với vùng đó. <a class="ask-tag" href="#cau-1">❓ câu 1</a></td></tr>
-</table></div>
-
-<!-- 3 -->
-<h2><span class="n">03</span>Chuẩn bị trước đợt đầu</h2>
+<h2><span class="n">02</span>Chuẩn bị trước đợt đầu</h2>
 <p>Người dùng tự làm, một lần. Chưa xong thì chưa mở được đợt đầu.</p>
 <div class="tbl"><table>
   <tr><th style="width:30%">Việc</th><th>Số liệu thật (dump Online 16/11)</th><th style="width:24%">Ai làm</th></tr>
@@ -159,8 +147,8 @@ a{color:var(--accent)}
   <tr><td><b>4. Người quản lý nhóm CCDC</b></td><td>Bảng người quản lý nhóm có 4 dòng còn hiệu lực, đều ở nhóm gốc. <b>VN02 chỉ có người cho nhóm NTS-03</b>, nên 494 món VN02 (nhóm NTS-01, NTS-02) chưa có ai nhận phiếu. <a class="ask-tag" href="#cau-2">❓ câu 2</a></td><td>Quản trị danh mục nhóm</td></tr>
 </table></div>
 
-<!-- 4 -->
-<h2><span class="n">04</span>Luồng</h2>
+<!-- 3 -->
+<h2><span class="n">03</span>Luồng</h2>
 <div class="flow">
   <div class="fstep"><div class="no">1</div><div>
     <div class="who">Hành chính · web</div>
@@ -184,7 +172,7 @@ a{color:var(--accent)}
     <ul>
       <li>Mỗi vùng do <b>một người hoặc một nhóm</b> đi kiểm lần lượt, không chia nhiều người kiểm cùng lúc một vùng.</li>
       <li>Quét hoặc nhập mã, món được thêm vào vùng. <b>Lưu dần</b>: thoát ra vào lại vẫn làm tiếp.</li>
-      <li>Ba trường hợp hiện cảnh báo (mục 05). Vẫn thêm thì hệ lưu vết.</li>
+      <li>Ba trường hợp hiện cảnh báo (mục 04). Vẫn thêm thì hệ lưu vết.</li>
     </ul>
   </div></div>
   <div class="fstep"><div class="no">4</div><div>
@@ -207,13 +195,13 @@ a{color:var(--accent)}
     <div class="who">Hành chính · web</div>
     <h3>Theo dõi báo cáo, đóng đợt</h3>
     <ul>
-      <li>Báo cáo đầy đủ, bấm vào xem chi tiết (mục 07). Đóng đợt theo <a class="ask-tag" href="#cau-5">❓ câu 5</a>.</li>
+      <li>Báo cáo đầy đủ, bấm vào xem chi tiết (mục 06). Đóng đợt theo <a class="ask-tag" href="#cau-5">❓ câu 5</a>.</li>
     </ul>
   </div></div>
 </div>
 
-<!-- 5 -->
-<h2><span class="n">05</span>Kiểm theo vùng: trạng thái, cảnh báo, lưu vết</h2>
+<!-- 4 -->
+<h2><span class="n">04</span>Kiểm theo vùng: trạng thái, cảnh báo, lưu vết</h2>
 <h3>Trạng thái của một vùng trong đợt</h3>
 <div class="states">
   <span class="pill p-mute">Chưa kiểm</span><span class="arr">→</span>
@@ -231,8 +219,8 @@ a{color:var(--accent)}
 </table></div>
 <p class="note" style="margin-top:8px">Mã không có trên hệ thì không thêm được, hiện "Không tìm thấy mã". Lưu vết gồm: mã món, vùng, người thêm, thời điểm, loại cảnh báo, nội dung cảnh báo lúc đó (tên nhân viên, công ty, vùng kia).</p>
 
-<!-- 6 -->
-<h2><span class="n">06</span>Phiếu xác nhận</h2>
+<!-- 5 -->
+<h2><span class="n">05</span>Phiếu xác nhận</h2>
 <div class="tbl"><table>
   <tr><th style="width:24%">Loại phiếu</th><th>Sinh khi nào</th><th>Gửi cho ai</th><th>Gồm những món nào</th></tr>
   <tr><td><b>Phiếu nhân viên</b></td><td>Nhân viên bấm xác nhận phần của mình</td><td>Chính nhân viên đó</td><td>Đồ riêng của nhân viên trong công ty của đợt</td></tr>
@@ -241,8 +229,8 @@ a{color:var(--accent)}
 </table></div>
 <p class="note" style="margin-top:8px">Ước số phiếu vùng mỗi đợt nếu đồ vẫn ở vùng như hiện nay: VN01 khoảng 81 phiếu cho 55 vùng có đồ, VN02 khoảng 44 phiếu cho 25 vùng (1–3 phiếu mỗi vùng). Đếm theo người quản lý nhóm, kể cả nhóm chưa có người quản lý.</p>
 
-<!-- 7 -->
-<h2><span class="n">07</span>Màn web và báo cáo</h2>
+<!-- 6 -->
+<h2><span class="n">06</span>Màn web và báo cáo</h2>
 <div class="tbl"><table>
   <tr><th style="width:30%">Màn</th><th>Trả lời câu hỏi gì</th></tr>
   <tr><td><b>Công cụ dụng cụ</b>: thêm cột và bộ lọc Chung / Riêng, tích hàng loạt</td><td>Món nào chưa phân loại. Chưa đủ thì không mở được đợt.</td></tr>
@@ -253,8 +241,8 @@ a{color:var(--accent)}
   <tr><td><b>Phiếu duyệt của tôi</b></td><td>Phiếu đang chờ mình xác nhận (người quản lý nhóm, nhân viên).</td></tr>
 </table></div>
 
-<!-- 8 -->
-<h2 id="so-lieu"><span class="n">08</span>Số liệu thật</h2>
+<!-- 7 -->
+<h2 id="so-lieu"><span class="n">07</span>Số liệu thật</h2>
 <p class="note">Nguồn: script nạp dữ liệu CCDC V5 production (16/11/2026), bảng vùng <code>org_station_zone</code> (17/11). Chỉ tính món đang theo dõi (bỏ mất, đã thanh lý, không theo dõi).</p>
 <div class="grid-3">
   <div class="card stat"><div class="num">3.557</div><div class="lbl">món phải kiểm: VN01 2.578, VN02 979. Ở kho 578, ở người 2.979.</div></div>
@@ -272,12 +260,12 @@ a{color:var(--accent)}
   <tr><td>Đồ đứng tên người đã nghỉ / tạm nghỉ</td><td class="num">140 / 7</td><td>Phải làm sạch trước đợt đầu.</td></tr>
 </table></div>
 
-<!-- 9 -->
-<h2 id="cau-hoi"><span class="n">09</span>Câu hỏi còn mở</h2>
-<p>Luồng đã thống nhất. Đây là các điểm luồng chưa nói tới, mỗi câu có đề xuất sẵn để anh Đạt chỉ cần đồng ý hoặc sửa.</p>
+<!-- 8 -->
+<h2 id="cau-hoi"><span class="n">08</span>Câu hỏi còn mở</h2>
+<p>Anh Đạt đã duyệt luồng. Đây là các điểm chi tiết luồng chưa nói tới, mỗi câu có đề xuất sẵn: anh Đạt đồng ý hoặc sửa, rồi mới thiết kế DB và API.</p>
 <div class="tbl"><table>
   <tr><th style="width:5%">#</th><th style="width:30%">Câu hỏi</th><th>Vì sao phải hỏi</th><th style="width:30%">Đề xuất</th></tr>
-  <tr id="cau-1"><td>1</td><td><b>Gắn vùng ghi vào đâu?</b> Chỉ ghi vào dữ liệu kiểm kê, hay cập nhật luôn vùng trên hồ sơ tài sản?</td><td>Buổi 16/11 đã chốt "kiểm kê không sửa tài sản". Luồng mới nói "món thêm vào vùng nào thì gắn với vùng đó", tức là có sửa vùng.</td><td>Cập nhật vùng trên hồ sơ tài sản <b>khi người quản lý xác nhận phiếu</b>, ghi lịch sử là "kiểm kê đợt X". Không đổi người giữ, tình trạng.</td></tr>
+  <tr id="cau-1"><td>1</td><td><b>Gắn vùng ghi vào đâu?</b> Chỉ ghi vào dữ liệu kiểm kê, hay cập nhật luôn vùng trên hồ sơ tài sản?</td><td>Buổi 16/11 đã chốt "kiểm kê không sửa tài sản". Luồng nói "món thêm vào vùng nào thì gắn với vùng đó", tức là có sửa vùng.</td><td>Cập nhật vùng trên hồ sơ tài sản <b>khi người quản lý xác nhận phiếu</b>, ghi lịch sử là "kiểm kê đợt X". Không đổi người giữ, tình trạng.</td></tr>
   <tr id="cau-2"><td>2</td><td><b>Phiếu vùng gửi theo trường nào?</b></td><td>Có hai nơi ghi "người quản lý": bảng người quản lý nhóm (V5 dùng cho bước Chuyên môn của phiếu điều chuyển, leo cây nhóm tới nhóm gần nhất có người) và cột "người quản lý" trên từng tài sản (V4 dùng cột này để chọn người duyệt kiểm kê; hiện 3 người, chỉ khớp 90 món). VN02 thiếu người quản lý nhóm NTS-01, NTS-02.</td><td>Theo <b>bảng người quản lý nhóm</b>, giống quy trình điều chuyển. Bổ sung người quản lý VN02 cho NTS-01, NTS-02 trước đợt đầu.</td></tr>
   <tr id="cau-3"><td>3</td><td><b>Món khác công ty được thêm vào vùng: phiếu cho ai, tính vào đợt nào?</b></td><td>198 món VN01 đang ở vùng VN02. Đợt VN01 không có vùng VN02 nên không ai kiểm chúng trong đợt VN01.</td><td>Phiếu cho người quản lý nhóm <b>của công ty của món</b>. Báo cáo "Món chung chưa gắn vùng" coi món đã được gắn nếu được thêm ở đợt bất kỳ đang mở.</td></tr>
   <tr id="cau-4"><td>4</td><td><b>Người quản lý không đồng ý một món trong phiếu thì sao?</b></td><td>Ví dụ món không thuộc nhóm mình, hoặc đã báo hỏng.</td><td>Bỏ tích món đó, ghi lý do, xác nhận phần còn lại. Món bị bỏ quay về "chưa gắn vùng" và lên báo cáo.</td></tr>
@@ -285,21 +273,13 @@ a{color:var(--accent)}
   <tr id="cau-6"><td>6</td><td><b>Lúc kiểm có ghi tình trạng (tốt / hỏng) không?</b></td><td>Luồng chưa nhắc. V4 có ghi tình trạng quan sát nhưng không sửa tài sản.</td><td>Có ô tình trạng tuỳ chọn, chỉ để báo cáo. Đổi tình trạng thật vẫn qua phiếu điều chuyển.</td></tr>
 </table></div>
 
-<!-- 10 -->
-<h2><span class="n">10</span>Những gì giữ, những gì bỏ</h2>
-<div class="grid-2">
-  <div class="card"><h3 style="margin-top:0"><span class="pill p-ok">Giữ</span></h3>
+<!-- 9 -->
+<h2><span class="n">09</span>Việc đã làm, dùng tiếp</h2>
+<div>
+  <div class="card">
     <ul>
       <li>Dọn dữ liệu trước đợt đầu (file rà soát): A1 xoá mã kho ở đồ đang ở người đã chạy thử đạt trên dev; B1 đồ ở người đã nghỉ.</li>
       <li>Phiếu điều chuyển kho → người bắt buộc chọn vùng (đã code 19/11, đang chờ merge), để nhãn sai không sinh lại.</li>
-      <li>Báo cáo chọn nhiều công ty, nhiều đợt; màn "Tài sản của tôi".</li>
-    </ul>
-  </div>
-  <div class="card"><h3 style="margin-top:0"><span class="pill p-mute">Bỏ</span></h3>
-    <ul>
-      <li>Luật tự chia phần 4 bước.</li>
-      <li>Câu "đồ chung đứng tên một người" (câu 3 cũ) và nhóm B2 trong file rà soát: chuyển thành gợi ý tích Chung.</li>
-      <li>Danh sách vùng lấy sẵn từ sổ, đánh dấu Có / Không thấy.</li>
     </ul>
   </div>
 </div>

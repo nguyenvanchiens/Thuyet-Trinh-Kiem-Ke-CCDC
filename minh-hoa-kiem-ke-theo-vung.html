@@ -122,6 +122,44 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .ms summary::-webkit-details-marker{display:none}
 .ms .box{position:absolute;z-index:5;background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px;margin-top:4px;min-width:240px;box-shadow:0 8px 20px rgba(0,0,0,.1)}
 .ms label{display:flex;gap:6px;align-items:center;padding:4px 6px;white-space:nowrap}
+/* app mobile */
+.app-wrap{display:grid;grid-template-columns:380px minmax(0,1fr);gap:20px;align-items:start}
+.dt{width:360px;max-width:100%;height:740px;border:10px solid #1b2130;border-radius:36px;background:#f5f6f8;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:0 18px 40px rgba(20,30,50,.18);margin:0 auto}
+.dt-status{flex:0 0 24px;display:flex;justify-content:space-between;align-items:center;padding:0 16px;font-size:11px;color:#fff;background:#1d48a8}
+.dt-top{flex:0 0 auto;background:var(--primary);color:#fff;padding:8px 12px 10px;display:flex;align-items:center;gap:8px;min-height:52px}
+.dt-top .bk{border:0;background:rgba(255,255,255,.18);color:#fff;width:30px;height:30px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1;flex:0 0 30px}
+.dt-top b{display:block;font-size:14px;line-height:1.3}
+.dt-top small{display:block;opacity:.85;font-size:11px}
+.dt-body{flex:1;overflow-y:auto;min-height:0}
+.dt-foot{flex:0 0 auto;padding:10px 12px;border-top:1px solid var(--border);background:#fff;display:flex;flex-direction:column;gap:6px}
+.dt-foot.two{flex-direction:row}
+.dt-h{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:12px 12px 4px}
+.dt-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:#fff;border-bottom:1px solid var(--border)}
+.dt-row[data-act]{cursor:pointer}
+.dt-row[data-act]:hover{background:#fafbfd}
+.dt-row > div:first-child{min-width:0}
+.dt-row .r{text-align:right;flex:0 0 auto}
+.dt-sub{font-size:11px;color:var(--muted)}
+.dt-note{padding:8px 12px;font-size:12px;color:var(--muted)}
+.dt-loc{display:flex;gap:6px;padding:8px 10px;background:#fff;border-bottom:1px solid var(--border)}
+.dt-loc input{flex:1;min-width:0}
+.ph-btn{min-height:40px;border-radius:10px;border:1px solid var(--border);background:#fff;font-weight:600;cursor:pointer;width:100%;padding:0 10px}
+.ph-btn:hover{background:var(--muted-bg)}
+.ph-btn.pri{background:var(--primary);border-color:var(--primary);color:#fff}
+.ph-btn.okb{background:var(--ok);border-color:var(--ok);color:#fff}
+.ph-btn:disabled{opacity:.5;cursor:not-allowed}
+.cam{height:150px;background:#0f1420;border-radius:12px;margin:10px;position:relative;display:grid;place-items:center;color:#8b95a8;font-size:12px;overflow:hidden}
+.cam::before{content:"";position:absolute;inset:24px 60px;border:2px solid rgba(255,255,255,.55);border-radius:10px}
+.cam::after{content:"";position:absolute;left:60px;right:60px;height:2px;background:#ff5a4f;top:26px;animation:quet 1.6s ease-in-out infinite alternate}
+@keyframes quet{to{top:122px}}
+@media (prefers-reduced-motion:reduce){.cam::after{animation:none;top:75px}}
+.tem-ds{display:flex;flex-wrap:wrap;gap:6px;padding:0 10px}
+.tem{border:1px dashed #9aa3b5;background:#fff;border-radius:8px;padding:6px 9px;cursor:pointer;text-align:left;font-size:12px;line-height:1.3}
+.tem:hover{border-color:var(--primary)}
+.ph-sheet{position:absolute;inset:0;background:rgba(15,20,35,.45);display:flex;align-items:flex-end;z-index:2}
+.ph-sheet .in{background:#fff;border-radius:16px 16px 0 0;padding:14px 14px 16px;width:100%;display:flex;flex-direction:column;gap:6px;max-height:88%;overflow-y:auto}
+.ph-sheet ul{margin:0;padding-left:18px}
+@media (max-width:1000px){ .app-wrap{grid-template-columns:1fr} }
 @media (max-width:760px){
   .shell{grid-template-columns:1fr}
   aside{display:none}
@@ -151,11 +189,13 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     <a data-go="cuatoi">Kiểm kê của tôi <span class="badge" id="bdgToi" hidden></span></a>
     <a data-go="phieu">Phiếu duyệt của tôi <span class="badge" id="bdgPhieu" hidden></span></a>
     <a data-go="bc">Báo cáo kiểm kê</a>
+    <div class="grp">Mobile</div>
+    <a data-go="app">App kiểm kê (mobile)</a>
   </aside>
   <div>
     <div class="mnav"><select class="input" id="mnav" aria-label="Menu">
       <option value="ccdc">Công cụ dụng cụ</option><option value="dot">Đợt kiểm kê</option>
-      <option value="cuatoi">Kiểm kê của tôi</option><option value="phieu">Phiếu duyệt của tôi</option><option value="bc">Báo cáo kiểm kê</option>
+      <option value="cuatoi">Kiểm kê của tôi</option><option value="phieu">Phiếu duyệt của tôi</option><option value="bc">Báo cáo kiểm kê</option><option value="app">App kiểm kê (mobile)</option>
     </select></div>
     <main id="main"></main>
   </div>
@@ -245,6 +285,7 @@ function batDau() {
     ],
     vet: [{ dot: 'KK0013', ma: 'TSHN0014', vung: 'T3_CNTT', loai: 'rieng', nd: 'Đồ riêng của anh Sơn', nguoi: 'thu', luc: '19/11 10:31' }],
   };
+  S.app = { tk: 'thu', man: 'home', dot: null, vung: null, phieu: null, sheet: null, loc: '' };
   function m(ma, cb) { return { ma, cb: cb || [], nguoi: 'thu', luc: '19/11' }; }
 }
 
@@ -272,7 +313,7 @@ function ve() {
   $('bdgPl').hidden = !chua; $('bdgPl').textContent = chua;
   const pc = phieuCho(S.vai).length; $('bdgPhieu').hidden = !pc; $('bdgPhieu').textContent = pc;
   const toi = dotCuaToi(S.vai).filter(d => d.nv[S.vai].tt !== 'xn').length; $('bdgToi').hidden = !toi; $('bdgToi').textContent = toi;
-  const f = { ccdc: veCcdc, dot: veDot, chitiet: veChiTiet, kiemvung: veKiemVung, cuatoi: veCuaToi, kiemnv: veKiemNv, phieu: vePhieu, chitietphieu: veChiTietPhieu, bc: veBaoCao }[S.view];
+  const f = { ccdc: veCcdc, dot: veDot, chitiet: veChiTiet, kiemvung: veKiemVung, cuatoi: veCuaToi, kiemnv: veKiemNv, phieu: vePhieu, chitietphieu: veChiTietPhieu, bc: veBaoCao, app: veApp }[S.view];
   $('main').innerHTML = f();
 }
 function di(view, extra) { Object.assign(S, extra || {}, { view }); ve(); window.scrollTo(0, 0); }
@@ -389,42 +430,73 @@ function veKiemVung() {
     ${sua ? `<div class="ph-foot"><button class="btn" data-act="luu-thoat">Lưu và thoát</button><button class="btn ok" data-act="chot-vung">Chốt vùng</button></div>` : `<div class="ph-foot"><button class="btn" data-act="mo-dot" data-dot="${d.id}">Quay lại đợt</button></div>`}
   </div>`;
 }
-function them(ma) {
-  ma = (ma || '').trim().toUpperCase(); if (!ma) return;
-  const d = dotById(S.dot), v = d.vung[S.vung], t = S.TS[ma];
-  if (!t) return toast('Không tìm thấy mã ' + ma + ' trên hệ thống.');
-  if (v.mon.some(x => x.ma === ma)) return toast(ma + ' đã có trong vùng này.');
+// ---- luật dùng chung cho web và app ----
+function kiemMa(d, z, ma) {
+  ma = (ma || '').trim().toUpperCase(); if (!ma) return { loi: '' };
+  const t = S.TS[ma];
+  if (!t) return { ma, loi: 'Không tìm thấy mã ' + ma + ' trên hệ thống.' };
+  if (d.vung[z].mon.some(x => x.ma === ma)) return { ma, loi: ma + ' đã có trong vùng này.' };
   const cb = [];
   if (t.loai === 'rieng') cb.push({ loai: 'rieng', nd: 'Đây là đồ riêng của ' + ten(t.giu) + '. Món vẫn nằm trong phần kiểm của ' + ten(t.giu) + '.' });
   if (t.cty !== d.cty) cb.push({ loai: 'cty', nd: 'Món này thuộc công ty ' + t.cty + ', đợt đang kiểm là ' + d.cty + '.' });
-  const kia = vungCuaMonTrongDot(d, ma, S.vung);
+  const kia = vungCuaMonTrongDot(d, ma, z);
   if (kia) cb.push({ loai: 'vung', nd: 'Món này đang được kiểm ở vùng ' + VUNG[kia].ten + ' trong cùng đợt.' });
-  if (!cb.length) return ghiMon(ma, []);
-  S.cho = { ma, cb };
-  dlg('Cảnh báo · ' + ma, `<p><b>${t.ten}</b></p><ul class="wlist">${cb.map(c => `<li><b>${CB[c.loai]}:</b> ${c.nd}</li>`).join('')}</ul><p style="margin-top:10px">Có thêm vào vùng <b>${VUNG[S.vung].ten}</b> không? Nếu thêm, hệ thống lưu vết để báo cáo tìm lại được.</p>`,
-    `<button class="btn" data-act="dong-dlg">Không thêm</button><button class="btn primary" data-act="them-ok">Vẫn thêm</button>`);
+  return { ma, t, cb };
 }
-function ghiMon(ma, cb) {
-  const d = dotById(S.dot), v = d.vung[S.vung];
-  v.mon.push({ ma, cb, nguoi: S.vai, luc: gio() }); v.tt = 'dang'; v.nguoi = v.nguoi || S.vai;
-  cb.forEach(c => S.vet.push({ dot: d.id, ma, vung: S.vung, loai: c.loai, nd: c.nd, nguoi: S.vai, luc: gio() }));
-  toast('Đã thêm ' + ma + (cb.length ? ' (đã lưu vết cảnh báo)' : '')); ve(); const s = $('scan'); if (s) s.focus();
+function luuMon(d, z, ma, cb, ai) {
+  const v = d.vung[z];
+  v.mon.push({ ma, cb, nguoi: ai, luc: gio() }); v.tt = 'dang'; v.nguoi = v.nguoi || ai;
+  cb.forEach(c => S.vet.push({ dot: d.id, ma, vung: z, loai: c.loai, nd: c.nd, nguoi: ai, luc: gio() }));
+}
+function boMon(d, z, ma) {
+  const v = d.vung[z]; v.mon = v.mon.filter(x => x.ma !== ma);
+  S.vet = S.vet.filter(x => !(x.dot === d.id && x.vung === z && x.ma === ma)); if (!v.mon.length) v.tt = 'chua';
 }
 function nhomPhieu(d, z) {
   const g = {}; d.vung[z].mon.forEach(x => { const t = S.TS[x.ma], k = qlCua(t) || '__khong__' + t.cty; (g[k] = g[k] || []).push(x.ma); }); return g;
 }
+function xemPhieu(d, z) {
+  return Object.entries(nhomPhieu(d, z)).map(([k, mons]) => k.startsWith('__khong__') ? `<li><span class="pill p-bad">Chưa có người quản lý</span> nhóm ${[...new Set(mons.map(m => S.TS[m].goc))].join(', ')} (${k.slice(9)}): ${mons.length} món. Phiếu chờ gán người (câu 2).</li>` : `<li><b>${ten(k)}</b> (${NGUOI[k].vai}): ${mons.length} món</li>`).join('');
+}
+function chotLuat(d, z, ai) {
+  const v = d.vung[z], g = nhomPhieu(d, z);
+  Object.entries(g).forEach(([k, mons]) => S.phieu.push({ id: 'XN' + String(++S.seq).padStart(4, '0'), dot: d.id, loai: 'vung', vung: z, ai: k.startsWith('__khong__') ? null : k, mon: mons, tt: 'cho', bo: {} }));
+  v.tt = 'chot'; v.chot = gio(); v.nguoi = v.nguoi || ai;
+  return Object.keys(g).length;
+}
+function xnPhieuLuat(p) {
+  const thieu = Object.entries(p.bo).filter(([, l]) => !l.trim());
+  if (thieu.length) return 'Ghi lý do cho ' + thieu.map(([m]) => m).join(', ');
+  p.tt = 'xn'; p.luc = gio();
+  p.mon.filter(ma => p.bo[ma] === undefined).forEach(ma => S.TS[ma].vung = p.vung);
+  return null;
+}
+function xnNvLuat(d, nv) {
+  d.nv[nv].tt = 'xn';
+  S.phieu.push({ id: 'XN' + String(++S.seq).padStart(4, '0'), dot: d.id, loai: 'nv', ai: nv, mon: rieng(nv, d.cty).map(t => t.ma), tt: 'xn', bo: {}, luc: gio() });
+}
+const hopCanhBao = (r, z) => `<p><b>${r.t.ten}</b> <span class="mono lbl">${r.ma}</span></p><ul class="wlist">${r.cb.map(c => `<li><b>${CB[c.loai]}:</b> ${c.nd}</li>`).join('')}</ul><p style="margin-top:10px">Có thêm vào vùng <b>${VUNG[z].ten}</b> không? Nếu thêm, hệ thống lưu vết để báo cáo tìm lại được.</p>`;
+const hopChot = (d, z) => d.vung[z].mon.length ? `<p>Đã thêm <b>${d.vung[z].mon.length}</b> món. Sẽ sinh <b>${Object.keys(nhomPhieu(d, z)).length} phiếu</b> xác nhận:</p><ul>${xemPhieu(d, z)}</ul><p class="note">Sau khi chốt không thêm món được nữa.</p>`
+  : `<div class="alert info">Vùng không có món nào. Chốt để ghi nhận đã kiểm vùng này, <b>không sinh phiếu</b>.</div>`;
+
+// ---- web ----
+function them(ma) {
+  const d = dotById(S.dot), r = kiemMa(d, S.vung, ma);
+  if (r.loi !== undefined) return r.loi && toast(r.loi);
+  if (!r.cb.length) return ghiMon(r.ma, []);
+  S.cho = { ma: r.ma, cb: r.cb };
+  dlg('Cảnh báo · ' + r.ma, hopCanhBao(r, S.vung), `<button class="btn" data-act="dong-dlg">Không thêm</button><button class="btn primary" data-act="them-ok">Vẫn thêm</button>`);
+}
+function ghiMon(ma, cb) {
+  luuMon(dotById(S.dot), S.vung, ma, cb, S.vai);
+  toast('Đã thêm ' + ma + (cb.length ? ' (đã lưu vết cảnh báo)' : '')); ve(); const s = $('scan'); if (s) s.focus();
+}
 function chotVung() {
-  const d = dotById(S.dot), v = d.vung[S.vung], g = nhomPhieu(d, S.vung);
-  const ds = Object.entries(g).map(([k, mons]) => k.startsWith('__khong__') ? `<li><span class="pill p-bad">Chưa có người quản lý</span> nhóm ${[...new Set(mons.map(m => S.TS[m].goc))].join(', ')} (${k.slice(9)}): ${mons.length} món. Phiếu chờ gán người (câu 2).</li>` : `<li><b>${ten(k)}</b> (${NGUOI[k].vai}): ${mons.length} món</li>`).join('');
-  dlg('Chốt vùng ' + VUNG[S.vung].ten, v.mon.length ? `<p>Đã thêm <b>${v.mon.length}</b> món. Sẽ sinh <b>${Object.keys(g).length} phiếu</b> xác nhận:</p><ul>${ds}</ul><p class="note">Sau khi chốt không thêm món được nữa.</p>`
-    : `<div class="alert info">Vùng không có món nào. Chốt để ghi nhận đã kiểm vùng này, <b>không sinh phiếu</b>.</div>`,
-    `<button class="btn" data-act="dong-dlg">Huỷ</button><button class="btn ok" data-act="chot-ok">Chốt vùng</button>`);
+  dlg('Chốt vùng ' + VUNG[S.vung].ten, hopChot(dotById(S.dot), S.vung), `<button class="btn" data-act="dong-dlg">Huỷ</button><button class="btn ok" data-act="chot-ok">Chốt vùng</button>`);
 }
 function chotOk() {
-  const d = dotById(S.dot), v = d.vung[S.vung], g = nhomPhieu(d, S.vung);
-  Object.entries(g).forEach(([k, mons]) => S.phieu.push({ id: 'XN' + String(++S.seq).padStart(4, '0'), dot: d.id, loai: 'vung', vung: S.vung, ai: k.startsWith('__khong__') ? null : k, mon: mons, tt: 'cho', bo: {} }));
-  v.tt = 'chot'; v.chot = gio(); v.nguoi = v.nguoi || S.vai; dongDlg();
-  toast(Object.keys(g).length ? 'Đã chốt, sinh ' + Object.keys(g).length + ' phiếu.' : 'Đã chốt vùng trống, không sinh phiếu.'); di('chitiet', { tab: 'vung' });
+  const n = chotLuat(dotById(S.dot), S.vung, S.vai); dongDlg();
+  toast(n ? 'Đã chốt, sinh ' + n + ' phiếu.' : 'Đã chốt vùng trống, không sinh phiếu.'); di('chitiet', { tab: 'vung' });
 }
 
 // ---------------- Kiểm kê của tôi (nhân viên) ----------------
@@ -473,11 +545,8 @@ function veChiTietPhieu() {
     : `<div class="foot">${p.loai === 'nv' ? 'Phiếu nhân viên do chính nhân viên xác nhận ở màn Kiểm kê của tôi.' : 'Khi xác nhận, vùng trên hồ sơ tài sản được cập nhật (đề xuất câu 1).'}</div>`}</div>`;
 }
 function phieuXn() {
-  const p = S.phieu.find(x => x.id === S.phieu_);
-  const thieu = Object.entries(p.bo).filter(([, l]) => !l.trim());
-  if (thieu.length) return toast('Ghi lý do cho ' + thieu.map(([m]) => m).join(', '));
-  p.tt = 'xn'; p.luc = gio();
-  p.mon.filter(ma => p.bo[ma] === undefined).forEach(ma => S.TS[ma].vung = p.vung);
+  const p = S.phieu.find(x => x.id === S.phieu_), loi = xnPhieuLuat(p);
+  if (loi) return toast(loi);
   toast('Đã xác nhận ' + p.id + '. Vùng của ' + (p.mon.length - Object.keys(p.bo).length) + ' món đã cập nhật.'); ve();
 }
 
@@ -516,6 +585,91 @@ function veBaoCao() {
   <div class="foot">${b.bcTab === 'cg' ? 'Kiểm vùng không so với sổ, nên đây là chỗ phát hiện đồ chung thất lạc. Đợt còn mở thì số này giảm dần khi kiểm.' : b.bcTab === 'cb' ? 'Mỗi lần người kiểm chọn "Vẫn thêm" sau cảnh báo được lưu một dòng.' : 'Bấm một dòng để mở chi tiết đợt.'}</div></div>`;
 }
 
+// ---------------- App kiểm kê (mobile) ----------------
+const APP_GIAI = {
+  home: ['Màn đầu', 'App chỉ hiện việc của người đăng nhập: vùng cần kiểm (người đi kiểm), đồ riêng của mình (nhân viên), phiếu chờ mình xác nhận (người quản lý nhóm CCDC).'],
+  dsvung: ['Danh sách vùng của đợt', 'Đợt tự lấy đủ vùng của công ty, kể cả kho. Lọc theo trạng thái bằng ô chọn. Vùng đang kiểm dở thì mở ra kiểm tiếp (mỗi vùng một người hoặc một nhóm).'],
+  kiem: ['Kiểm vùng', 'Danh sách bắt đầu trắng. Quét tem (bản minh hoạ: bấm một tem ở hàng "tem trước mặt") hoặc gõ mã. Ba trường hợp hiện cảnh báo: đồ riêng, khác công ty, đã ở vùng khác. "Lưu và thoát" giữ lại để làm tiếp; "Chốt vùng" sinh phiếu theo người quản lý nhóm, vùng trống thì không sinh phiếu.'],
+  rieng: ['Đồ riêng của tôi', 'Nhân viên chỉ thấy đồ Riêng. Ghi Có / Không thấy cho từng món rồi Xác nhận, phiếu nhân viên đứng tên chính mình.'],
+  phieu: ['Phiếu chờ tôi xác nhận', 'Người quản lý nhóm CCDC nhận một phiếu cho mỗi vùng có đồ thuộc nhóm mình.'],
+  phieuct: ['Xác nhận phiếu', 'Món không đúng thì bỏ tích và ghi lý do (đề xuất câu 4). Xác nhận xong, vùng của các món đồng ý được cập nhật (đề xuất câu 1).'],
+};
+const APP_TK = [['thu', 'chị Thu · hành chính, đi kiểm vùng'], ['ha', 'chị Hà · nhân viên, có đồ riêng'], ['ngan', 'chị Ngân · nhân viên VN02'], ['hung', 'anh Hùng · quản lý nhóm Thiết bị CNTT'], ['quan', 'anh Quân · quản lý nhóm Nội thất']];
+const APP_LUI = { dsvung: 'home', kiem: 'dsvung', rieng: 'home', phieu: 'home', phieuct: 'phieu' };
+function veApp() {
+  const a = S.app, tk = a.tk; let tieu = '', phu = '', body = '', foot = '';
+  if (a.man === 'home') {
+    tieu = 'Kiểm kê CCDC'; phu = ten(tk) + ' · ' + NGUOI[tk].vai;
+    const kiem = tk === 'thu' ? S.dots.filter(d => d.mo) : [], rg = dotCuaToi(tk), pc = phieuCho(tk), coPhieu = S.phieu.some(p => p.ai === tk && p.loai === 'vung');
+    body = (kiem.length ? '<div class="dt-h">Kiểm vùng</div>' + kiem.map(d => { const t = tienDo(d); return `<div class="dt-row" data-act="a-go" data-man="dsvung" data-dot="${d.id}"><div><b>${d.id} · ${d.cty}</b><div class="dt-sub">${d.ten}</div></div><div class="r"><span class="pill p-info">${t.vChot}/${t.vTong} vùng</span></div></div>`; }).join('') : '')
+      + (rg.length ? '<div class="dt-h">Đồ riêng của tôi</div>' + rg.map(d => `<div class="dt-row" data-act="a-go" data-man="rieng" data-dot="${d.id}"><div><b>${d.id}</b><div class="dt-sub">${rieng(tk, d.cty).length} món riêng</div></div><div class="r">${d.nv[tk].tt === 'xn' ? '<span class="pill p-ok">Đã xác nhận</span>' : '<span class="pill p-warn">Chưa xác nhận</span>'}</div></div>`).join('') : '')
+      + (coPhieu ? `<div class="dt-h">Phiếu xác nhận</div><div class="dt-row" data-act="a-go" data-man="phieu"><div><b>Phiếu chờ tôi xác nhận</b><div class="dt-sub">Phiếu vùng của nhóm tôi quản lý</div></div><div class="r"><span class="pill ${pc.length ? 'p-bad' : 'p-ok'}">${pc.length}</span></div></div>` : '')
+      + (!kiem.length && !rg.length && !coPhieu ? '<div class="dt-note">Không có việc kiểm kê nào cho tài khoản này.</div>' : '');
+  } else if (a.man === 'dsvung') {
+    const d = dotById(a.dot); tieu = d.id + ' · chọn vùng'; phu = d.ten;
+    const zs = Object.keys(d.vung).filter(z => !a.loc || d.vung[z].tt === a.loc);
+    body = `<div class="dt-loc"><select class="input" id="aLoc" aria-label="Lọc vùng">${[['', 'Tất cả vùng'], ['chua', 'Chưa kiểm'], ['dang', 'Đang kiểm'], ['chot', 'Đã chốt']].map(([v, t]) => `<option value="${v}" ${a.loc === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div>`
+      + (zs.map(z => `<div class="dt-row" data-act="a-go" data-man="kiem" data-vung="${z}"><div><b>${VUNG[z].ten}</b><div class="dt-sub">${VUNG[z].kho ? 'Kho · ' : ''}${d.vung[z].mon.length} món${d.vung[z].nguoi ? ' · ' + ten(d.vung[z].nguoi) : ''}</div></div><div class="r">${ttVung(d, z)}</div></div>`).join('') || '<div class="dt-note">Không có vùng nào.</div>');
+  } else if (a.man === 'kiem') {
+    const d = dotById(a.dot), v = d.vung[a.vung], sua = d.mo && v.tt !== 'chot';
+    tieu = VUNG[a.vung].ten; phu = d.id + ' · ' + (v.tt === 'chot' ? 'Đã chốt' : v.mon.length + ' món đã thêm');
+    body = (sua ? `<div class="cam">Camera quét tem</div><div class="dt-note">Tem trước mặt (bấm để giả lập quét):</div>
+      <div class="tem-ds">${GOI_Y.map(([ma, g]) => `<button class="tem" data-act="a-quet" data-ma="${ma}"><b class="mono">${ma}</b><br>${g}</button>`).join('')}</div>
+      <div class="dt-loc" style="margin-top:8px"><input class="input" id="aScan" placeholder="Hoặc gõ mã" autocomplete="off" aria-label="Gõ mã tài sản"><button class="btn primary" data-act="a-them">Thêm</button></div>` : '')
+      + `<div class="dt-h">Đã thêm vào vùng (${v.mon.length})</div>`
+      + (v.mon.slice().reverse().map(x => { const t = S.TS[x.ma]; return `<div class="dt-row"><div><b class="mono">${t.ma}</b> ${t.ten}<div class="dt-sub">${NHOM_GOC[t.goc]} · ${t.cty} · ${LOAI[t.loai]} ${x.cb.map(c => `<span class="pill p-warn">${CB[c.loai]}</span>`).join(' ')}</div></div>${sua ? `<button class="x" data-act="a-bo" data-ma="${t.ma}" aria-label="Bỏ ${t.ma}">×</button>` : ''}</div>`; }).join('') || `<div class="dt-note">${sua ? 'Chưa có món nào. Quét món đầu tiên.' : 'Vùng trống, đã chốt không sinh phiếu.'}</div>`);
+    if (sua) foot = `<div class="dt-foot two"><button class="ph-btn" data-act="a-luu">Lưu và thoát</button><button class="ph-btn okb" data-act="a-chot">Chốt vùng</button></div>`;
+  } else if (a.man === 'rieng') {
+    const d = dotById(a.dot), r = d.nv[tk], ds = rieng(tk, d.cty), sua = d.mo && r.tt !== 'xn';
+    tieu = 'Đồ riêng của tôi'; phu = d.id + ' · ' + ds.length + ' món';
+    body = ds.map(t => { const k = r.kq[t.ma]; return `<div class="dt-row"><div><b class="mono">${t.ma}</b><div>${t.ten}</div></div><div class="seg"><button class="${k === 'co' ? 'on' : ''}" data-act="a-kq" data-ma="${t.ma}" data-kq="co" ${sua ? '' : 'disabled'}>Có</button><button class="${k === 'khong' ? 'on khong' : ''}" data-act="a-kq" data-ma="${t.ma}" data-kq="khong" ${sua ? '' : 'disabled'}>Không thấy</button></div></div>`; }).join('');
+    foot = sua ? `<div class="dt-foot"><button class="ph-btn okb" data-act="a-nvxn" ${Object.keys(r.kq).length === ds.length ? '' : 'disabled'}>Xác nhận (${Object.keys(r.kq).length}/${ds.length})</button></div>` : '<div class="dt-foot"><div class="dt-sub" style="text-align:center">Đã xác nhận</div></div>';
+  } else if (a.man === 'phieu') {
+    tieu = 'Phiếu chờ tôi xác nhận'; phu = ten(tk);
+    const ps = S.phieu.filter(p => p.ai === tk && p.loai === 'vung').sort((x, y) => (x.tt === 'cho' ? 0 : 1) - (y.tt === 'cho' ? 0 : 1));
+    body = ps.map(p => `<div class="dt-row" data-act="a-go" data-man="phieuct" data-phieu="${p.id}"><div><b>${p.id} · ${VUNG[p.vung].ten}</b><div class="dt-sub">${p.dot} · ${p.mon.length} món</div></div><div class="r">${p.tt === 'xn' ? '<span class="pill p-ok">Đã xác nhận</span>' : '<span class="pill p-warn">Chờ</span>'}</div></div>`).join('') || '<div class="dt-note">Không có phiếu.</div>';
+  } else if (a.man === 'phieuct') {
+    const p = S.phieu.find(x => x.id === a.phieu), sua = p.tt === 'cho' && p.ai === tk;
+    tieu = p.id; phu = VUNG[p.vung].ten + ' · ' + p.mon.length + ' món';
+    body = p.mon.map(ma => { const t = S.TS[ma], cb = S.vet.filter(x => x.dot === p.dot && x.ma === ma && x.vung === p.vung), bo = p.bo[ma];
+      return `<div class="dt-row" style="flex-direction:column;align-items:stretch"><label style="display:flex;gap:8px;align-items:flex-start">${sua ? `<input type="checkbox" data-ady="${ma}" ${bo === undefined ? 'checked' : ''} aria-label="Đồng ý ${ma}">` : ''}<span><b class="mono">${ma}</b> ${t.ten}<span class="dt-sub" style="display:block">${t.cty} · ${LOAI[t.loai]} ${cb.map(c => `<span class="pill p-warn">${CB[c.loai]}</span>`).join(' ')}</span></span></label>`
+        + (sua && bo !== undefined ? `<input class="input" data-alydo="${ma}" value="${bo}" placeholder="Lý do không đồng ý (bắt buộc)" style="margin-top:6px">` : '')
+        + (!sua && bo ? `<div class="dt-sub"><span class="pill p-bad">Không đồng ý</span> ${bo}</div>` : '') + '</div>'; }).join('');
+    foot = sua ? '<div class="dt-foot"><button class="ph-btn okb" data-act="a-xn">Xác nhận phiếu</button></div>' : `<div class="dt-foot"><div class="dt-sub" style="text-align:center">${p.tt === 'xn' ? 'Đã xác nhận ' + (p.luc || '') : 'Phiếu của ' + ten(p.ai)}</div></div>`;
+  }
+  let sheet = '';
+  if (a.sheet && a.sheet.loai === 'cb') sheet = `<div class="ph-sheet"><div class="in"><b>Cảnh báo</b>${hopCanhBao(a.sheet.r, a.vung)}<button class="ph-btn pri" data-act="a-cb-ok">Vẫn thêm</button><button class="ph-btn" data-act="a-sheet-huy">Không thêm</button></div></div>`;
+  if (a.sheet && a.sheet.loai === 'chot') sheet = `<div class="ph-sheet"><div class="in"><b>Chốt vùng ${VUNG[a.vung].ten}</b>${hopChot(dotById(a.dot), a.vung)}<button class="ph-btn okb" data-act="a-chot-ok">Chốt vùng</button><button class="ph-btn" data-act="a-sheet-huy">Huỷ</button></div></div>`;
+  const [gt, gd] = APP_GIAI[a.man];
+  return `<div class="crumb">Mobile › App kiểm kê</div>
+  <div class="head"><h1>App kiểm kê (mobile)</h1><label class="lbl" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">Đăng nhập app bằng: <select class="input" id="appTk" style="width:auto;max-width:100%">${APP_TK.map(([k, t]) => `<option value="${k}" ${tk === k ? 'selected' : ''}>${t}</option>`).join('')}</select></label></div>
+  <div class="app-wrap">
+    <div class="dt" id="phone"><div class="dt-status"><span>9:41</span><span>4G · 86%</span></div>
+      <div class="dt-top">${a.man !== 'home' ? '<button class="bk" data-act="a-lui" aria-label="Quay lại">‹</button>' : ''}<div><b>${tieu}</b><small>${phu}</small></div></div>
+      <div class="dt-body">${body}</div>${foot}${sheet}</div>
+    <div>
+      <div class="card pad"><div class="lbl">Đang xem</div><h3 style="margin:2px 0 6px;font-size:15px">${gt}</h3><div>${gd}</div></div>
+      <details class="guide" open style="margin-top:12px"><summary>Kịch bản demo app (bấm theo thứ tự)</summary><ol>
+        <li>Đăng nhập <b>chị Thu</b>: bấm đợt <b>KK0013</b>, chọn <b>Tầng 4 · Phòng họp lớn</b>.</li>
+        <li>Bấm tem <b>TSHN0006</b>: món chung đúng vùng, thêm luôn không hỏi.</li>
+        <li>Bấm tem <b>TSHN0010</b>: cảnh báo <b>đồ riêng của chị Hà</b>, bấm Vẫn thêm. Thử <b>TSHN0023</b> (khác công ty), <b>TSHN0003</b> (đang ở Tầng 3), <b>TSHN9999</b> (không có trên hệ).</li>
+        <li>Bấm <b>Lưu và thoát</b>, vào lại Tầng 4: các món vẫn còn, kiểm tiếp được.</li>
+        <li>Bấm <b>Chốt vùng</b>: xem trước số phiếu theo người quản lý nhóm, rồi chốt. Thử vùng <b>Tầng 5 · Phòng TGĐ</b> không thêm gì rồi chốt: vùng trống, không sinh phiếu.</li>
+        <li>Đổi sang <b>anh Hùng</b>: Phiếu chờ tôi xác nhận, bỏ tích một món, ghi lý do, Xác nhận.</li>
+        <li>Đổi sang <b>chị Hà</b>: Đồ riêng của tôi, ghi Có / Không thấy, Xác nhận.</li>
+      </ol></details>
+      <div class="card pad" style="margin-top:12px"><b>Xem kết quả bên web</b><div class="acts" style="margin-top:8px"><button class="btn sm" data-act="mo-dot" data-dot="KK0013">Chi tiết đợt KK0013</button><button class="btn sm" data-act="go" data-go="bc">Báo cáo kiểm kê</button></div></div>
+    </div>
+  </div>`;
+}
+function aDi(o) { Object.assign(S.app, o, { sheet: null }); ve(); const b = document.querySelector('#phone .dt-body'); if (b) b.scrollTop = 0; }
+function aThem(ma) {
+  const a = S.app, d = dotById(a.dot), r = kiemMa(d, a.vung, ma);
+  if (r.loi !== undefined) return r.loi && toast(r.loi);
+  if (r.cb.length) { a.sheet = { loai: 'cb', r }; return ve(); }
+  luuMon(d, a.vung, r.ma, [], a.tk); toast('Đã thêm ' + r.ma); ve();
+}
+
 // ---------------- sự kiện ----------------
 document.addEventListener('click', e => {
   const a = e.target.closest('[data-act],[data-go]'); if (!a) return;
@@ -539,22 +693,38 @@ document.addEventListener('click', e => {
     case 'them': return them($('scan').value);
     case 'thu-ma': return them(ds.ma);
     case 'them-ok': { const c = S.cho; S.cho = null; dongDlg(); return ghiMon(c.ma, c.cb); }
-    case 'bo-mon': { const d = dotById(S.dot), v = d.vung[S.vung]; v.mon = v.mon.filter(x => x.ma !== ds.ma); S.vet = S.vet.filter(x => !(x.dot === d.id && x.vung === S.vung && x.ma === ds.ma)); if (!v.mon.length) v.tt = 'chua'; return ve(); }
+    case 'bo-mon': boMon(dotById(S.dot), S.vung, ds.ma); return ve();
     case 'luu-thoat': toast('Đã lưu ' + dotById(S.dot).vung[S.vung].mon.length + ' món. Vào lại vẫn kiểm tiếp được.'); return di('chitiet', { tab: 'vung' });
     case 'chot-vung': return chotVung();
     case 'chot-ok': return chotOk();
     case 'mo-nv': return di('kiemnv', { nv: ds.nv, dot: ds.dot || S.dot });
     case 'kq': dotById(S.dot).nv[S.nv].kq[ds.ma] = ds.kq; return ve();
-    case 'nv-xn': { const d = dotById(S.dot), r = d.nv[S.nv]; r.tt = 'xn'; S.phieu.push({ id: 'XN' + String(++S.seq).padStart(4, '0'), dot: d.id, loai: 'nv', ai: S.nv, mon: rieng(S.nv, d.cty).map(t => t.ma), tt: 'xn', bo: {}, luc: gio() }); toast('Đã xác nhận đồ riêng, sinh phiếu nhân viên.'); return ve(); }
+    case 'nv-xn': xnNvLuat(dotById(S.dot), S.nv); toast('Đã xác nhận đồ riêng, sinh phiếu nhân viên.'); return ve();
     case 'mo-phieu': return di('chitietphieu', { phieu_: ds.phieu });
     case 'phieu-xn': return phieuXn();
     case 'bc-tab': S.bc.bcTab = ds.tab; return ve();
+    case 'a-go': return aDi({ man: ds.man, dot: ds.dot || S.app.dot, vung: ds.vung || S.app.vung, phieu: ds.phieu || S.app.phieu });
+    case 'a-lui': return aDi({ man: APP_LUI[S.app.man] });
+    case 'a-quet': return aThem(ds.ma);
+    case 'a-them': return aThem($('aScan').value);
+    case 'a-cb-ok': { const a = S.app, r = a.sheet.r; luuMon(dotById(a.dot), a.vung, r.ma, r.cb, a.tk); a.sheet = null; toast('Đã thêm ' + r.ma + ' (đã lưu vết cảnh báo)'); return ve(); }
+    case 'a-sheet-huy': S.app.sheet = null; return ve();
+    case 'a-bo': boMon(dotById(S.app.dot), S.app.vung, ds.ma); return ve();
+    case 'a-luu': toast('Đã lưu ' + dotById(S.app.dot).vung[S.app.vung].mon.length + ' món. Vào lại vẫn kiểm tiếp được.'); return aDi({ man: 'dsvung' });
+    case 'a-chot': S.app.sheet = { loai: 'chot' }; return ve();
+    case 'a-chot-ok': { const n = chotLuat(dotById(S.app.dot), S.app.vung, S.app.tk); toast(n ? 'Đã chốt, sinh ' + n + ' phiếu.' : 'Đã chốt vùng trống, không sinh phiếu.'); return aDi({ man: 'dsvung' }); }
+    case 'a-kq': dotById(S.app.dot).nv[S.app.tk].kq[ds.ma] = ds.kq; return ve();
+    case 'a-nvxn': xnNvLuat(dotById(S.app.dot), S.app.tk); toast('Đã xác nhận đồ riêng, sinh phiếu nhân viên.'); return ve();
+    case 'a-xn': { const p = S.phieu.find(x => x.id === S.app.phieu), loi = xnPhieuLuat(p); if (loi) return toast(loi); toast('Đã xác nhận ' + p.id + '.'); return ve(); }
   }
 });
 document.addEventListener('change', e => {
   const t = e.target;
   if (t.id === 'vai') { S.vai = t.value; if (['kiemnv', 'chitietphieu'].includes(S.view)) S.view = S.vai === 'thu' ? 'dot' : 'phieu'; return ve(); }
   if (t.id === 'mnav') return di(t.value);
+  if (t.id === 'appTk') { S.app.tk = t.value; return aDi({ man: 'home' }); }
+  if (t.id === 'aLoc') { S.app.loc = t.value; return ve(); }
+  if (t.dataset.ady) { const p = S.phieu.find(x => x.id === S.app.phieu); if (t.checked) delete p.bo[t.dataset.ady]; else p.bo[t.dataset.ady] = ''; return ve(); }
   if (t.id === 'tdCty') return xemTaoDot();
   if (t.dataset.ccdc) { S.ccdc[t.dataset.ccdc] = t.value; S.ccdc.chon.clear(); return ve(); }
   if (t.dataset.chon) { t.checked ? S.ccdc.chon.add(t.dataset.chon) : S.ccdc.chon.delete(t.dataset.chon); return ve(); }
@@ -562,8 +732,8 @@ document.addEventListener('change', e => {
   if (t.dataset.bcdot) { const id = t.dataset.bcdot; S.bc.dot = t.checked ? [...S.bc.dot, id] : S.bc.dot.filter(x => x !== id); ve(); const d = document.querySelector('details.ms'); if (d) d.open = true; return; }
   if (t.dataset.bc) { S.bc[t.dataset.bc] = t.value; return ve(); }
 });
-document.addEventListener('input', e => { const t = e.target; if (t.dataset.lydo) { S.phieu.find(x => x.id === S.phieu_).bo[t.dataset.lydo] = t.value; } });
-document.addEventListener('keydown', e => { if (e.target.id === 'scan' && e.key === 'Enter') them(e.target.value); });
+document.addEventListener('input', e => { const t = e.target; if (t.dataset.lydo) { S.phieu.find(x => x.id === S.phieu_).bo[t.dataset.lydo] = t.value; } if (t.dataset.alydo) { S.phieu.find(x => x.id === S.app.phieu).bo[t.dataset.alydo] = t.value; } });
+document.addEventListener('keydown', e => { if (e.target.id === 'scan' && e.key === 'Enter') them(e.target.value); if (e.target.id === 'aScan' && e.key === 'Enter') aThem(e.target.value); });
 document.addEventListener('mousedown', e => { const d = document.querySelector('details.ms[open]'); if (d && !d.contains(e.target)) d.open = false; });
 $('btnReset').addEventListener('click', () => { batDau(); $('vai').value = 'thu'; ve(); });
 $('ov').addEventListener('click', e => { if (e.target.id === 'ov') dongDlg(); });
@@ -581,6 +751,7 @@ $('vai').innerHTML = Object.entries(NGUOI).map(([k, n]) => `<option value="${k}"
   else if (man === 'kiemnv') Object.assign(S, { view: 'kiemnv', dot: 'KK0013', nv: q.get('nv') || S.vai });
   else if (man === 'phieu') S.view = 'phieu';
   else if (man === 'bc') Object.assign(S, { view: 'bc' }), S.bc.bcTab = q.get('tab') || 'tq';
+  else if (man === 'app') { S.view = 'app'; const tk = q.get('tk'); if (tk && NGUOI[tk]) S.app.tk = tk; const am = q.get('app'); if (am) Object.assign(S.app, { man: am, dot: q.get('dot') || 'KK0013', vung: q.get('vung') || 'T4_HOP', phieu: q.get('phieu') || 'XN0001' }); }
   ve();
 })();
 </script>
