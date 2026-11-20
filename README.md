@@ -11,7 +11,7 @@ Phím tắt:
 - Màn hình hẹp (điện thoại) hiện các slide xếp dọc.
 - In ra PDF (Ctrl+P): mỗi slide một trang.
 
-**Luồng mới (họp 19/11/2026, anh Đạt đã duyệt luồng và chốt 6 điểm chi tiết 20/11): kiểm theo vùng và theo nhân viên. Kiểm kê không sửa hồ sơ tài sản, kết quả chỉ nằm trên báo cáo kiểm kê.** Tài sản có cột Chung / Riêng; đợt vẫn theo công ty; phần nhân viên chỉ có đồ Riêng; kiểm vùng bắt đầu trắng, thêm từng món, có 3 cảnh báo và lưu vết; chốt vùng sinh phiếu theo người quản lý nhóm CCDC.
+**Luồng mới (họp 19/11/2026, anh Đạt đã duyệt luồng và chốt 13 điểm chi tiết 20/11): kiểm theo vùng và theo nhân viên. Kiểm kê không sửa hồ sơ tài sản, kết quả chỉ nằm trên báo cáo kiểm kê.** Tài sản có cột Chung / Riêng; đợt vẫn theo công ty; phần nhân viên chỉ có đồ Riêng; kiểm vùng bắt đầu trắng, thêm từng món, có 3 cảnh báo và lưu vết; chốt vùng sinh phiếu theo người quản lý nhóm CCDC.
 
 - `kiem-ke-theo-vung-phan-tich.html`: trang phân tích luồng mới, số liệu thật, 6 câu còn mở.
 - `minh-hoa-kiem-ke-theo-vung.html`: màn minh hoạ bấm được: Công cụ dụng cụ (Chung / Riêng), Đợt kiểm kê, Kiểm vùng, Kiểm kê của tôi, Phiếu duyệt của tôi, Báo cáo, và menu **App kiểm kê (mobile)** (khung điện thoại: kiểm theo vùng và theo nhân viên, quét tem, tìm theo tên, cảnh báo, tình trạng từng món (Hỏng bắt buộc ảnh), in lại tem, ghi chú, chốt vùng, xác nhận phiếu; mở thẳng `?man=app`). Trang phân tích có 16 ảnh màn hình theo từng bước; ảnh ở `anh-minh-hoa/vung-*.png`. Đổi người đăng nhập ở thanh trên cùng. Mở thẳng: `?man=kiemvung&vung=T4_HOP`, `?man=phieu&vai=hung`, `?man=bc&tab=cg`.

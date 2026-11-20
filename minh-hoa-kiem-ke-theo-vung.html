@@ -565,7 +565,7 @@ function vePhieu() {
   </tbody></table></div></div>`;
 }
 function veChiTietPhieu() {
-  const p = S.phieu.find(x => x.id === S.phieu_), d = dotById(p.dot), sua = p.tt === 'cho' && p.ai === S.vai, nv = p.loai === 'nv', chon = sua && nv;
+  const p = S.phieu.find(x => x.id === S.phieu_), d = dotById(p.dot), sua = p.tt === 'cho' && p.ai === S.vai, nv = p.loai === 'nv', chon = false; // chốt: phiếu nào cũng chỉ Xác nhận, không bỏ tích
   return `<div class="crumb"><a data-act="go" data-go="phieu">Phiếu duyệt của tôi</a> › ${p.id}</div>
   <div class="head"><h1>${p.id} · ${nv ? 'Phiếu nhân viên · đồ riêng của ' + ten(p.ai) : 'Phiếu vùng ' + VUNG[p.vung].ten} ${p.tt === 'xn' ? '<span class="pill p-ok">Đã xác nhận</span>' : '<span class="pill p-warn">Chờ xác nhận</span>'}</h1></div>
   <div class="alert info">Đợt ${d.id} · ${d.cty} · Người xác nhận: <b>${p.ai ? ten(p.ai) : 'chưa có NV chuyên môn'}</b>${p.nguoi ? ' · người kiểm ' + ten(p.nguoi) : ''}${p.luc ? ' · xác nhận lúc ' + p.luc : ''}</div>
@@ -575,7 +575,7 @@ function veChiTietPhieu() {
     return `<tr>${chon ? `<td><input type="checkbox" data-dy="${ma}" ${bo === undefined ? 'checked' : ''} aria-label="Đồng ý ${ma}"></td>` : ''}<td class="mono">${ma}</td><td>${t.ten}</td><td class="mono">${t.nhom}</td><td>${t.cty}</td>${nv ? `<td>${(p.kq || {})[ma] === 'khong' ? '<span class="pill p-bad">Không thấy</span>' : '<span class="pill p-ok">Có</span>'}</td><td class="wrap">${ttPill(monCt(p, ma).tt)}${phuMon(monCt(p, ma))}</td>` : `<td>${LOAI[t.loai]}</td><td class="wrap">${ttPill(monCt(p, ma).tt)}${phuMon(monCt(p, ma))}</td><td>${cb.map(c => `<span class="pill p-warn">${CB[c.loai]}</span>`).join(' ') || '—'}</td>`}
     <td class="wrap">${chon ? (bo !== undefined ? `<input class="input" data-lydo="${ma}" value="${bo}" placeholder="Bắt buộc">` : '') : (bo ? '<span class="pill p-bad">Không đồng ý</span> ' + bo : '')}</td></tr>`; }).join('')}
   </tbody></table></div>
-  ${sua ? `<div class="foot" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><span>${nv ? 'Kết quả nào không đúng (ví dụ ghi Không thấy nhưng mình vẫn đang giữ) thì bỏ tích và ghi lý do.' : 'Xem các món, tình trạng và cảnh báo lúc thêm rồi xác nhận.'}</span><button class="btn ok" data-act="phieu-xn">Xác nhận phiếu</button></div>`
+  ${sua ? `<div class="foot" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><span>${nv ? 'Xem kết quả hành chính đã kiểm đồ riêng của bạn rồi xác nhận.' : 'Xem các món, tình trạng và cảnh báo lúc thêm rồi xác nhận.'}</span><button class="btn ok" data-act="phieu-xn">Xác nhận phiếu</button></div>`
     : `<div class="foot">${nv ? 'Phiếu nhân viên: hành chính kiểm đồ riêng, nhân viên xác nhận.' : 'Phiếu vùng: nhân viên chuyên môn xác nhận. Kết quả chỉ nằm trên báo cáo kiểm kê, không sửa hồ sơ tài sản.'}</div>`}</div>`;
 }
 function phieuXn() {
@@ -643,7 +643,7 @@ const APP_GIAI = {
   kiemnv: ['Kiểm theo nhân viên', 'Chỉ có đồ <b>Riêng</b> của người đó (đứng tên 100 món, 2 riêng thì chỉ có 2). Quét tem thì món đó thành Có · Tốt đang dùng; món không thấy thì bấm Không thấy. Bấm "Chi tiết" để ghi tình trạng khác (Hỏng phải chụp ảnh), in lại tem, ghi chú. Xong thì sinh <b>phiếu cho chính nhân viên đó</b> xác nhận.'],
   rieng: ['Đồ riêng của tôi', 'Nhân viên xem đồ riêng của mình và kết quả kiểm. Khi hành chính kiểm xong, phiếu hiện ở "Phiếu chờ tôi xác nhận".'],
   phieu: ['Phiếu chờ tôi xác nhận', 'Nhân viên chuyên môn (người quản lý nhóm CCDC) nhận phiếu vùng (mỗi vùng có đồ của nhóm mình một phiếu). Nhân viên nhận phiếu đồ riêng của mình.'],
-  phieuct: ['Xác nhận phiếu', 'Phiếu vùng: nhân viên chuyên môn xem các món, tình trạng, cảnh báo lúc thêm rồi xác nhận. Phiếu đồ riêng: kết quả nào sai thì nhân viên bỏ tích, ghi lý do. Kết quả chỉ nằm trên báo cáo kiểm kê, không sửa hồ sơ tài sản.'],
+  phieuct: ['Xác nhận phiếu', 'Phiếu vùng: nhân viên chuyên môn xem các món, tình trạng, cảnh báo lúc thêm rồi xác nhận. Phiếu đồ riêng: nhân viên xem kết quả hành chính đã kiểm rồi xác nhận. Phiếu nào cũng chỉ có nút Xác nhận. Kết quả chỉ nằm trên báo cáo kiểm kê, không sửa hồ sơ tài sản.'],
 };
 const APP_TK = [['thu', 'chị Thu · hành chính, đi kiểm'], ['ha', 'chị Hà · nhân viên, có đồ riêng'], ['son', 'anh Sơn · nhân viên, có đồ riêng'], ['ngan', 'chị Ngân · nhân viên VN02'], ['hung', 'anh Hùng · NV chuyên môn nhóm Thiết bị CNTT'], ['quan', 'anh Quân · NV chuyên môn nhóm Nội thất']];
 const APP_LUI = { dot: 'home', tim: 'kiem', kiem: 'dot', kiemnv: 'dot', rieng: 'home', phieu: 'home', phieuct: 'phieu' };
@@ -708,10 +708,10 @@ function veApp() {
   } else if (a.man === 'phieuct') {
     const p = S.phieu.find(x => x.id === a.phieu), sua = p.tt === 'cho' && p.ai === tk, nv = p.loai === 'nv';
     tieu = p.id; phu = tenPhieu(p) + ' · ' + p.mon.length + ' món';
-    body = (nv && p.nguoi ? `<div class="dt-note">Người kiểm: ${ten(p.nguoi)}. Kết quả nào không đúng thì bỏ tích và ghi lý do.</div>` : '')
+    body = (nv && p.nguoi ? `<div class="dt-note">Người kiểm: ${ten(p.nguoi)}. Xem kết quả rồi xác nhận.</div>` : '')
       + p.mon.map(ma => { const t = S.TS[ma], cb = S.vet.filter(x => x.dot === p.dot && x.ma === ma && x.vung === p.vung), bo = p.bo[ma];
-      return `<div class="dt-row" style="flex-direction:column;align-items:stretch"><label style="display:flex;gap:8px;align-items:flex-start">${sua && nv ? `<input type="checkbox" data-ady="${ma}" ${bo === undefined ? 'checked' : ''} aria-label="Đồng ý ${ma}">` : ''}<span><b class="mono">${ma}</b> ${t.ten}<span class="dt-sub" style="display:block">${nv ? ((p.kq || {})[ma] === 'khong' ? '<span class="pill p-bad">Không thấy</span>' : '<span class="pill p-ok">Có</span>') : t.cty + ' · ' + LOAI[t.loai] + ' ' + cb.map(c => `<span class="pill p-warn">${CB[c.loai]}</span>`).join(' ')}</span><span class="dt-sub" style="display:block">${ttPill(monCt(p, ma).tt)}${phuMon(monCt(p, ma))}</span></span></label>`
-        + (sua && nv && bo !== undefined ? `<input class="input" data-alydo="${ma}" value="${bo}" placeholder="Lý do không đồng ý (bắt buộc)" style="margin-top:6px">` : '')
+      return `<div class="dt-row" style="flex-direction:column;align-items:stretch"><label style="display:flex;gap:8px;align-items:flex-start">${false ? `<input type="checkbox" data-ady="${ma}" ${bo === undefined ? 'checked' : ''} aria-label="Đồng ý ${ma}">` : ''}<span><b class="mono">${ma}</b> ${t.ten}<span class="dt-sub" style="display:block">${nv ? ((p.kq || {})[ma] === 'khong' ? '<span class="pill p-bad">Không thấy</span>' : '<span class="pill p-ok">Có</span>') : t.cty + ' · ' + LOAI[t.loai] + ' ' + cb.map(c => `<span class="pill p-warn">${CB[c.loai]}</span>`).join(' ')}</span><span class="dt-sub" style="display:block">${ttPill(monCt(p, ma).tt)}${phuMon(monCt(p, ma))}</span></span></label>`
+        + (false ? `<input class="input" data-alydo="${ma}" value="${bo}" placeholder="Lý do không đồng ý (bắt buộc)" style="margin-top:6px">` : '')
         + (!sua && bo ? `<div class="dt-sub"><span class="pill p-bad">Không đồng ý</span> ${bo}</div>` : '') + '</div>'; }).join('');
     foot = sua ? '<div class="dt-foot"><button class="ph-btn okb" data-act="a-xn">Xác nhận phiếu</button></div>' : `<div class="dt-foot"><div class="dt-sub" style="text-align:center">${p.tt === 'xn' ? 'Đã xác nhận ' + (p.luc || '') : 'Phiếu của ' + (p.ai ? ten(p.ai) : 'chưa có NV chuyên môn')}</div></div>`;
   }
@@ -761,7 +761,7 @@ function veApp() {
         <li>Bấm <b>Lưu và thoát</b>, vào lại: các món vẫn còn. Bấm <b>Chốt vùng</b>: xem trước số phiếu theo nhân viên chuyên môn, rồi chốt. Vùng không có món nào thì chốt không sinh phiếu.</li>
         <li><b>Tình trạng:</b> bấm vào <b>TSHN0006</b> trong danh sách đã thêm, chọn <b>Hỏng</b>: nút Lưu khoá tới khi bấm Chụp ảnh. Thử tích <b>in lại tem</b>, ghi chú. Lọc danh sách bằng ô chọn. Không quét được tem thì bấm <b>Tìm theo tên</b>, gõ "camera".</li>
         <li><b>Kiểm theo nhân viên:</b> tab Theo nhân viên, chọn <b>chị Hà</b>: chỉ có 2 đồ riêng. Bấm tem để đánh dấu Có; bấm <b>Chi tiết</b> của máy tính bảng, chọn Không thấy, ghi chú; rồi <b>Xong, gửi phiếu</b>.</li>
-        <li>Đổi sang <b>chị Hà</b>: Phiếu chờ tôi xác nhận, mở phiếu đồ riêng, xác nhận (kết quả nào sai thì bỏ tích, ghi lý do).</li>
+        <li>Đổi sang <b>chị Hà</b>: Phiếu chờ tôi xác nhận, mở phiếu đồ riêng, xem kết quả, Xác nhận.</li>
         <li>Đổi sang <b>anh Hùng</b> (nhân viên chuyên môn): phiếu vùng Tầng 4, xem tình trạng từng món, Xác nhận.</li>
       </ol></details>
       <div class="card pad" style="margin-top:12px"><b>Xem kết quả bên web</b><div class="acts" style="margin-top:8px"><button class="btn sm" data-act="mo-dot" data-dot="KK0013">Chi tiết đợt KK0013</button><button class="btn sm" data-act="go" data-go="bc">Báo cáo kiểm kê</button></div></div>

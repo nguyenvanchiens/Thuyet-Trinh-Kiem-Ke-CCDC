@@ -116,13 +116,13 @@ a{color:var(--accent)}
   <div class="meta">
     Ngày lập: <b>20/11/2026</b><br>
     Luồng họp <b>19/11/2026</b>, anh Đạt <b>đã duyệt</b><br>
-    6 điểm chi tiết đã chốt (mục 08)
+    13 điểm chi tiết đã chốt (mục 08)
   </div>
 </header>
 
 <div class="status">
   <div class="card"><div class="k">Luồng nghiệp vụ</div><div class="v"><span class="pill p-ok">Anh Đạt đã duyệt</span></div></div>
-  <div class="card"><div class="k">Điểm chi tiết</div><div class="v"><span class="pill p-ok">Đã chốt 6/6</span></div></div>
+  <div class="card"><div class="k">Điểm chi tiết</div><div class="v"><span class="pill p-ok">Đã chốt 13/13</span></div></div>
   <div class="card"><div class="k">DB + API</div><div class="v"><span class="pill p-warn">Chưa làm</span></div></div>
   <div class="card"><div class="k">Code</div><div class="v"><span class="pill p-warn">Chưa bắt đầu</span></div></div>
 </div>
@@ -130,7 +130,7 @@ a{color:var(--accent)}
 <div class="cta">
   <a href="minh-hoa-kiem-ke-theo-vung.html">Mở màn minh hoạ web</a>
   <a href="minh-hoa-kiem-ke-theo-vung.html?man=app">Mở app mobile</a>
-  <a class="sec" href="#cau-hoi">6 điểm đã chốt</a>
+  <a class="sec" href="#cau-hoi">13 điểm đã chốt</a>
   <a class="sec" href="#so-lieu">Số liệu thật</a>
 </div>
 
@@ -138,7 +138,7 @@ a{color:var(--accent)}
 <h2><span class="n">01</span>Tóm tắt</h2>
 <div class="card summary">
   <ul>
-    <li><b>Tài sản chia hai loại: Chung và Riêng.</b> Người dùng tự tích trên danh sách CCDC. Đồ riêng là đồ của một nhân viên, đồ chung là đồ đặt ở vùng.</li>
+    <li><b>Tài sản chia hai loại: Chung và Riêng.</b> <b>Hành chính</b> tích trên danh sách CCDC; kiểm kê chỉ đọc. Đồ riêng là đồ của một nhân viên, đồ chung là đồ đặt ở vùng.</li>
     <li><b>Đợt kiểm vẫn mở theo công ty.</b> Trong đợt có hai loại kiểm: <b>theo nhân viên</b> (chỉ đồ riêng) và <b>theo vùng</b> (kho cũng là một vùng).</li>
     <li><b>Kiểm vùng bắt đầu từ danh sách trắng.</b> Người kiểm thấy món nào thì thêm món đó vào vùng. Không so với sổ cũ. Kết quả kiểm chỉ nằm trên <b>báo cáo kiểm kê</b>, không sửa hồ sơ tài sản.</li>
     <li><b>Phiếu xác nhận tự sinh khi chốt vùng</b>, mỗi <b>nhân viên chuyên môn</b> (người quản lý nhóm CCDC) nhận một phiếu cho các món thuộc nhóm mình trong vùng đó. Đồ riêng: phiếu cho chính nhân viên.</li>
@@ -149,11 +149,11 @@ a{color:var(--accent)}
 
 <!-- 2 -->
 <h2><span class="n">02</span>Chuẩn bị trước đợt đầu</h2>
-<p>Người dùng tự làm, một lần. Chưa xong thì chưa mở được đợt đầu.</p>
+<p>Làm một lần, đã có người phụ trách. Chưa xong thì chưa mở được đợt đầu.</p>
 <div class="tbl"><table>
   <tr><th style="width:30%">Việc</th><th>Số liệu thật (dump Online 16/11)</th><th style="width:24%">Ai làm</th></tr>
   <tr><td><b>1. Làm sạch dữ liệu</b><br>không còn đồ đứng tên người đã nghỉ</td><td>140 món đứng tên 16 người đã nghỉ, 7 món của 3 người tạm nghỉ. File rà soát gửi riêng (có mã nhân viên).</td><td>Hành chính, lập phiếu điều chuyển</td></tr>
-  <tr><td><b>2. Tích Chung / Riêng</b></td><td>3.557 món phải có giá trị (VN01 2.578, VN02 979). Gợi ý: 794 món đang ở người mà không có phòng có thể là đồ riêng (VN01 697 món / 53 người, VN02 97 món / 50 người). Chỉ là gợi ý, người dùng quyết.</td><td>Người dùng trên danh sách CCDC</td></tr>
+  <tr><td><b>2. Tích Chung / Riêng</b></td><td>3.557 món phải có giá trị (VN01 2.578, VN02 979). Gợi ý: 794 món đang ở người mà không có phòng có thể là đồ riêng (VN01 697 món / 53 người, VN02 97 món / 50 người). Chỉ là gợi ý, hành chính quyết.</td><td>Hành chính trên danh sách CCDC</td></tr>
   <tr><td><b>3. Tạo bảng vùng mới</b><br>vùng nào cũng có công ty, kho là vùng</td><td>Bảng hiện có 80 vùng: VN01 37, VN02 25, <b>18 vùng chưa có công ty</b> (đồ trong đó đều của VN01). Mỗi công ty có 1 kho.</td><td>Hành chính</td></tr>
   <tr><td><b>4. Nhân viên chuyên môn của nhóm CCDC</b></td><td>Bảng nhân viên chuyên môn (người quản lý nhóm) có 4 dòng còn hiệu lực, đều ở nhóm gốc. <b>VN02 chỉ có người cho nhóm NTS-03</b>, nên 494 món VN02 (nhóm NTS-01, NTS-02) chưa có ai nhận phiếu: phải bổ sung. <a class="done-tag" href="#cau-2">✔ chốt 2</a></td><td>Quản trị danh mục nhóm</td></tr>
 </table></div>
@@ -179,7 +179,7 @@ a{color:var(--accent)}
       <li>Mở đợt, tab <b>Theo nhân viên</b>, chọn một người. Chỉ hiện đồ riêng của người đó: đứng tên 100 món, 2 riêng, 98 chung thì chỉ có 2.</li>
       <li>Quét tem thì món thành Có, món không thấy thì bấm Không thấy. Lưu dở được.</li>
       <li>Bấm <b>Chi tiết</b> một món để ghi tình trạng (Hỏng phải chụp ảnh), in lại tem, ghi chú; món Không thấy ghi lý do.</li>
-      <li>Bấm <b>Xong, gửi phiếu</b>: sinh một phiếu cho <b>chính nhân viên đó</b> xác nhận (ở "Phiếu duyệt của tôi" trên web hoặc app). Kết quả nào sai thì nhân viên bỏ tích, ghi lý do.</li>
+      <li>Bấm <b>Xong, gửi phiếu</b>: sinh một phiếu cho <b>chính nhân viên đó</b> xác nhận (ở "Phiếu duyệt của tôi" trên web hoặc app). Nhân viên chỉ xem và bấm Xác nhận, không sửa được gì.</li>
     </ul>
     <div class="phones"><figure class="fig"><img src="anh-minh-hoa/vung-app-kiem-nv.png" alt="Người đi kiểm: đồ riêng của chị Hà, quét tem, Có / Không thấy" loading="lazy"><figcaption>Người đi kiểm: đồ riêng của chị Hà, quét tem, Có / Không thấy</figcaption></figure><figure class="fig"><img src="anh-minh-hoa/vung-app-do-rieng.png" alt="Chị Hà xem kết quả và mở phiếu để xác nhận" loading="lazy"><figcaption>Chị Hà xem kết quả và mở phiếu để xác nhận</figcaption></figure></div>
   </div></div>
@@ -295,15 +295,22 @@ a{color:var(--accent)}
 
 <!-- 8 -->
 <h2 id="cau-hoi"><span class="n">08</span>Các điểm đã chốt</h2>
-<p>Anh Đạt đã duyệt luồng và chốt 6 điểm chi tiết dưới đây (20/11/2026). Màn minh hoạ làm đúng theo các điểm này.</p>
+<p>Anh Đạt đã duyệt luồng và chốt điểm 1–6; điểm 7–13 chốt cùng chủ dự án (20/11/2026). Màn minh hoạ làm đúng theo các điểm này.</p>
 <div class="tbl"><table>
   <tr><th style="width:5%">#</th><th style="width:34%">Điểm</th><th>Đã chốt</th></tr>
   <tr id="cau-1"><td>1</td><td><b>Kiểm kê có sửa hồ sơ tài sản không?</b></td><td><b>Không.</b> Xác nhận phiếu không tự cập nhật bảng tài sản. Vùng gắn lúc kiểm, tình trạng, ảnh, tem chỉ nằm trên báo cáo kiểm kê. Đổi vùng, người giữ, tình trạng thật vẫn qua phiếu điều chuyển.</td></tr>
   <tr id="cau-2"><td>2</td><td><b>Phiếu vùng gửi cho ai?</b></td><td><b>Nhân viên chuyên môn</b> của nhóm CCDC, chính là người quản lý nhóm (bảng dùng cho bước Chuyên môn của phiếu điều chuyển, leo cây nhóm tới nhóm gần nhất có người). Không dùng cột "người quản lý" trên từng tài sản. Dữ liệu cần bổ sung: VN02 chưa có nhân viên chuyên môn cho NTS-01, NTS-02 (494 món).</td></tr>
   <tr id="cau-3"><td>3</td><td><b>Món của công ty khác được thêm vào vùng</b></td><td>Vẫn gửi <b>nhân viên chuyên môn</b> của nhóm món đó. Cảnh báo và lưu vết như mục 04.</td></tr>
-  <tr id="cau-4"><td>4</td><td><b>Nhân viên chuyên môn không đồng ý một món?</b></td><td><b>Không có trường hợp này.</b> Phiếu vùng chỉ có nút Xác nhận. (Phiếu đồ riêng: nhân viên vẫn bỏ tích được kết quả sai, kèm lý do.)</td></tr>
+  <tr id="cau-4"><td>4</td><td><b>Nhân viên chuyên môn không đồng ý một món?</b></td><td><b>Không có trường hợp này.</b> Phiếu vùng và phiếu đồ riêng đều chỉ có nút Xác nhận.</td></tr>
   <tr id="cau-5"><td>5</td><td><b>Đóng đợt khi chưa xong</b></td><td>Hành chính bấm đóng: nếu còn vùng chưa chốt, nhân viên chưa xác nhận hoặc phiếu chưa xác nhận thì <b>hiện cảnh báo</b> kèm số còn dở. Hành chính đồng ý thì đóng; các mục dở giữ nguyên trên báo cáo.</td></tr>
   <tr id="cau-6"><td>6</td><td><b>Có ghi tình trạng không?</b></td><td><b>Có.</b> Tốt đang dùng, Tốt không dùng, Chờ thanh lý, Hỏng (bắt buộc ảnh); in lại tem; ghi chú. Chỉ nằm trên báo cáo kiểm kê.</td></tr>
+  <tr id="cau-7"><td>7</td><td><b>Ai kiểm phần nhân viên?</b></td><td><b>Hành chính</b> đi kiểm từng người. Nhân viên chỉ xác nhận phiếu.</td></tr>
+  <tr id="cau-8"><td>8</td><td><b>Nhân viên có sửa được gì không?</b></td><td><b>Không.</b> Nhân viên không vào màn tài sản để sửa; phiếu đồ riêng chỉ có nút Xác nhận.</td></tr>
+  <tr id="cau-9"><td>9</td><td><b>Ai quyết Chung / Riêng, đổi khi điều chuyển thế nào?</b></td><td><b>Hành chính</b> quyết trên màn tài sản. Kiểm kê chỉ đọc cột này, không cập nhật gì vào dữ liệu tài sản; báo cáo kiểm kê là căn cứ để hành chính xử lý tiếp.</td></tr>
+  <tr id="cau-10"><td>10</td><td><b>Mấy đợt cùng lúc?</b></td><td>Trong khoảng thời gian kiểm kê, mỗi công ty chỉ có <b>1 đợt</b> đang mở.</td></tr>
+  <tr id="cau-11"><td>11</td><td><b>Ai được đi kiểm?</b></td><td>Có <b>resource quyền riêng</b> cho người đi kiểm kê, chủ dự án cấp.</td></tr>
+  <tr id="cau-12"><td>12</td><td><b>App mobile ai làm?</b></td><td><b>Bên mobile</b> làm app. V5 làm web và cung cấp đủ API cho app (danh sách API gửi đội code).</td></tr>
+  <tr id="cau-13"><td>13</td><td><b>Bảng vùng mới đặt ở đâu?</b></td><td>Bảng mới trong <code>fl_asset_v5</code>, vùng nào cũng có công ty. Không sửa bảng vùng dùng chung.</td></tr>
 </table></div>
 
 <!-- 9 -->
