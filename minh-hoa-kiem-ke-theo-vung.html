@@ -229,11 +229,11 @@ const NHOM_GOC = { 'NTS-01': 'Thiết bị văn phòng', 'NTS-02': 'Thiết bị
 const QL = { VN01: { 'NTS-01': 'lan', 'NTS-02': 'hung', 'NTS-03': 'quan' }, VN02: { 'NTS-02': 'phong', 'NTS-03': 'tam' } };
 const NGUOI = {
   thu: { ten: 'chị Thu', vai: 'Hành chính', cty: 'VN01' },
-  lan: { ten: 'chị Lan', vai: 'QL nhóm Thiết bị văn phòng · VN01', cty: 'VN01' },
-  hung: { ten: 'anh Hùng', vai: 'QL nhóm Thiết bị CNTT · VN01', cty: 'VN01' },
-  quan: { ten: 'anh Quân', vai: 'QL nhóm Nội thất · VN01', cty: 'VN01' },
-  phong: { ten: 'anh Phong', vai: 'QL nhóm Thiết bị CNTT · VN02', cty: 'VN02' },
-  tam: { ten: 'anh Tâm', vai: 'QL nhóm Nội thất · VN02', cty: 'VN02' },
+  lan: { ten: 'chị Lan', vai: 'NV chuyên môn nhóm Thiết bị văn phòng · VN01', cty: 'VN01' },
+  hung: { ten: 'anh Hùng', vai: 'NV chuyên môn nhóm Thiết bị CNTT · VN01', cty: 'VN01' },
+  quan: { ten: 'anh Quân', vai: 'NV chuyên môn nhóm Nội thất · VN01', cty: 'VN01' },
+  phong: { ten: 'anh Phong', vai: 'NV chuyên môn nhóm Thiết bị CNTT · VN02', cty: 'VN02' },
+  tam: { ten: 'anh Tâm', vai: 'NV chuyên môn nhóm Nội thất · VN02', cty: 'VN02' },
   minh: { ten: 'anh Minh', vai: 'Nhân viên · VN01', cty: 'VN01' },
   ha: { ten: 'chị Hà', vai: 'Nhân viên · VN01', cty: 'VN01' },
   son: { ten: 'anh Sơn', vai: 'Nhân viên · VN01', cty: 'VN01' },
@@ -349,7 +349,7 @@ function veCcdc() {
   </div>
   <div class="tblwrap"><table><thead><tr><th><input type="checkbox" data-act="chon-het" aria-label="Chọn tất cả"></th><th>Mã</th><th>Tên</th><th>Nhóm</th><th>Công ty</th><th>Chung / Riêng</th><th>Người giữ</th><th>Vùng</th></tr></thead><tbody>
   ${ds.map(t => `<tr><td><input type="checkbox" data-chon="${t.ma}" ${c.chon.has(t.ma) ? 'checked' : ''} aria-label="Chọn ${t.ma}"></td><td class="mono">${t.ma}</td><td>${t.ten}</td><td class="mono">${t.nhom}</td><td>${t.cty}</td><td>${LOAI[t.loai]}</td><td>${t.giu ? ten(t.giu) : '—'}</td><td>${t.vung ? VUNG[t.vung].ten : '—'}</td></tr>`).join('') || '<tr><td colspan="8" class="lbl">Không có món nào.</td></tr>'}
-  </tbody></table></div><div class="foot">${ds.length} món · Đồ riêng phải có người giữ. Vùng cập nhật khi người quản lý xác nhận phiếu kiểm kê (đề xuất câu 1).</div></div>`;
+  </tbody></table></div><div class="foot">${ds.length} món · Đồ riêng phải có người giữ. Kiểm kê không sửa cột nào trên hồ sơ tài sản: kết quả chỉ nằm trên báo cáo kiểm kê.</div></div>`;
 }
 function datLoai(loai) {
   const ds = [...S.ccdc.chon].map(ma => S.TS[ma]);
@@ -403,7 +403,7 @@ function veChiTiet() {
   const vungRows = Object.keys(d.vung).map(z => { const v = d.vung[z]; return `<tr><td>${VUNG[z].ten} ${VUNG[z].kho ? '<span class="pill p-mute">Kho</span>' : ''}</td><td>${ttVung(d, z)}</td><td class="num">${v.mon.length}</td><td class="num">${v.mon.filter(x => x.cb.length).length || ''}</td><td>${v.nguoi ? ten(v.nguoi) : '—'}</td><td>${v.chot || ''}</td>
     <td>${d.mo && v.tt !== 'chot' ? `<button class="btn sm primary" data-act="kiem-vung" data-vung="${z}">${v.tt === 'dang' ? 'Kiểm tiếp' : 'Kiểm vùng'}</button>` : `<button class="btn sm" data-act="kiem-vung" data-vung="${z}">Xem</button>`}</td></tr>`; }).join('');
   const nvRows = Object.keys(d.nv).map(n => { const r = d.nv[n], ds = rieng(n, d.cty), p = phieuNv(d, n); return `<tr><td>${ten(n)}</td><td class="num">${ds.length}</td><td class="num">${Object.keys(r.kq).length}</td><td class="num">${Object.values(r.kq).filter(x => x === 'khong').length || ''}</td><td>${TT_NV[r.tt]}</td><td>${r.nguoi ? ten(r.nguoi) : '—'}</td><td>${p ? `<button class="link" data-act="mo-phieu" data-phieu="${p.id}">${p.id}</button>` : ''}</td><td>${hc && d.mo && ['chua', 'dang'].includes(r.tt) ? `<button class="btn sm primary" data-act="mo-nv" data-nv="${n}">${r.tt === 'dang' ? 'Kiểm tiếp' : 'Kiểm'}</button>` : `<button class="btn sm" data-act="mo-nv" data-nv="${n}">Xem</button>`}</td></tr>`; }).join('');
-  const pRows = ps.map(p => `<tr class="click" data-act="mo-phieu" data-phieu="${p.id}"><td class="mono">${p.id}</td><td>${p.loai === 'vung' ? 'Phiếu vùng' : 'Phiếu nhân viên'}</td><td>${p.loai === 'vung' ? VUNG[p.vung].ten : '—'}</td><td>${p.ai ? ten(p.ai) : '<span class="pill p-bad">Chưa có người quản lý</span>'}</td><td class="num">${p.mon.length}</td><td>${p.tt === 'xn' ? '<span class="pill p-ok">Đã xác nhận</span>' : '<span class="pill p-warn">Chờ xác nhận</span>'}</td></tr>`).join('');
+  const pRows = ps.map(p => `<tr class="click" data-act="mo-phieu" data-phieu="${p.id}"><td class="mono">${p.id}</td><td>${p.loai === 'vung' ? 'Phiếu vùng' : 'Phiếu nhân viên'}</td><td>${p.loai === 'vung' ? VUNG[p.vung].ten : '—'}</td><td>${p.ai ? ten(p.ai) : '<span class="pill p-bad">Chưa có NV chuyên môn</span>'}</td><td class="num">${p.mon.length}</td><td>${p.tt === 'xn' ? '<span class="pill p-ok">Đã xác nhận</span>' : '<span class="pill p-warn">Chờ xác nhận</span>'}</td></tr>`).join('');
   return `<div class="crumb"><a data-act="go" data-go="dot">Đợt kiểm kê</a> › ${d.id}</div>
   <div class="head"><h1>${d.ten} ${d.mo ? '<span class="pill p-info">Đang kiểm</span>' : '<span class="pill p-mute">Đã đóng</span>'}</h1>
    <div class="acts">${hc && d.mo ? '<button class="btn danger" data-act="dong-dot">Đóng đợt</button>' : ''}<button class="btn" data-act="bc-dot">Xem báo cáo</button></div></div>
@@ -420,13 +420,13 @@ function veChiTiet() {
   <div class="tblwrap">${S.tab === 'vung' ? `<table><thead><tr><th>Vùng</th><th>Trạng thái</th><th class="num">Số món</th><th class="num">Có cảnh báo</th><th>Người kiểm</th><th>Chốt lúc</th><th></th></tr></thead><tbody>${vungRows}</tbody></table>`
     : S.tab === 'nv' ? `<table><thead><tr><th>Nhân viên</th><th class="num">Đồ riêng</th><th class="num">Đã kiểm</th><th class="num">Không thấy</th><th>Trạng thái</th><th>Người kiểm</th><th>Phiếu</th><th></th></tr></thead><tbody>${nvRows || '<tr><td colspan="8" class="lbl">Không có nhân viên có đồ riêng.</td></tr>'}</tbody></table>`
     : `<table><thead><tr><th>Mã phiếu</th><th>Loại</th><th>Vùng</th><th>Người xác nhận</th><th class="num">Số món</th><th>Trạng thái</th></tr></thead><tbody>${pRows || '<tr><td colspan="6" class="lbl">Chưa có phiếu. Phiếu vùng sinh khi chốt vùng, phiếu nhân viên sinh khi kiểm xong phần của nhân viên.</td></tr>'}</tbody></table>`}</div>
-  <div class="foot">${S.tab === 'vung' ? 'Mỗi vùng do một người hoặc một nhóm kiểm lần lượt. Vùng trống vẫn phải chốt, không sinh phiếu.' : S.tab === 'nv' ? 'Phần nhân viên chỉ có đồ Riêng. Hành chính kiểm xong thì sinh phiếu cho chính nhân viên đó xác nhận.' : 'Phiếu vùng: mỗi người quản lý nhóm CCDC một phiếu cho mỗi vùng.'}</div></div>`;
+  <div class="foot">${S.tab === 'vung' ? 'Mỗi vùng do một người hoặc một nhóm kiểm lần lượt. Vùng trống vẫn phải chốt, không sinh phiếu.' : S.tab === 'nv' ? 'Phần nhân viên chỉ có đồ Riêng. Hành chính kiểm xong thì sinh phiếu cho chính nhân viên đó xác nhận.' : 'Phiếu vùng: mỗi nhân viên chuyên môn (người quản lý nhóm CCDC) một phiếu cho mỗi vùng.'}</div></div>`;
 }
 function dongDot() {
-  const d = dotById(S.dot), t = tienDo(d);
-  dlg('Đóng đợt ' + d.id, `<p>Còn dở trong đợt:</p><ul><li>${t.vTong - t.vChot} vùng chưa chốt</li><li>${t.nTong - t.nXn} nhân viên chưa xác nhận</li><li>${t.pTong - t.pXn} phiếu chưa xác nhận</li></ul>
-    <div class="alert warn">Đề xuất câu 5: vẫn cho đóng, báo cáo giữ nguyên các mục dở. Sau khi đóng không kiểm thêm được.</div>`,
-    `<button class="btn" data-act="dong-dlg">Huỷ</button><button class="btn danger" data-act="dong-dot-ok">Đóng đợt</button>`);
+  const d = dotById(S.dot), t = tienDo(d), con = (t.vTong - t.vChot) + (t.nTong - t.nXn) + (t.pTong - t.pXn);
+  dlg('Đóng đợt ' + d.id, con ? `<div class="alert bad"><b>Đợt chưa xong.</b> Đóng bây giờ thì các mục dưới đây giữ nguyên trạng thái dở trên báo cáo, không kiểm thêm được nữa.</div><ul><li>${t.vTong - t.vChot} vùng chưa chốt</li><li>${t.nTong - t.nXn} nhân viên chưa xác nhận đồ riêng</li><li>${t.pTong - t.pXn} phiếu chưa xác nhận</li></ul><p>Bạn có chắc muốn đóng đợt?</p>`
+    : '<div class="alert ok">Đã chốt đủ vùng, đủ nhân viên xác nhận, đủ phiếu.</div><p>Đóng đợt?</p>',
+    `<button class="btn" data-act="dong-dlg">Huỷ</button><button class="btn danger" data-act="dong-dot-ok">${con ? 'Vẫn đóng đợt' : 'Đóng đợt'}</button>`);
 }
 
 // ---------------- Kiểm vùng (màn app) ----------------
@@ -470,7 +470,7 @@ function nhomPhieu(d, z) {
   const g = {}; d.vung[z].mon.forEach(x => { const t = S.TS[x.ma], k = qlCua(t) || '__khong__' + t.cty; (g[k] = g[k] || []).push(x.ma); }); return g;
 }
 function xemPhieu(d, z) {
-  return Object.entries(nhomPhieu(d, z)).map(([k, mons]) => k.startsWith('__khong__') ? `<li><span class="pill p-bad">Chưa có người quản lý</span> nhóm ${[...new Set(mons.map(m => S.TS[m].goc))].join(', ')} (${k.slice(9)}): ${mons.length} món. Phiếu chờ gán người (câu 2).</li>` : `<li><b>${ten(k)}</b> (${NGUOI[k].vai}): ${mons.length} món</li>`).join('');
+  return Object.entries(nhomPhieu(d, z)).map(([k, mons]) => k.startsWith('__khong__') ? `<li><span class="pill p-bad">Chưa có NV chuyên môn</span> nhóm ${[...new Set(mons.map(m => S.TS[m].goc))].join(', ')} (${k.slice(9)}): ${mons.length} món. Bổ sung NV chuyên môn cho nhóm trước đợt kiểm.</li>` : `<li><b>${ten(k)}</b> (${NGUOI[k].vai}): ${mons.length} món</li>`).join('');
 }
 function chotLuat(d, z, ai) {
   const v = d.vung[z], g = nhomPhieu(d, z);
@@ -482,8 +482,7 @@ function xnPhieuLuat(p) {
   const thieu = Object.entries(p.bo).filter(([, l]) => !l.trim());
   if (thieu.length) return 'Ghi lý do cho ' + thieu.map(([m]) => m).join(', ');
   p.tt = 'xn'; p.luc = gio();
-  if (p.loai === 'vung') p.mon.filter(ma => p.bo[ma] === undefined).forEach(ma => S.TS[ma].vung = p.vung);
-  else dotById(p.dot).nv[p.ai].tt = 'xn';
+  if (p.loai === 'nv') dotById(p.dot).nv[p.ai].tt = 'xn'; // kết quả chỉ nằm trên báo cáo kiểm kê, không sửa hồ sơ tài sản
   return null;
 }
 function kqNvLuat(d, n, ma, kq, ai, ct) {
@@ -566,23 +565,23 @@ function vePhieu() {
   </tbody></table></div></div>`;
 }
 function veChiTietPhieu() {
-  const p = S.phieu.find(x => x.id === S.phieu_), d = dotById(p.dot), sua = p.tt === 'cho' && p.ai === S.vai, nv = p.loai === 'nv';
+  const p = S.phieu.find(x => x.id === S.phieu_), d = dotById(p.dot), sua = p.tt === 'cho' && p.ai === S.vai, nv = p.loai === 'nv', chon = sua && nv;
   return `<div class="crumb"><a data-act="go" data-go="phieu">Phiếu duyệt của tôi</a> › ${p.id}</div>
   <div class="head"><h1>${p.id} · ${nv ? 'Phiếu nhân viên · đồ riêng của ' + ten(p.ai) : 'Phiếu vùng ' + VUNG[p.vung].ten} ${p.tt === 'xn' ? '<span class="pill p-ok">Đã xác nhận</span>' : '<span class="pill p-warn">Chờ xác nhận</span>'}</h1></div>
-  <div class="alert info">Đợt ${d.id} · ${d.cty} · Người xác nhận: <b>${p.ai ? ten(p.ai) : 'chưa có người quản lý (câu 2)'}</b>${p.nguoi ? ' · người kiểm ' + ten(p.nguoi) : ''}${p.luc ? ' · xác nhận lúc ' + p.luc : ''}</div>
+  <div class="alert info">Đợt ${d.id} · ${d.cty} · Người xác nhận: <b>${p.ai ? ten(p.ai) : 'chưa có NV chuyên môn'}</b>${p.nguoi ? ' · người kiểm ' + ten(p.nguoi) : ''}${p.luc ? ' · xác nhận lúc ' + p.luc : ''}</div>
   ${p.ai && p.ai !== S.vai && p.tt === 'cho' ? `<div class="alert warn">Phiếu này chờ ${ten(p.ai)}. Đổi người đăng nhập để xác nhận.</div>` : ''}
-  <div class="card"><div class="tblwrap"><table><thead><tr>${sua ? '<th>Đồng ý</th>' : ''}<th>Mã</th><th>Tên</th><th>Nhóm</th><th>Công ty</th>${nv ? '<th>Kết quả kiểm</th><th>Tình trạng</th>' : '<th>Chung / Riêng</th><th>Tình trạng</th><th>Cảnh báo lúc thêm</th>'}${sua ? '<th>Lý do không đồng ý</th>' : '<th>Ghi chú</th>'}</tr></thead><tbody>
+  <div class="card"><div class="tblwrap"><table><thead><tr>${chon ? '<th>Đồng ý</th>' : ''}<th>Mã</th><th>Tên</th><th>Nhóm</th><th>Công ty</th>${nv ? '<th>Kết quả kiểm</th><th>Tình trạng</th>' : '<th>Chung / Riêng</th><th>Tình trạng</th><th>Cảnh báo lúc thêm</th>'}${chon ? '<th>Lý do không đồng ý</th>' : '<th>Ghi chú</th>'}</tr></thead><tbody>
   ${p.mon.map(ma => { const t = S.TS[ma], cb = S.vet.filter(x => x.dot === p.dot && x.ma === ma && x.vung === p.vung); const bo = p.bo[ma];
-    return `<tr>${sua ? `<td><input type="checkbox" data-dy="${ma}" ${bo === undefined ? 'checked' : ''} aria-label="Đồng ý ${ma}"></td>` : ''}<td class="mono">${ma}</td><td>${t.ten}</td><td class="mono">${t.nhom}</td><td>${t.cty}</td>${nv ? `<td>${(p.kq || {})[ma] === 'khong' ? '<span class="pill p-bad">Không thấy</span>' : '<span class="pill p-ok">Có</span>'}</td><td class="wrap">${ttPill(monCt(p, ma).tt)}${phuMon(monCt(p, ma))}</td>` : `<td>${LOAI[t.loai]}</td><td class="wrap">${ttPill(monCt(p, ma).tt)}${phuMon(monCt(p, ma))}</td><td>${cb.map(c => `<span class="pill p-warn">${CB[c.loai]}</span>`).join(' ') || '—'}</td>`}
-    <td class="wrap">${sua ? (bo !== undefined ? `<input class="input" data-lydo="${ma}" value="${bo}" placeholder="Bắt buộc">` : '') : (bo ? '<span class="pill p-bad">Không đồng ý</span> ' + bo : '')}</td></tr>`; }).join('')}
+    return `<tr>${chon ? `<td><input type="checkbox" data-dy="${ma}" ${bo === undefined ? 'checked' : ''} aria-label="Đồng ý ${ma}"></td>` : ''}<td class="mono">${ma}</td><td>${t.ten}</td><td class="mono">${t.nhom}</td><td>${t.cty}</td>${nv ? `<td>${(p.kq || {})[ma] === 'khong' ? '<span class="pill p-bad">Không thấy</span>' : '<span class="pill p-ok">Có</span>'}</td><td class="wrap">${ttPill(monCt(p, ma).tt)}${phuMon(monCt(p, ma))}</td>` : `<td>${LOAI[t.loai]}</td><td class="wrap">${ttPill(monCt(p, ma).tt)}${phuMon(monCt(p, ma))}</td><td>${cb.map(c => `<span class="pill p-warn">${CB[c.loai]}</span>`).join(' ') || '—'}</td>`}
+    <td class="wrap">${chon ? (bo !== undefined ? `<input class="input" data-lydo="${ma}" value="${bo}" placeholder="Bắt buộc">` : '') : (bo ? '<span class="pill p-bad">Không đồng ý</span> ' + bo : '')}</td></tr>`; }).join('')}
   </tbody></table></div>
-  ${sua ? `<div class="foot" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><span>${nv ? 'Kết quả nào không đúng (ví dụ ghi Không thấy nhưng mình vẫn đang giữ) thì bỏ tích và ghi lý do.' : 'Bỏ tích món không đúng và ghi lý do (đề xuất câu 4). Món bị bỏ quay về "chưa gắn vùng".'}</span><button class="btn ok" data-act="phieu-xn">Xác nhận phiếu</button></div>`
-    : `<div class="foot">${nv ? 'Phiếu nhân viên: hành chính kiểm đồ riêng, nhân viên xác nhận.' : 'Khi xác nhận, vùng trên hồ sơ tài sản được cập nhật (đề xuất câu 1).'}</div>`}</div>`;
+  ${sua ? `<div class="foot" style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><span>${nv ? 'Kết quả nào không đúng (ví dụ ghi Không thấy nhưng mình vẫn đang giữ) thì bỏ tích và ghi lý do.' : 'Xem các món, tình trạng và cảnh báo lúc thêm rồi xác nhận.'}</span><button class="btn ok" data-act="phieu-xn">Xác nhận phiếu</button></div>`
+    : `<div class="foot">${nv ? 'Phiếu nhân viên: hành chính kiểm đồ riêng, nhân viên xác nhận.' : 'Phiếu vùng: nhân viên chuyên môn xác nhận. Kết quả chỉ nằm trên báo cáo kiểm kê, không sửa hồ sơ tài sản.'}</div>`}</div>`;
 }
 function phieuXn() {
   const p = S.phieu.find(x => x.id === S.phieu_), loi = xnPhieuLuat(p);
   if (loi) return toast(loi);
-  toast('Đã xác nhận ' + p.id + (p.loai === 'vung' ? '. Vùng của ' + (p.mon.length - Object.keys(p.bo).length) + ' món đã cập nhật.' : '.')); ve();
+  toast('Đã xác nhận ' + p.id + '.'); ve();
 }
 
 // ---------------- Báo cáo ----------------
@@ -632,21 +631,21 @@ function veBaoCao() {
     <button class="tab ${b.bcTab === 'cg' ? 'on' : ''}" data-act="bc-tab" data-tab="cg">Món chung chưa gắn vùng <span class="c">${cg.length}</span></button>
     <button class="tab ${b.bcTab === 'tt' ? 'on' : ''}" data-act="bc-tab" data-tab="tt">Tình trạng ghi nhận <span class="c">${dsTinhTrang(b.dot).filter(x => locTt(x, '')).length}</span></button></div>
   <div class="tblwrap">${body}</div>
-  <div class="foot">${b.bcTab === 'tt' ? 'Tình trạng chỉ để báo cáo (đề xuất câu 6); đổi tình trạng thật vẫn qua phiếu điều chuyển. Hỏng bắt buộc có ảnh.' : b.bcTab === 'cg' ? 'Kiểm vùng không so với sổ, nên đây là chỗ phát hiện đồ chung thất lạc. Đợt còn mở thì số này giảm dần khi kiểm.' : b.bcTab === 'cb' ? 'Mỗi lần người kiểm chọn "Vẫn thêm" sau cảnh báo được lưu một dòng.' : 'Bấm một dòng để mở chi tiết đợt.'}</div></div>`;
+  <div class="foot">${b.bcTab === 'tt' ? 'Tình trạng ghi lúc kiểm chỉ nằm trên báo cáo kiểm kê; đổi tình trạng thật vẫn qua phiếu điều chuyển. Hỏng bắt buộc có ảnh.' : b.bcTab === 'cg' ? 'Kiểm vùng không so với sổ, nên đây là chỗ phát hiện đồ chung thất lạc. Đợt còn mở thì số này giảm dần khi kiểm.' : b.bcTab === 'cb' ? 'Mỗi lần người kiểm chọn "Vẫn thêm" sau cảnh báo được lưu một dòng.' : 'Bấm một dòng để mở chi tiết đợt.'}</div></div>`;
 }
 
 // ---------------- App kiểm kê (mobile) ----------------
 const APP_GIAI = {
-  home: ['Màn đầu', 'App chỉ hiện việc của người đăng nhập: đợt cần kiểm (người đi kiểm), đồ riêng của mình, phiếu chờ mình xác nhận (nhân viên, người quản lý nhóm CCDC).'],
+  home: ['Màn đầu', 'App chỉ hiện việc của người đăng nhập: đợt cần kiểm (người đi kiểm), đồ riêng của mình, phiếu chờ mình xác nhận (nhân viên, nhân viên chuyên môn (người quản lý nhóm CCDC)).'],
   dot: ['Đợt kiểm kê: hai loại kiểm', 'Mở đợt ra có hai tab: <b>Theo vùng</b> (đủ vùng của công ty, kể cả kho) và <b>Theo nhân viên</b> (người có đồ riêng). Lọc theo trạng thái bằng ô chọn.'],
   tim: ['Tìm tài sản để thêm', 'Khi không quét được tem (tem mờ, mất): gõ mã hoặc tên. Kết quả ghi Chung / Riêng, công ty, người giữ, vùng trên sổ và vùng đang được kiểm trong đợt. Chọn một món thì đi qua đúng các cảnh báo như khi quét.'],
   kiem: ['Kiểm vùng', 'Bấm vào một món đã thêm để ghi <b>tình trạng</b> (Tốt đang dùng, Tốt không dùng, Chờ thanh lý, Hỏng: bắt buộc chụp ảnh), đánh dấu <b>in lại tem</b>, ghi chú, hoặc bỏ khỏi vùng. Lọc món đã thêm bằng ô chọn. Danh sách bắt đầu trắng. Quét tem (bản minh hoạ: bấm một tem ở hàng "tem trước mặt") hoặc gõ mã. Ba trường hợp hiện cảnh báo: đồ riêng, khác công ty, đã ở vùng khác. "Lưu và thoát" giữ lại để làm tiếp; "Chốt vùng" sinh phiếu theo người quản lý nhóm, vùng trống thì không sinh phiếu.'],
   kiemnv: ['Kiểm theo nhân viên', 'Chỉ có đồ <b>Riêng</b> của người đó (đứng tên 100 món, 2 riêng thì chỉ có 2). Quét tem thì món đó thành Có · Tốt đang dùng; món không thấy thì bấm Không thấy. Bấm "Chi tiết" để ghi tình trạng khác (Hỏng phải chụp ảnh), in lại tem, ghi chú. Xong thì sinh <b>phiếu cho chính nhân viên đó</b> xác nhận.'],
   rieng: ['Đồ riêng của tôi', 'Nhân viên xem đồ riêng của mình và kết quả kiểm. Khi hành chính kiểm xong, phiếu hiện ở "Phiếu chờ tôi xác nhận".'],
-  phieu: ['Phiếu chờ tôi xác nhận', 'Người quản lý nhóm CCDC nhận phiếu vùng (mỗi vùng có đồ của nhóm mình một phiếu). Nhân viên nhận phiếu đồ riêng của mình.'],
-  phieuct: ['Xác nhận phiếu', 'Món không đúng thì bỏ tích và ghi lý do. Phiếu vùng: xác nhận xong, vùng của các món đồng ý được cập nhật (đề xuất câu 1).'],
+  phieu: ['Phiếu chờ tôi xác nhận', 'Nhân viên chuyên môn (người quản lý nhóm CCDC) nhận phiếu vùng (mỗi vùng có đồ của nhóm mình một phiếu). Nhân viên nhận phiếu đồ riêng của mình.'],
+  phieuct: ['Xác nhận phiếu', 'Phiếu vùng: nhân viên chuyên môn xem các món, tình trạng, cảnh báo lúc thêm rồi xác nhận. Phiếu đồ riêng: kết quả nào sai thì nhân viên bỏ tích, ghi lý do. Kết quả chỉ nằm trên báo cáo kiểm kê, không sửa hồ sơ tài sản.'],
 };
-const APP_TK = [['thu', 'chị Thu · hành chính, đi kiểm'], ['ha', 'chị Hà · nhân viên, có đồ riêng'], ['son', 'anh Sơn · nhân viên, có đồ riêng'], ['ngan', 'chị Ngân · nhân viên VN02'], ['hung', 'anh Hùng · quản lý nhóm Thiết bị CNTT'], ['quan', 'anh Quân · quản lý nhóm Nội thất']];
+const APP_TK = [['thu', 'chị Thu · hành chính, đi kiểm'], ['ha', 'chị Hà · nhân viên, có đồ riêng'], ['son', 'anh Sơn · nhân viên, có đồ riêng'], ['ngan', 'chị Ngân · nhân viên VN02'], ['hung', 'anh Hùng · NV chuyên môn nhóm Thiết bị CNTT'], ['quan', 'anh Quân · NV chuyên môn nhóm Nội thất']];
 const APP_LUI = { dot: 'home', tim: 'kiem', kiem: 'dot', kiemnv: 'dot', rieng: 'home', phieu: 'home', phieuct: 'phieu' };
 const tenPhieu = p => p.loai === 'vung' ? VUNG[p.vung].ten : 'Đồ riêng của ' + ten(p.ai);
 function veApp() {
@@ -656,7 +655,7 @@ function veApp() {
     const kiem = tk === 'thu' ? S.dots.filter(d => d.mo) : [], rg = dotCuaToi(tk), pc = phieuCho(tk), coPhieu = S.phieu.some(p => p.ai === tk);
     body = (kiem.length ? '<div class="dt-h">Đợt cần kiểm</div>' + kiem.map(d => { const t = tienDo(d); return `<div class="dt-row" data-act="a-go" data-man="dot" data-dot="${d.id}"><div><b>${d.id} · ${d.cty}</b><div class="dt-sub">${d.ten}</div></div><div class="r"><div class="dt-sub">${t.vChot}/${t.vTong} vùng</div><div class="dt-sub">${t.nKiem}/${t.nTong} nhân viên</div></div></div>`; }).join('') : '')
       + (rg.length ? '<div class="dt-h">Đồ riêng của tôi</div>' + rg.map(d => `<div class="dt-row" data-act="a-go" data-man="rieng" data-dot="${d.id}"><div><b>${d.id}</b><div class="dt-sub">${rieng(tk, d.cty).length} món riêng</div></div><div class="r">${TT_NV[d.nv[tk].tt]}</div></div>`).join('') : '')
-      + (coPhieu ? `<div class="dt-h">Phiếu xác nhận</div><div class="dt-row" data-act="a-go" data-man="phieu"><div><b>Phiếu chờ tôi xác nhận</b><div class="dt-sub">${['ha', 'son', 'ngan', 'minh'].includes(tk) ? 'Phiếu đồ riêng của tôi' : 'Phiếu vùng của nhóm tôi quản lý'}</div></div><div class="r"><span class="pill ${pc.length ? 'p-bad' : 'p-ok'}">${pc.length}</span></div></div>` : '')
+      + (coPhieu ? `<div class="dt-h">Phiếu xác nhận</div><div class="dt-row" data-act="a-go" data-man="phieu"><div><b>Phiếu chờ tôi xác nhận</b><div class="dt-sub">${['ha', 'son', 'ngan', 'minh'].includes(tk) ? 'Phiếu đồ riêng của tôi' : 'Phiếu vùng của nhóm tôi phụ trách chuyên môn'}</div></div><div class="r"><span class="pill ${pc.length ? 'p-bad' : 'p-ok'}">${pc.length}</span></div></div>` : '')
       + (!kiem.length && !rg.length && !coPhieu ? '<div class="dt-note">Không có việc kiểm kê nào cho tài khoản này.</div>' : '');
   } else if (a.man === 'dot') {
     const d = dotById(a.dot); tieu = d.id + ' · ' + d.cty; phu = d.ten;
@@ -711,10 +710,10 @@ function veApp() {
     tieu = p.id; phu = tenPhieu(p) + ' · ' + p.mon.length + ' món';
     body = (nv && p.nguoi ? `<div class="dt-note">Người kiểm: ${ten(p.nguoi)}. Kết quả nào không đúng thì bỏ tích và ghi lý do.</div>` : '')
       + p.mon.map(ma => { const t = S.TS[ma], cb = S.vet.filter(x => x.dot === p.dot && x.ma === ma && x.vung === p.vung), bo = p.bo[ma];
-      return `<div class="dt-row" style="flex-direction:column;align-items:stretch"><label style="display:flex;gap:8px;align-items:flex-start">${sua ? `<input type="checkbox" data-ady="${ma}" ${bo === undefined ? 'checked' : ''} aria-label="Đồng ý ${ma}">` : ''}<span><b class="mono">${ma}</b> ${t.ten}<span class="dt-sub" style="display:block">${nv ? ((p.kq || {})[ma] === 'khong' ? '<span class="pill p-bad">Không thấy</span>' : '<span class="pill p-ok">Có</span>') : t.cty + ' · ' + LOAI[t.loai] + ' ' + cb.map(c => `<span class="pill p-warn">${CB[c.loai]}</span>`).join(' ')}</span><span class="dt-sub" style="display:block">${ttPill(monCt(p, ma).tt)}${phuMon(monCt(p, ma))}</span></span></label>`
-        + (sua && bo !== undefined ? `<input class="input" data-alydo="${ma}" value="${bo}" placeholder="Lý do không đồng ý (bắt buộc)" style="margin-top:6px">` : '')
+      return `<div class="dt-row" style="flex-direction:column;align-items:stretch"><label style="display:flex;gap:8px;align-items:flex-start">${sua && nv ? `<input type="checkbox" data-ady="${ma}" ${bo === undefined ? 'checked' : ''} aria-label="Đồng ý ${ma}">` : ''}<span><b class="mono">${ma}</b> ${t.ten}<span class="dt-sub" style="display:block">${nv ? ((p.kq || {})[ma] === 'khong' ? '<span class="pill p-bad">Không thấy</span>' : '<span class="pill p-ok">Có</span>') : t.cty + ' · ' + LOAI[t.loai] + ' ' + cb.map(c => `<span class="pill p-warn">${CB[c.loai]}</span>`).join(' ')}</span><span class="dt-sub" style="display:block">${ttPill(monCt(p, ma).tt)}${phuMon(monCt(p, ma))}</span></span></label>`
+        + (sua && nv && bo !== undefined ? `<input class="input" data-alydo="${ma}" value="${bo}" placeholder="Lý do không đồng ý (bắt buộc)" style="margin-top:6px">` : '')
         + (!sua && bo ? `<div class="dt-sub"><span class="pill p-bad">Không đồng ý</span> ${bo}</div>` : '') + '</div>'; }).join('');
-    foot = sua ? '<div class="dt-foot"><button class="ph-btn okb" data-act="a-xn">Xác nhận phiếu</button></div>' : `<div class="dt-foot"><div class="dt-sub" style="text-align:center">${p.tt === 'xn' ? 'Đã xác nhận ' + (p.luc || '') : 'Phiếu của ' + (p.ai ? ten(p.ai) : 'chưa có người quản lý')}</div></div>`;
+    foot = sua ? '<div class="dt-foot"><button class="ph-btn okb" data-act="a-xn">Xác nhận phiếu</button></div>' : `<div class="dt-foot"><div class="dt-sub" style="text-align:center">${p.tt === 'xn' ? 'Đã xác nhận ' + (p.luc || '') : 'Phiếu của ' + (p.ai ? ten(p.ai) : 'chưa có NV chuyên môn')}</div></div>`;
   }
   let sheet = '';
   if (a.sheet && a.sheet.loai === 'cb') sheet = `<div class="ph-sheet"><div class="in"><b>Cảnh báo</b>${hopCanhBao(a.sheet.r, a.vung)}<button class="ph-btn pri" data-act="a-cb-ok">Vẫn thêm</button><button class="ph-btn" data-act="a-sheet-huy">Không thêm</button></div></div>`;
@@ -759,11 +758,11 @@ function veApp() {
       <details class="guide" open style="margin-top:12px"><summary>Kịch bản demo app (bấm theo thứ tự)</summary><ol>
         <li>Đăng nhập <b>chị Thu</b>, bấm đợt <b>KK0013</b>: có hai tab <b>Theo vùng</b> và <b>Theo nhân viên</b>.</li>
         <li><b>Kiểm vùng:</b> chọn <b>Tầng 4 · Phòng họp lớn</b>. Bấm tem <b>TSHN0006</b> (thêm luôn), <b>TSHN0010</b> (cảnh báo đồ riêng của chị Hà, bấm Vẫn thêm). Thử <b>TSHN0023</b> (khác công ty), <b>TSHN0003</b> (đang ở Tầng 3), <b>TSHN9999</b> (không có trên hệ).</li>
-        <li>Bấm <b>Lưu và thoát</b>, vào lại: các món vẫn còn. Bấm <b>Chốt vùng</b>: xem trước số phiếu theo người quản lý nhóm, rồi chốt. Vùng không có món nào thì chốt không sinh phiếu.</li>
+        <li>Bấm <b>Lưu và thoát</b>, vào lại: các món vẫn còn. Bấm <b>Chốt vùng</b>: xem trước số phiếu theo nhân viên chuyên môn, rồi chốt. Vùng không có món nào thì chốt không sinh phiếu.</li>
         <li><b>Tình trạng:</b> bấm vào <b>TSHN0006</b> trong danh sách đã thêm, chọn <b>Hỏng</b>: nút Lưu khoá tới khi bấm Chụp ảnh. Thử tích <b>in lại tem</b>, ghi chú. Lọc danh sách bằng ô chọn. Không quét được tem thì bấm <b>Tìm theo tên</b>, gõ "camera".</li>
         <li><b>Kiểm theo nhân viên:</b> tab Theo nhân viên, chọn <b>chị Hà</b>: chỉ có 2 đồ riêng. Bấm tem để đánh dấu Có; bấm <b>Chi tiết</b> của máy tính bảng, chọn Không thấy, ghi chú; rồi <b>Xong, gửi phiếu</b>.</li>
         <li>Đổi sang <b>chị Hà</b>: Phiếu chờ tôi xác nhận, mở phiếu đồ riêng, xác nhận (kết quả nào sai thì bỏ tích, ghi lý do).</li>
-        <li>Đổi sang <b>anh Hùng</b>: phiếu vùng Tầng 4, bỏ tích một món, ghi lý do, Xác nhận.</li>
+        <li>Đổi sang <b>anh Hùng</b> (nhân viên chuyên môn): phiếu vùng Tầng 4, xem tình trạng từng món, Xác nhận.</li>
       </ol></details>
       <div class="card pad" style="margin-top:12px"><b>Xem kết quả bên web</b><div class="acts" style="margin-top:8px"><button class="btn sm" data-act="mo-dot" data-dot="KK0013">Chi tiết đợt KK0013</button><button class="btn sm" data-act="go" data-go="bc">Báo cáo kiểm kê</button></div></div>
     </div>

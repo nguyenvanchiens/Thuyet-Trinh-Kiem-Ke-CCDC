@@ -74,6 +74,7 @@ td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 .fstep ul{margin:6px 0 8px;padding-left:20px}
 .ask{border:1px solid var(--warn);border-left-width:4px;background:var(--warn-soft);border-radius:8px;padding:8px 12px;margin:10px 0 12px;font-size:14px}
 .ask .lb{font-weight:700;color:var(--warn);margin-right:2px}
+a.done-tag{display:inline-block;font-size:12px;font-weight:600;line-height:1.5;padding:0 8px;border-radius:999px;background:var(--ok-soft);color:var(--ok);border:1px solid var(--ok);text-decoration:none;white-space:nowrap;vertical-align:1px}
 a.ask-tag{display:inline-block;font-size:12px;font-weight:600;line-height:1.5;padding:0 8px;border-radius:999px;background:var(--warn-soft);color:var(--warn);border:1px solid var(--warn);text-decoration:none;white-space:nowrap;vertical-align:1px}
 .tbl tr:target td{background:var(--warn-soft)}
 .tbl tr[id]{scroll-margin-top:16px}
@@ -115,13 +116,13 @@ a{color:var(--accent)}
   <div class="meta">
     Ngày lập: <b>20/11/2026</b><br>
     Luồng họp <b>19/11/2026</b>, anh Đạt <b>đã duyệt</b><br>
-    Còn 6 câu chi tiết ở mục 08
+    6 điểm chi tiết đã chốt (mục 08)
   </div>
 </header>
 
 <div class="status">
   <div class="card"><div class="k">Luồng nghiệp vụ</div><div class="v"><span class="pill p-ok">Anh Đạt đã duyệt</span></div></div>
-  <div class="card"><div class="k">Câu hỏi chi tiết</div><div class="v"><span class="pill p-warn">Còn 6 câu</span></div></div>
+  <div class="card"><div class="k">Điểm chi tiết</div><div class="v"><span class="pill p-ok">Đã chốt 6/6</span></div></div>
   <div class="card"><div class="k">DB + API</div><div class="v"><span class="pill p-warn">Chưa làm</span></div></div>
   <div class="card"><div class="k">Code</div><div class="v"><span class="pill p-warn">Chưa bắt đầu</span></div></div>
 </div>
@@ -129,7 +130,7 @@ a{color:var(--accent)}
 <div class="cta">
   <a href="minh-hoa-kiem-ke-theo-vung.html">Mở màn minh hoạ web</a>
   <a href="minh-hoa-kiem-ke-theo-vung.html?man=app">Mở app mobile</a>
-  <a class="sec" href="#cau-hoi">Câu hỏi còn mở (6)</a>
+  <a class="sec" href="#cau-hoi">6 điểm đã chốt</a>
   <a class="sec" href="#so-lieu">Số liệu thật</a>
 </div>
 
@@ -139,8 +140,8 @@ a{color:var(--accent)}
   <ul>
     <li><b>Tài sản chia hai loại: Chung và Riêng.</b> Người dùng tự tích trên danh sách CCDC. Đồ riêng là đồ của một nhân viên, đồ chung là đồ đặt ở vùng.</li>
     <li><b>Đợt kiểm vẫn mở theo công ty.</b> Trong đợt có hai loại kiểm: <b>theo nhân viên</b> (chỉ đồ riêng) và <b>theo vùng</b> (kho cũng là một vùng).</li>
-    <li><b>Kiểm vùng bắt đầu từ danh sách trắng.</b> Người kiểm thấy món nào thì thêm món đó vào vùng. Không so với sổ cũ: lần kiểm này chính là lần gắn tài sản vào vùng.</li>
-    <li><b>Phiếu xác nhận tự sinh khi chốt vùng</b>, mỗi người quản lý nhóm CCDC nhận một phiếu cho các món thuộc nhóm mình trong vùng đó. Đồ riêng: phiếu cho chính nhân viên.</li>
+    <li><b>Kiểm vùng bắt đầu từ danh sách trắng.</b> Người kiểm thấy món nào thì thêm món đó vào vùng. Không so với sổ cũ. Kết quả kiểm chỉ nằm trên <b>báo cáo kiểm kê</b>, không sửa hồ sơ tài sản.</li>
+    <li><b>Phiếu xác nhận tự sinh khi chốt vùng</b>, mỗi <b>nhân viên chuyên môn</b> (người quản lý nhóm CCDC) nhận một phiếu cho các món thuộc nhóm mình trong vùng đó. Đồ riêng: phiếu cho chính nhân viên.</li>
     <li><b>Ba trường hợp có cảnh báo</b> (đồ riêng, khác công ty, đã ở vùng khác). Người kiểm vẫn thêm được, hệ thống lưu vết để báo cáo lọc ra.</li>
     <li><b>Mỗi món ghi tình trạng</b> (Tốt đang dùng, Tốt không dùng, Chờ thanh lý, Hỏng có ảnh), đánh dấu in lại tem và ghi chú. Báo cáo lọc được món hỏng, không thấy, cần in tem.</li>
   </ul>
@@ -154,7 +155,7 @@ a{color:var(--accent)}
   <tr><td><b>1. Làm sạch dữ liệu</b><br>không còn đồ đứng tên người đã nghỉ</td><td>140 món đứng tên 16 người đã nghỉ, 7 món của 3 người tạm nghỉ. File rà soát gửi riêng (có mã nhân viên).</td><td>Hành chính, lập phiếu điều chuyển</td></tr>
   <tr><td><b>2. Tích Chung / Riêng</b></td><td>3.557 món phải có giá trị (VN01 2.578, VN02 979). Gợi ý: 794 món đang ở người mà không có phòng có thể là đồ riêng (VN01 697 món / 53 người, VN02 97 món / 50 người). Chỉ là gợi ý, người dùng quyết.</td><td>Người dùng trên danh sách CCDC</td></tr>
   <tr><td><b>3. Tạo bảng vùng mới</b><br>vùng nào cũng có công ty, kho là vùng</td><td>Bảng hiện có 80 vùng: VN01 37, VN02 25, <b>18 vùng chưa có công ty</b> (đồ trong đó đều của VN01). Mỗi công ty có 1 kho.</td><td>Hành chính</td></tr>
-  <tr><td><b>4. Người quản lý nhóm CCDC</b></td><td>Bảng người quản lý nhóm có 4 dòng còn hiệu lực, đều ở nhóm gốc. <b>VN02 chỉ có người cho nhóm NTS-03</b>, nên 494 món VN02 (nhóm NTS-01, NTS-02) chưa có ai nhận phiếu. <a class="ask-tag" href="#cau-2">❓ câu 2</a></td><td>Quản trị danh mục nhóm</td></tr>
+  <tr><td><b>4. Nhân viên chuyên môn của nhóm CCDC</b></td><td>Bảng nhân viên chuyên môn (người quản lý nhóm) có 4 dòng còn hiệu lực, đều ở nhóm gốc. <b>VN02 chỉ có người cho nhóm NTS-03</b>, nên 494 món VN02 (nhóm NTS-01, NTS-02) chưa có ai nhận phiếu: phải bổ sung. <a class="done-tag" href="#cau-2">✔ chốt 2</a></td><td>Quản trị danh mục nhóm</td></tr>
 </table></div>
 <figure class="fig"><img src="anh-minh-hoa/vung-ccdc-chung-rieng.png" alt="Danh sách công cụ dụng cụ có cột Chung / Riêng, lọc "Chưa phân loại", chọn nhiều rồi đặt Chung hoặc Riêng. Đồ riêng phải có người giữ." loading="lazy"><figcaption>Danh sách công cụ dụng cụ có cột Chung / Riêng, lọc "Chưa phân loại", chọn nhiều rồi đặt Chung hoặc Riêng. Đồ riêng phải có người giữ.</figcaption></figure>
 
@@ -197,27 +198,27 @@ a{color:var(--accent)}
     <div class="who">Người đi kiểm · điện thoại</div>
     <h3>Chốt vùng, hệ tự sinh phiếu</h3>
     <ul>
-      <li>Gom các món theo <b>người quản lý chính của nhóm CCDC</b>: mỗi người một phiếu cho vùng đó. Vùng có đồ của 3 người quản lý thì sinh 3 phiếu.</li>
-      <li>Đồ riêng được thêm vào vùng cũng vào phiếu của người quản lý nhóm. Phiếu của nhân viên ở bước 2 vẫn giữ.</li>
+      <li>Gom các món theo <b>nhân viên chuyên môn</b> của nhóm CCDC (người quản lý nhóm, giống bước Chuyên môn của phiếu điều chuyển): mỗi người một phiếu cho vùng đó. Vùng có đồ của 3 nhóm do 3 người phụ trách thì sinh 3 phiếu.</li>
+      <li>Đồ riêng hay đồ của công ty khác được thêm vào vùng cũng vào phiếu của nhân viên chuyên môn nhóm món đó. Phiếu của nhân viên ở bước 2 vẫn giữ.</li>
       <li><b>Vùng trống vẫn phải chốt</b>, không sinh phiếu, để biết đợt đã đi đủ vùng.</li>
     </ul>
-    <div class="phones"><figure class="fig"><img src="anh-minh-hoa/vung-app-chot.png" alt="Chốt vùng: xem trước 2 phiếu cho 2 người quản lý nhóm" loading="lazy"><figcaption>Chốt vùng: xem trước 2 phiếu cho 2 người quản lý nhóm</figcaption></figure></div>
+    <div class="phones"><figure class="fig"><img src="anh-minh-hoa/vung-app-chot.png" alt="Chốt vùng: xem trước 2 phiếu cho 2 nhân viên chuyên môn" loading="lazy"><figcaption>Chốt vùng: xem trước 2 phiếu cho 2 nhân viên chuyên môn</figcaption></figure></div>
   </div></div>
   <div class="fstep"><div class="no">5</div><div>
-    <div class="who">Người quản lý nhóm CCDC · web hoặc app</div>
+    <div class="who">Nhân viên chuyên môn · web hoặc app</div>
     <h3>Xác nhận phiếu ở "Phiếu duyệt của tôi"</h3>
     <ul>
-      <li>Xem các món trong phiếu kèm tình trạng và cảnh báo lúc thêm, xác nhận. Món không đúng thì bỏ tích, ghi lý do <a class="ask-tag" href="#cau-4">❓ câu 4</a>.</li>
+      <li>Xem các món trong phiếu kèm tình trạng và cảnh báo lúc thêm, rồi <b>Xác nhận</b>. Phiếu vùng không có bỏ tích <a class="done-tag" href="#cau-4">✔ chốt 4</a>.</li>
     </ul>
-    <div class="phones"><figure class="fig"><img src="anh-minh-hoa/vung-app-phieu.png" alt="Anh Hùng bỏ tích một món và ghi lý do trước khi xác nhận" loading="lazy"><figcaption>Anh Hùng bỏ tích một món và ghi lý do trước khi xác nhận</figcaption></figure></div>
+    <div class="phones"><figure class="fig"><img src="anh-minh-hoa/vung-app-phieu.png" alt="Anh Hùng (nhân viên chuyên môn) xem tình trạng từng món rồi xác nhận" loading="lazy"><figcaption>Anh Hùng (nhân viên chuyên môn) xem tình trạng từng món rồi xác nhận</figcaption></figure></div>
   </div></div>
   <div class="fstep"><div class="no">6</div><div>
     <div class="who">Hành chính · web</div>
     <h3>Theo dõi báo cáo, đóng đợt</h3>
     <ul>
-      <li>Báo cáo đầy đủ, bấm vào xem chi tiết (mục 06). Đóng đợt theo <a class="ask-tag" href="#cau-5">❓ câu 5</a>.</li>
+      <li>Báo cáo đầy đủ, bấm vào xem chi tiết (mục 06). Đóng đợt khi chưa xong thì hiện cảnh báo, hành chính đồng ý thì đóng <a class="done-tag" href="#cau-5">✔ chốt 5</a>.</li>
     </ul>
-    <figure class="fig"><img src="anh-minh-hoa/vung-web-chi-tiet-dot.png" alt="Chi tiết đợt trên web: tiến độ vùng, nhân viên, phiếu; trạng thái từng vùng." loading="lazy"><figcaption>Chi tiết đợt trên web: tiến độ vùng, nhân viên, phiếu; trạng thái từng vùng.</figcaption></figure><figure class="fig"><img src="anh-minh-hoa/vung-web-theo-nhan-vien.png" alt="Tab Theo nhân viên: chưa kiểm, đang kiểm, chờ nhân viên xác nhận, đã xác nhận." loading="lazy"><figcaption>Tab Theo nhân viên: chưa kiểm, đang kiểm, chờ nhân viên xác nhận, đã xác nhận.</figcaption></figure><figure class="fig"><img src="anh-minh-hoa/vung-web-phieu.png" alt="Tab Phiếu xác nhận: phiếu vùng theo người quản lý nhóm và phiếu nhân viên." loading="lazy"><figcaption>Tab Phiếu xác nhận: phiếu vùng theo người quản lý nhóm và phiếu nhân viên.</figcaption></figure>
+    <figure class="fig"><img src="anh-minh-hoa/vung-web-chi-tiet-dot.png" alt="Chi tiết đợt trên web: tiến độ vùng, nhân viên, phiếu; trạng thái từng vùng." loading="lazy"><figcaption>Chi tiết đợt trên web: tiến độ vùng, nhân viên, phiếu; trạng thái từng vùng.</figcaption></figure><figure class="fig"><img src="anh-minh-hoa/vung-web-theo-nhan-vien.png" alt="Tab Theo nhân viên: chưa kiểm, đang kiểm, chờ nhân viên xác nhận, đã xác nhận." loading="lazy"><figcaption>Tab Theo nhân viên: chưa kiểm, đang kiểm, chờ nhân viên xác nhận, đã xác nhận.</figcaption></figure><figure class="fig"><img src="anh-minh-hoa/vung-web-phieu.png" alt="Tab Phiếu xác nhận: phiếu vùng theo nhân viên chuyên môn và phiếu nhân viên." loading="lazy"><figcaption>Tab Phiếu xác nhận: phiếu vùng theo người quản lý nhóm và phiếu nhân viên.</figcaption></figure>
   </div></div>
 </div>
 
@@ -234,8 +235,8 @@ a{color:var(--accent)}
 <h3>Ba cảnh báo khi thêm món</h3>
 <div class="tbl"><table>
   <tr><th style="width:24%">Trường hợp</th><th>Câu hỏi hiện ra</th><th>Nếu vẫn thêm</th></tr>
-  <tr><td><b>Món là đồ riêng</b></td><td>"Đây là đồ riêng của [tên nhân viên]. Có thêm vào vùng này không?"</td><td>Món vẫn nằm trong phần kiểm của nhân viên đó, đồng thời có mặt ở vùng. Vào phiếu của người quản lý nhóm.</td></tr>
-  <tr><td><b>Món thuộc công ty khác</b></td><td>"Món này thuộc công ty [mã]. Có thêm vào vùng này không?"</td><td>Lưu vết. Phiếu đi theo <a class="ask-tag" href="#cau-3">❓ câu 3</a>.</td></tr>
+  <tr><td><b>Món là đồ riêng</b></td><td>"Đây là đồ riêng của [tên nhân viên]. Có thêm vào vùng này không?"</td><td>Món vẫn nằm trong phần kiểm của nhân viên đó, đồng thời có mặt ở vùng. Vào phiếu của nhân viên chuyên môn.</td></tr>
+  <tr><td><b>Món thuộc công ty khác</b></td><td>"Món này thuộc công ty [mã]. Có thêm vào vùng này không?"</td><td>Lưu vết. Phiếu cho nhân viên chuyên môn nhóm món đó <a class="done-tag" href="#cau-3">✔ chốt 3</a>.</td></tr>
   <tr><td><b>Món đã được thêm ở vùng khác</b> trong cùng đợt</td><td>"Món này đang được kiểm ở vùng [tên vùng]. Có thêm vào đây không?"</td><td>Lưu vết, món nằm ở hai phiếu. Gần như không xảy ra vì mỗi vùng chỉ một người kiểm. Sau đợt món gắn với vùng chốt sau cùng.</td></tr>
 </table></div>
 <h3>Ghi tình trạng từng món</h3>
@@ -247,17 +248,17 @@ a{color:var(--accent)}
   <tr><td><b>Không thấy</b></td><td>Đồ riêng</td><td>Ghi chú lý do (ví dụ nhân viên nói để ở nhà). Món ở vùng không có "Không thấy": không thấy thì không thêm.</td></tr>
   <tr><td><b>Ghi chú</b></td><td>Mọi món</td><td>Tuỳ chọn.</td></tr>
 </table></div>
-<p class="note" style="margin-top:8px">Tình trạng chỉ để báo cáo, không sửa hồ sơ tài sản <a class="ask-tag" href="#cau-6">❓ câu 6</a>. Mã không có trên hệ thì không thêm được, hiện "Không tìm thấy mã". Lưu vết gồm: mã món, vùng, người thêm, thời điểm, loại cảnh báo, nội dung cảnh báo lúc đó (tên nhân viên, công ty, vùng kia).</p>
+<p class="note" style="margin-top:8px">Có ghi tình trạng, chỉ nằm trên báo cáo kiểm kê, không sửa hồ sơ tài sản <a class="done-tag" href="#cau-6">✔ chốt 6</a>. Mã không có trên hệ thì không thêm được, hiện "Không tìm thấy mã". Lưu vết gồm: mã món, vùng, người thêm, thời điểm, loại cảnh báo, nội dung cảnh báo lúc đó (tên nhân viên, công ty, vùng kia).</p>
 
 <!-- 5 -->
 <h2><span class="n">05</span>Phiếu xác nhận</h2>
 <div class="tbl"><table>
   <tr><th style="width:24%">Loại phiếu</th><th>Sinh khi nào</th><th>Gửi cho ai</th><th>Gồm những món nào</th></tr>
   <tr><td><b>Phiếu nhân viên</b></td><td>Người đi kiểm bấm "Xong, gửi phiếu" cho phần của nhân viên</td><td>Chính nhân viên đó</td><td>Đồ riêng của nhân viên trong công ty của đợt</td></tr>
-  <tr><td><b>Phiếu vùng</b></td><td>Người kiểm chốt vùng</td><td>Người quản lý chính của nhóm CCDC <a class="ask-tag" href="#cau-2">❓ câu 2</a></td><td>Các món đã thêm vào vùng, thuộc nhóm người đó quản lý (tính theo cây nhóm)</td></tr>
+  <tr><td><b>Phiếu vùng</b></td><td>Người kiểm chốt vùng</td><td>Nhân viên chuyên môn của nhóm CCDC <a class="done-tag" href="#cau-2">✔ chốt 2</a></td><td>Các món đã thêm vào vùng, thuộc nhóm người đó phụ trách (tính theo cây nhóm). Chỉ có nút Xác nhận.</td></tr>
   <tr><td><b>Vùng trống</b></td><td>Người kiểm chốt vùng không có món</td><td>Không sinh phiếu</td><td>Chỉ ghi vùng đã chốt, ai chốt, lúc nào</td></tr>
 </table></div>
-<p class="note" style="margin-top:8px">Ước số phiếu vùng mỗi đợt nếu đồ vẫn ở vùng như hiện nay: VN01 khoảng 81 phiếu cho 55 vùng có đồ, VN02 khoảng 44 phiếu cho 25 vùng (1–3 phiếu mỗi vùng). Đếm theo người quản lý nhóm, kể cả nhóm chưa có người quản lý.</p>
+<p class="note" style="margin-top:8px">Ước số phiếu vùng mỗi đợt nếu đồ vẫn ở vùng như hiện nay: VN01 khoảng 81 phiếu cho 55 vùng có đồ, VN02 khoảng 44 phiếu cho 25 vùng (1–3 phiếu mỗi vùng). Đếm theo nhân viên chuyên môn, kể cả nhóm chưa có người.</p>
 
 <!-- 6 -->
 <h2><span class="n">06</span>Màn web và báo cáo</h2>
@@ -269,7 +270,7 @@ a{color:var(--accent)}
   <tr><td><b>Báo cáo "Món thêm có cảnh báo"</b></td><td>Lọc theo loại: đồ riêng, khác công ty, ở hai vùng. Có người thêm và thời điểm.</td></tr>
   <tr><td><b>Báo cáo "Món chung chưa gắn vùng"</b></td><td>Món Chung mà hết đợt không ai thêm vào vùng nào. Đây là chỗ duy nhất phát hiện đồ thất lạc, vì kiểm vùng không so với sổ.</td></tr>
   <tr><td><b>Báo cáo "Tình trạng ghi nhận"</b></td><td>Món hỏng (có ảnh), không thấy, cần in lại tem, tốt không dùng, chờ thanh lý; kiểm ở đâu, ai kiểm, ghi chú.</td></tr>
-  <tr><td><b>Phiếu duyệt của tôi</b></td><td>Phiếu đang chờ mình xác nhận (người quản lý nhóm, nhân viên).</td></tr>
+  <tr><td><b>Phiếu duyệt của tôi</b></td><td>Phiếu đang chờ mình xác nhận (nhân viên chuyên môn, nhân viên có đồ riêng).</td></tr>
 </table></div>
 <figure class="fig"><img src="anh-minh-hoa/vung-bc-tinh-trang.png" alt="Báo cáo Tình trạng ghi nhận: món hỏng có ảnh, cần in lại tem, không thấy, kèm ghi chú." loading="lazy"><figcaption>Báo cáo Tình trạng ghi nhận: món hỏng có ảnh, cần in lại tem, không thấy, kèm ghi chú.</figcaption></figure><figure class="fig"><img src="anh-minh-hoa/vung-bc-canh-bao.png" alt="Báo cáo Món thêm có cảnh báo: loại cảnh báo, nội dung lúc thêm, người thêm, thời điểm." loading="lazy"><figcaption>Báo cáo Món thêm có cảnh báo: loại cảnh báo, nội dung lúc thêm, người thêm, thời điểm.</figcaption></figure><figure class="fig"><img src="anh-minh-hoa/vung-bc-chung-chua-gan.png" alt="Báo cáo Món chung chưa gắn vùng: chỗ phát hiện đồ chung thất lạc." loading="lazy"><figcaption>Báo cáo Món chung chưa gắn vùng: chỗ phát hiện đồ chung thất lạc.</figcaption></figure>
 
@@ -284,25 +285,25 @@ a{color:var(--accent)}
 <div class="tbl" style="margin-top:12px"><table>
   <tr><th>Chỉ số</th><th class="num">Số</th><th>Ghi chú</th></tr>
   <tr><td>Món VN01 ở 18 vùng chưa có công ty</td><td class="num">380</td><td>Gán 18 vùng cho VN01 lúc tạo bảng vùng mới là hết.</td></tr>
-  <tr><td>Món VN01 ở vùng của VN02</td><td class="num">198</td><td>Sẽ hiện cảnh báo "khác công ty" khi kiểm vùng VN02. <a class="ask-tag" href="#cau-3">❓ câu 3</a></td></tr>
+  <tr><td>Món VN01 ở vùng của VN02</td><td class="num">198</td><td>Hiện cảnh báo "khác công ty" khi kiểm vùng VN02; phiếu cho nhân viên chuyên môn nhóm món đó. <a class="done-tag" href="#cau-3">✔ chốt 3</a></td></tr>
   <tr><td>Món VN02 ở vùng của VN01</td><td class="num">15</td><td>Như trên, chiều ngược lại.</td></tr>
-  <tr><td>Dòng người quản lý nhóm còn hiệu lực</td><td class="num">4</td><td>VN01 đủ 3 nhóm gốc NTS-01, NTS-02, NTS-03. VN02 chỉ NTS-03.</td></tr>
-  <tr><td>Món chưa tìm được người quản lý nhóm</td><td class="num">494</td><td>Đều là VN02, nhóm NTS-01 và NTS-02.</td></tr>
-  <tr><td>Cột "người quản lý" trên từng tài sản</td><td class="num">3 người</td><td>Có giá trị ở cả 3.557 món, nhưng chỉ 90 món trùng người quản lý nhóm. <a class="ask-tag" href="#cau-2">❓ câu 2</a></td></tr>
+  <tr><td>Dòng nhân viên chuyên môn còn hiệu lực</td><td class="num">4</td><td>VN01 đủ 3 nhóm gốc NTS-01, NTS-02, NTS-03. VN02 chỉ NTS-03.</td></tr>
+  <tr><td>Món chưa có nhân viên chuyên môn</td><td class="num">494</td><td>Đều là VN02, nhóm NTS-01 và NTS-02. Phải bổ sung trước đợt đầu.</td></tr>
+  <tr><td>Cột "người quản lý" trên từng tài sản</td><td class="num">3 người</td><td>Không dùng cho kiểm kê. Có giá trị ở cả 3.557 món, chỉ 90 món trùng nhân viên chuyên môn. <a class="done-tag" href="#cau-2">✔ chốt 2</a></td></tr>
   <tr><td>Đồ đứng tên người đã nghỉ / tạm nghỉ</td><td class="num">140 / 7</td><td>Phải làm sạch trước đợt đầu.</td></tr>
 </table></div>
 
 <!-- 8 -->
-<h2 id="cau-hoi"><span class="n">08</span>Câu hỏi còn mở</h2>
-<p>Anh Đạt đã duyệt luồng. Đây là các điểm chi tiết luồng chưa nói tới, mỗi câu có đề xuất sẵn: anh Đạt đồng ý hoặc sửa, rồi mới thiết kế DB và API.</p>
+<h2 id="cau-hoi"><span class="n">08</span>Các điểm đã chốt</h2>
+<p>Anh Đạt đã duyệt luồng và chốt 6 điểm chi tiết dưới đây (20/11/2026). Màn minh hoạ làm đúng theo các điểm này.</p>
 <div class="tbl"><table>
-  <tr><th style="width:5%">#</th><th style="width:30%">Câu hỏi</th><th>Vì sao phải hỏi</th><th style="width:30%">Đề xuất</th></tr>
-  <tr id="cau-1"><td>1</td><td><b>Gắn vùng ghi vào đâu?</b> Chỉ ghi vào dữ liệu kiểm kê, hay cập nhật luôn vùng trên hồ sơ tài sản?</td><td>Buổi 16/11 đã chốt "kiểm kê không sửa tài sản". Luồng nói "món thêm vào vùng nào thì gắn với vùng đó", tức là có sửa vùng.</td><td>Cập nhật vùng trên hồ sơ tài sản <b>khi người quản lý xác nhận phiếu</b>, ghi lịch sử là "kiểm kê đợt X". Không đổi người giữ, tình trạng.</td></tr>
-  <tr id="cau-2"><td>2</td><td><b>Phiếu vùng gửi theo trường nào?</b></td><td>Có hai nơi ghi "người quản lý": bảng người quản lý nhóm (V5 dùng cho bước Chuyên môn của phiếu điều chuyển, leo cây nhóm tới nhóm gần nhất có người) và cột "người quản lý" trên từng tài sản (V4 dùng cột này để chọn người duyệt kiểm kê; hiện 3 người, chỉ khớp 90 món). VN02 thiếu người quản lý nhóm NTS-01, NTS-02.</td><td>Theo <b>bảng người quản lý nhóm</b>, giống quy trình điều chuyển. Bổ sung người quản lý VN02 cho NTS-01, NTS-02 trước đợt đầu.</td></tr>
-  <tr id="cau-3"><td>3</td><td><b>Món khác công ty được thêm vào vùng: phiếu cho ai, tính vào đợt nào?</b></td><td>198 món VN01 đang ở vùng VN02. Đợt VN01 không có vùng VN02 nên không ai kiểm chúng trong đợt VN01.</td><td>Phiếu cho người quản lý nhóm <b>của công ty của món</b>. Báo cáo "Món chung chưa gắn vùng" coi món đã được gắn nếu được thêm ở đợt bất kỳ đang mở.</td></tr>
-  <tr id="cau-4"><td>4</td><td><b>Người quản lý không đồng ý một món trong phiếu thì sao?</b></td><td>Ví dụ món không thuộc nhóm mình, hoặc đã báo hỏng.</td><td>Bỏ tích món đó, ghi lý do, xác nhận phần còn lại. Món bị bỏ quay về "chưa gắn vùng" và lên báo cáo.</td></tr>
-  <tr id="cau-5"><td>5</td><td><b>Khi nào đóng đợt?</b></td><td>Có ba thứ có thể còn dở: vùng chưa chốt, nhân viên chưa xác nhận, phiếu chưa duyệt.</td><td>Hành chính bấm đóng. Hệ hiện số còn dở trước khi đóng, vẫn cho đóng. Báo cáo giữ nguyên các mục dở.</td></tr>
-  <tr id="cau-6"><td>6</td><td><b>Lúc kiểm có ghi tình trạng (tốt / hỏng) không?</b></td><td>Luồng chưa nhắc. V4 có ghi tình trạng quan sát nhưng không sửa tài sản.</td><td>Ghi như màn minh hoạ (mục 04): tình trạng, Hỏng bắt buộc ảnh, in lại tem, ghi chú. Chỉ để báo cáo; đổi tình trạng thật vẫn qua phiếu điều chuyển.</td></tr>
+  <tr><th style="width:5%">#</th><th style="width:34%">Điểm</th><th>Đã chốt</th></tr>
+  <tr id="cau-1"><td>1</td><td><b>Kiểm kê có sửa hồ sơ tài sản không?</b></td><td><b>Không.</b> Xác nhận phiếu không tự cập nhật bảng tài sản. Vùng gắn lúc kiểm, tình trạng, ảnh, tem chỉ nằm trên báo cáo kiểm kê. Đổi vùng, người giữ, tình trạng thật vẫn qua phiếu điều chuyển.</td></tr>
+  <tr id="cau-2"><td>2</td><td><b>Phiếu vùng gửi cho ai?</b></td><td><b>Nhân viên chuyên môn</b> của nhóm CCDC, chính là người quản lý nhóm (bảng dùng cho bước Chuyên môn của phiếu điều chuyển, leo cây nhóm tới nhóm gần nhất có người). Không dùng cột "người quản lý" trên từng tài sản. Dữ liệu cần bổ sung: VN02 chưa có nhân viên chuyên môn cho NTS-01, NTS-02 (494 món).</td></tr>
+  <tr id="cau-3"><td>3</td><td><b>Món của công ty khác được thêm vào vùng</b></td><td>Vẫn gửi <b>nhân viên chuyên môn</b> của nhóm món đó. Cảnh báo và lưu vết như mục 04.</td></tr>
+  <tr id="cau-4"><td>4</td><td><b>Nhân viên chuyên môn không đồng ý một món?</b></td><td><b>Không có trường hợp này.</b> Phiếu vùng chỉ có nút Xác nhận. (Phiếu đồ riêng: nhân viên vẫn bỏ tích được kết quả sai, kèm lý do.)</td></tr>
+  <tr id="cau-5"><td>5</td><td><b>Đóng đợt khi chưa xong</b></td><td>Hành chính bấm đóng: nếu còn vùng chưa chốt, nhân viên chưa xác nhận hoặc phiếu chưa xác nhận thì <b>hiện cảnh báo</b> kèm số còn dở. Hành chính đồng ý thì đóng; các mục dở giữ nguyên trên báo cáo.</td></tr>
+  <tr id="cau-6"><td>6</td><td><b>Có ghi tình trạng không?</b></td><td><b>Có.</b> Tốt đang dùng, Tốt không dùng, Chờ thanh lý, Hỏng (bắt buộc ảnh); in lại tem; ghi chú. Chỉ nằm trên báo cáo kiểm kê.</td></tr>
 </table></div>
 
 <!-- 9 -->
