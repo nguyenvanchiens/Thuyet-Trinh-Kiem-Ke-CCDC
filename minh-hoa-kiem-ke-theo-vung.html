@@ -267,7 +267,7 @@ const TS0 = [
   ['TSHN0019', 'Bàn làm việc 1m2', 'NTS-03', 'VN02', 'chung', '', 'T8A'],
   ['TSHN0020', 'Máy in Canon', 'NTS-02', 'VN02', 'chung', '', 'T8A'],
   ['TSHN0021', 'Tủ lạnh mini', 'NTS-01', 'VN02', 'chung', '', 'KHO_MN'],
-  ['TSHN0022', 'Ghế phòng chờ', 'NTS-03', 'VN02', '', '', 'T8A'],
+  ['TSHN0022', 'Ghế phòng chờ', 'NTS-03', 'VN02', 'chung', '', 'T8A'],
   ['TSHN0023', 'Máy lọc nước', 'NTS-01', 'VN02', 'chung', '', 'T4_HOP'],
   ['TSHN0024', 'Màn hình LG 27"', 'NTS-02', 'VN01', 'chung', '', 'T8A'],
 ];
@@ -333,26 +333,37 @@ function ve() {
 function di(view, extra) { Object.assign(S, extra || {}, { view }); ve(); window.scrollTo(0, 0); }
 
 // ---------------- Công cụ dụng cụ ----------------
+const dotMo = () => S.dots.filter(d => d.mo);
+const dotKhoa = () => dotMo()[0];
+const tenDotMo = () => dotMo().map(d => d.id + ' (' + d.cty + ')').join(', ');
+const KHOA_TXT = 'toàn bộ tài sản của mọi công ty: thêm, sửa, xoá (kể cả Chung / Riêng) và điều chuyển nội bộ, liên công ty (lập, trình, duyệt, từ chối, huỷ phiếu)';
+function chanKhoa(ds, viec) {
+  if (!dotMo().length) return false;
+  dlg('Đang kiểm kê, tạm khoá', `<div class="alert bad"><b>Đang có đợt kiểm kê mở: ${tenDotMo()}.</b></div><p>Chỉ cần có một đợt đang mở là hệ thống khoá ${KHOA_TXT}. Không ${viec} được. Đóng hết các đợt thì mở khoá.</p>`, '<button class="btn primary" data-act="dong-dlg">Đã hiểu</button>');
+  return true;
+}
 function veCcdc() {
   const c = S.ccdc;
   const ds = Object.values(S.TS).filter(t => (!c.cty || t.cty === c.cty) && (c.loai === '' || (c.loai === 'chua' ? !t.loai : t.loai === c.loai)));
   const chua = Object.values(S.TS).filter(t => !t.loai);
   return `<div class="crumb">Tài sản › Công cụ dụng cụ</div>
   <div class="head"><h1>Công cụ dụng cụ</h1>
-    <div class="acts"><span class="lbl" style="align-self:center">Đã chọn ${c.chon.size} món</span>
+    <div class="acts"><button class="btn sm" data-act="ts-them">+ Thêm tài sản</button><button class="btn sm" data-act="ts-dieu-chuyen" ${c.chon.size ? '' : 'disabled'}>Lập phiếu điều chuyển</button><span class="lbl" style="align-self:center">Đã chọn ${c.chon.size} món</span>
       <button class="btn sm" data-act="dat-loai" data-loai="chung" ${c.chon.size ? '' : 'disabled'}>Đặt là Chung</button>
       <button class="btn sm" data-act="dat-loai" data-loai="rieng" ${c.chon.size ? '' : 'disabled'}>Đặt là Riêng</button></div></div>
+  ${dotMo().length ? `<div class="alert bad"><b>Đang kiểm kê ${tenDotMo()}:</b> khoá ${KHOA_TXT} tới khi đóng hết đợt.</div>` : ''}
   ${chua.length ? `<div class="alert warn">Còn <b>${chua.length}</b> món chưa phân loại Chung / Riêng (${[...new Set(chua.map(t => t.cty))].join(', ')}). Công ty còn món chưa phân loại thì chưa tạo được đợt kiểm kê. <button class="link" data-act="loc-chua">Lọc ra</button></div>` : '<div class="alert ok">Mọi món đã phân loại Chung / Riêng.</div>'}
   <div class="card"><div class="filters">
     <div class="f"><span class="lbl">Công ty</span><select class="input" data-ccdc="cty"><option value="">Tất cả</option>${Object.keys(CTY).map(k => `<option ${c.cty === k ? 'selected' : ''}>${k}</option>`).join('')}</select></div>
     <div class="f"><span class="lbl">Chung / Riêng</span><select class="input" data-ccdc="loai">${[['', 'Tất cả'], ['chung', 'Chung'], ['rieng', 'Riêng'], ['chua', 'Chưa phân loại']].map(([v, t]) => `<option value="${v}" ${c.loai === v ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
   </div>
   <div class="tblwrap"><table><thead><tr><th><input type="checkbox" data-act="chon-het" aria-label="Chọn tất cả"></th><th>Mã</th><th>Tên</th><th>Nhóm</th><th>Công ty</th><th>Chung / Riêng</th><th>Người giữ</th><th>Vùng</th></tr></thead><tbody>
-  ${ds.map(t => `<tr><td><input type="checkbox" data-chon="${t.ma}" ${c.chon.has(t.ma) ? 'checked' : ''} aria-label="Chọn ${t.ma}"></td><td class="mono">${t.ma}</td><td>${t.ten}</td><td class="mono">${t.nhom}</td><td>${t.cty}</td><td>${LOAI[t.loai]}</td><td>${t.giu ? ten(t.giu) : '—'}</td><td>${t.vung ? VUNG[t.vung].ten : '—'}</td></tr>`).join('') || '<tr><td colspan="8" class="lbl">Không có món nào.</td></tr>'}
+  ${ds.map(t => `<tr><td><input type="checkbox" data-chon="${t.ma}" ${c.chon.has(t.ma) ? 'checked' : ''} aria-label="Chọn ${t.ma}"></td><td class="mono">${t.ma}</td><td>${t.ten}</td><td class="mono">${t.nhom}</td><td>${t.cty}${dotKhoa() ? ' <span class="pill p-bad">Khoá</span>' : ''}</td><td>${LOAI[t.loai]}</td><td>${t.giu ? ten(t.giu) : '—'}</td><td>${t.vung ? VUNG[t.vung].ten : '—'}</td></tr>`).join('') || '<tr><td colspan="8" class="lbl">Không có món nào.</td></tr>'}
   </tbody></table></div><div class="foot">${ds.length} món · Đồ riêng phải có người giữ. Kiểm kê không sửa cột nào trên hồ sơ tài sản: kết quả chỉ nằm trên báo cáo kiểm kê.</div></div>`;
 }
 function datLoai(loai) {
   const ds = [...S.ccdc.chon].map(ma => S.TS[ma]);
+  if (chanKhoa(ds, 'đổi Chung / Riêng')) return;
   if (loai === 'rieng') { const k = ds.filter(t => !t.giu); if (k.length) return toast('Không đặt Riêng được: ' + k.map(t => t.ma).join(', ') + ' chưa có người giữ.'); }
   ds.forEach(t => t.loai = loai); S.ccdc.chon.clear(); toast(`Đã đặt ${ds.length} món là ${loai === 'chung' ? 'Chung' : 'Riêng'}.`); ve();
 }
@@ -384,7 +395,7 @@ function xemTaoDot() {
   const trung = S.dots.find(d => d.mo && d.cty === cty);
   $('tdXem').innerHTML = (chua.length ? `<div class="alert bad">Còn ${chua.length} món ${cty} chưa phân loại Chung / Riêng (${chua.map(t => t.ma).join(', ')}). Phân loại xong mới tạo được đợt.</div>` : '')
     + (trung ? `<div class="alert bad">${cty} đang có đợt ${trung.id} chưa đóng.</div>` : '')
-    + `<div class="alert info">Đợt sẽ tự lấy <b>${zs.length} vùng</b> của ${cty} (kể cả kho): ${zs.map(z => VUNG[z].ten).join(', ')}.<br>Và <b>${nvs.length} nhân viên có đồ riêng</b>: ${nvs.map(ten).join(', ') || '—'}.</div>`;
+    + `<div class="alert info">Đợt sẽ tự lấy <b>${zs.length} vùng</b> của ${cty} (kể cả kho): ${zs.map(z => VUNG[z].ten).join(', ')}.<br>Và <b>${nvs.length} nhân viên có đồ riêng</b>: ${nvs.map(ten).join(', ') || '—'}.</div><div class="alert warn">Mở đợt sẽ <b>khoá</b> ${KHOA_TXT} tới khi đóng hết đợt.</div>`;
   $('tdOk').disabled = !!(chua.length || trung);
 }
 function taoDot() {
@@ -424,8 +435,8 @@ function veChiTiet() {
 }
 function dongDot() {
   const d = dotById(S.dot), t = tienDo(d), con = (t.vTong - t.vChot) + (t.nTong - t.nXn) + (t.pTong - t.pXn);
-  dlg('Đóng đợt ' + d.id, con ? `<div class="alert bad"><b>Đợt chưa xong.</b> Đóng bây giờ thì các mục dưới đây giữ nguyên trạng thái dở trên báo cáo, không kiểm thêm được nữa.</div><ul><li>${t.vTong - t.vChot} vùng chưa chốt</li><li>${t.nTong - t.nXn} nhân viên chưa xác nhận đồ riêng</li><li>${t.pTong - t.pXn} phiếu chưa xác nhận</li></ul><p>Bạn có chắc muốn đóng đợt?</p>`
-    : '<div class="alert ok">Đã chốt đủ vùng, đủ nhân viên xác nhận, đủ phiếu.</div><p>Đóng đợt?</p>',
+  dlg('Đóng đợt ' + d.id, con ? `<div class="alert bad"><b>Đợt chưa xong.</b> Đóng bây giờ thì các mục dưới đây giữ nguyên trạng thái dở trên báo cáo, không kiểm thêm được nữa.</div><ul><li>${t.vTong - t.vChot} vùng chưa chốt</li><li>${t.nTong - t.nXn} nhân viên chưa xác nhận đồ riêng</li><li>${t.pTong - t.pXn} phiếu chưa xác nhận</li></ul><p>${dotMo().length > 1 ? 'Còn đợt khác đang mở nên tài sản vẫn khoá.' : 'Đóng đợt sẽ mở khoá tài sản và điều chuyển.'} Bạn có chắc muốn đóng đợt?</p>`
+    : `<div class="alert ok">Đã chốt đủ vùng, đủ nhân viên xác nhận, đủ phiếu.</div><p>${dotMo().length > 1 ? 'Còn đợt khác đang mở nên tài sản vẫn khoá.' : 'Đóng đợt sẽ mở khoá tài sản và điều chuyển.'} Đóng đợt?</p>`,
     `<button class="btn" data-act="dong-dlg">Huỷ</button><button class="btn danger" data-act="dong-dot-ok">${con ? 'Vẫn đóng đợt' : 'Đóng đợt'}</button>`);
 }
 
@@ -799,13 +810,15 @@ document.addEventListener('click', e => {
     case 'dong-dlg': return dongDlg();
     case 'loc-chua': S.ccdc.loai = 'chua'; S.ccdc.cty = ''; return ve();
     case 'dat-loai': return datLoai(ds.loai);
+    case 'ts-them': if (chanKhoa([], 'thêm tài sản')) return; return dlg('Thêm tài sản', '<p>Bản minh hoạ không làm form thêm tài sản.</p>', '<button class="btn primary" data-act="dong-dlg">Đóng</button>');
+    case 'ts-dieu-chuyen': { const sel = [...S.ccdc.chon].map(ma => S.TS[ma]); if (chanKhoa(sel, 'lập phiếu điều chuyển')) return; return toast('Bản minh hoạ không làm form điều chuyển.'); }
     case 'chon-het': { const all = Object.values(S.TS).filter(t => (!S.ccdc.cty || t.cty === S.ccdc.cty) && (S.ccdc.loai === '' || (S.ccdc.loai === 'chua' ? !t.loai : t.loai === S.ccdc.loai))); if (a.checked) all.forEach(t => S.ccdc.chon.add(t.ma)); else S.ccdc.chon.clear(); return ve(); }
     case 'tao-dot': return moTaoDot();
     case 'tao-dot-ok': return taoDot();
     case 'mo-dot': return di('chitiet', { dot: ds.dot, tab: S.view === 'chitiet' || S.view === 'kiemvung' ? S.tab : 'vung' });
     case 'tab': S.tab = ds.tab; return ve();
     case 'dong-dot': return dongDot();
-    case 'dong-dot-ok': dotById(S.dot).mo = false; dongDlg(); toast('Đã đóng đợt ' + S.dot); return ve();
+    case 'dong-dot-ok': dotById(S.dot).mo = false; dongDlg(); toast('Đã đóng đợt ' + S.dot + (dotMo().length ? '. Vẫn khoá vì còn đợt ' + tenDotMo() + '.' : '. Đã mở khoá tài sản.')); return ve();
     case 'bc-dot': S.bc.dot = [S.dot]; S.bc.bcTab = 'tq'; return di('bc');
     case 'kiem-vung': { const v = dotById(S.dot).vung[ds.vung]; return di('kiemvung', { vung: ds.vung }); }
     case 'them': return them($('scan').value);
