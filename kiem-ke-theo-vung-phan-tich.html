@@ -156,7 +156,7 @@ a{color:var(--accent)}
   <tr><td><b>1. Làm sạch dữ liệu</b><br>không còn đồ đứng tên người đã nghỉ</td><td>140 món đứng tên 16 người đã nghỉ, 7 món của 3 người tạm nghỉ. File rà soát gửi riêng (có mã nhân viên).</td><td>Hành chính, lập phiếu điều chuyển</td></tr>
   <tr><td><b>2. Tích Chung / Riêng</b></td><td>3.557 món phải có giá trị (VN01 2.578, VN02 979). Gợi ý: 794 món đang ở người mà không có phòng có thể là đồ riêng (VN01 697 món / 53 người, VN02 97 món / 50 người). Chỉ là gợi ý, hành chính quyết.</td><td>Hành chính trên danh sách CCDC</td></tr>
   <tr><td><b>3. Tạo bảng vùng mới</b><br>vùng nào cũng có công ty, kho là vùng</td><td>Bảng hiện có 80 vùng: VN01 37, VN02 25, <b>18 vùng chưa có công ty</b> (đồ trong đó đều của VN01). Mỗi công ty có 1 kho.</td><td>Hành chính</td></tr>
-  <tr><td><b>4. Nhân viên chuyên môn của nhóm CCDC</b></td><td>Bảng nhân viên chuyên môn (người quản lý nhóm) có 4 dòng còn hiệu lực, đều ở nhóm gốc. <b>VN02 chỉ có người cho nhóm NTS-03</b>, nên 494 món VN02 (nhóm NTS-01, NTS-02) chưa có ai nhận phiếu: phải bổ sung. <a class="done-tag" href="#cau-2">✔ chốt 2</a></td><td>Quản trị danh mục nhóm</td></tr>
+  <tr><td><b>4. Nhân viên chuyên môn của nhóm CCDC</b></td><td><b>Online 21/11 đã đủ</b>: phân công ở 3 nhóm gốc (Thiết bị VP, Phương tiện vận tải, Trang thiết bị CNTT), mọi nhóm con leo lên nhóm gốc để tìm người. VN02 chưa có người riêng cho nhóm Phương tiện vận tải (NTS-02, 37 món): theo luật hiện tại phiếu vùng của các món này sang người VN01 phụ trách nhóm đó. Muốn VN02 tự xác nhận thì thêm một dòng phân công. <a class="done-tag" href="#cau-2">✔ chốt 2</a></td><td>Quản trị danh mục nhóm</td></tr>
 </table></div>
 <figure class="fig"><img src="anh-minh-hoa/vung-ccdc-chung-rieng.png" alt="Danh sách công cụ dụng cụ có cột Chung / Riêng (hành chính đặt, chọn nhiều được). Đang có đợt KK0013 mở nên băng đỏ báo khoá, mọi món kể cả VN02 mang nhãn Khoá." loading="lazy"><figcaption>Danh sách công cụ dụng cụ có cột Chung / Riêng (hành chính đặt, chọn nhiều được). Đang có đợt KK0013 mở nên băng đỏ báo khoá, mọi món kể cả VN02 mang nhãn Khoá.</figcaption></figure>
 
@@ -289,8 +289,8 @@ a{color:var(--accent)}
   <tr><td>Món VN01 ở 18 vùng chưa có công ty</td><td class="num">380</td><td>Gán 18 vùng cho VN01 lúc tạo bảng vùng mới là hết.</td></tr>
   <tr><td>Món VN01 ở vùng của VN02</td><td class="num">198</td><td>Hiện cảnh báo "khác công ty" khi kiểm vùng VN02; phiếu cho nhân viên chuyên môn nhóm món đó. <a class="done-tag" href="#cau-3">✔ chốt 3</a></td></tr>
   <tr><td>Món VN02 ở vùng của VN01</td><td class="num">15</td><td>Như trên, chiều ngược lại.</td></tr>
-  <tr><td>Dòng nhân viên chuyên môn còn hiệu lực</td><td class="num">4</td><td>VN01 đủ 3 nhóm gốc NTS-01, NTS-02, NTS-03. VN02 chỉ NTS-03.</td></tr>
-  <tr><td>Món chưa có nhân viên chuyên môn</td><td class="num">494</td><td>Đều là VN02, nhóm NTS-01 và NTS-02. Phải bổ sung trước đợt đầu.</td></tr>
+  <tr><td>Dòng nhân viên chuyên môn còn hiệu lực (Online 21/11)</td><td class="num">5</td><td>VN01: 3 nhóm gốc. VN02: Thiết bị VP, Trang thiết bị CNTT.</td></tr>
+  <tr><td>Món VN02 nhóm Phương tiện vận tải</td><td class="num">37</td><td>Chưa có người VN02; phiếu sang người VN01 phụ trách nhóm (luật ưu tiên cùng công ty, không có thì lấy công ty khác).</td></tr>
   <tr><td>Cột "người quản lý" trên từng tài sản</td><td class="num">3 người</td><td>Không dùng cho kiểm kê. Có giá trị ở cả 3.557 món, chỉ 90 món trùng nhân viên chuyên môn. <a class="done-tag" href="#cau-2">✔ chốt 2</a></td></tr>
   <tr><td>Đồ đứng tên người đã nghỉ / tạm nghỉ</td><td class="num">140 / 7</td><td>Phải làm sạch trước đợt đầu.</td></tr>
 </table></div>
@@ -301,7 +301,7 @@ a{color:var(--accent)}
 <div class="tbl"><table>
   <tr><th style="width:5%">#</th><th style="width:34%">Điểm</th><th>Đã chốt</th></tr>
   <tr id="cau-1"><td>1</td><td><b>Kiểm kê có sửa hồ sơ tài sản không?</b></td><td><b>Không.</b> Xác nhận phiếu không tự cập nhật bảng tài sản. Vùng gắn lúc kiểm, tình trạng, ảnh, tem chỉ nằm trên báo cáo kiểm kê. Đổi vùng, người giữ, tình trạng thật vẫn qua phiếu điều chuyển.</td></tr>
-  <tr id="cau-2"><td>2</td><td><b>Phiếu vùng gửi cho ai?</b></td><td><b>Nhân viên chuyên môn</b> của nhóm CCDC, chính là người quản lý nhóm (bảng dùng cho bước Chuyên môn của phiếu điều chuyển, leo cây nhóm tới nhóm gần nhất có người). Không dùng cột "người quản lý" trên từng tài sản. Dữ liệu cần bổ sung: VN02 chưa có nhân viên chuyên môn cho NTS-01, NTS-02 (494 món).</td></tr>
+  <tr id="cau-2"><td>2</td><td><b>Phiếu vùng gửi cho ai?</b></td><td><b>Nhân viên chuyên môn</b> của nhóm CCDC, chính là người quản lý nhóm (bảng dùng cho bước Chuyên môn của phiếu điều chuyển, leo cây nhóm tới nhóm gần nhất có người). Không dùng cột "người quản lý" trên từng tài sản. Online đã đủ phân công ở nhóm gốc. VN02 chưa có người riêng cho nhóm Phương tiện vận tải (NTS-02, 37 món): theo luật hiện tại phiếu vùng của các món này sang người VN01 phụ trách nhóm đó. Muốn VN02 tự xác nhận thì thêm một dòng phân công.</td></tr>
   <tr id="cau-3"><td>3</td><td><b>Món của công ty khác được thêm vào vùng</b></td><td>Vẫn gửi <b>nhân viên chuyên môn</b> của nhóm món đó. Cảnh báo và lưu vết như mục 04.</td></tr>
   <tr id="cau-4"><td>4</td><td><b>Nhân viên chuyên môn không đồng ý một món?</b></td><td><b>Không có trường hợp này.</b> Phiếu vùng và phiếu đồ riêng đều chỉ có nút Xác nhận.</td></tr>
   <tr id="cau-5"><td>5</td><td><b>Đóng đợt khi chưa xong</b></td><td>Hành chính bấm đóng: nếu còn vùng chưa chốt, nhân viên chưa xác nhận hoặc phiếu chưa xác nhận thì <b>hiện cảnh báo</b> kèm số còn dở. Hành chính đồng ý thì đóng; các mục dở giữ nguyên trên báo cáo.</td></tr>
