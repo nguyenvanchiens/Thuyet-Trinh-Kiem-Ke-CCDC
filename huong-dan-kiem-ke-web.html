@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hướng dẫn kiểm kê CCDC</title>
+<meta name="description" content="Hướng dẫn sử dụng phần Kiểm kê công cụ dụng cụ trên web: từng menu, từng tab, từng nút, kèm ảnh màn hình có đánh số">
+<style>
+:root{
+  --paper:#eceff1; --sheet:#ffffff; --sheet-2:#f4f6f7; --ink:#1b2125; --muted:#5a666d; --rule:#d5dce0;
+  --accent:#0f766e; --accent-soft:#ddf1ee; --blue:#2c5fb0; --blue-soft:#e4ecf8;
+  --amber:#93600b; --amber-soft:#f6ecd6; --red:#b03a26; --red-soft:#f8e3dd; --mark:#e2462f;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#101416; --sheet:#181e21; --sheet-2:#20282c; --ink:#e4eaed; --muted:#9aa8af; --rule:#2e393e;
+    --accent:#4fc4b4; --accent-soft:#16302d; --blue:#8aaef0; --blue-soft:#1c283f;
+    --amber:#e3b25e; --amber-soft:#33290f; --red:#f08d77; --red-soft:#3a201a; --mark:#ff6b52;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#101416; --sheet:#181e21; --sheet-2:#20282c; --ink:#e4eaed; --muted:#9aa8af; --rule:#2e393e;
+  --accent:#4fc4b4; --accent-soft:#16302d; --blue:#8aaef0; --blue-soft:#1c283f;
+  --amber:#e3b25e; --amber-soft:#33290f; --red:#f08d77; --red-soft:#3a201a; --mark:#ff6b52;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;font-size:16px;line-height:1.6;-webkit-text-size-adjust:100%}
+a{color:var(--blue)}
+.page{max-width:980px;margin:0 auto;padding:24px 16px 72px}
+main{background:var(--sheet);border-radius:14px;padding:32px 40px;box-shadow:0 1px 0 var(--rule)}
+h1{font-size:31px;line-height:1.2;margin:0 0 6px;letter-spacing:-.01em}
+h2{font-size:24px;line-height:1.25;margin:44px 0 12px;padding-top:12px;border-top:3px solid var(--accent);scroll-margin-top:12px}
+h3{font-size:19px;line-height:1.3;margin:28px 0 8px;scroll-margin-top:12px}
+h4{font-size:16px;margin:18px 0 6px}
+p{margin:0 0 12px} ul,ol{margin:0 0 12px;padding-left:24px} li{margin:4px 0}
+.lead{font-size:17.5px;color:var(--muted);margin-bottom:16px}
+.meta{font-size:13.5px;color:var(--muted)}
+b,strong{font-weight:700}
+.ui{font-weight:700;white-space:nowrap;border:1px solid var(--rule);background:var(--sheet-2);border-radius:5px;padding:0 6px;font-size:.94em}
+.st{display:inline-block;font-size:13px;font-weight:700;border-radius:999px;padding:0 9px;border:1.5px solid currentColor;white-space:nowrap;line-height:1.55}
+.st-blue{color:var(--blue)} .st-green{color:var(--accent)} .st-grey{color:var(--muted)} .st-red{color:var(--red)} .st-amber{color:var(--amber)}
+
+/* mục lục */
+.toc{border:1px solid var(--rule);border-radius:12px;background:var(--sheet-2);padding:14px 18px 10px;margin:18px 0 8px}
+.toc h2{border:0;margin:0 0 6px;padding:0;font-size:17px}
+.toc ol{margin:0;padding-left:22px;columns:2;column-gap:32px}
+.toc li{break-inside:avoid;margin:2px 0}
+.toc ol ol{columns:1;padding-left:18px;font-size:14.5px}
+.toc a{text-decoration:none} .toc a:hover{text-decoration:underline}
+
+/* hộp nhấn */
+.note,.warn,.key{border-radius:0 10px 10px 0;padding:10px 14px;margin:14px 0}
+.note{border-left:4px solid var(--blue);background:var(--blue-soft)}
+.warn{border-left:4px solid var(--amber);background:var(--amber-soft)}
+.key{border-left:4px solid var(--red);background:var(--red-soft)}
+.note>:last-child,.warn>:last-child,.key>:last-child{margin-bottom:0}
+.quote{border:1px dashed var(--rule);background:var(--sheet-2);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:15px}
+.quote .qt{font-weight:700;display:block;margin-bottom:2px}
+
+/* bảng */
+.tbl{overflow-x:auto;margin:10px 0 16px;-webkit-overflow-scrolling:touch}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border-bottom:1px solid var(--rule);padding:7px 9px;text-align:left;vertical-align:top}
+th{background:var(--sheet-2);font-weight:700}
+td:first-child{font-weight:600}
+
+/* ảnh màn hình + chú thích đánh số */
+figure.shot{margin:16px 0 6px;break-inside:avoid;page-break-inside:avoid}
+figure.shot img{display:block;width:100%;height:auto;border:1px solid var(--rule);border-radius:8px;background:#fff}
+figure.shot figcaption{font-size:13.5px;color:var(--muted);margin-top:6px}
+ol.callouts{list-style:none;padding:0;margin:8px 0 18px}
+ol.callouts>li{position:relative;padding-left:38px;margin:7px 0}
+ol.callouts>li::before{content:attr(data-n);position:absolute;left:0;top:1px;width:26px;height:26px;border-radius:50%;background:var(--mark);color:#fff;font-weight:800;font-size:14px;line-height:26px;text-align:center}
+.n{display:inline-block;min-width:21px;height:21px;border-radius:50%;background:var(--mark);color:#fff;font-weight:800;font-size:12.5px;line-height:21px;text-align:center;padding:0 4px;vertical-align:1px}
+
+/* vai trò */
+.roles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0 16px}
+.role{border:1px solid var(--rule);border-radius:10px;padding:10px 12px;background:var(--sheet-2)}
+.role b{display:block;margin-bottom:2px}
+.role span{font-size:14.5px;color:var(--muted)}
+
+/* sơ đồ quy trình */
+.procmap{margin:10px 0 18px;border:1px solid var(--rule);border-radius:12px;background:var(--sheet-2);padding:10px;break-inside:avoid}
+.pd{display:block;height:auto;margin:0 auto}
+.pd-desk{width:100%;max-width:900px}
+.pd-mob{display:none;width:100%;max-width:360px}
+@media (max-width:700px){ .pd-desk{display:none} .pd-mob{display:block} }
+.pd text{font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+.pd-box{fill:var(--sheet);stroke:var(--ink);stroke-width:1.2}
+.pd-key{stroke:var(--red);stroke-width:2.4}
+.pd-num{fill:var(--accent)} .pd-numt{fill:#fff;font-weight:800;font-size:14px}
+.pd-title{fill:var(--ink);font-weight:800;font-size:16px}
+.pd-who{fill:var(--accent);font-weight:700;font-size:13px}
+.pd-txt{fill:var(--ink);font-size:14px} .pd-small{font-size:13px}
+.pd-b{font-weight:800}
+.pd-st{font-weight:700;font-size:12.5px}
+.pd-lane{fill:var(--accent-soft);stroke:var(--accent)}
+.pd-lanet{fill:var(--accent);font-weight:800;font-size:13.5px}
+.pd-arrow{fill:none;stroke:var(--muted);stroke-width:1.8}
+.pd-ahead{fill:var(--muted)}
+.pd-note{fill:var(--amber-soft);stroke:var(--amber)}
+
+footer{margin-top:40px;font-size:13.5px;color:var(--muted);border-top:1px solid var(--rule);padding-top:12px}
+
+@media (max-width:700px){
+  .page{padding:0 0 48px}
+  main{border-radius:0;padding:20px 16px}
+  h1{font-size:25px} h2{font-size:21px} h3{font-size:18px}
+  .toc ol{columns:1}
+  table{font-size:13.5px}
+}
+@media print{
+  @page{size:A4;margin:12mm 11mm}
+  :root{--paper:#fff;--sheet:#fff}
+  body{font-size:11pt;line-height:1.45;background:#fff;color:#000;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{max-width:none;padding:0}
+  main{padding:0;box-shadow:none;border-radius:0}
+  h2{break-before:page;margin-top:0}
+  .toc + h2, h2.nobreak{break-before:auto}
+  h2,h3,h4{break-after:avoid}
+  figure.shot,.procmap,.quote,table,ol.callouts>li,.note,.warn,.key{break-inside:avoid}
+  .pd-desk{display:block!important} .pd-mob{display:none!important}
+  a{color:inherit;text-decoration:none}
+  .toc ol{columns:2}
+}
+</style>
+</head>
+<body>
+<div class="page">
+<main>
+
+<h1>Hướng dẫn sử dụng: Kiểm kê CCDC trên web</h1>
+<p class="lead">Tài liệu giới thiệu phần Kiểm kê công cụ dụng cụ (CCDC) trên web, đi lần lượt qua từng menu, từng tab, từng nút: dùng để làm gì, ai nhìn thấy, bấm vào thì chuyện gì xảy ra, và lúc nào nút bị khoá.</p>
+<p class="meta">Áp dụng cho bản sau lượt góp ý 2 (22/11/2026). Mọi mã, tên người, tên vùng, mã tài sản và con số trong ảnh là <b>dữ liệu giả</b> dùng để minh hoạ. Số trong vòng tròn đỏ trên ảnh khớp với danh sách giải thích ngay bên dưới ảnh.</p>
+
+<nav class="toc" aria-label="Mục lục">
+<h2 class="nobreak">Mục lục</h2>
+<ol>
+  <li><a href="#tong-quan">Tổng quan</a>
+    <ol>
+      <li><a href="#hai-cach-kiem">Hai cách kiểm: theo vùng và theo nhân viên</a></li>
+      <li><a href="#chung-rieng-kho">Đồ Chung, đồ Riêng, đồ Kho</a></li>
+      <li><a href="#vai-tro">Ai làm gì</a></li>
+      <li><a href="#quyen-menu">Quyền nào thấy menu nào</a></li>
+    </ol></li>
+  <li><a href="#quy-trinh">Quy trình tổng</a></li>
+  <li><a href="#dot-kiem-ke">Menu Đợt kiểm kê</a>
+    <ol>
+      <li><a href="#ds-dot">Danh sách đợt và bộ lọc</a></li>
+      <li><a href="#tao-dot">Tạo đợt</a></li>
+      <li><a href="#trang-thai-dot">Bốn trạng thái của đợt</a></li>
+      <li><a href="#dot-cho">Đợt Chờ bắt đầu: Sửa, Huỷ, Bắt đầu kiểm</a></li>
+      <li><a href="#chi-tiet-dot">Chi tiết đợt: ô tổng và 3 tab</a></li>
+      <li><a href="#popup-tai-san">Hộp xem tài sản</a></li>
+      <li><a href="#dong-dot">Đóng đợt</a></li>
+      <li><a href="#qua-han">Cảnh báo Quá hạn</a></li>
+    </ol></li>
+  <li><a href="#khoa">Khi đang kiểm kê: tài sản bị khoá</a></li>
+  <li><a href="#bao-cao">Menu Báo cáo kiểm kê</a>
+    <ol>
+      <li><a href="#chon-dot">Chọn đợt</a></li>
+      <li><a href="#bc-5-tab">Năm tab báo cáo</a></li>
+      <li><a href="#xuat-excel">Xuất Excel</a></li>
+    </ol></li>
+  <li><a href="#cua-toi">Menu Kiểm kê của tôi</a>
+    <ol>
+      <li><a href="#phieu-can-xn">Tab Phiếu cần xác nhận</a></li>
+      <li><a href="#dot-co-toi">Tab Các đợt có tôi</a></li>
+    </ol></li>
+  <li><a href="#man-tai-san">Màn tài sản: đánh dấu Chung / Riêng</a></li>
+  <li><a href="#app-mobile">Đi kiểm trên app điện thoại (tóm tắt)</a></li>
+  <li><a href="#hoi-dap">Câu hỏi thường gặp</a></li>
+</ol>
+</nav>
+
+
+<h2 id="tong-quan" class="nobreak">1. Tổng quan</h2>
+<p>Kiểm kê là đối chiếu tài sản ghi trên sổ với tài sản thực tế. Mỗi lần kiểm là một <b>đợt kiểm kê</b> của một công ty. Kiểm kê <b>không sửa dữ liệu tài sản</b>: kết quả nằm trong các phiếu kiểm kê và báo cáo, còn việc sửa tài sản (nếu cần) làm sau khi đóng đợt.</p>
+
+<h3 id="hai-cach-kiem">1.1. Hai cách kiểm: theo vùng và theo nhân viên</h3>
+<div class="tbl"><table>
+<thead><tr><th>Cách kiểm</th><th>Kiểm đồ gì</th><th>Ai đi kiểm</th><th>Kết quả</th></tr></thead>
+<tbody>
+<tr><td>Theo vùng</td><td>Đồ <b>Chung</b> và đồ <b>Kho</b> đang đặt trong một vùng (phòng, tầng, khu vực, kho)</td><td>Người đi kiểm, quét từng tài sản có mặt trong vùng bằng app điện thoại</td><td>Chốt vùng thì hệ thống lập <b>phiếu vùng</b>, chia theo nhân viên chuyên môn quản lý nhóm tài sản</td></tr>
+<tr><td>Theo nhân viên</td><td>Đồ <b>Riêng</b> của từng người</td><td>Người đi kiểm (thường là hành chính), dùng danh sách đồ Riêng hệ thống lập sẵn cho người đó</td><td>Gửi kết quả thì hệ thống lập <b>phiếu cá nhân</b>, người xác nhận là chính người giữ đồ</td></tr>
+</tbody></table></div>
+
+<h3 id="chung-rieng-kho">1.2. Đồ Chung, đồ Riêng, đồ Kho</h3>
+<p>Mỗi tài sản có một <b>Loại sử dụng</b>, quyết định nó được kiểm theo cách nào:</p>
+<div class="tbl"><table>
+<thead><tr><th>Loại</th><th>Nghĩa</th><th>Ai đặt</th><th>Được kiểm ở đâu</th></tr></thead>
+<tbody>
+<tr><td>Riêng</td><td>Đồ một người dùng riêng (máy tính, điện thoại…)</td><td>Hành chính chọn</td><td>Kiểm theo nhân viên</td></tr>
+<tr><td>Chung</td><td>Đồ dùng chung của một vùng (máy in, bàn họp…)</td><td>Hành chính chọn</td><td>Kiểm theo vùng</td></tr>
+<tr><td>Kho</td><td>Tài sản đang nằm trong kho</td><td><b>Hệ thống tự đặt</b> khi tài sản về kho; không chọn tay được</td><td>Kiểm theo vùng (vùng kho)</td></tr>
+</tbody></table></div>
+<p>Cách đánh dấu Chung / Riêng xem ở <a href="#man-tai-san">mục 7</a>.</p>
+
+<h3 id="vai-tro">1.3. Ai làm gì</h3>
+<div class="roles">
+  <div class="role"><b>Hành chính</b><span>Tạo, sửa, huỷ, bắt đầu và đóng đợt. Đánh dấu tài sản Chung / Riêng. Thường cũng là người đi kiểm theo nhân viên.</span></div>
+  <div class="role"><b>Người đi kiểm</b><span>Cầm điện thoại đi kiểm từng vùng hoặc từng nhân viên, quét mã, ghi tình trạng, chụp ảnh.</span></div>
+  <div class="role"><b>Nhân viên chuyên môn</b><span>Người quản lý một nhóm tài sản của công ty. Xác nhận phiếu vùng có tài sản thuộc nhóm mình.</span></div>
+  <div class="role"><b>Nhân viên</b><span>Người giữ đồ Riêng. Xác nhận phiếu cá nhân của chính mình; xem kết quả kiểm phần của mình.</span></div>
+  <div class="role"><b>Quản lý</b><span>Theo dõi tiến độ các đợt, xem báo cáo, xuất Excel.</span></div>
+</div>
+
+<h3 id="quyen-menu">1.4. Quyền nào thấy menu nào</h3>
+<p>Ba menu nằm trong nhóm <span class="ui">Kiểm kê CCDC</span> ở thanh menu bên trái.</p>
+<div class="tbl"><table>
+<thead><tr><th>Menu</th><th>Ai thấy</th><th>Ghi chú</th></tr></thead>
+<tbody>
+<tr><td>Đợt kiểm kê</td><td>Người có quyền <b>Xem kiểm kê</b></td><td>Các nút Tạo đợt, Sửa, Huỷ, Bắt đầu kiểm, Đóng đợt chỉ hiện thêm với người có quyền <b>Hành chính CCDC</b>. Người không có quyền này chỉ xem.</td></tr>
+<tr><td>Báo cáo kiểm kê</td><td>Người có quyền <b>Xem kiểm kê</b></td><td>Chỉ xem và xuất Excel.</td></tr>
+<tr><td>Kiểm kê của tôi</td><td>Mọi người đã đăng nhập</td><td>Mỗi người chỉ thấy phiếu và đợt của chính mình.</td></tr>
+</tbody></table></div>
+<div class="warn"><p><b>Lưu ý khi cấp quyền:</b> hành chính cần <b>cả hai</b> quyền Hành chính CCDC và Xem kiểm kê. Thiếu quyền Xem kiểm kê thì không thấy menu Đợt kiểm kê, nên không có chỗ để tạo hay đóng đợt. Người chỉ có quyền <b>Đi kiểm</b> thì làm việc trên app điện thoại và không thấy menu Đợt kiểm kê trên web.</p></div>
+<p class="meta">Dành cho người cấp quyền: Xem kiểm kê = <code>asset-stocktake/read</code>; Đi kiểm = <code>asset-stocktake-check/read</code>; Hành chính CCDC = <code>v5:asset:ccdc:hanh_chinh:sua</code>.</p>
+
+<h2 id="quy-trinh" class="nobreak">2. Quy trình tổng</h2>
+<p>Một đợt kiểm kê đi qua 6 bước. Bước 2 (viền đỏ) là bước quan trọng nhất: từ lúc bấm <span class="ui">Bắt đầu kiểm</span> tới lúc đóng đợt, <b>toàn bộ tài sản của mọi công ty</b> bị khoá sửa và khoá điều chuyển.</p>
+
+<div class="procmap">
+<svg class="pd pd-desk" viewBox="0 0 902 500" role="img" aria-labelledby="pd-desk-t"><title id="pd-desk-t">Quy trình kiểm kê: tạo đợt, bắt đầu kiểm, đi kiểm trên app, xác nhận phiếu, đóng đợt, xem báo cáo</title><defs><marker id="pd-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="pd-ahead" d="M0,0 L10,5 L0,10 z"/></marker></defs><g><rect class="pd-box" x="12" y="14" width="262" height="176" rx="10"/><circle class="pd-num" cx="32" cy="36" r="13"/><text class="pd-numt" x="32" y="41" text-anchor="middle">1</text><text class="pd-title" x="54" y="42">Tạo đợt</text><text class="pd-who" x="26" y="66">Hành chính · web</text><text class="pd-txt" x="26" y="90">Chọn công ty, tên đợt,</text><text class="pd-txt" x="26" y="108">ngày bắt đầu – kết thúc.</text><text class="pd-txt" x="26" y="126">Chưa khoá tài sản.</text><text class="pd-txt" x="26" y="144">Còn Sửa / Huỷ được.</text><rect x="158.4" y="24" width="105.6" height="22" rx="11" fill="none" stroke="var(--blue)" stroke-width="1.6"/><text class="pd-st" x="211.2" y="39" text-anchor="middle" style="fill:var(--blue)">Chờ bắt đầu</text></g><g><rect class="pd-box pd-key" x="320" y="14" width="262" height="176" rx="10"/><circle class="pd-num" cx="340" cy="36" r="13"/><text class="pd-numt" x="340" y="41" text-anchor="middle">2</text><text class="pd-title" x="362" y="42">Bắt đầu kiểm</text><text class="pd-who" x="334" y="66">Hành chính · web</text><text class="pd-txt" x="334" y="90">Khoá TOÀN BỘ tài sản</text><text class="pd-txt" x="334" y="108">(mọi công ty).</text><text class="pd-txt" x="334" y="126">Chụp danh sách vùng và</text><text class="pd-txt" x="334" y="144">người đang giữ đồ Riêng.</text><rect x="496.8" y="24" width="75.19999999999999" height="22" rx="11" fill="none" stroke="var(--accent)" stroke-width="1.6"/><text class="pd-st" x="534.4" y="39" text-anchor="middle" style="fill:var(--accent)">Đang mở</text></g><g><rect class="pd-box" x="628" y="14" width="262" height="176" rx="10"/><circle class="pd-num" cx="648" cy="36" r="13"/><text class="pd-numt" x="648" y="41" text-anchor="middle">3</text><text class="pd-title" x="670" y="42">Đi kiểm trên app</text><text class="pd-who" x="642" y="66">Người đi kiểm · điện thoại</text><rect class="pd-lane" x="640" y="76" width="238" height="47" rx="7"/><text class="pd-lanet" x="650" y="95">Theo vùng · đồ Chung, Kho</text><text class="pd-txt pd-small" x="650" y="114">Chốt vùng → phiếu vùng</text><rect class="pd-lane" x="640" y="131" width="238" height="47" rx="7"/><text class="pd-lanet" x="650" y="150">Theo nhân viên · đồ Riêng</text><text class="pd-txt pd-small" x="650" y="169">Gửi kết quả → phiếu cá nhân</text></g><g><rect class="pd-box" x="12" y="260" width="262" height="176" rx="10"/><circle class="pd-num" cx="32" cy="282" r="13"/><text class="pd-numt" x="32" y="287" text-anchor="middle">4</text><text class="pd-title" x="54" y="288">Xác nhận phiếu</text><text class="pd-who" x="26" y="312">NV chuyên môn · nhân viên</text><text class="pd-txt" x="26" y="336">Phiếu vùng: NV chuyên môn</text><text class="pd-txt" x="26" y="354">của nhóm tài sản.</text><text class="pd-txt" x="26" y="372">Phiếu cá nhân: chính</text><text class="pd-txt" x="26" y="390">người giữ đồ. Web hoặc app.</text></g><g><rect class="pd-box" x="320" y="260" width="262" height="176" rx="10"/><circle class="pd-num" cx="340" cy="282" r="13"/><text class="pd-numt" x="340" y="287" text-anchor="middle">5</text><text class="pd-title" x="362" y="288">Đóng đợt</text><text class="pd-who" x="334" y="312">Hành chính · web</text><text class="pd-txt" x="334" y="336">Phiếu còn chờ: hệ thống</text><text class="pd-txt" x="334" y="354">TỰ XÁC NHẬN.</text><text class="pd-txt" x="334" y="372">Gỡ khoá tài sản khi</text><text class="pd-txt" x="334" y="390">không còn đợt nào mở.</text><rect x="496.8" y="270" width="75.19999999999999" height="22" rx="11" fill="none" stroke="var(--muted)" stroke-width="1.6"/><text class="pd-st" x="534.4" y="285" text-anchor="middle" style="fill:var(--muted)">Đã đóng</text></g><g><rect class="pd-box" x="628" y="260" width="262" height="176" rx="10"/><circle class="pd-num" cx="648" cy="282" r="13"/><text class="pd-numt" x="648" y="287" text-anchor="middle">6</text><text class="pd-title" x="670" y="288">Xem báo cáo</text><text class="pd-who" x="642" y="312">Quản lý · hành chính</text><text class="pd-txt" x="642" y="336">5 tab: tổng quan, cảnh báo,</text><text class="pd-txt" x="642" y="354">đồ Chung chưa gắn vùng,</text><text class="pd-txt" x="642" y="372">tình trạng, người không</text><text class="pd-txt" x="642" y="390">xác nhận. Xuất Excel.</text></g><path class="pd-arrow" d="M274 102 H316" marker-end="url(#pd-ah)"/><path class="pd-arrow" d="M582 102 H624" marker-end="url(#pd-ah)"/><path class="pd-arrow" d="M759 190 V220 H143 V256" marker-end="url(#pd-ah)"/><path class="pd-arrow" d="M274 348 H316" marker-end="url(#pd-ah)"/><path class="pd-arrow" d="M582 348 H624" marker-end="url(#pd-ah)"/><rect class="pd-note" x="12" y="450" width="878" height="40" rx="8"/><text class="pd-txt" x="24" y="475"><tspan class="pd-b">Nhánh phụ:</tspan> đợt còn Chờ bắt đầu thì Huỷ được → trạng thái <tspan class="pd-b">Đã huỷ</tspan> (không dùng lại; muốn kiểm thì tạo đợt mới).</text></svg>
+<svg class="pd pd-mob" viewBox="0 0 350 1292" role="img" aria-labelledby="pd-mob-t"><title id="pd-mob-t">Quy trình kiểm kê (bản dọc)</title><defs><marker id="pd-ahm" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="pd-ahead" d="M0,0 L10,5 L0,10 z"/></marker></defs><g><rect class="pd-box" x="10" y="10" width="330" height="168" rx="10"/><circle class="pd-num" cx="30" cy="32" r="13"/><text class="pd-numt" x="30" y="37" text-anchor="middle">1</text><text class="pd-title" x="52" y="38">Tạo đợt</text><text class="pd-who" x="24" y="62">Hành chính · web</text><text class="pd-txt" x="24" y="86">Chọn công ty, tên đợt,</text><text class="pd-txt" x="24" y="104">ngày bắt đầu – kết thúc.</text><text class="pd-txt" x="24" y="122">Chưa khoá tài sản.</text><text class="pd-txt" x="24" y="140">Còn Sửa / Huỷ được.</text><rect x="224.4" y="20" width="105.6" height="22" rx="11" fill="none" stroke="var(--blue)" stroke-width="1.6"/><text class="pd-st" x="277.2" y="35" text-anchor="middle" style="fill:var(--blue)">Chờ bắt đầu</text></g><path class="pd-arrow" d="M175 178 V208" marker-end="url(#pd-ahm)"/><g><rect class="pd-box pd-key" x="10" y="212" width="330" height="168" rx="10"/><circle class="pd-num" cx="30" cy="234" r="13"/><text class="pd-numt" x="30" y="239" text-anchor="middle">2</text><text class="pd-title" x="52" y="240">Bắt đầu kiểm</text><text class="pd-who" x="24" y="264">Hành chính · web</text><text class="pd-txt" x="24" y="288">Khoá TOÀN BỘ tài sản</text><text class="pd-txt" x="24" y="306">(mọi công ty).</text><text class="pd-txt" x="24" y="324">Chụp danh sách vùng và</text><text class="pd-txt" x="24" y="342">người đang giữ đồ Riêng.</text><rect x="254.8" y="222" width="75.19999999999999" height="22" rx="11" fill="none" stroke="var(--accent)" stroke-width="1.6"/><text class="pd-st" x="292.4" y="237" text-anchor="middle" style="fill:var(--accent)">Đang mở</text></g><path class="pd-arrow" d="M175 380 V410" marker-end="url(#pd-ahm)"/><g><rect class="pd-box" x="10" y="414" width="330" height="190" rx="10"/><circle class="pd-num" cx="30" cy="436" r="13"/><text class="pd-numt" x="30" y="441" text-anchor="middle">3</text><text class="pd-title" x="52" y="442">Đi kiểm trên app</text><text class="pd-who" x="24" y="466">Người đi kiểm · điện thoại</text><rect class="pd-lane" x="22" y="476" width="306" height="54" rx="7"/><text class="pd-lanet" x="32" y="495">Theo vùng · đồ Chung, Kho</text><text class="pd-txt pd-small" x="32" y="514">Chốt vùng → phiếu vùng</text><rect class="pd-lane" x="22" y="538" width="306" height="54" rx="7"/><text class="pd-lanet" x="32" y="557">Theo nhân viên · đồ Riêng</text><text class="pd-txt pd-small" x="32" y="576">Gửi kết quả → phiếu cá nhân</text></g><path class="pd-arrow" d="M175 604 V634" marker-end="url(#pd-ahm)"/><g><rect class="pd-box" x="10" y="638" width="330" height="168" rx="10"/><circle class="pd-num" cx="30" cy="660" r="13"/><text class="pd-numt" x="30" y="665" text-anchor="middle">4</text><text class="pd-title" x="52" y="666">Xác nhận phiếu</text><text class="pd-who" x="24" y="690">NV chuyên môn · nhân viên</text><text class="pd-txt" x="24" y="714">Phiếu vùng: NV chuyên môn</text><text class="pd-txt" x="24" y="732">của nhóm tài sản.</text><text class="pd-txt" x="24" y="750">Phiếu cá nhân: chính</text><text class="pd-txt" x="24" y="768">người giữ đồ. Web hoặc app.</text></g><path class="pd-arrow" d="M175 806 V836" marker-end="url(#pd-ahm)"/><g><rect class="pd-box" x="10" y="840" width="330" height="168" rx="10"/><circle class="pd-num" cx="30" cy="862" r="13"/><text class="pd-numt" x="30" y="867" text-anchor="middle">5</text><text class="pd-title" x="52" y="868">Đóng đợt</text><text class="pd-who" x="24" y="892">Hành chính · web</text><text class="pd-txt" x="24" y="916">Phiếu còn chờ: hệ thống</text><text class="pd-txt" x="24" y="934">TỰ XÁC NHẬN.</text><text class="pd-txt" x="24" y="952">Gỡ khoá tài sản khi</text><text class="pd-txt" x="24" y="970">không còn đợt nào mở.</text><rect x="254.8" y="850" width="75.19999999999999" height="22" rx="11" fill="none" stroke="var(--muted)" stroke-width="1.6"/><text class="pd-st" x="292.4" y="865" text-anchor="middle" style="fill:var(--muted)">Đã đóng</text></g><path class="pd-arrow" d="M175 1008 V1038" marker-end="url(#pd-ahm)"/><g><rect class="pd-box" x="10" y="1042" width="330" height="168" rx="10"/><circle class="pd-num" cx="30" cy="1064" r="13"/><text class="pd-numt" x="30" y="1069" text-anchor="middle">6</text><text class="pd-title" x="52" y="1070">Xem báo cáo</text><text class="pd-who" x="24" y="1094">Quản lý · hành chính</text><text class="pd-txt" x="24" y="1118">5 tab: tổng quan, cảnh báo,</text><text class="pd-txt" x="24" y="1136">đồ Chung chưa gắn vùng,</text><text class="pd-txt" x="24" y="1154">tình trạng, người không</text><text class="pd-txt" x="24" y="1172">xác nhận. Xuất Excel.</text></g><rect class="pd-note" x="10" y="1222" width="330" height="58" rx="8"/><text class="pd-txt" x="22" y="1245"><tspan class="pd-b">Nhánh phụ:</tspan> đợt còn Chờ bắt đầu thì</text><text class="pd-txt" x="22" y="1265">Huỷ được → <tspan class="pd-b">Đã huỷ</tspan>.</text></svg>
+</div>
+
+<ol>
+  <li><b>Tạo đợt</b> (<a href="#tao-dot">mục 3.2</a>): hành chính chọn công ty, đặt tên, ngày bắt đầu và kết thúc dự kiến. Đợt ở trạng thái <span class="st st-blue">Chờ bắt đầu</span>; tài sản chưa bị khoá; còn sửa hoặc huỷ được.</li>
+  <li><b>Bắt đầu kiểm</b> (<a href="#dot-cho">mục 3.4</a>): đợt chuyển sang <span class="st st-green">Đang mở</span>. Hệ thống khoá tài sản và chụp lại danh sách vùng của công ty, cùng danh sách những người đang giữ đồ Riêng. Hai danh sách này là "việc phải làm" của đợt.</li>
+  <li><b>Đi kiểm trên app điện thoại</b> (<a href="#app-mobile">mục 8</a>): kiểm từng vùng (đồ Chung, đồ Kho) và từng nhân viên (đồ Riêng). Chốt xong một vùng hoặc gửi xong phần một nhân viên thì hệ thống lập phiếu chờ xác nhận.</li>
+  <li><b>Xác nhận phiếu</b> (<a href="#cua-toi">mục 6</a>): nhân viên chuyên môn xác nhận phiếu vùng, nhân viên xác nhận phiếu cá nhân của mình, trên web ở menu Kiểm kê của tôi hoặc trên app.</li>
+  <li><b>Đóng đợt</b> (<a href="#dong-dot">mục 3.7</a>): đợt chuyển sang <span class="st st-grey">Đã đóng</span>. Phiếu nào còn chờ thì <b>hệ thống tự xác nhận</b> thay người được giao, và ghi lại nguồn xác nhận là "Hệ thống". Tài sản được mở khoá khi không còn đợt nào đang mở.</li>
+  <li><b>Xem báo cáo</b> (<a href="#bao-cao">mục 5</a>): tổng quan tiến độ, tài sản thêm vào có cảnh báo, đồ Chung chưa gắn vùng, tình trạng ghi nhận, người không xác nhận; xuất Excel.</li>
+</ol>
+
+
+<h2 id="dot-kiem-ke">3. Menu Đợt kiểm kê</h2>
+<p>Nơi hành chính lập và điều hành các đợt kiểm kê, và nơi quản lý theo dõi tiến độ từng đợt. Menu nằm ở <span class="ui">Kiểm kê CCDC › Đợt kiểm kê</span>.</p>
+
+<h3 id="ds-dot">3.1. Danh sách đợt và bộ lọc</h3>
+<figure class="shot" data-marks="7"><img src="huong-dan-kiem-ke-web/01-ds-dot.png" width="1440" height="860" alt="Màn danh sách đợt kiểm kê với ô tìm, bộ lọc trạng thái và công ty, nút Tạo đợt"><figcaption>Hình 1. Danh sách đợt kiểm kê.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1">Menu <b>Đợt kiểm kê</b> trong nhóm Kiểm kê CCDC.</li>
+  <li data-n="2"><b>Ô tìm</b>: gõ mã hoặc tên đợt; không cần gõ dấu.</li>
+  <li data-n="3">Lọc theo <b>Trạng thái</b>: Chờ bắt đầu, Đang mở, Đã đóng, Đã huỷ.</li>
+  <li data-n="4">Lọc theo <b>Công ty</b>.</li>
+  <li data-n="5">Nút <span class="ui">Tạo đợt</span>: chỉ hiện với hành chính. Xem <a href="#tao-dot">mục 3.2</a>.</li>
+  <li data-n="6">Nhãn <span class="st st-amber">Quá hạn</span>: đợt đang mở đã qua ngày kết thúc dự kiến. Xem <a href="#qua-han">mục 3.8</a>.</li>
+  <li data-n="7">Bấm vào một dòng để mở <b>trang chi tiết đợt</b>. Danh sách không có nút trên từng dòng; mọi thao tác (sửa, huỷ, bắt đầu, đóng) nằm ở trang chi tiết.</li>
+</ol>
+<p>Các cột của bảng:</p>
+<div class="tbl"><table>
+<thead><tr><th>Cột</th><th>Ý nghĩa</th></tr></thead>
+<tbody>
+<tr><td>Mã đợt, Tên đợt, Công ty</td><td>Mã do hệ thống cấp; tên và công ty do hành chính nhập khi tạo đợt.</td></tr>
+<tr><td>Trạng thái</td><td>Một trong bốn trạng thái ở <a href="#trang-thai-dot">mục 3.3</a>, kèm nhãn Quá hạn nếu có.</td></tr>
+<tr><td>Ngày bắt đầu – kết thúc</td><td>Khoảng ngày dự kiến của đợt.</td></tr>
+<tr><td>Mở lúc, Người mở</td><td>Lúc và người bấm Bắt đầu kiểm. Để trống với đợt Chờ bắt đầu và Đã huỷ.</td></tr>
+<tr><td>Đóng lúc, Đóng bởi</td><td>Lúc và người đóng đợt. Với đợt Đã huỷ, hai cột này ghi lúc và người huỷ.</td></tr>
+<tr><td>Đóng khi còn dở</td><td>"Có" nếu đợt bị đóng khi vẫn còn vùng chưa chốt hoặc nhân viên chưa kiểm xong.</td></tr>
+</tbody></table></div>
+
+<h3 id="tao-dot">3.2. Tạo đợt</h3>
+<figure class="shot" data-marks="6"><img src="huong-dan-kiem-ke-web/02-tao-dot.png" width="696" height="472" alt="Hộp Tạo đợt kiểm kê"><figcaption>Hình 2. Hộp Tạo đợt kiểm kê.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1">Câu nhắc: đợt tạo xong ở trạng thái Chờ bắt đầu và <b>chưa khoá tài sản</b>.</li>
+  <li data-n="2"><b>Công ty</b> (bắt buộc). Sau khi tạo, không đổi được công ty của đợt.</li>
+  <li data-n="3"><b>Tên đợt</b> (bắt buộc), ví dụ "Kiểm kê cuối năm 2026".</li>
+  <li data-n="4"><b>Ngày bắt đầu</b> (bắt buộc). Được chọn ngày đã qua.</li>
+  <li data-n="5"><b>Ngày kết thúc</b> (bắt buộc). Không được trước hôm nay và không được trước ngày bắt đầu.</li>
+  <li data-n="6"><span class="ui">Lưu</span>: chỉ bấm được khi đã chọn công ty, có tên đợt và hai ngày hợp lệ. Lưu xong, màn hình chuyển thẳng vào trang chi tiết của đợt mới.</li>
+</ol>
+<p><b>Chặn trùng ngày.</b> Một công ty không được có hai đợt (Chờ bắt đầu hoặc Đang mở) có khoảng ngày chồng lên nhau; hai khoảng chỉ chạm nhau ở ngày đầu hoặc ngày cuối cũng tính là trùng. Đợt đã đóng hoặc đã huỷ không tính. Khi trùng, hệ thống báo:</p>
+<div class="quote">Khoảng ngày trùng với đợt {mã} ({từ} – {đến}) của công ty {mã}. Chọn khoảng ngày khác, hoặc sửa / huỷ đợt đó.</div>
+<p>Nếu công ty đang có một đợt mở, hộp tạo đợt nhắc: <i>"Công ty này đang có đợt kiểm kê mở. Vẫn tạo được đợt mới nếu không trùng ngày, nhưng chỉ Bắt đầu kiểm được sau khi đóng đợt đang mở."</i></p>
+
+<h3 id="trang-thai-dot">3.3. Bốn trạng thái của đợt</h3>
+<div class="tbl"><table>
+<thead><tr><th>Trạng thái</th><th>Nghĩa</th><th>Làm được gì</th></tr></thead>
+<tbody>
+<tr><td><span class="st st-blue">Chờ bắt đầu</span></td><td>Đã tạo, chưa kiểm. Tài sản chưa bị khoá.</td><td>Sửa đợt, Huỷ đợt, Bắt đầu kiểm.</td></tr>
+<tr><td><span class="st st-green">Đang mở</span></td><td>Đang kiểm. Toàn bộ tài sản bị khoá.</td><td>Đi kiểm trên app, xác nhận phiếu, xem tiến độ, Đóng đợt.</td></tr>
+<tr><td><span class="st st-grey">Đã đóng</span></td><td>Kiểm xong. Không mở lại được.</td><td>Chỉ xem và lấy báo cáo.</td></tr>
+<tr><td><span class="st st-red">Đã huỷ</span></td><td>Bỏ đợt khi chưa bắt đầu. Không dùng lại được.</td><td>Không làm gì thêm; muốn kiểm thì tạo đợt mới.</td></tr>
+</tbody></table></div>
+
+<h3 id="dot-cho">3.4. Đợt Chờ bắt đầu: Sửa, Huỷ, Bắt đầu kiểm</h3>
+<figure class="shot" data-marks="5"><img src="huong-dan-kiem-ke-web/03-dot-cho.png" width="1146" height="300" alt="Trang chi tiết đợt ở trạng thái Chờ bắt đầu, có ba nút Sửa đợt, Huỷ đợt, Bắt đầu kiểm"><figcaption>Hình 3. Trang chi tiết của một đợt Chờ bắt đầu.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1">Dòng thông tin: mã đợt, công ty, trạng thái, khoảng ngày dự kiến, lúc lập và người lập.</li>
+  <li data-n="2"><span class="ui">Sửa đợt</span>: sửa tên, ghi chú và hai ngày (cùng luật ngày như lúc tạo). Không đổi được công ty.</li>
+  <li data-n="3"><span class="ui">Huỷ đợt</span>: hỏi lại <i>"Đợt chuyển sang Đã huỷ và không dùng lại được; muốn kiểm thì tạo đợt mới."</i> rồi mới huỷ.</li>
+  <li data-n="4"><span class="ui">Bắt đầu kiểm</span>: mở đợt và khoá tài sản (xem Hình 4).</li>
+  <li data-n="5">Ba tab của đợt còn trống, vì danh sách vùng và nhân viên chỉ được chụp lúc bấm Bắt đầu kiểm.</li>
+</ol>
+<p>Ba nút chỉ hiện với hành chính, và chỉ khi đợt còn Chờ bắt đầu. Nếu người khác vừa bắt đầu hoặc huỷ đợt, hệ thống báo đợt không còn ở trạng thái Chờ bắt đầu và nhắc tải lại trang.</p>
+<figure class="shot" data-marks="0"><img src="huong-dan-kiem-ke-web/04-bat-dau-hop.png" width="476" height="238" alt="Hộp xác nhận Bắt đầu đợt"><figcaption>Hình 4. Hộp xác nhận Bắt đầu kiểm.</figcaption></figure>
+<p>Bấm <span class="ui">Bắt đầu kiểm</span> trong hộp này thì:</p>
+<ul>
+  <li>Đợt chuyển sang <span class="st st-green">Đang mở</span>.</li>
+  <li><b>Toàn bộ tài sản của mọi công ty bị khoá</b> (không thêm, sửa, xoá tài sản, không đặt Chung / Riêng, không lập hay duyệt điều chuyển) cho tới khi đóng hết các đợt đang mở. Xem <a href="#khoa">mục 4</a>.</li>
+  <li>Hệ thống chụp lại danh sách vùng của công ty và danh sách người đang giữ đồ Riêng kèm số đồ của từng người. Hai danh sách này là việc phải làm của đợt; vùng hay người phát sinh sau đó không tự vào đợt.</li>
+</ul>
+<p>Hộp có thêm dòng nhắc màu cam nếu hôm nay chưa tới ngày bắt đầu dự kiến (vẫn bắt đầu được), hoặc nếu đã qua ngày kết thúc dự kiến (nên Sửa đợt trước). Mỗi công ty chỉ có <b>một đợt Đang mở</b>; nếu công ty đã có đợt mở, hệ thống báo <i>"Công ty {mã} đang có đợt kiểm kê mở, hãy đóng đợt đó trước."</i></p>
+
+<h3 id="chi-tiet-dot">3.5. Chi tiết đợt: ô tổng và 3 tab</h3>
+<p>Khi đợt Đang mở hoặc Đã đóng, trang chi tiết có 4 ô tổng và 3 tab.</p>
+<figure class="shot" data-marks="10"><img src="huong-dan-kiem-ke-web/05-chi-tiet-phieu.png" width="1146" height="760" alt="Trang chi tiết đợt đang mở: ô tổng, ba tab, danh sách phiếu"><figcaption>Hình 5. Chi tiết một đợt Đang mở, tab Ds phiếu đợt kiểm kê.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1">Dòng thông tin: mã đợt, công ty, trạng thái, khoảng ngày dự kiến, lúc mở và người mở. Đợt đã đóng có thêm lúc đóng, và nhãn "Đã đóng khi còn dở" nếu có.</li>
+  <li data-n="2"><span class="ui">Đóng đợt</span>: chỉ hiện với hành chính khi đợt Đang mở. Xem <a href="#dong-dot">mục 3.7</a>.</li>
+  <li data-n="3"><b>Vùng</b>: số vùng Chờ kiểm · Đang kiểm · Đã chốt / tổng số vùng của đợt.</li>
+  <li data-n="4"><b>Tài sản đã kiểm</b>: tổng số tài sản đã ghi nhận; dòng nhỏ tách số đã thêm vào các vùng và số đồ Riêng đã ghi kết quả.</li>
+  <li data-n="5"><b>Phiếu đã xác nhận</b>: số phiếu đã xác nhận / tổng số phiếu (cả phiếu vùng và phiếu cá nhân).</li>
+  <li data-n="6"><b>Nhân viên</b>: số người Chưa kiểm · Đang kiểm · Chờ xác nhận · Đã xác nhận / tổng số người giữ đồ Riêng trong đợt.</li>
+  <li data-n="7">Ba tab: <b>Ds phiếu đợt kiểm kê</b> (mở sẵn), <b>Theo vùng</b>, <b>Theo nhân viên</b>.</li>
+  <li data-n="8">Ba bộ lọc phiếu: loại phiếu (Vùng / Cá nhân), trạng thái (Chờ xác nhận / Đã xác nhận), nguồn xác nhận (Người dùng / Hệ thống).</li>
+  <li data-n="9">Phiếu vùng chưa có người xác nhận, vì nhóm tài sản đó chưa có nhân viên chuyên môn phụ trách. Khi đóng đợt, hệ thống tự xác nhận phiếu này.</li>
+  <li data-n="10"><b>Trạng thái</b> phiếu: <span class="st st-amber">Chờ xác nhận</span>, <span class="st st-green">Đã xác nhận</span>, hoặc <span class="st st-blue">Hệ thống xác nhận</span> (phiếu được tự xác nhận lúc đóng đợt; cột Xác nhận bởi ghi "Hệ thống").</li>
+</ol>
+<p>Tab Ds phiếu đợt kiểm kê chỉ để xem danh sách: bấm vào dòng không mở gì. Các cột còn lại (kéo ngang để xem): Lập lúc, Xác nhận lúc, Xác nhận bởi.</p>
+
+<figure class="shot" data-marks="4"><img src="huong-dan-kiem-ke-web/06-chi-tiet-vung.png" width="1146" height="480" alt="Tab Theo vùng"><figcaption>Hình 6. Tab Theo vùng.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1"><b>Loại</b>: ghi "Kho" nếu là vùng kho; vùng thường để trống.</li>
+  <li data-n="2">Trạng thái vùng: <b>Chờ kiểm</b> (chưa ai mở), <b>Đang kiểm</b> (đã có người kiểm), <b>Đã chốt</b> (đã chốt và đã lập phiếu).</li>
+  <li data-n="3"><b>Người kiểm</b> của vùng, kèm giờ bắt đầu, giờ chốt và số tài sản ở các cột bên phải.</li>
+  <li data-n="4">Bấm vào một dòng để xem tài sản đã kiểm trong vùng (Hình 8, <a href="#popup-tai-san">mục 3.6</a>).</li>
+</ol>
+
+<figure class="shot" data-marks="5"><img src="huong-dan-kiem-ke-web/08-chi-tiet-nhan-vien.png" width="1380" height="500" alt="Tab Theo nhân viên"><figcaption>Hình 7. Tab Theo nhân viên.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1">Lọc theo trạng thái: Chưa kiểm, Đang kiểm, Chờ xác nhận, Đã xác nhận.</li>
+  <li data-n="2"><b>Đồ riêng</b>: số đồ Riêng người đó giữ lúc bắt đầu đợt. Cột <b>Đã ghi</b> bên cạnh là số món đã ghi kết quả.</li>
+  <li data-n="3"><b>Không thấy</b>: số món đã ghi kết quả "Không thấy".</li>
+  <li data-n="4">Trạng thái phần kiểm của người đó. Các cột tiếp theo: người kiểm, lúc kiểm, lúc xác nhận.</li>
+  <li data-n="5"><b>Phiếu</b>: mã phiếu cá nhân, bấm để mở trang chi tiết phiếu.</li>
+</ol>
+<p>Bấm vào một dòng để xem đồ Riêng của người đó cùng kết quả kiểm từng món.</p>
+
+<h3 id="popup-tai-san">3.6. Hộp xem tài sản</h3>
+<figure class="shot" data-marks="5"><img src="huong-dan-kiem-ke-web/07-popup-vung.png" width="1256" height="530" alt="Hộp Tài sản của vùng"><figcaption>Hình 8. Hộp xem tài sản của một vùng (chỉ xem).</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1">Tiêu đề: vùng (hoặc nhân viên) đang xem.</li>
+  <li data-n="2"><b>Tình trạng</b> người kiểm ghi nhận: Tốt - Đang sử dụng, Tốt - Không sử dụng, Hỏng…</li>
+  <li data-n="3"><b>In lại tem</b>: "Có" nếu tem mờ, mất, cần in lại.</li>
+  <li data-n="4"><b>Ảnh</b> chụp lúc kiểm (tình trạng Hỏng bắt buộc có ảnh).</li>
+  <li data-n="5"><b>Cảnh báo</b> lúc thêm vào vùng: đồ Riêng của người khác, tài sản công ty khác, hoặc tài sản đang ghi thuộc vùng khác.</li>
+</ol>
+<p>Hộp của nhân viên có thêm cột <b>Kết quả</b> (Có / Không thấy) và không có cột Cảnh báo. Hộp chỉ để xem, không sửa được gì.</p>
+
+<h3 id="dong-dot">3.7. Đóng đợt</h3>
+<p>Hành chính bấm <span class="ui">Đóng đợt</span> ở trang chi tiết đợt. Hệ thống tải lại số liệu mới nhất rồi mới hỏi xác nhận.</p>
+<figure class="shot" data-marks="0"><img src="huong-dan-kiem-ke-web/09-dong-dot-hop.png" width="476" height="238" alt="Hộp xác nhận Đóng đợt"><figcaption>Hình 9. Hộp xác nhận Đóng đợt: báo trước số phiếu sẽ được hệ thống tự xác nhận.</figcaption></figure>
+<p>Nếu đợt <b>còn việc dở</b> (vùng chưa chốt, hoặc nhân viên còn Chưa kiểm / Đang kiểm), hệ thống không đóng ngay mà hiện hộp cảnh báo đỏ:</p>
+<figure class="shot" data-marks="1"><img src="huong-dan-kiem-ke-web/10-dong-dot-con-do.png" width="476" height="296" alt="Hộp cảnh báo Đóng đợt khi còn việc dở"><figcaption>Hình 10. Cảnh báo đóng đợt khi còn việc dở.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1"><span class="ui">Vẫn đóng đợt</span>: đóng dù còn dở. Phần dở không làm tiếp được nữa, đợt được ghi nhận "đóng khi còn dở", không hoàn tác được. Bấm <span class="ui">Huỷ</span> để quay lại kiểm tiếp.</li>
+</ol>
+<div class="key">
+<p><b>Khi đợt đóng</b>, trong cùng một lần:</p>
+<ul>
+  <li>Đợt chuyển sang <span class="st st-grey">Đã đóng</span> và không mở lại được.</li>
+  <li>Mọi phiếu còn Chờ xác nhận được <b>hệ thống tự xác nhận</b>. Nguồn xác nhận ghi "Hệ thống"; người được giao vẫn được giữ trên phiếu để biết ai đã không xác nhận.</li>
+  <li>Nhân viên đang Chờ xác nhận chuyển sang Đã xác nhận. Nhân viên còn Chưa kiểm / Đang kiểm giữ nguyên.</li>
+  <li>Tài sản được mở khoá nếu không còn đợt nào khác đang mở.</li>
+</ul>
+<p>Thông báo sau khi đóng: <i>"Đã đóng đợt kiểm kê. Hệ thống đã tự xác nhận N phiếu."</i></p>
+</div>
+
+<h3 id="qua-han">3.8. Cảnh báo Quá hạn</h3>
+<p>Nhãn <span class="st st-amber">Quá hạn</span> hiện cạnh trạng thái khi đợt <b>Đang mở</b> và hôm nay đã qua ngày kết thúc dự kiến. Đúng ngày kết thúc thì chưa tính là quá hạn. Nhãn chỉ để nhắc: đợt không tự đóng, vẫn kiểm tiếp được cho tới khi hành chính bấm Đóng đợt.</p>
+
+
+<h2 id="khoa">4. Khi đang kiểm kê: tài sản bị khoá</h2>
+<p>Từ lúc một đợt được bấm Bắt đầu kiểm tới lúc <b>mọi</b> đợt đang mở đều đã đóng, toàn bộ tài sản của <b>mọi công ty</b> bị khoá, để số liệu không thay đổi trong lúc đang đếm. Một công ty đang kiểm là đủ để khoá tài sản của tất cả các công ty.</p>
+<figure class="shot" data-marks="5"><img src="huong-dan-kiem-ke-web/11-khoa-tai-san.png" width="1146" height="470" alt="Màn Quản lý CCDC khi đang kiểm kê: băng báo vàng, các nút bị xám"><figcaption>Hình 11. Màn Quản lý CCDC khi đang có đợt kiểm kê mở.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1"><b>Băng báo vàng</b> "Đang kiểm kê": liệt kê các đợt đang mở và công ty, nhắc rằng thêm / sửa / xoá tài sản, đặt Riêng-Chung và điều chuyển đang tạm khoá cho tới khi đóng hết đợt.</li>
+  <li data-n="2"><span class="ui">Thêm mới CCDC</span> bị xám.</li>
+  <li data-n="3"><span class="ui">Điều chuyển CCDC</span> bị xám.</li>
+  <li data-n="4"><span class="ui">Điều chuyển liên công ty</span> bị xám.</li>
+  <li data-n="5">Rê chuột vào nút xám để xem lý do: <i>"Đang có đợt kiểm kê mở — thao tác này tạm khoá cho tới khi đóng hết đợt."</i></li>
+</ol>
+<p>Những chỗ khác cũng bị khoá theo cùng cách:</p>
+<ul>
+  <li>Nút <span class="ui">Đặt là Chung</span> / <span class="ui">Đặt là Riêng</span> trên màn Quản lý CCDC, và nút <span class="ui">Lưu</span> trong hộp chi tiết tài sản.</li>
+  <li>Các màn Điều chuyển CCDC và Điều chuyển LCT (Chờ duyệt, Đã duyệt, Từ chối, Tra cứu tất cả) có cùng băng báo; trong phiếu điều chuyển, các nút Trình / Duyệt / Từ chối / Huỷ bị xám.</li>
+  <li>Màn Vùng tài sản: không xoá được và không đổi được công ty của một vùng đang nằm trong đợt mở.</li>
+</ul>
+<div class="note"><p>Băng báo có thể hiện chậm tối đa khoảng 1 phút sau khi đợt được bắt đầu. Nếu ai đó thao tác đúng lúc đó, hệ thống vẫn chặn và báo <i>"Đang có đợt kiểm kê mở (…). Thao tác này tạm khoá cho tới khi đóng hết đợt."</i></p></div>
+
+
+<h2 id="bao-cao">5. Menu Báo cáo kiểm kê</h2>
+<p>Xem kết quả của một hoặc nhiều đợt cùng lúc, chia thành 5 tab. Menu nằm ở <span class="ui">Kiểm kê CCDC › Báo cáo kiểm kê</span>, dành cho người có quyền Xem kiểm kê. Báo cáo chỉ để xem và xuất Excel, không sửa được gì.</p>
+<figure class="shot" data-marks="4"><img src="huong-dan-kiem-ke-web/13-bao-cao-tong-quan.png" width="1146" height="380" alt="Trang Báo cáo kiểm kê, tab Tổng quan"><figcaption>Hình 12. Báo cáo kiểm kê, tab Tổng quan.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1">Ô tìm đợt: thu hẹp danh sách đợt trong ô chọn bên cạnh theo mã hoặc tên.</li>
+  <li data-n="2"><b>Ô chọn đợt</b>: chọn một hoặc nhiều đợt để xem. Xem <a href="#chon-dot">mục 5.1</a>.</li>
+  <li data-n="3">Năm tab báo cáo. Xem <a href="#bc-5-tab">mục 5.2</a>.</li>
+  <li data-n="4"><span class="ui">Xuất Excel (trang này)</span>. Xem <a href="#xuat-excel">mục 5.3</a>.</li>
+</ol>
+
+<h3 id="chon-dot">5.1. Chọn đợt</h3>
+<figure class="shot" data-marks="2"><img src="huong-dan-kiem-ke-web/14-bao-cao-chon-dot.png" width="1000" height="330" alt="Danh sách chọn đợt của báo cáo"><figcaption>Hình 13. Mở ô chọn đợt.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1">Ô tìm trong danh sách: gõ mã hoặc tên đợt.</li>
+  <li data-n="2"><span class="ui">Chọn tất cả</span> / <span class="ui">Bỏ chọn tất cả</span>. Dấu tích cho biết đợt đang được chọn.</li>
+</ol>
+<ul>
+  <li>Danh sách chỉ có đợt <b>Đang mở</b> và <b>Đã đóng</b> (đợt Chờ bắt đầu và Đã huỷ chưa có dữ liệu để báo cáo). <b>Đợt mới nhất nằm trên cùng.</b></li>
+  <li>Khi vào trang, hệ thống <b>chọn sẵn mọi đợt đang mở</b>. Không có đợt nào mở thì không chọn gì, và trang nhắc "Chọn ít nhất một đợt kiểm kê để xem báo cáo."</li>
+  <li>Chọn tối đa 20 đợt một lần. Nút <span class="ui">Xóa bộ lọc</span> đưa lựa chọn về mặc định.</li>
+</ul>
+
+<h3 id="bc-5-tab">5.2. Năm tab báo cáo</h3>
+<div class="tbl"><table>
+<thead><tr><th>Tab</th><th>Cho biết gì</th></tr></thead>
+<tbody>
+<tr><td>Tổng quan</td><td>Mỗi đợt một dòng: công ty, trạng thái, mở / đóng lúc nào, ai mở / đóng, số vùng đã chốt / tổng, số nhân viên chờ xác nhận / đã xác nhận / tổng, phiếu đã xác nhận / tổng, số tài sản đã ghi, số phiếu hệ thống tự xác nhận, có đóng khi còn dở không.</td></tr>
+<tr><td>Tài sản thêm có cảnh báo</td><td>Tài sản người kiểm đã thêm vào vùng dù có cảnh báo: đồ Riêng của người khác, tài sản công ty khác, tài sản đang ghi thuộc vùng khác. Dùng để rà lại sau đợt.</td></tr>
+<tr><td>Tài sản Chung chưa gắn vùng</td><td>Đồ Chung và đồ Kho của các công ty trong các đợt đã chọn mà <b>không có trong vùng nào</b> của các đợt đó (và các đợt đang mở). Không tính tài sản Mất, Đã thanh lý, Không theo dõi. Đây là danh sách đồ "không ai kiểm tới".</td></tr>
+<tr><td>Tình trạng ghi nhận</td><td>Tài sản theo một loại tình trạng: Hỏng (mặc định), Không thấy, Cần in tem, Tốt không dùng, Chờ thanh lý. Gồm cả tài sản trong vùng lẫn đồ Riêng của nhân viên; "Không thấy" chỉ có ở đồ Riêng.</td></tr>
+<tr><td>Người không xác nhận</td><td>Những người được giao xác nhận phiếu nhưng không xác nhận, để hệ thống phải tự xác nhận lúc đóng đợt: số phiếu, chia phiếu vùng / phiếu cá nhân, mã các phiếu.</td></tr>
+</tbody></table></div>
+
+<figure class="shot" data-marks="3"><img src="huong-dan-kiem-ke-web/15-bao-cao-canh-bao.png" width="1146" height="360" alt="Tab Tài sản thêm có cảnh báo"><figcaption>Hình 14. Tab Tài sản thêm có cảnh báo.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1">Lọc <b>Loại cảnh báo</b>: Tất cả, Đồ Riêng, Công ty khác, Vùng khác.</li>
+  <li data-n="2"><b>Loại</b> cảnh báo của từng tài sản.</li>
+  <li data-n="3"><b>Nội dung</b> cảnh báo người kiểm đã thấy lúc thêm. Các cột bên phải: người thêm, giờ thêm.</li>
+</ol>
+
+<figure class="shot" data-marks="2"><img src="huong-dan-kiem-ke-web/16-bao-cao-chua-vung.png" width="1146" height="420" alt="Tab Tài sản Chung chưa gắn vùng"><figcaption>Hình 15. Tab Tài sản Chung chưa gắn vùng.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1"><b>Chung/Kho</b>: loại sử dụng của tài sản.</li>
+  <li data-n="2"><b>Vùng trên sổ</b>: vị trí đang ghi trên sổ tài sản. Cột Người giữ bên phải cho biết ai đang giữ.</li>
+</ol>
+
+<figure class="shot" data-marks="2"><img src="huong-dan-kiem-ke-web/17-bao-cao-tinh-trang.png" width="1146" height="360" alt="Tab Tình trạng ghi nhận"><figcaption>Hình 16. Tab Tình trạng ghi nhận, loại Hỏng.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1"><b>Loại tình trạng</b> (bắt buộc chọn một loại; mặc định Hỏng).</li>
+  <li data-n="2"><b>Nguồn</b>: ghi nhận từ vùng nào hay từ phần kiểm của nhân viên nào. Các cột bên phải: kết quả, cần in tem, ghi chú, ảnh.</li>
+</ol>
+
+<figure class="shot" data-marks="2"><img src="huong-dan-kiem-ke-web/18-bao-cao-khong-xn.png" width="1146" height="330" alt="Tab Người không xác nhận"><figcaption>Hình 17. Tab Người không xác nhận (đã chọn thêm một đợt đã đóng).</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1"><b>Người được giao</b> xác nhận mà không xác nhận.</li>
+  <li data-n="2"><b>Mã phiếu</b> do hệ thống tự xác nhận thay người đó.</li>
+</ol>
+
+<h3 id="xuat-excel">5.3. Xuất Excel</h3>
+<p>Nút <span class="ui">Xuất Excel (trang này)</span> xuất <b>đúng các dòng đang hiện trên trang</b> của tab đang mở. Báo cáo nhiều trang thì chuyển từng trang rồi xuất. File có tên dạng <code>bao-cao-kiem-ke-…</code>, sheet trùng tên tab. File không chứa ảnh, chỉ ghi số ảnh; cột Mã phiếu xuất đủ mọi mã. Không có dữ liệu thì hệ thống báo "Chưa có dữ liệu để xuất".</p>
+
+
+<h2 id="cua-toi">6. Menu Kiểm kê của tôi</h2>
+<p>Ai đăng nhập cũng thấy menu này, và chỉ thấy việc của chính mình. Menu có 2 tab. Khi vào, nếu còn phiếu chờ xác nhận thì mở tab Phiếu cần xác nhận, nếu không thì mở tab Các đợt có tôi.</p>
+
+<h3 id="phieu-can-xn">6.1. Tab Phiếu cần xác nhận</h3>
+<p>Liệt kê các phiếu mà mình là người xác nhận: phiếu vùng (nếu mình là nhân viên chuyên môn của nhóm tài sản) và phiếu cá nhân (đồ Riêng của chính mình).</p>
+<figure class="shot" data-marks="5"><img src="huong-dan-kiem-ke-web/19-cua-toi-phieu.png" width="1700" height="300" alt="Tab Phiếu cần xác nhận"><figcaption>Hình 18. Tab Phiếu cần xác nhận.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1">Hai tab: <b>Phiếu cần xác nhận</b> và <b>Các đợt có tôi</b>.</li>
+  <li data-n="2">Lọc trạng thái: Chờ xác nhận (mặc định), Đã xác nhận, hoặc tất cả.</li>
+  <li data-n="3">Lọc loại phiếu: Vùng, Cá nhân, hoặc tất cả.</li>
+  <li data-n="4">Bấm <b>mã phiếu</b> (hoặc bấm vào dòng) để xem chi tiết phiếu (Hình 20).</li>
+  <li data-n="5"><span class="ui">Xác nhận</span>: xác nhận phiếu ngay trên dòng. Nút chỉ có ở phiếu đang Chờ xác nhận.</li>
+</ol>
+<figure class="shot" data-marks="0"><img src="huong-dan-kiem-ke-web/20-cua-toi-xac-nhan.png" width="476" height="213" alt="Hộp hỏi lại khi xác nhận phiếu"><figcaption>Hình 19. Hộp hỏi lại trước khi xác nhận.</figcaption></figure>
+<p>Bấm <span class="ui">Xác nhận phiếu</span> là xác nhận <b>cả phiếu một lần</b>: mọi tài sản trong phiếu là đúng. Không bỏ tích từng tài sản được, và xác nhận xong không hoàn tác được. Thấy sai thì báo hành chính trước khi xác nhận.</p>
+<figure class="shot" data-marks="0"><img src="huong-dan-kiem-ke-web/21-cua-toi-popup-phieu.png" width="1256" height="540" alt="Hộp xem chi tiết phiếu, chỉ xem"><figcaption>Hình 20. Hộp xem chi tiết phiếu.</figcaption></figure>
+<p>Hộp này <b>chỉ để xem</b>, không có nút Xác nhận. Đầu hộp ghi đợt, vùng (hoặc nhân viên), người xác nhận và trạng thái; phiếu đã xác nhận ghi thêm lúc nào, bởi ai, hoặc "Hệ thống tự xác nhận khi đóng đợt". Bảng tài sản giống <a href="#popup-tai-san">mục 3.6</a>.</p>
+
+<h3 id="dot-co-toi">6.2. Tab Các đợt có tôi</h3>
+<p>Liệt kê các đợt mà <b>lúc bấm Bắt đầu kiểm</b> mình đang giữ đồ Riêng, để biết đồ của mình đã được kiểm chưa.</p>
+<figure class="shot" data-marks="3"><img src="huong-dan-kiem-ke-web/22-cua-toi-dot.png" width="1380" height="260" alt="Tab Các đợt có tôi"><figcaption>Hình 21. Tab Các đợt có tôi.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1"><b>Phần của tôi</b>: Chưa kiểm, Đang kiểm, Chờ xác nhận, Đã xác nhận.</li>
+  <li data-n="2"><b>Phiếu</b>: mã phiếu cá nhân và trạng thái phiếu.</li>
+  <li data-n="3">Phiếu đang chờ thì mã phiếu là đường dẫn, bấm để mở trang chi tiết phiếu và xác nhận.</li>
+</ol>
+<figure class="shot" data-marks="0"><img src="huong-dan-kiem-ke-web/23-cua-toi-ket-qua.png" width="1256" height="250" alt="Hộp Kết quả của tôi trong đợt"><figcaption>Hình 22. Bấm vào một dòng: kết quả kiểm từng món đồ Riêng của mình (chỉ xem).</figcaption></figure>
+
+
+<h2 id="man-tai-san">7. Màn tài sản: đánh dấu Chung / Riêng</h2>
+<p>Loại sử dụng (Chung / Riêng / Kho, xem <a href="#chung-rieng-kho">mục 1.2</a>) quyết định tài sản được kiểm theo vùng hay theo nhân viên, nên cần đánh dấu đúng <b>trước khi</b> bắt đầu một đợt. Chỉ hành chính đổi được loại sử dụng, và không đổi được trong lúc có đợt đang mở.</p>
+<figure class="shot" data-marks="5"><img src="huong-dan-kiem-ke-web/12-tai-san-chung-rieng.png" width="1146" height="560" alt="Màn Quản lý CCDC: chọn nhiều dòng, nút Đặt là Chung và Đặt là Riêng"><figcaption>Hình 23. Màn Quản lý CCDC, đánh dấu Chung / Riêng hàng loạt.</figcaption></figure>
+<ol class="callouts">
+  <li data-n="1">Tích chọn các dòng cần đổi (ô tích này dùng chung với In tem).</li>
+  <li data-n="2"><span class="ui">Đặt là Chung</span>: chuyển các tài sản đã chọn sang Chung.</li>
+  <li data-n="3"><span class="ui">Đặt là Riêng</span>: chuyển các tài sản đã chọn sang Riêng.</li>
+  <li data-n="4">Cột <b>Loại sử dụng</b>: Riêng, Chung hoặc Kho.</li>
+  <li data-n="5">Bộ lọc <b>Loại sử dụng</b>: lọc ra đồ Riêng, Chung hoặc Kho để rà soát.</li>
+</ol>
+<ul>
+  <li>Tài sản đang ở kho luôn là <b>Kho</b>, do hệ thống tự đặt; chọn nhầm tài sản kho thì hệ thống bỏ qua món đó và báo dạng <i>"Đã đặt N tài sản là Chung. M tài sản không đổi được"</i>, các món không đổi được vẫn được tích lại trên lưới.</li>
+  <li><b>Sửa từng tài sản:</b> trong hộp chi tiết tài sản có ô <b>Loại sử dụng</b>. Tài sản đang ở người thì bắt buộc chọn Riêng hoặc Chung; tài sản ở kho thì ô này chỉ đọc "Kho". Form Thêm mới không có ô này (tài sản mới vào kho).</li>
+  <li><b>Điều chuyển từ kho cho người dùng:</b> mỗi dòng của phiếu điều chuyển phải chọn Riêng hoặc Chung (có nút chọn nhanh <span class="ui">Tất cả Riêng</span> / <span class="ui">Tất cả Chung</span>). Để trống thì không lưu được phiếu.</li>
+</ul>
+
+
+<h2 id="app-mobile">8. Đi kiểm trên app điện thoại (tóm tắt)</h2>
+<p>Việc đi kiểm thực tế làm trên app điện thoại; web không có màn đi kiểm. Mục này chỉ tóm tắt để nắm luồng. Cách dùng app có tài liệu riêng.</p>
+<p>Màn đầu của app cho biết: các đợt đang mở mà mình được đi kiểm, số đồ Riêng mình đang giữ, và số phiếu đang chờ mình xác nhận. Đợt còn Chờ bắt đầu không hiện trên app.</p>
+
+<h3>Kiểm theo vùng</h3>
+<ol>
+  <li>Người đi kiểm chọn một vùng và bắt đầu kiểm. Từ lúc đó họ là "người kiểm" của vùng. Chỉ hành chính mới nhận lại được một vùng đang có người khác kiểm.</li>
+  <li>Quét mã từng tài sản có mặt trong vùng để thêm vào vùng. App <b>cảnh báo</b> khi quét phải: đồ Riêng của một người, tài sản của công ty khác, hoặc tài sản đang ghi thuộc vùng khác. Người kiểm phải xác nhận mới thêm được. Những tài sản này hiện ở tab "Tài sản thêm có cảnh báo" của <a href="#bc-5-tab">báo cáo</a>.</li>
+  <li>Ghi tình trạng, đánh dấu cần in lại tem, ghi chú, chụp ảnh. Tình trạng <b>Hỏng</b> bắt buộc có ảnh. Thêm nhầm thì bỏ tài sản khỏi vùng.</li>
+  <li>Xem lại rồi <b>chốt vùng</b>. Hệ thống lập phiếu vùng, chia theo nhân viên chuyên môn quản lý nhóm tài sản, và gửi phiếu cho từng người xác nhận.</li>
+</ol>
+
+<h3>Kiểm theo nhân viên</h3>
+<ol>
+  <li>Người đi kiểm chọn một nhân viên. Hệ thống lập sẵn danh sách đồ Riêng của người đó.</li>
+  <li>Quét mã từng món: món đúng là đồ của người đó được ghi ngay là "Có", tình trạng tốt, đang dùng. Món không tìm thấy thì ghi "Không thấy". Có thể sửa tình trạng, đánh dấu in tem, ghi chú, chụp ảnh.</li>
+  <li>Ghi đủ mọi món thì <b>gửi</b>. Hệ thống lập phiếu cá nhân, người xác nhận là chính nhân viên đó. Phần của nhân viên chuyển sang "Chờ xác nhận".</li>
+  <li>Nhân viên xác nhận phiếu của mình trên web (<a href="#phieu-can-xn">mục 6.1</a>) hoặc trên app. Hành chính có đồ Riêng thì được tự kiểm và tự xác nhận phần của mình.</li>
+</ol>
+
+<h2 id="hoi-dap">9. Câu hỏi thường gặp</h2>
+<h4>Vì sao tôi không sửa được tài sản, nút Lưu hay nút Điều chuyển bị xám?</h4>
+<p>Đang có ít nhất một đợt kiểm kê <b>Đang mở</b>, ở bất kỳ công ty nào. Rê chuột vào nút xám sẽ thấy lý do. Tài sản mở khoá khi mọi đợt đang mở đều đã đóng. Xem <a href="#khoa">mục 4</a>.</p>
+<h4>Phiếu không ai xác nhận thì sao?</h4>
+<p>Khi hành chính đóng đợt, mọi phiếu còn chờ được <b>hệ thống tự xác nhận</b>. Phiếu đó hiện nhãn "Hệ thống xác nhận", cột Xác nhận bởi ghi "Hệ thống". Người được giao vẫn được giữ trên phiếu, nên tab <a href="#bc-5-tab">Người không xác nhận</a> của báo cáo liệt kê được ai đã không xác nhận.</p>
+<h4>Có phiếu ghi "Chưa có người xác nhận" là sao?</h4>
+<p>Khi chốt vùng, tài sản thuộc nhóm chưa có nhân viên chuyên môn phụ trách sẽ vào một phiếu không có người xác nhận. Hiện chưa có màn giao lại người xác nhận cho phiếu này; khi đóng đợt, hệ thống tự xác nhận nó như mọi phiếu còn chờ.</p>
+<h4>Còn vùng chưa chốt, còn nhân viên chưa kiểm thì có đóng đợt được không?</h4>
+<p>Được, nhưng phải bấm qua hộp cảnh báo đỏ <span class="ui">Vẫn đóng đợt</span>. Phần dở không làm tiếp được nữa, đợt được ghi nhận là "đóng khi còn dở", và không hoàn tác được. Xem <a href="#dong-dot">mục 3.7</a>.</p>
+<h4>Đợt quá ngày kết thúc thì có tự đóng không?</h4>
+<p>Không. Đợt chỉ hiện nhãn <span class="st st-amber">Quá hạn</span> để nhắc; vẫn kiểm tiếp được cho tới khi hành chính bấm Đóng đợt.</p>
+<h4>Một công ty có hai đợt cùng lúc được không?</h4>
+<p>Tạo được nhiều đợt nếu khoảng ngày không trùng nhau, nhưng mỗi công ty chỉ có <b>một đợt Đang mở</b> tại một thời điểm. Muốn bắt đầu đợt sau thì phải đóng đợt đang mở trước.</p>
+<h4>Lỡ huỷ đợt, hoặc lỡ xác nhận phiếu, có lấy lại được không?</h4>
+<p>Không. Đợt đã huỷ không dùng lại được, muốn kiểm thì tạo đợt mới. Phiếu đã xác nhận không hoàn tác được.</p>
+<h4>Vì sao tôi không thấy đợt nào ở tab "Các đợt có tôi"?</h4>
+<p>Tab này chỉ liệt kê đợt mà <b>lúc bấm Bắt đầu kiểm</b> bạn đang giữ đồ Riêng. Nhân viên chuyên môn chỉ nhận phiếu vùng sẽ thấy phiếu ở tab Phiếu cần xác nhận, không thấy đợt ở tab này.</p>
+<h4>Muốn xem tài sản trong một phiếu ở trang chi tiết đợt thì bấm vào đâu?</h4>
+<p>Tab "Ds phiếu đợt kiểm kê" chỉ liệt kê phiếu, bấm vào dòng không mở gì. Để xem tài sản, dùng tab Theo vùng hoặc Theo nhân viên và bấm vào dòng. Ở tab Theo nhân viên, mã phiếu là đường dẫn mở trang chi tiết phiếu.</p>
+<h4>Xuất Excel ở báo cáo sao không ra đủ mọi dòng?</h4>
+<p>Nút <span class="ui">Xuất Excel (trang này)</span> chỉ xuất các dòng đang hiện trên trang. Báo cáo nhiều trang thì chuyển từng trang rồi xuất. File Excel không chứa ảnh, chỉ ghi số ảnh.</p>
+
+
+<footer>
+<p>Hướng dẫn kiểm kê CCDC trên web · bản 22/11/2026, theo bản sau lượt góp ý 2. Ảnh chụp từ môi trường thử, mọi dữ liệu trong ảnh đã thay bằng dữ liệu giả.</p>
+</footer>
+</main>
+</div>
+</body>
+</html>
