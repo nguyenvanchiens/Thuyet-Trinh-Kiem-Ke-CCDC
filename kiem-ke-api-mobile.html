@@ -107,7 +107,6 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 
 <nav class="toc" id="toc" aria-label="Mục lục">
 <ol>
-  <li><a href="#doi-ten">Đổi tên route (22/11)</a></li>
   <li><a href="#tong-quan">1. Tổng quan</a>
     <ol>
       <li><a href="#gui-request">Cách gửi request</a></li>
@@ -148,52 +147,8 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 <main>
 <h1>API kiểm kê CCDC cho app mobile</h1>
 <p class="lead">Các API BE hỗ trợ app kiểm kê: request, response, validate, mã lỗi. Viết theo mã nguồn backend; chỗ chưa kiểm được ghi "chưa xác minh".</p>
-<p class="meta">Cập nhật 22/11/2026 · Căn cứ: backend nhánh đổi tên route, commit <code>20564089</code> (dựng trên <code>main</code> <code>07385536</code>, đã gồm góp ý lượt 1).</p>
+<p class="meta">Viết ngày 22/11/2026 · Căn cứ: mã nguồn backend, commit <code>20564089</code>.</p>
 <div class="note"><p style="margin:0">Mọi dữ liệu trong ví dụ là <b>dữ liệu giả</b>: NV <code>000999</code> "Nguyễn Văn A", NV <code>000998</code> "Trần Thị B", tài sản <code>TS000001</code>, vùng <code>VUNG01</code>, đợt <code>DKK0000999</code>, công ty <code>CT01</code>.</p></div>
-
-<h2 id="doi-ten">Đổi tên route (22/11)</h2>
-<div class="danger"><b>Route cũ không còn chạy (trả 404), không có bí danh.</b> App đã code theo tên cũ phải đổi URL trước khi gọi bản BE mới. Chỉ đổi đường dẫn: tên query param, body và response <b>giữ nguyên</b>. <b>Thời điểm áp dụng:</b> tên mới chạy từ bản backend có đợt đổi tên (đang chờ merge và deploy). Trước khi bản đó lên dev, dev vẫn chạy tên cũ. Hỏi đầu mối backend trước khi chuyển.</div>
-<p>Base cũ <code>/api/v1/asset-management/stocktake/</code> → base mới <code>/api/v1/asset-management/asset-stocktake/</code>. Tham số path đổi tên thành <code>{roundCode}</code>, <code>{zoneCode}</code>, <code>{staffCode}</code>, <code>{ticketCode}</code>. Query param giữ tên: <code>?round=</code>, <code>?zone=</code>, <code>?rounds=</code>, <code>status</code>, <code>type</code>, <code>q</code>…</p>
-<div class="tbl"><table>
-<thead><tr><th>#</th><th>Method</th><th>Route cũ (sau <code>stocktake/</code>)</th><th>Route mới (sau <code>asset-stocktake/</code>)</th><th>App dùng</th></tr></thead>
-<tbody>
-<tr><td>1</td><td>GET</td><td><code>rounds?status=&amp;companyCode=</code></td><td><code>rounds/search?status=&amp;companyCode=</code></td><td><a href="#ep-rounds">có</a></td></tr>
-<tr><td>2</td><td>POST</td><td><code>rounds/create</code></td><td><code>rounds/create</code></td><td>web</td></tr>
-<tr><td>3</td><td>POST</td><td><code>rounds/update</code></td><td><code>rounds/update</code></td><td>web</td></tr>
-<tr><td>4</td><td>POST</td><td><code>rounds/start</code> (body <code>{code}</code>)</td><td><code>rounds/{roundCode}/start</code> (không body)</td><td>web</td></tr>
-<tr><td>5</td><td>POST</td><td><code>rounds/cancel</code> (body <code>{code}</code>)</td><td><code>rounds/{roundCode}/cancel</code> (không body)</td><td>web</td></tr>
-<tr><td>6</td><td>POST</td><td><code>rounds/close</code> (body <code>{code, force}</code>)</td><td><code>rounds/{roundCode}/close</code> (body <code>{force}</code>)</td><td>web</td></tr>
-<tr><td>7</td><td>GET</td><td><code>rounds/{code}</code></td><td><code>rounds/{roundCode}</code></td><td><a href="#ep-round">có</a></td></tr>
-<tr><td>8</td><td>GET</td><td><code>rounds/{code}/zones</code></td><td><code>rounds/{roundCode}/zones</code></td><td><a href="#ep-zones">có</a></td></tr>
-<tr><td>9</td><td>GET</td><td><code>rounds/{code}/tickets</code></td><td><code>rounds/{roundCode}/tickets</code></td><td>web</td></tr>
-<tr><td>10</td><td>GET</td><td><code>rounds/{round}/staffs</code></td><td><code>rounds/{roundCode}/staffs</code></td><td><a href="#ep-staffs">có</a></td></tr>
-<tr><td>11</td><td>GET</td><td><code>rounds/{round}/assets/search</code></td><td><code>rounds/{roundCode}/items/search</code></td><td><a href="#ep-search">có</a></td></tr>
-<tr><td>12</td><td>POST</td><td><code>rounds/{round}/photos</code></td><td><code>rounds/{roundCode}/photos/upload</code></td><td><a href="#ep-photos">có</a></td></tr>
-<tr><td>13</td><td>GET</td><td><code>lock</code></td><td><code>lock-status</code></td><td><a href="#ep-lock">tuỳ chọn</a></td></tr>
-<tr><td>14</td><td>POST</td><td><code>…/zones/{zone}/open</code></td><td><code>…/zones/{zoneCode}/claim</code></td><td><a href="#ep-zone-claim">có</a></td></tr>
-<tr><td>15</td><td>GET</td><td><code>…/zones/{zone}/items</code></td><td><code>…/zones/{zoneCode}/items</code></td><td><a href="#ep-zone-items">có</a></td></tr>
-<tr><td>16</td><td>POST</td><td><code>…/zones/{zone}/items</code></td><td><code>…/zones/{zoneCode}/items/create</code></td><td><a href="#ep-zone-create">có</a></td></tr>
-<tr><td>17</td><td>POST</td><td><code>…/zones/{zone}/items/update</code></td><td><code>…/zones/{zoneCode}/items/update</code></td><td><a href="#ep-zone-update">có</a></td></tr>
-<tr><td>18</td><td>POST</td><td><code>…/zones/{zone}/items/remove</code></td><td><code>…/zones/{zoneCode}/items/delete</code></td><td><a href="#ep-zone-delete">có</a></td></tr>
-<tr><td>19</td><td>POST</td><td><code>…/zones/{zone}/close/preview</code></td><td><code>…/zones/{zoneCode}/close-preview</code></td><td><a href="#ep-zone-preview">có</a></td></tr>
-<tr><td>20</td><td>POST</td><td><code>…/zones/{zone}/close</code></td><td><code>…/zones/{zoneCode}/close</code></td><td><a href="#ep-zone-close">có</a></td></tr>
-<tr><td>21</td><td>POST</td><td><code>…/staffs/{staff}/open</code></td><td><code>…/staffs/{staffCode}/claim</code></td><td><a href="#ep-staff-claim">có</a></td></tr>
-<tr><td>22</td><td>GET</td><td><code>…/staffs/{staff}/items</code></td><td><code>…/staffs/{staffCode}/items</code></td><td><a href="#ep-staff-items">có</a></td></tr>
-<tr><td>23</td><td>POST</td><td><code>…/staffs/{staff}/scan</code></td><td><code>…/staffs/{staffCode}/items/scan</code></td><td><a href="#ep-staff-scan">có</a></td></tr>
-<tr><td>24</td><td>POST</td><td><code>…/staffs/{staff}/items/update</code></td><td><code>…/staffs/{staffCode}/items/update</code></td><td><a href="#ep-staff-update">có</a></td></tr>
-<tr><td>25</td><td>POST</td><td><code>…/staffs/{staff}/submit</code></td><td><code>…/staffs/{staffCode}/submit</code></td><td><a href="#ep-staff-submit">có</a></td></tr>
-<tr><td>26</td><td>GET</td><td><code>reports/overview</code></td><td><code>reports/overview</code></td><td>web</td></tr>
-<tr><td>27</td><td>GET</td><td><code>reports/warnings</code></td><td><code>reports/warning-items</code></td><td>web</td></tr>
-<tr><td>28</td><td>GET</td><td><code>reports/conditions</code></td><td><code>reports/items-by-condition</code></td><td>web</td></tr>
-<tr><td>29</td><td>GET</td><td><code>reports/unzoned-shared</code></td><td><code>reports/shared-items-without-zone</code></td><td>web</td></tr>
-<tr><td>30</td><td>GET</td><td><code>reports/unconfirmed</code></td><td><code>reports/unconfirmed-assignees</code></td><td>web</td></tr>
-<tr><td>31</td><td>GET</td><td><code>my/tasks</code></td><td><code>me/tasks</code></td><td><a href="#ep-me-tasks">có</a></td></tr>
-<tr><td>32</td><td>GET</td><td><code>my/tickets</code></td><td><code>me/assigned-tickets</code></td><td><a href="#ep-me-tickets">có</a></td></tr>
-<tr><td>33</td><td>GET</td><td><code>my/private-items</code></td><td><code>me/private-items</code></td><td><a href="#ep-me-private">có</a></td></tr>
-<tr><td>34</td><td>GET</td><td><code>tickets/{code}</code></td><td><code>tickets/{ticketCode}</code></td><td><a href="#ep-ticket">có</a></td></tr>
-<tr><td>35</td><td>POST</td><td><code>tickets/{code}/confirm</code></td><td><code>tickets/{ticketCode}/confirm</code></td><td><a href="#ep-confirm">có</a></td></tr>
-</tbody></table></div>
-<p class="meta"><code>…/zones/{zoneCode}</code> = <code>rounds/{roundCode}/zones/{zoneCode}</code>; <code>…/staffs/{staffCode}</code> = <code>rounds/{roundCode}/staffs/{staffCode}</code>. Bên cũ tương tự với <code>{round}</code>, <code>{zone}</code>, <code>{staff}</code>.</p>
 
 <h2 id="tong-quan">1. Tổng quan</h2>
 <dl class="kv">
@@ -583,7 +538,7 @@ POST …/asset-stocktake/rounds/DKK0000999/zones/VUNG01/items/create
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>; lỗi tệp trả <code>code 20</code> không subCode (<a href="#loi-chung">lỗi chung</a>); máy chủ lưu trữ lỗi trả <code>code 10</code>.</p>
 </div></details>
 <details class="ep" id="ep-photo-view">
-<summary><span class="m get">GET</span><span class="path">{BASE_URL}/api/v1/asset-management/asset-item/files/assets/{fileId}</span><span class="what"><b>API này làm gì:</b> Xem ảnh đã tải (trả byte, không bọc ApiResult). API của module tài sản, không thuộc nhóm kiểm kê và không đổi tên.</span></summary>
+<summary><span class="m get">GET</span><span class="path">{BASE_URL}/api/v1/asset-management/asset-item/files/assets/{fileId}</span><span class="what"><b>API này làm gì:</b> Xem ảnh đã tải (trả byte, không bọc ApiResult). API của module tài sản, không thuộc nhóm kiểm kê.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd>Đăng nhập</dd><dt>Path</dt><dd><code>fileId</code> lấy từ <code>photos[].fileId</code> (không phải <code>id</code>)</dd></dl>
 <p>Không có tệp thì trả HTTP 404.</p>
@@ -705,7 +660,7 @@ Ví dụ ghi Có, Tốt không dùng:
 <summary><span class="m get">GET</span><span class="path">/me/private-items?round=</span><span class="what"><b>API này làm gì:</b> Đồ Riêng của tôi (hiện tại hoặc trong một đợt).</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd>Đăng nhập. Mã NV luôn là người gọi; app không truyền mã NV.</dd>
-<dt>Query</dt><dd><code>round</code> (tuỳ chọn, tên tham số giữ nguyên). Không truyền: đồ Riêng hiện tại của tôi ở mọi công ty (<code>result</code> null). Có truyền: tài sản của tôi trong đợt đó.</dd></dl>
+<dt>Query</dt><dd><code>round</code> (tuỳ chọn). Không truyền: đồ Riêng hiện tại của tôi ở mọi công ty (<code>result</code> null). Có truyền: tài sản của tôi trong đợt đó.</dd></dl>
 <p><b>Response <code>data</code></b>: <code>roundCode</code> (null khi không truyền <code>round</code>), <code>items[]</code> (dạng <a href="#ep-staff-items">tài sản của NV</a>), <code>rounds[]</code>: mọi đợt có tôi trong danh sách NV (mở lẫn đã đóng), gồm <code>roundCode</code>, <code>roundName</code>, <code>companyCode</code>, <code>roundStatus</code>, <code>staffStatus</code>, <code>ticketCode</code>, <code>ticketStatus</code>.</p>
 <pre><code>GET …/asset-stocktake/me/private-items?round=DKK0000999
 
@@ -989,7 +944,7 @@ FOUND | NOT_FOUND ─ items/scan ─▶ không đổi
 
 <h2 id="thu-dev">7. Thử trên dev</h2>
 <ul>
-<li>Route mới chỉ chạy khi bản backend đổi tên <b>đã deploy lên dev</b>. BE và web deploy cùng lúc; route cũ trả 404. Hỏi đầu mối backend xem dev đang chạy bản nào trước khi thử.</li>
+<li>Cần bản backend kiểm kê đã deploy lên dev; hỏi đầu mối backend trước khi thử.</li>
 <li><b>Hẹn giờ trước khi thử.</b> Đợt kiểm kê đang mở <b>khoá sửa tài sản và phiếu điều chuyển trên toàn bộ dev</b> (mọi công ty). Bắt đầu một đợt thử thì báo đầu mối lúc bắt đầu và lúc đóng.</li>
 <li>Cần tài khoản dev có quyền <code>asset-stocktake-check/read</code> và đã gắn mã nhân viên; thử <code>takeOver</code> thì cần thêm quyền hành chính.</li>
 <li>Dữ liệu tạo khi thử nên đặt tên dễ nhận ra (vd tên đợt bắt đầu bằng <code>ZZ-TEST</code>).</li>
@@ -998,13 +953,11 @@ FOUND | NOT_FOUND ─ items/scan ─▶ không đổi
 
 <h2 id="lich-su">8. Ngày viết, căn cứ, lịch sử</h2>
 <dl class="kv">
-<dt>Cập nhật</dt><dd>22/11/2026</dd>
-<dt>Căn cứ</dt><dd>Mã nguồn backend, nhánh đổi tên route, commit <code>20564089</code> (dựng trên <code>main</code> <code>07385536</code>): endpoint, hằng route, validator, service, DTO, mã lỗi. Đối chiếu tên trường và mã lỗi với bộ request / response chạy thật trên dev theo route mới (30 cặp, 22/11). Khi nhánh đổi tên merge, căn cứ chuyển sang commit <code>main</code> tương ứng.</dd>
+<dt>Ngày viết</dt><dd>22/11/2026</dd>
+<dt>Căn cứ</dt><dd>Mã nguồn backend, commit <code>20564089</code>: endpoint, hằng route, validator, service, DTO, mã lỗi. Đối chiếu tên trường và mã lỗi với bộ request / response chạy thật trên dev (30 cặp, 22/11).</dd>
 </dl>
 <div class="tbl"><table><thead><tr><th>Ngày</th><th>Thay đổi</th></tr></thead><tbody>
-<tr><td>22/11/2026 (lần 3)</td><td><b>Đổi tên route</b>: base <code>/asset-stocktake</code>, tham số <code>{roundCode}</code>/<code>{zoneCode}</code>/<code>{staffCode}</code>/<code>{ticketCode}</code>, 35 route theo bảng <a href="#doi-ten">cũ → mới</a>; route cũ trả 404. Mỗi API thêm câu "API này làm gì". Góp ý lượt 1 đã merge, chuyển thành nội dung chính thức: đợt <code>WAITING</code>/<code>CANCELLED</code>, ngày dự kiến, <code>confirmSource</code>, tự xác nhận khi đóng đợt, tham số <code>status</code>/<code>type</code> của <code>me/assigned-tickets</code>, số liệu mới ở chi tiết đợt; câu thông báo dùng "tài sản" thay "món".</td></tr>
-<tr><td>22/11/2026 (lần 2)</td><td>Bỏ phần giới thiệu xác thực, thay bằng một câu (xác thực dùng chung hệ thống); rút gọn các đoạn dẫn; cập nhật phần sắp có của góp ý lượt 1.</td></tr>
-<tr><td>22/11/2026</td><td>Bản đầu: 23 API kiểm kê app dùng (cộng API xem ảnh và API khoá tuỳ chọn), validate, mã lỗi, sơ đồ trạng thái.</td></tr>
+<tr><td>22/11/2026</td><td>Bản đầu.</td></tr>
 </tbody></table></div>
 
 <h2 id="chua-xac-minh">Phụ lục: chưa xác minh</h2>
