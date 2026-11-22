@@ -107,6 +107,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 
 <nav class="toc" id="toc" aria-label="Mục lục">
 <ol>
+  <li><a href="#doi-ten">Đổi tên route (22/11)</a></li>
   <li><a href="#tong-quan">1. Tổng quan</a>
     <ol>
       <li><a href="#gui-request">Cách gửi request</a></li>
@@ -127,7 +128,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
       <li><a href="#man-anh">3.6 Ảnh</a></li>
       <li><a href="#man-kiem-nv">3.7 Kiểm theo NV</a></li>
       <li><a href="#man-do-rieng">3.8 Đồ Riêng của tôi</a></li>
-      <li><a href="#man-phieu">3.9 Phiếu chờ tôi xác nhận</a></li>
+      <li><a href="#man-phieu">3.9 Phiếu giao tôi xác nhận</a></li>
       <li><a href="#man-khac">3.10 API khác</a></li>
     </ol>
   </li>
@@ -147,25 +148,66 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 <main>
 <h1>API kiểm kê CCDC cho app mobile</h1>
 <p class="lead">Các API BE hỗ trợ app kiểm kê: request, response, validate, mã lỗi. Viết theo mã nguồn backend; chỗ chưa kiểm được ghi "chưa xác minh".</p>
-<p class="meta">Viết ngày 22/11/2026 · Căn cứ: nhánh <code>main</code> của backend, commit <code>1d1f087b</code> · Phần "Sắp có" đọc ở nhánh góp ý lượt 1, commit <code>e44c287a</code> (chưa merge).</p>
-<div class="note">
-  <p><span class="live">Đang chạy</span> là API đã có trên <code>main</code>. <span class="soon">Sắp có (lượt góp ý 1)</span> là phần đang làm, chưa merge, có thể còn đổi. Phần sắp có <b>chỉ thêm</b> trường và tham số tuỳ chọn, không đổi tên hay bỏ trường nào. App làm theo phần đang chạy vẫn dùng tiếp được.</p>
-  <p style="margin:0">Mọi dữ liệu trong ví dụ là <b>dữ liệu giả</b>: NV <code>000999</code> "Nguyễn Văn A", NV <code>000998</code> "Trần Thị B", tài sản <code>TS000001</code>, vùng <code>VUNG01</code>, đợt <code>DKK0000999</code>, công ty <code>CT01</code>.</p>
-</div>
+<p class="meta">Cập nhật 22/11/2026 · Căn cứ: backend nhánh đổi tên route, commit <code>20564089</code> (dựng trên <code>main</code> <code>07385536</code>, đã gồm góp ý lượt 1).</p>
+<div class="note"><p style="margin:0">Mọi dữ liệu trong ví dụ là <b>dữ liệu giả</b>: NV <code>000999</code> "Nguyễn Văn A", NV <code>000998</code> "Trần Thị B", tài sản <code>TS000001</code>, vùng <code>VUNG01</code>, đợt <code>DKK0000999</code>, công ty <code>CT01</code>.</p></div>
+
+<h2 id="doi-ten">Đổi tên route (22/11)</h2>
+<div class="danger"><b>Route cũ không còn chạy (trả 404), không có bí danh.</b> App đã code theo tên cũ phải đổi URL trước khi gọi bản BE mới. Chỉ đổi đường dẫn: tên query param, body và response <b>giữ nguyên</b>. <b>Thời điểm áp dụng:</b> tên mới chạy từ bản backend có đợt đổi tên (đang chờ merge và deploy). Trước khi bản đó lên dev, dev vẫn chạy tên cũ. Hỏi đầu mối backend trước khi chuyển.</div>
+<p>Base cũ <code>/api/v1/asset-management/stocktake/</code> → base mới <code>/api/v1/asset-management/asset-stocktake/</code>. Tham số path đổi tên thành <code>{roundCode}</code>, <code>{zoneCode}</code>, <code>{staffCode}</code>, <code>{ticketCode}</code>. Query param giữ tên: <code>?round=</code>, <code>?zone=</code>, <code>?rounds=</code>, <code>status</code>, <code>type</code>, <code>q</code>…</p>
+<div class="tbl"><table>
+<thead><tr><th>#</th><th>Method</th><th>Route cũ (sau <code>stocktake/</code>)</th><th>Route mới (sau <code>asset-stocktake/</code>)</th><th>App dùng</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>GET</td><td><code>rounds?status=&amp;companyCode=</code></td><td><code>rounds/search?status=&amp;companyCode=</code></td><td><a href="#ep-rounds">có</a></td></tr>
+<tr><td>2</td><td>POST</td><td><code>rounds/create</code></td><td><code>rounds/create</code></td><td>web</td></tr>
+<tr><td>3</td><td>POST</td><td><code>rounds/update</code></td><td><code>rounds/update</code></td><td>web</td></tr>
+<tr><td>4</td><td>POST</td><td><code>rounds/start</code> (body <code>{code}</code>)</td><td><code>rounds/{roundCode}/start</code> (không body)</td><td>web</td></tr>
+<tr><td>5</td><td>POST</td><td><code>rounds/cancel</code> (body <code>{code}</code>)</td><td><code>rounds/{roundCode}/cancel</code> (không body)</td><td>web</td></tr>
+<tr><td>6</td><td>POST</td><td><code>rounds/close</code> (body <code>{code, force}</code>)</td><td><code>rounds/{roundCode}/close</code> (body <code>{force}</code>)</td><td>web</td></tr>
+<tr><td>7</td><td>GET</td><td><code>rounds/{code}</code></td><td><code>rounds/{roundCode}</code></td><td><a href="#ep-round">có</a></td></tr>
+<tr><td>8</td><td>GET</td><td><code>rounds/{code}/zones</code></td><td><code>rounds/{roundCode}/zones</code></td><td><a href="#ep-zones">có</a></td></tr>
+<tr><td>9</td><td>GET</td><td><code>rounds/{code}/tickets</code></td><td><code>rounds/{roundCode}/tickets</code></td><td>web</td></tr>
+<tr><td>10</td><td>GET</td><td><code>rounds/{round}/staffs</code></td><td><code>rounds/{roundCode}/staffs</code></td><td><a href="#ep-staffs">có</a></td></tr>
+<tr><td>11</td><td>GET</td><td><code>rounds/{round}/assets/search</code></td><td><code>rounds/{roundCode}/items/search</code></td><td><a href="#ep-search">có</a></td></tr>
+<tr><td>12</td><td>POST</td><td><code>rounds/{round}/photos</code></td><td><code>rounds/{roundCode}/photos/upload</code></td><td><a href="#ep-photos">có</a></td></tr>
+<tr><td>13</td><td>GET</td><td><code>lock</code></td><td><code>lock-status</code></td><td><a href="#ep-lock">tuỳ chọn</a></td></tr>
+<tr><td>14</td><td>POST</td><td><code>…/zones/{zone}/open</code></td><td><code>…/zones/{zoneCode}/claim</code></td><td><a href="#ep-zone-claim">có</a></td></tr>
+<tr><td>15</td><td>GET</td><td><code>…/zones/{zone}/items</code></td><td><code>…/zones/{zoneCode}/items</code></td><td><a href="#ep-zone-items">có</a></td></tr>
+<tr><td>16</td><td>POST</td><td><code>…/zones/{zone}/items</code></td><td><code>…/zones/{zoneCode}/items/create</code></td><td><a href="#ep-zone-create">có</a></td></tr>
+<tr><td>17</td><td>POST</td><td><code>…/zones/{zone}/items/update</code></td><td><code>…/zones/{zoneCode}/items/update</code></td><td><a href="#ep-zone-update">có</a></td></tr>
+<tr><td>18</td><td>POST</td><td><code>…/zones/{zone}/items/remove</code></td><td><code>…/zones/{zoneCode}/items/delete</code></td><td><a href="#ep-zone-delete">có</a></td></tr>
+<tr><td>19</td><td>POST</td><td><code>…/zones/{zone}/close/preview</code></td><td><code>…/zones/{zoneCode}/close-preview</code></td><td><a href="#ep-zone-preview">có</a></td></tr>
+<tr><td>20</td><td>POST</td><td><code>…/zones/{zone}/close</code></td><td><code>…/zones/{zoneCode}/close</code></td><td><a href="#ep-zone-close">có</a></td></tr>
+<tr><td>21</td><td>POST</td><td><code>…/staffs/{staff}/open</code></td><td><code>…/staffs/{staffCode}/claim</code></td><td><a href="#ep-staff-claim">có</a></td></tr>
+<tr><td>22</td><td>GET</td><td><code>…/staffs/{staff}/items</code></td><td><code>…/staffs/{staffCode}/items</code></td><td><a href="#ep-staff-items">có</a></td></tr>
+<tr><td>23</td><td>POST</td><td><code>…/staffs/{staff}/scan</code></td><td><code>…/staffs/{staffCode}/items/scan</code></td><td><a href="#ep-staff-scan">có</a></td></tr>
+<tr><td>24</td><td>POST</td><td><code>…/staffs/{staff}/items/update</code></td><td><code>…/staffs/{staffCode}/items/update</code></td><td><a href="#ep-staff-update">có</a></td></tr>
+<tr><td>25</td><td>POST</td><td><code>…/staffs/{staff}/submit</code></td><td><code>…/staffs/{staffCode}/submit</code></td><td><a href="#ep-staff-submit">có</a></td></tr>
+<tr><td>26</td><td>GET</td><td><code>reports/overview</code></td><td><code>reports/overview</code></td><td>web</td></tr>
+<tr><td>27</td><td>GET</td><td><code>reports/warnings</code></td><td><code>reports/warning-items</code></td><td>web</td></tr>
+<tr><td>28</td><td>GET</td><td><code>reports/conditions</code></td><td><code>reports/items-by-condition</code></td><td>web</td></tr>
+<tr><td>29</td><td>GET</td><td><code>reports/unzoned-shared</code></td><td><code>reports/shared-items-without-zone</code></td><td>web</td></tr>
+<tr><td>30</td><td>GET</td><td><code>reports/unconfirmed</code></td><td><code>reports/unconfirmed-assignees</code></td><td>web</td></tr>
+<tr><td>31</td><td>GET</td><td><code>my/tasks</code></td><td><code>me/tasks</code></td><td><a href="#ep-me-tasks">có</a></td></tr>
+<tr><td>32</td><td>GET</td><td><code>my/tickets</code></td><td><code>me/assigned-tickets</code></td><td><a href="#ep-me-tickets">có</a></td></tr>
+<tr><td>33</td><td>GET</td><td><code>my/private-items</code></td><td><code>me/private-items</code></td><td><a href="#ep-me-private">có</a></td></tr>
+<tr><td>34</td><td>GET</td><td><code>tickets/{code}</code></td><td><code>tickets/{ticketCode}</code></td><td><a href="#ep-ticket">có</a></td></tr>
+<tr><td>35</td><td>POST</td><td><code>tickets/{code}/confirm</code></td><td><code>tickets/{ticketCode}/confirm</code></td><td><a href="#ep-confirm">có</a></td></tr>
+</tbody></table></div>
+<p class="meta"><code>…/zones/{zoneCode}</code> = <code>rounds/{roundCode}/zones/{zoneCode}</code>; <code>…/staffs/{staffCode}</code> = <code>rounds/{roundCode}/staffs/{staffCode}</code>. Bên cũ tương tự với <code>{round}</code>, <code>{zone}</code>, <code>{staff}</code>.</p>
 
 <h2 id="tong-quan">1. Tổng quan</h2>
 <dl class="kv">
-  <dt>Base path</dt><dd><code>{BASE_URL}/api/v1/asset-management/stocktake</code>. Mọi đường dẫn bên dưới tính tiếp từ đây.</dd>
-  <dt>Động từ</dt><dd>Chỉ có <code>GET</code> và <code>POST</code>, không có PUT/PATCH/DELETE. Sửa và bỏ đều là <code>POST …/update</code>, <code>POST …/remove</code>.</dd>
-  <dt>Tham số path</dt><dd><code>{round}</code> là mã đợt, <code>{zone}</code> là mã vùng, <code>{staff}</code> là mã NV được kiểm, <code>{code}</code> là mã đợt hoặc mã phiếu. BE tự cắt khoảng trắng hai đầu và so <b>không phân biệt hoa thường</b>.</dd>
+  <dt>Base path</dt><dd><code>{BASE_URL}/api/v1/asset-management/asset-stocktake</code>. Mọi đường dẫn bên dưới tính tiếp từ đây.</dd>
+  <dt>Động từ</dt><dd>Chỉ có <code>GET</code> và <code>POST</code>. Tạo, sửa, xoá là <code>POST …/create</code>, <code>…/update</code>, <code>…/delete</code>.</dd>
+  <dt>Tham số path</dt><dd><code>{roundCode}</code> mã đợt, <code>{zoneCode}</code> mã vùng, <code>{staffCode}</code> mã NV được kiểm, <code>{ticketCode}</code> mã phiếu. BE cắt khoảng trắng hai đầu và so <b>không phân biệt hoa thường</b>.</dd>
   <dt>Xác thực</dt><dd>Xác thực dùng chung hệ thống; mã nhân viên của người gọi lấy từ phiên đăng nhập.</dd>
 </dl>
 
 <h3 id="gui-request">Cách gửi request</h3>
 <ul>
-  <li><b>GET:</b> tham số đặt ở path và query string. <b>Không gửi <code>Content-Type</code> và không gửi body.</b> GET mà kèm <code>Content-Type: application/json</code> với body rỗng sẽ bị <b>HTTP 400</b>.</li>
-  <li><b>POST:</b> body JSON, header <code>Content-Type: application/json</code>. Tham số path (<code>round</code>, <code>zone</code>, <code>staff</code>, <code>code</code>) lấy từ URL, không cần đưa vào body.</li>
-  <li>POST chỉ có tham số path (<code>close/preview</code>, <code>close</code>, <code>submit</code>, <code>confirm</code>): gửi body <code>{}</code>.</li>
+  <li><b>GET:</b> tham số ở path và query string. <b>Không gửi <code>Content-Type</code> và không gửi body</b>: GET kèm <code>Content-Type: application/json</code> với body rỗng bị <b>HTTP 400</b>.</li>
+  <li><b>POST:</b> body JSON, <code>Content-Type: application/json</code>. Tham số path lấy từ URL, không đưa vào body.</li>
+  <li>POST chỉ có tham số path (<code>close-preview</code>, <code>close</code>, <code>submit</code>, <code>confirm</code>): gửi body <code>{}</code>.</li>
   <li>Trường không gửi: bool là <code>false</code>, chuỗi / số / mảng tuỳ chọn là <code>null</code>.</li>
 </ul>
 
@@ -175,31 +217,31 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 <thead><tr><th>Trường</th><th>Kiểu</th><th>Ý nghĩa</th></tr></thead>
 <tbody>
 <tr><td><code>code</code></td><td>số</td><td><code>0</code> là thành công. Các giá trị khác xem bảng dưới.</td></tr>
-<tr><td><code>subCode</code></td><td>chuỗi hoặc null</td><td>Mã lỗi nghiệp vụ kiểm kê (<a href="#ma-loi">mục 5</a>). Là null khi thành công hoặc khi lỗi không có mã riêng.</td></tr>
-<tr><td><code>message</code></td><td>chuỗi</td><td>Thành công là <code>"Success"</code>. Khi lỗi là câu tiếng Việt, hiển thị được cho người dùng.</td></tr>
-<tr><td><code>data</code></td><td>object / mảng / null</td><td>Dữ liệu trả về. Khi lỗi là <code>null</code>. API không trả dữ liệu (<code>items/remove</code>) thì <b>không có khoá <code>data</code></b>.</td></tr>
+<tr><td><code>subCode</code></td><td>chuỗi hoặc null</td><td>Mã lỗi nghiệp vụ kiểm kê (<a href="#ma-loi">mục 5</a>). Null khi thành công hoặc lỗi không có mã riêng.</td></tr>
+<tr><td><code>message</code></td><td>chuỗi</td><td>Thành công là <code>"Success"</code>. Khi lỗi là câu tiếng Việt hiển thị được.</td></tr>
+<tr><td><code>data</code></td><td>object / mảng / null</td><td>Dữ liệu trả về. Khi lỗi là <code>null</code>. API không trả dữ liệu (<code>items/delete</code>) thì <b>không có khoá <code>data</code></b>.</td></tr>
 <tr><td><code>errors</code></td><td>mảng <code>{code, message}</code></td><td>Thường là <code>[]</code>. Có nội dung khi lỗi validator (HTTP 400).</td></tr>
 </tbody></table></div>
 <div class="tbl"><table>
 <thead><tr><th><code>code</code></th><th>Tên</th><th>Khi nào gặp ở kiểm kê</th></tr></thead>
 <tbody>
 <tr><td>0</td><td>Success</td><td>Thành công</td></tr>
-<tr><td>10</td><td>DataError</td><td>Sai trạng thái nghiệp vụ: đợt đã đóng, vùng đã chốt, đang có người kiểm, đã gửi phiếu…; hoặc lỗi ghi dữ liệu</td></tr>
-<tr><td>11</td><td>NotFound</td><td>Không thấy đợt, vùng, NV, tài sản, món hoặc phiếu</td></tr>
+<tr><td>10</td><td>DataError</td><td>Sai trạng thái nghiệp vụ (đợt không mở, vùng đã chốt, đang có người kiểm, đã gửi…) hoặc lỗi ghi dữ liệu</td></tr>
+<tr><td>11</td><td>NotFound</td><td>Không thấy đợt, vùng, NV, tài sản hoặc phiếu</td></tr>
 <tr><td>20</td><td>InvalidParameter</td><td>Tham số sai: tình trạng, kết quả, ảnh, ghi chú quá dài, tài khoản chưa gắn mã NV…</td></tr>
 <tr><td>21</td><td>ValidationFailed</td><td>Lỗi validator, đi kèm <b>HTTP 400</b> (<a href="#loi-validator">xem dưới</a>)</td></tr>
-<tr><td>22</td><td>MissingConfiguration</td><td>Máy chủ thiếu cấu hình sinh mã phiếu. Lỗi phía hệ thống, app báo "thử lại sau"</td></tr>
+<tr><td>22</td><td>MissingConfiguration</td><td>Máy chủ thiếu cấu hình sinh mã phiếu; app báo "thử lại sau"</td></tr>
 <tr><td>30</td><td>NotAvailable</td><td>Không tra được người xác nhận, hoặc dịch vụ sinh mã không phản hồi</td></tr>
 <tr><td>1</td><td>Exception</td><td>Lỗi chưa bắt, đi kèm HTTP 500</td></tr>
 </tbody></table></div>
 
 <h4>Ba trường hợp không theo phong bì trên</h4>
 <ol>
-  <li><b>Thiếu quyền</b> (cổng quyền chạy trước API): HTTP <b>401 / 403 / 503</b>. Thân chỉ có hai khoá, và <code>code</code> là <b>chuỗi</b>:
+  <li><b>Thiếu quyền</b> (chặn trước API): HTTP <b>401 / 403 / 503</b>, thân chỉ có hai khoá và <code>code</code> là <b>chuỗi</b>:
 <pre><code>HTTP 403
 {"code":"403","message":"Tài khoản … chưa được cấp quyền …"}</code></pre>
   401 = chưa đăng nhập. 403 = thiếu quyền. 503 = không hỏi được dịch vụ quyền.</li>
-  <li id="loi-validator"><b>Lỗi validator</b> (sai định dạng, bị chặn trước khi vào nghiệp vụ): HTTP <b>400</b>, <code>code = 21</code>, <code>subCode = null</code>, không có <code>data</code>, chi tiết nằm trong <code>errors</code>. Dạng này đọc từ thư viện, <i>chưa chạy thử</i>:
+  <li id="loi-validator"><b>Lỗi validator</b> (sai định dạng): HTTP <b>400</b>, <code>code = 21</code>, <code>subCode = null</code>, không có <code>data</code>, chi tiết trong <code>errors</code>. Dạng này đọc từ thư viện, <i>chưa chạy thử</i>:
 <pre><code>HTTP 400
 {"code":21,"subCode":null,"message":"One or more validation errors occurred",
  "errors":[{"code":"NotEmptyValidator","message":"itemCode không được để trống"}]}</code></pre></li>
@@ -208,33 +250,33 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 
 <h3 id="kieu-du-lieu">Kiểu dữ liệu, ngày giờ</h3>
 <ul>
-  <li>Tên trường là <b>camelCase</b>.</li>
-  <li>Trạng thái và loại là <b>chuỗi</b> (<code>"OPEN"</code>, <code>"FOUND"</code>…). Tình trạng và phạm vi sử dụng là <b>số</b> (<code>"condition": 1</code>).</li>
-  <li><b>Ngày giờ luôn là UTC</b>, nhưng chuỗi có lúc có hậu tố <code>Z</code>, có lúc không: giá trị vừa sinh trong request có <code>Z</code> (vd <code>closedAt</code> khi chốt vùng), giá trị đọc từ DB thì không (vd <code>openedAt</code>). Phần thập phân của giây có 6 hoặc 7 chữ số. App luôn hiểu là UTC, và bộ parse phải nhận được cả hai dạng.</li>
+  <li>Tên trường <b>camelCase</b>. Trạng thái, loại là <b>chuỗi</b> (<code>"OPEN"</code>, <code>"FOUND"</code>…); tình trạng, phạm vi sử dụng là <b>số</b> (<code>"condition": 1</code>).</li>
+  <li><b>Ngày giờ luôn là UTC</b>; chuỗi có lúc có hậu tố <code>Z</code> (giá trị vừa sinh, vd <code>closedAt</code> khi chốt vùng), có lúc không (giá trị đọc từ DB). Phần giây có 6 hoặc 7 chữ số lẻ. App parse được cả hai dạng.</li>
+  <li><b>Ngày dự kiến</b> của đợt (<code>plannedStartDate</code>, <code>plannedEndDate</code>) là ngày thuần dạng <code>yyyy-MM-dd</code>, không có giờ.</li>
   <li>Id ảnh là chuỗi GUID.</li>
 </ul>
 
 <h3 id="phan-trang">Phân trang</h3>
 <ul>
-  <li><b>Mọi API app dùng đều trả toàn bộ danh sách, không phân trang.</b> Riêng <code>assets/search</code> trả tối đa <b>20</b> dòng đầu.</li>
-  <li>Chỉ báo cáo web có phân trang: <code>pageIndex</code> <b>tính từ 0</b>; <code>pageSize</code> từ 1 đến 200; bằng 0, bỏ trống hoặc lớn hơn 200 thì về <b>20</b>. Kết quả có khối <code>pager</code>.</li>
+  <li><b>Mọi API app dùng trả toàn bộ danh sách, không phân trang.</b> Riêng <code>items/search</code> trả tối đa <b>20</b> dòng.</li>
+  <li>Chỉ báo cáo web có phân trang: <code>pageIndex</code> <b>tính từ 0</b>; <code>pageSize</code> 1–200; bằng 0, bỏ trống hoặc lớn hơn 200 thì về <b>20</b>. Kết quả có khối <code>pager</code>.</li>
 </ul>
 
 <h3 id="bang-gia-tri">Bảng giá trị</h3>
 <div class="tbl"><table>
 <thead><tr><th>Trường</th><th>Giá trị</th></tr></thead>
 <tbody>
-<tr><td><code>condition</code> (tình trạng)</td><td><code>0</code> Hỏng (bắt buộc ≥ 1 ảnh) · <code>1</code> Tốt, đang dùng · <code>2</code> Tốt, không dùng · <code>4</code> Chờ thanh lý. Chỉ nhận đúng 4 giá trị này; <code>3</code> đã bỏ.</td></tr>
-<tr><td><code>result</code> (kết quả món NV)</td><td><code>FOUND</code> (Có) · <code>NOT_FOUND</code> (Không thấy) · <code>null</code> (chưa kiểm)</td></tr>
+<tr><td><code>condition</code> (tình trạng)</td><td><code>0</code> Hỏng (bắt buộc ≥ 1 ảnh) · <code>1</code> Tốt, đang dùng · <code>2</code> Tốt, không dùng · <code>4</code> Chờ thanh lý. Chỉ nhận đúng 4 giá trị này.</td></tr>
+<tr><td><code>result</code> (kết quả tài sản của NV)</td><td><code>FOUND</code> (Có) · <code>NOT_FOUND</code> (Không thấy) · <code>null</code> (chưa kiểm)</td></tr>
 <tr><td><code>usageScope</code> / <code>itemUsageScope</code></td><td><code>0</code> Riêng · <code>1</code> Chung · <code>10</code> Kho</td></tr>
 <tr><td><code>zoneType</code></td><td><code>0</code> vùng thường · <code>10</code> kho</td></tr>
 <tr><td>Cảnh báo <code>type</code></td><td><code>PRIVATE</code> · <code>OTHER_COMPANY</code> · <code>OTHER_ZONE</code> (<a href="#luat-canh-bao">xem luật</a>)</td></tr>
-<tr><td>Đợt <code>status</code></td><td><code>OPEN</code> · <code>CLOSED</code> · <span class="soon">Sắp có</span> <code>WAITING</code> (chờ bắt đầu), <code>CANCELLED</code> (đã huỷ)</td></tr>
-<tr><td>Vùng <code>status</code></td><td><code>PENDING</code> (chưa ai mở) · <code>IN_PROGRESS</code> · <code>CLOSED</code> (đã chốt)</td></tr>
+<tr><td>Đợt <code>status</code></td><td><code>WAITING</code> (chờ bắt đầu) · <code>OPEN</code> (đang kiểm) · <code>CLOSED</code> (đã đóng) · <code>CANCELLED</code> (đã huỷ)</td></tr>
+<tr><td>Vùng <code>status</code></td><td><code>PENDING</code> (chưa ai nhận) · <code>IN_PROGRESS</code> · <code>CLOSED</code> (đã chốt)</td></tr>
 <tr><td>NV <code>status</code></td><td><code>PENDING</code> · <code>IN_PROGRESS</code> · <code>AWAITING_CONFIRM</code> (đã gửi, chờ NV xác nhận) · <code>CONFIRMED</code></td></tr>
 <tr><td>Phiếu <code>status</code></td><td><code>PENDING</code> · <code>CONFIRMED</code></td></tr>
-<tr><td>Phiếu <code>type</code></td><td><code>ZONE</code> (phiếu vùng, mã dạng <code>KKV…</code>) · <code>STAFF</code> (phiếu NV, mã dạng <code>KKN…</code>)</td></tr>
-<tr><td><span class="soon">Sắp có</span> <code>confirmSource</code></td><td><code>USER</code> (người xác nhận bấm) · <code>SYSTEM</code> (hệ thống tự xác nhận khi đóng đợt) · <code>null</code> (chưa xác nhận)</td></tr>
+<tr><td>Phiếu <code>type</code></td><td><code>ZONE</code> (phiếu vùng, mã dạng <code>KKV…</code>) · <code>STAFF</code> (phiếu cá nhân, mã dạng <code>KKN…</code>)</td></tr>
+<tr><td><code>confirmSource</code></td><td><code>USER</code> (người xác nhận bấm) · <code>SYSTEM</code> (hệ thống tự xác nhận khi đóng đợt) · <code>null</code> (chưa xác nhận)</td></tr>
 <tr><td>Mã đợt / mã phiếu</td><td>Do hệ thống sinh, tối đa 64 ký tự, app không kiểm dạng. Hiện có dạng 3 chữ cái + 7 chữ số (vd <code>DKK0000999</code>)</td></tr>
 </tbody></table></div>
 
@@ -244,52 +286,53 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 <thead><tr><th>Quyền</th><th>Ý nghĩa</th></tr></thead>
 <tbody>
 <tr><td><code>asset-stocktake/read</code></td><td>Xem kiểm kê (đợt, vùng, NV, phiếu, báo cáo)</td></tr>
-<tr><td><code>asset-stocktake-check/read</code></td><td>Đi kiểm: mở vùng / NV, thêm và sửa món, chụp ảnh, chốt vùng, gửi phiếu NV</td></tr>
-<tr><td>Hành chính (quyền sửa CCDC)</td><td>Tạo / đóng đợt (web). Trên app: dùng được <code>takeOver</code> để nhận lại vùng / NV đang do người khác kiểm, và xem mọi phiếu</td></tr>
-<tr><td>Chỉ cần đăng nhập</td><td>Các API "của tôi" (<code>my/*</code>), chi tiết và xác nhận phiếu, <code>lock</code></td></tr>
+<tr><td><code>asset-stocktake-check/read</code></td><td>Đi kiểm: nhận vùng / NV, thêm và sửa tài sản, tải ảnh, chốt vùng, gửi kết quả NV</td></tr>
+<tr><td>Hành chính (quyền sửa CCDC)</td><td>Lập / bắt đầu / huỷ / đóng đợt (web). Trên app: <code>takeOver</code> để giành vùng / NV người khác đang giữ, và xem mọi phiếu</td></tr>
+<tr><td>Chỉ cần đăng nhập</td><td>API "của tôi" (<code>me/*</code>), chi tiết và xác nhận phiếu, <code>lock-status</code></td></tr>
 </tbody></table></div>
 <div class="tbl"><table>
 <thead><tr><th>API</th><th>Quyền cần</th></tr></thead>
 <tbody>
-<tr><td><code>GET my/tasks</code></td><td>Đăng nhập. Phần <code>checkRounds</code> chỉ có khi có <code>asset-stocktake-check/read</code>; không có quyền này thì nhận mảng rỗng, không bị 403</td></tr>
-<tr><td><code>GET rounds</code>, <code>rounds/{code}</code>, <code>rounds/{code}/zones</code>, <code>…/zones/{zone}/items</code>, <code>…/staffs</code>, <code>…/staffs/{staff}/items</code></td><td><code>asset-stocktake/read</code> <b>hoặc</b> <code>asset-stocktake-check/read</code></td></tr>
-<tr><td>Mọi API đi kiểm: <code>open</code>, <code>items</code> (thêm), <code>items/update</code>, <code>items/remove</code>, <code>close/preview</code>, <code>close</code>, <code>photos</code>, <code>assets/search</code>, <code>scan</code>, <code>submit</code></td><td><code>asset-stocktake-check/read</code>. Ghi lên vùng / NV còn phải <b>là người đang kiểm</b> vùng / NV đó</td></tr>
-<tr><td><code>open</code> kèm <code>takeOver: true</code></td><td>Như trên, cộng quyền hành chính. Không phải hành chính thì cờ này <b>bị bỏ qua</b>, không báo lỗi riêng</td></tr>
-<tr><td><code>GET my/private-items</code>, <code>GET my/tickets</code></td><td>Đăng nhập</td></tr>
-<tr><td><code>GET tickets/{code}</code></td><td>Đăng nhập, và là người xác nhận phiếu, <b>hoặc</b> có <code>asset-stocktake/read</code>, <b>hoặc</b> là hành chính. Không đủ điều kiện thì nhận <code>code 11</code> "Không tìm thấy phiếu" (cố ý không lộ phiếu có tồn tại)</td></tr>
-<tr><td><code>POST tickets/{code}/confirm</code></td><td>Đăng nhập, và <b>chỉ người xác nhận của phiếu</b></td></tr>
-<tr><td>Chỉ web: <code>rounds/{code}/tickets</code>, <code>reports/*</code></td><td><code>asset-stocktake/read</code> hoặc hành chính. Người chỉ có quyền đi kiểm sẽ nhận 403</td></tr>
-<tr><td>Chỉ web: <code>rounds/create</code>, <code>rounds/close</code></td><td>Hành chính</td></tr>
+<tr><td><code>GET me/tasks</code></td><td>Đăng nhập. <code>checkRounds</code> chỉ có khi có <code>asset-stocktake-check/read</code>; không có thì nhận mảng rỗng, không bị 403</td></tr>
+<tr><td><code>GET rounds/search</code>, <code>rounds/{roundCode}</code>, <code>…/zones</code>, <code>…/zones/{zoneCode}/items</code>, <code>…/staffs</code>, <code>…/staffs/{staffCode}/items</code></td><td><code>asset-stocktake/read</code> <b>hoặc</b> <code>asset-stocktake-check/read</code></td></tr>
+<tr><td>Mọi API đi kiểm: <code>claim</code>, <code>items/create</code>, <code>items/update</code>, <code>items/delete</code>, <code>close-preview</code>, <code>close</code>, <code>photos/upload</code>, <code>items/search</code>, <code>items/scan</code>, <code>submit</code></td><td><code>asset-stocktake-check/read</code>. Ghi lên vùng / NV còn phải <b>là người đang kiểm</b> vùng / NV đó</td></tr>
+<tr><td><code>claim</code> kèm <code>takeOver: true</code></td><td>Như trên, cộng quyền hành chính. Không phải hành chính thì cờ này <b>bị bỏ qua</b>, không báo lỗi riêng</td></tr>
+<tr><td><code>GET me/private-items</code>, <code>GET me/assigned-tickets</code></td><td>Đăng nhập</td></tr>
+<tr><td><code>GET tickets/{ticketCode}</code></td><td>Đăng nhập, và là người xác nhận phiếu, <b>hoặc</b> có <code>asset-stocktake/read</code>, <b>hoặc</b> là hành chính. Không đủ thì nhận <code>code 11</code> "Không tìm thấy phiếu"</td></tr>
+<tr><td><code>POST tickets/{ticketCode}/confirm</code></td><td>Đăng nhập, và <b>chỉ người xác nhận của phiếu</b></td></tr>
+<tr><td>Chỉ web: <code>rounds/{roundCode}/tickets</code>, <code>reports/*</code></td><td><code>asset-stocktake/read</code> hoặc hành chính</td></tr>
+<tr><td>Chỉ web: <code>rounds/create</code>, <code>rounds/update</code>, <code>rounds/{roundCode}/start</code>, <code>…/cancel</code>, <code>…/close</code></td><td>Hành chính</td></tr>
 </tbody></table></div>
 
 
 <h2 id="man-app">3. Theo từng màn app</h2>
 <p>Bấm vào từng API để xem quyền, tham số, ví dụ và mã lỗi. Ngoài mã ghi riêng, API nào cũng có thể trả lỗi chung: thiếu quyền (401/403/503), validator (400), <code>code 20</code> khi tài khoản chưa gắn mã NV.</p>
 <div class="screens">
-  <a href="#man-dau"><b>Màn đầu</b><span>my/tasks</span></a>
-  <a href="#man-dot"><b>Đợt</b><span>rounds, rounds/{code}</span></a>
-  <a href="#man-theo-vung"><b>Tab Theo vùng</b><span>rounds/{code}/zones</span></a>
-  <a href="#man-kiem-vung"><b>Kiểm vùng</b><span>open, items, update, remove, close</span></a>
-  <a href="#man-tim"><b>Tìm tài sản</b><span>assets/search</span></a>
-  <a href="#man-anh"><b>Ảnh</b><span>photos (JSON base64)</span></a>
-  <a href="#man-kiem-nv"><b>Kiểm theo NV</b><span>staffs, open, items, scan, submit</span></a>
-  <a href="#man-do-rieng"><b>Đồ Riêng của tôi</b><span>my/private-items</span></a>
-  <a href="#man-phieu"><b>Phiếu chờ tôi xác nhận</b><span>my/tickets, tickets/{code}, confirm</span></a>
+  <a href="#man-dau"><b>Màn đầu</b><span>me/tasks</span></a>
+  <a href="#man-dot"><b>Đợt</b><span>rounds/search, rounds/{roundCode}</span></a>
+  <a href="#man-theo-vung"><b>Tab Theo vùng</b><span>rounds/{roundCode}/zones</span></a>
+  <a href="#man-kiem-vung"><b>Kiểm vùng</b><span>claim, items/create, update, delete, close</span></a>
+  <a href="#man-tim"><b>Tìm tài sản</b><span>items/search</span></a>
+  <a href="#man-anh"><b>Ảnh</b><span>photos/upload (JSON base64)</span></a>
+  <a href="#man-kiem-nv"><b>Kiểm theo NV</b><span>staffs, claim, items/scan, submit</span></a>
+  <a href="#man-do-rieng"><b>Đồ Riêng của tôi</b><span>me/private-items</span></a>
+  <a href="#man-phieu"><b>Phiếu giao tôi xác nhận</b><span>me/assigned-tickets, tickets/{ticketCode}</span></a>
 </div>
 
 <h3 id="man-dau">3.1 Màn đầu</h3>
-<details class="ep" id="ep-my-tasks">
-<summary><span class="m get">GET</span><span class="path">/my/tasks</span><span class="live">Đang chạy</span><span class="what">Một lần gọi cho cả màn đầu: các đợt cần kiểm, đồ Riêng của tôi theo đợt, số phiếu chờ tôi xác nhận.</span></summary>
+<details class="ep" id="ep-me-tasks">
+<summary><span class="m get">GET</span><span class="path">/me/tasks</span><span class="what"><b>API này làm gì:</b> Màn đầu app: đợt tôi đi kiểm được, đồ Riêng của tôi trong đợt mở, số phiếu chờ tôi.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd>Đăng nhập. <code>checkRounds</code> chỉ có dữ liệu khi người dùng có <code>asset-stocktake-check/read</code>.</dd>
 <dt>Tham số</dt><dd>Không có.</dd></dl>
 <h4>Response <code>data</code></h4>
 <ul>
-<li><code>checkRounds[]</code>: <b>mọi</b> đợt đang mở (mọi công ty), xếp theo mã. Mỗi phần tử gồm <code>code</code>, <code>name</code>, <code>companyCode</code>, <code>zonesTotal</code>, <code>zonesClosed</code>, <code>staffTotal</code> (số NV có đồ Riêng), <code>staffSubmitted</code> (số NV đã gửi hoặc đã xác nhận).</li>
+<li><code>checkRounds[]</code>: <b>mọi</b> đợt đang mở (<code>OPEN</code>, mọi công ty), xếp theo mã. Mỗi phần tử gồm <code>code</code>, <code>name</code>, <code>companyCode</code>, <code>zonesTotal</code>, <code>zonesClosed</code>, <code>staffTotal</code> (số NV có đồ Riêng), <code>staffSubmitted</code> (số NV đã gửi hoặc đã xác nhận).</li>
 <li><code>myPrivate[]</code>: mỗi đợt đang mở có tôi trong danh sách NV. Mỗi phần tử gồm <code>roundCode</code>, <code>privateItemCount</code>, <code>status</code> (trạng thái NV của tôi), <code>ticketCode</code> (phiếu NV của tôi; null khi chưa gửi).</li>
-<li><code>pendingTicketCount</code>: số phiếu đang chờ tôi xác nhận. Đếm cùng điều kiện với <code>my/tickets</code>.</li>
+<li><code>pendingTicketCount</code>: số phiếu đang chờ tôi xác nhận, đếm cùng điều kiện với <code>me/assigned-tickets</code>.</li>
 </ul>
-<pre><code>GET {BASE_URL}/api/v1/asset-management/stocktake/my/tasks
+<p>Chỉ lấy đợt <code>OPEN</code>: đợt <code>WAITING</code> (chờ bắt đầu) và <code>CANCELLED</code> (đã huỷ) không xuất hiện ở đây.</p>
+<pre><code>GET {BASE_URL}/api/v1/asset-management/asset-stocktake/me/tasks
 
 {"data":{"checkRounds":[{"code":"DKK0000999","name":"Kiểm kê cuối năm","companyCode":"CT01",
    "zonesTotal":6,"zonesClosed":1,"staffTotal":40,"staffSubmitted":3}],
@@ -297,59 +340,56 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
  "pendingTicketCount":1},
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> chỉ có lỗi chung.</p>
-<div class="soon-block"><span class="soon">Sắp có</span> Đợt <code>WAITING</code> (chờ bắt đầu) và <code>CANCELLED</code> (đã huỷ) <b>không</b> xuất hiện ở <code>my/tasks</code>, vì API này chỉ lấy đợt <code>OPEN</code>.</div>
 </div></details>
 
 <h3 id="man-dot">3.2 Đợt</h3>
 <details class="ep" id="ep-rounds">
-<summary><span class="m get">GET</span><span class="path">/rounds?status=&amp;companyCode=</span><span class="live">Đang chạy</span><span class="what">Danh sách đợt, mới nhất trước.</span></summary>
+<summary><span class="m get">GET</span><span class="path">/rounds/search?status=&amp;companyCode=</span><span class="what"><b>API này làm gì:</b> Danh sách đợt kiểm kê, lọc theo trạng thái / công ty.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake/read</code> hoặc <code>asset-stocktake-check/read</code></dd>
-<dt>Query</dt><dd><code>status</code> (tuỳ chọn): <code>OPEN</code> / <code>CLOSED</code>; để trống thì lấy mọi trạng thái. <code>companyCode</code> (tuỳ chọn). Giá trị lạ không báo lỗi mà trả <code>[]</code>.</dd></dl>
-<h4>Response <code>data</code>: mảng đợt</h4>
-<p><code>code</code>, <code>companyCode</code>, <code>name</code>, <code>note</code>, <code>status</code>, <code>openedAt</code>, <code>openedByStaffCode</code>, <code>openedByStaffName</code>, <code>closedAt</code>, <code>closedByStaffCode</code>, <code>closedByStaffName</code>, <code>closedWithPending</code> (đợt bị đóng ép khi còn dở). Các trường tên có thể null khi không tra được tên.</p>
-<pre><code>GET …/stocktake/rounds?status=OPEN
+<dt>Query</dt><dd><code>status</code> (tuỳ chọn): <code>WAITING</code> / <code>OPEN</code> / <code>CLOSED</code> / <code>CANCELLED</code>. <code>companyCode</code> (tuỳ chọn). Giá trị lạ không báo lỗi mà trả <code>[]</code>.</dd></dl>
+<div class="warn"><b>Không truyền <code>status</code> thì trả mọi trạng thái, gồm cả đợt chờ bắt đầu và đã huỷ.</b> App chỉ cần đợt đang mở thì truyền <code>status=OPEN</code> hoặc tự lọc.</div>
+<h4>Response <code>data</code>: mảng đợt, mới nhất trước</h4>
+<p><code>code</code>, <code>companyCode</code>, <code>name</code>, <code>note</code>, <code>status</code>, <code>plannedStartDate</code>, <code>plannedEndDate</code> (ngày dự kiến, dạng <code>yyyy-MM-dd</code>; đợt cũ có thể null), <code>openedAt</code>, <code>openedByStaffCode</code>, <code>openedByStaffName</code>, <code>closedAt</code>, <code>closedByStaffCode</code>, <code>closedByStaffName</code>, <code>closedWithPending</code> (đợt bị đóng ép khi còn dở). Đợt đã huỷ: <code>closedAt</code> / <code>closedBy…</code> là lúc và người huỷ. Các trường tên có thể null khi không tra được tên.</p>
+<pre><code>GET …/asset-stocktake/rounds/search?status=OPEN
 
 {"data":[{"code":"DKK0000999","companyCode":"CT01","name":"Kiểm kê cuối năm","note":null,"status":"OPEN",
   "openedAt":"2026-01-05T01:00:00.123456","openedByStaffCode":"000998","openedByStaffName":"Trần Thị B",
-  "closedAt":null,"closedByStaffCode":null,"closedByStaffName":null,"closedWithPending":false}],
+  "closedAt":null,"closedByStaffCode":null,"closedByStaffName":null,"closedWithPending":false,
+  "plannedStartDate":"2026-01-05","plannedEndDate":"2026-01-10"}],
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> chỉ có lỗi chung.</p>
-<div class="soon-block"><span class="soon">Sắp có</span>
-<ul><li>DTO đợt thêm <code>plannedStartDate</code>, <code>plannedEndDate</code> (dạng <code>yyyy-MM-dd</code>). <code>status</code> có thêm <code>WAITING</code> (chờ bắt đầu), <code>CANCELLED</code> (đã huỷ).</li>
-<li><b>Không truyền <code>status</code> thì trả cả đợt <code>WAITING</code> và <code>CANCELLED</code>.</b> App chỉ cần đợt đang mở thì truyền <code>status=OPEN</code> hoặc tự lọc. <code>my/tasks</code> vẫn chỉ trả đợt <code>OPEN</code>.</li>
-<li>Đi kiểm trên đợt chờ hoặc đã huỷ (mở vùng / NV, tìm tài sản, tải ảnh…) vẫn trả mã <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>, nhưng câu theo trạng thái thật: "Đợt … chưa bắt đầu kiểm." hoặc "Đợt … đã huỷ." (đợt đóng thật vẫn là "Đợt … đã đóng."). App nên dựa vào <code>status</code> của đợt.</li></ul></div>
 </div></details>
 
 <details class="ep" id="ep-round">
-<summary><span class="m get">GET</span><span class="path">/rounds/{code}</span><span class="live">Đang chạy</span><span class="what">Chi tiết một đợt kèm các con số tiến độ.</span></summary>
+<summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}</span><span class="what"><b>API này làm gì:</b> Chi tiết một đợt kèm tiến độ.</span></summary>
 <div class="body">
-<dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake/read</code> hoặc <code>asset-stocktake-check/read</code></dd>
-<dt>Path</dt><dd><code>code</code>: mã đợt</dd></dl>
+<dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake/read</code> hoặc <code>asset-stocktake-check/read</code></dd></dl>
 <h4>Response <code>data</code></h4>
-<p><code>round</code> (cùng dạng một phần tử của <code>GET /rounds</code>), cùng các số nguyên <code>zonesTotal</code>, <code>zonesPending</code>, <code>zonesInProgress</code>, <code>zonesClosed</code>, <code>itemsAdded</code>, <code>ticketsTotal</code>, <code>ticketsConfirmed</code>, <code>staffTotal</code>, <code>staffConfirmed</code>, <code>staffPending</code>, <code>staffInProgress</code>, <code>staffAwaitingConfirm</code>.</p>
-<pre><code>GET …/stocktake/rounds/DKK0000999
+<p><code>round</code> (cùng dạng một phần tử của <code>rounds/search</code>), cùng các số nguyên <code>zonesTotal</code>, <code>zonesPending</code>, <code>zonesInProgress</code>, <code>zonesClosed</code>, <code>itemsAdded</code> (tài sản đã ghi trong các vùng), <code>ticketsTotal</code>, <code>ticketsConfirmed</code>, <code>staffTotal</code>, <code>staffConfirmed</code>, <code>staffPending</code>, <code>staffInProgress</code>, <code>staffAwaitingConfirm</code>, <code>pendingTicketCount</code> (phiếu còn chờ; hệ thống sẽ tự xác nhận khi đóng đợt), <code>systemConfirmedTicketCount</code> (phiếu hệ thống đã tự xác nhận), <code>staffItemsRecorded</code> (tài sản Riêng đã ghi kết quả). Tổng đã kiểm = <code>itemsAdded</code> + <code>staffItemsRecorded</code>.</p>
+<pre><code>GET …/asset-stocktake/rounds/DKK0000999
 
 {"data":{"round":{"code":"DKK0000999","companyCode":"CT01","name":"Kiểm kê cuối năm","note":null,"status":"OPEN",
    "openedAt":"2026-01-05T01:00:00.123456","openedByStaffCode":"000998","openedByStaffName":"Trần Thị B",
-   "closedAt":null,"closedByStaffCode":null,"closedByStaffName":null,"closedWithPending":false},
+   "closedAt":null,"closedByStaffCode":null,"closedByStaffName":null,"closedWithPending":false,
+   "plannedStartDate":"2026-01-05","plannedEndDate":"2026-01-10"},
  "zonesTotal":6,"zonesPending":4,"zonesInProgress":1,"zonesClosed":1,"itemsAdded":12,
- "ticketsTotal":1,"ticketsConfirmed":0,"staffTotal":40,"staffConfirmed":0,"staffPending":36,
- "staffInProgress":1,"staffAwaitingConfirm":3},
+ "ticketsTotal":2,"ticketsConfirmed":1,"staffTotal":40,"staffConfirmed":1,"staffPending":36,
+ "staffInProgress":1,"staffAwaitingConfirm":2,"pendingTicketCount":1,"systemConfirmedTicketCount":0,
+ "staffItemsRecorded":7},
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>.</p>
 </div></details>
 
 <h3 id="man-theo-vung">3.3 Tab Theo vùng</h3>
 <details class="ep" id="ep-zones">
-<summary><span class="m get">GET</span><span class="path">/rounds/{code}/zones</span><span class="live">Đang chạy</span><span class="what">Các vùng của đợt: trạng thái, người kiểm, số món. Đợt đã đóng vẫn đọc được.</span></summary>
+<summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}/zones</span><span class="what"><b>API này làm gì:</b> Danh sách vùng của đợt và người đang kiểm.</span></summary>
 <div class="body">
-<dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake/read</code> hoặc <code>asset-stocktake-check/read</code></dd>
-<dt>Path</dt><dd><code>code</code>: mã đợt</dd>
-<dt>Lọc</dt><dd>API không nhận tham số lọc trạng thái; app tự lọc theo <code>status</code> sau khi nhận về.</dd></dl>
+<dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake/read</code> hoặc <code>asset-stocktake-check/read</code>. Đợt đã đóng vẫn đọc được.</dd>
+<dt>Lọc</dt><dd>API không nhận tham số lọc; app tự lọc theo <code>status</code>.</dd></dl>
 <h4>Response <code>data</code>: mảng, xếp theo mã vùng</h4>
 <p><code>zoneCode</code>, <code>zoneName</code>, <code>zoneCompanyCode</code>, <code>zoneType</code> (0 / 10), <code>status</code>, <code>checkerStaffCode</code>, <code>checkerStaffName</code>, <code>startedAt</code>, <code>closedAt</code>, <code>itemCount</code>.</p>
-<pre><code>GET …/stocktake/rounds/DKK0000999/zones
+<pre><code>GET …/asset-stocktake/rounds/DKK0000999/zones
 
 {"data":[{"zoneCode":"VUNG01","zoneName":"Kho tầng 1","zoneCompanyCode":"CT01","zoneType":10,
   "status":"IN_PROGRESS","checkerStaffCode":"000999","checkerStaffName":"Nguyễn Văn A",
@@ -359,23 +399,21 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 </div></details>
 
 <h3 id="man-kiem-vung">3.4 Kiểm vùng</h3>
-<p>Trình tự: <b>mở vùng</b>, rồi thêm / sửa / bỏ món (có thể <a href="#man-tim">tìm tài sản</a> và <a href="#man-anh">tải ảnh</a>), rồi <b>xem trước chốt</b>, cuối cùng <b>chốt vùng</b>. Chỉ người đang kiểm vùng mới ghi được.</p>
-<div class="flow">open ──▶ items (thêm) ──▶ items/update (tình trạng, tem, ghi chú, ảnh) ──▶ close/preview ──▶ close
-            │  có cảnh báo, confirmWarnings=false → app hỏi người dùng
-            └─ đồng ý → gọi lại items với confirmWarnings=true</div>
+<p>Trình tự: <b>nhận vùng</b> → thêm / sửa / bỏ tài sản (có thể <a href="#man-tim">tìm tài sản</a>, <a href="#man-anh">tải ảnh</a>) → <b>xem trước chốt</b> → <b>chốt vùng</b>. Chỉ người đang kiểm vùng mới ghi được. Tiền tố <code>…/zones/{zoneCode}</code> = <code>/rounds/{roundCode}/zones/{zoneCode}</code>.</p>
+<div class="flow">claim ──▶ items/create ──▶ items/update (tình trạng, tem, ghi chú, ảnh) ──▶ close-preview ──▶ close
+                │  có cảnh báo, confirmWarnings=false → app hỏi người dùng
+                └─ đồng ý → gọi lại items/create với confirmWarnings=true</div>
 
-<details class="ep" id="ep-zone-open">
-<summary><span class="m post">POST</span><span class="path">/rounds/{round}/zones/{zone}/open</span><span class="live">Đang chạy</span><span class="what">Nhận vùng để kiểm, hoặc mở lại vùng mình đang kiểm. Trả về danh sách món hiện có.</span></summary>
+<details class="ep" id="ep-zone-claim">
+<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/claim</span><span class="what"><b>API này làm gì:</b> Nhận vùng về mình để kiểm (hoặc làm tiếp); <code>takeOver = true</code> để hành chính giành vùng người khác đang giữ.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>. <code>takeOver</code> chỉ có tác dụng với hành chính.</dd>
-<dt>Body</dt><dd><code>takeOver</code> bool, mặc định <code>false</code>: hành chính nhận lại vùng đang do người khác kiểm.</dd></dl>
-<h4>Hành vi</h4>
+<dt>Body</dt><dd><code>takeOver</code> bool, mặc định <code>false</code>.</dd></dl>
 <ul><li>Vùng <code>PENDING</code>: nhận vùng, vùng chuyển <code>IN_PROGRESS</code>, người kiểm là tôi.</li>
-<li>Vùng tôi đang kiểm: mở tiếp, không ghi gì.</li>
-<li>Vùng người khác đang kiểm: trả <a href="#e-VUNG_DANG_CO_NGUOI_KIEM"><code>VUNG_DANG_CO_NGUOI_KIEM</code></a>, trừ khi <code>takeOver=true</code> và người gọi là hành chính.</li></ul>
-<h4>Response <code>data</code></h4>
-<p><code>roundCode</code>, <code>zoneCode</code>, <code>zoneName</code>, <code>status</code>, <code>checkerStaffCode</code>, <code>checkerStaffName</code>, <code>startedAt</code>, <code>items[]</code> (cùng dạng món ở API dưới).</p>
-<pre><code>POST …/stocktake/rounds/DKK0000999/zones/VUNG01/open
+<li>Vùng tôi đang kiểm: làm tiếp, không ghi gì.</li>
+<li>Vùng người khác đang kiểm: trả <a href="#e-VUNG_DANG_CO_NGUOI_KIEM"><code>VUNG_DANG_CO_NGUOI_KIEM</code></a>, trừ khi <code>takeOver=true</code> và là hành chính.</li></ul>
+<p><b>Response <code>data</code></b>: <code>roundCode</code>, <code>zoneCode</code>, <code>zoneName</code>, <code>status</code>, <code>checkerStaffCode</code>, <code>checkerStaffName</code>, <code>startedAt</code>, <code>items[]</code> (dạng tài sản trong vùng, xem API dưới).</p>
+<pre><code>POST …/asset-stocktake/rounds/DKK0000999/zones/VUNG01/claim
 Content-Type: application/json
 
 {"takeOver":false}
@@ -387,10 +425,10 @@ Content-Type: application/json
 </div></details>
 
 <details class="ep" id="ep-zone-items">
-<summary><span class="m get">GET</span><span class="path">/rounds/{round}/zones/{zone}/items</span><span class="live">Đang chạy</span><span class="what">Danh sách món đã thêm vào vùng. Đợt đã đóng hoặc vùng đã chốt vẫn đọc được.</span></summary>
+<summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/items</span><span class="what"><b>API này làm gì:</b> Danh sách tài sản đã ghi trong vùng.</span></summary>
 <div class="body">
-<dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake/read</code> hoặc <code>asset-stocktake-check/read</code></dd></dl>
-<h4>Món trong vùng (dùng chung cho open / thêm / sửa)</h4>
+<dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake/read</code> hoặc <code>asset-stocktake-check/read</code>. Đợt đã đóng hoặc vùng đã chốt vẫn đọc được.</dd></dl>
+<h4>Tài sản trong vùng (dùng chung cho claim / create / update)</h4>
 <div class="tbl"><table><thead><tr><th>Trường</th><th>Kiểu</th><th>Ý nghĩa</th></tr></thead><tbody>
 <tr><td><code>itemCode</code></td><td>chuỗi</td><td>Mã tài sản</td></tr>
 <tr><td><code>description</code></td><td>chuỗi?</td><td>Mô tả, chụp lúc thêm</td></tr>
@@ -404,7 +442,7 @@ Content-Type: application/json
 <tr><td><code>warnings[]</code></td><td><code>{type, detail}</code></td><td>Cảnh báo đã ghi khi thêm</td></tr>
 <tr><td><code>photos[]</code></td><td><code>{id, fileId, fileName, fileExt}</code></td><td>Ảnh đã gắn (<a href="#man-anh">xem ảnh</a>)</td></tr>
 </tbody></table></div>
-<pre><code>GET …/stocktake/rounds/DKK0000999/zones/VUNG01/items
+<pre><code>GET …/asset-stocktake/rounds/DKK0000999/zones/VUNG01/items
 
 {"data":[{"itemCode":"TS000001","description":"Ghế phòng họp","condition":1,"needsRelabel":false,"note":null,
   "itemCompanyCode":"CT01","itemGroupCode":"NHOM01","itemUsageScope":0,"itemStaffCode":"000998",
@@ -414,26 +452,26 @@ Content-Type: application/json
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-VUNG_KHONG_THUOC_DOT"><code>VUNG_KHONG_THUOC_DOT</code></a>.</p>
 </div></details>
 
-<details class="ep" id="ep-zone-add">
-<summary><span class="m post">POST</span><span class="path">/rounds/{round}/zones/{zone}/items</span><span class="live">Đang chạy</span><span class="what">Thêm món vào vùng (quét hoặc nhập mã). Lần đầu có thể nhận cảnh báo; người dùng đồng ý thì gửi lại kèm confirmWarnings.</span></summary>
+<details class="ep" id="ep-zone-create">
+<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/items/create</span><span class="what"><b>API này làm gì:</b> Thêm một tài sản vào vùng (ghi tình trạng, cảnh báo nếu có).</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>, và là người đang kiểm vùng</dd>
 <dt>Body</dt><dd><code>itemCode</code> (bắt buộc, ≤ 64 ký tự; BE cắt khoảng trắng, không phân biệt hoa thường) · <code>confirmWarnings</code> bool, mặc định <code>false</code></dd></dl>
 <h4>Ba kết quả có thể nhận (đều là <code>code 0</code>)</h4>
 <div class="tbl"><table><thead><tr><th>Tình huống</th><th><code>added</code></th><th><code>skipped</code></th><th><code>warnings</code></th><th><code>item</code></th><th>App làm gì</th></tr></thead><tbody>
-<tr><td>Món đã có trong vùng</td><td>false</td><td>true</td><td><code>[]</code></td><td>món hiện có</td><td>Báo "đã có", trỏ tới món</td></tr>
+<tr><td>Tài sản đã có trong vùng</td><td>false</td><td>true</td><td><code>[]</code></td><td>tài sản hiện có</td><td>Báo "đã có", trỏ tới tài sản</td></tr>
 <tr><td>Có cảnh báo, <code>confirmWarnings=false</code></td><td>false</td><td>false</td><td>danh sách</td><td>null</td><td>Hiện cảnh báo. Đồng ý thì gọi lại với <code>true</code>. <b>Chưa ghi gì</b></td></tr>
-<tr><td>Không có cảnh báo, hoặc <code>confirmWarnings=true</code></td><td>true</td><td>false</td><td>cảnh báo đã ghi</td><td>món vừa thêm</td><td>Thêm vào danh sách</td></tr>
+<tr><td>Không có cảnh báo, hoặc <code>confirmWarnings=true</code></td><td>true</td><td>false</td><td>cảnh báo đã ghi</td><td>tài sản vừa thêm</td><td>Thêm vào danh sách</td></tr>
 </tbody></table></div>
 <p>Tình trạng mặc định khi thêm: <code>2</code> (Tốt, không dùng) với tài sản Kho, còn lại là <code>1</code>. Ba loại cảnh báo: xem <a href="#luat-canh-bao">luật cảnh báo</a>.</p>
-<pre><code>POST …/stocktake/rounds/DKK0000999/zones/VUNG01/items
+<pre><code>POST …/asset-stocktake/rounds/DKK0000999/zones/VUNG01/items/create
 {"itemCode":"TS000001","confirmWarnings":false}
 
 {"data":{"added":false,"skipped":false,
   "warnings":[{"type":"PRIVATE","detail":"Đồ riêng của 000998 - Trần Thị B."}],"item":null},
  "code":0,"subCode":null,"message":"Success","errors":[]}
 
-POST …/stocktake/rounds/DKK0000999/zones/VUNG01/items
+POST …/asset-stocktake/rounds/DKK0000999/zones/VUNG01/items/create
 {"itemCode":"TS000001","confirmWarnings":true}
 
 {"data":{"added":true,"skipped":false,
@@ -443,17 +481,17 @@ POST …/stocktake/rounds/DKK0000999/zones/VUNG01/items
    "addedByStaffCode":"000999","addedAt":"2026-01-05T02:05:00.5",
    "warnings":[{"type":"PRIVATE","detail":"Đồ riêng của 000998 - Trần Thị B."}],"photos":[]}},
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>, <a href="#e-VUNG_KHONG_THUOC_DOT"><code>VUNG_KHONG_THUOC_DOT</code></a>, <a href="#e-VUNG_DA_CHOT"><code>VUNG_DA_CHOT</code></a>, <a href="#e-VUNG_DANG_CO_NGUOI_KIEM"><code>VUNG_DANG_CO_NGUOI_KIEM</code></a> (vùng chưa mở hoặc của người khác), <a href="#e-KHONG_TIM_THAY_MA"><code>KHONG_TIM_THAY_MA</code></a>; lỗi ghi khác trả <code>code 10</code> không subCode ("Không ghi được món … hãy thử lại."); validator 400 khi <code>itemCode</code> rỗng hoặc dài quá.</p>
+<p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>, <a href="#e-VUNG_KHONG_THUOC_DOT"><code>VUNG_KHONG_THUOC_DOT</code></a>, <a href="#e-VUNG_DA_CHOT"><code>VUNG_DA_CHOT</code></a>, <a href="#e-VUNG_DANG_CO_NGUOI_KIEM"><code>VUNG_DANG_CO_NGUOI_KIEM</code></a> (vùng chưa nhận hoặc của người khác), <a href="#e-KHONG_TIM_THAY_MA"><code>KHONG_TIM_THAY_MA</code></a>; lỗi ghi khác trả <code>code 10</code> không subCode ("Không ghi được tài sản … hãy thử lại."); validator 400 khi <code>itemCode</code> rỗng hoặc dài quá.</p>
 <pre><code>{"data":null,"code":10,"subCode":"VUNG_DA_CHOT","message":"Vùng VUNG01 đã chốt.","errors":[]}</code></pre>
 </div></details>
 
 <details class="ep" id="ep-zone-update">
-<summary><span class="m post">POST</span><span class="path">/rounds/{round}/zones/{zone}/items/update</span><span class="live">Đang chạy</span><span class="what">Sửa món: tình trạng, cần in lại tem, ghi chú, ảnh. Mỗi lần gửi là ghi đè.</span></summary>
+<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/items/update</span><span class="what"><b>API này làm gì:</b> Sửa tình trạng / ghi chú / ảnh của tài sản trong vùng.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>, và là người đang kiểm vùng</dd>
 <dt>Body</dt><dd><code>itemCode</code> (bắt buộc) · <code>condition</code> (bắt buộc) · <code>needsRelabel</code> (mặc định false) · <code>note</code> · <code>photoIds</code>. Chi tiết: <a href="#v-zone-update">bảng validate</a>.</dd></dl>
-<div class="warn"><b>Mỗi lần gửi ghi đè</b> <code>condition</code>, <code>needsRelabel</code>, <code>note</code>, nên app gửi đủ trạng thái hiện tại của món. <code>photoIds</code> là <b>tập ảnh cuối cùng</b> của món: không gửi (null) thì giữ nguyên ảnh; <code>[]</code> thì gỡ hết ảnh; gửi danh sách thì món có đúng các ảnh đó.</div>
-<pre><code>POST …/stocktake/rounds/DKK0000999/zones/VUNG01/items/update
+<div class="warn"><b>Mỗi lần gửi ghi đè</b> <code>condition</code>, <code>needsRelabel</code>, <code>note</code>, nên app gửi đủ trạng thái hiện tại. <code>photoIds</code> là <b>tập ảnh cuối cùng</b> của tài sản: không gửi (null) thì giữ nguyên; <code>[]</code> thì gỡ hết; gửi danh sách thì có đúng các ảnh đó.</div>
+<pre><code>POST …/asset-stocktake/rounds/DKK0000999/zones/VUNG01/items/update
 {"itemCode":"TS000001","condition":0,"needsRelabel":true,"note":"Gãy chân",
  "photoIds":["00000000-0000-7000-8000-000000000001"]}
 
@@ -463,63 +501,63 @@ POST …/stocktake/rounds/DKK0000999/zones/VUNG01/items
   "photos":[{"id":"00000000-0000-7000-8000-000000000001","fileId":"00000000-0000-7000-8000-0000000000f1",
    "fileName":"anh1","fileExt":".jpg"}]},
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> các lỗi cổng như API thêm món, cộng <a href="#e-TINH_TRANG_KHONG_HOP_LE"><code>TINH_TRANG_KHONG_HOP_LE</code></a>, <a href="#e-MON_KHONG_CO_TRONG_VUNG"><code>MON_KHONG_CO_TRONG_VUNG</code></a>, <a href="#e-ANH_KHONG_HOP_LE"><code>ANH_KHONG_HOP_LE</code></a>, <a href="#e-HONG_CAN_ANH"><code>HONG_CAN_ANH</code></a>; ghi chú dài hơn 1024 ký tự trả <code>code 20</code> không subCode.</p>
-<pre><code>{"data":null,"code":20,"subCode":"HONG_CAN_ANH","message":"Món Hỏng bắt buộc có ít nhất một ảnh.","errors":[]}</code></pre>
-<p class="meta"><span class="soon">Sắp có</span> câu đổi thành "Tài sản Hỏng bắt buộc có ít nhất một ảnh."; <code>subCode</code> giữ nguyên.</p>
+<p><b>Lỗi:</b> các lỗi cổng như API thêm tài sản, cộng <a href="#e-TINH_TRANG_KHONG_HOP_LE"><code>TINH_TRANG_KHONG_HOP_LE</code></a>, <a href="#e-MON_KHONG_CO_TRONG_VUNG"><code>MON_KHONG_CO_TRONG_VUNG</code></a>, <a href="#e-ANH_KHONG_HOP_LE"><code>ANH_KHONG_HOP_LE</code></a>, <a href="#e-HONG_CAN_ANH"><code>HONG_CAN_ANH</code></a>; ghi chú dài hơn 1024 ký tự trả <code>code 20</code> không subCode.</p>
+<pre><code>{"data":null,"code":20,"subCode":"HONG_CAN_ANH","message":"Tài sản Hỏng bắt buộc có ít nhất một ảnh.","errors":[]}</code></pre>
 </div></details>
 
-<details class="ep" id="ep-zone-remove">
-<summary><span class="m post">POST</span><span class="path">/rounds/{round}/zones/{zone}/items/remove</span><span class="live">Đang chạy</span><span class="what">Bỏ món khỏi vùng. Ảnh của món trở về trạng thái "đã tải, chưa gắn".</span></summary>
+<details class="ep" id="ep-zone-delete">
+<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/items/delete</span><span class="what"><b>API này làm gì:</b> Bỏ một tài sản khỏi vùng.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>, và là người đang kiểm vùng</dd>
 <dt>Body</dt><dd><code>itemCode</code> (bắt buộc, ≤ 64)</dd></dl>
-<pre><code>POST …/stocktake/rounds/DKK0000999/zones/VUNG01/items/remove
+<p>Ảnh của tài sản trở về trạng thái "đã tải, chưa gắn".</p>
+<pre><code>POST …/asset-stocktake/rounds/DKK0000999/zones/VUNG01/items/delete
 {"itemCode":"TS000001"}
 
 {"code":0,"subCode":null,"message":"Success","errors":[]}      ← không có khoá data</code></pre>
-<p><b>Lỗi:</b> các lỗi cổng như API thêm món, cộng <a href="#e-MON_KHONG_CO_TRONG_VUNG"><code>MON_KHONG_CO_TRONG_VUNG</code></a>.</p>
+<p><b>Lỗi:</b> các lỗi cổng như API thêm tài sản, cộng <a href="#e-MON_KHONG_CO_TRONG_VUNG"><code>MON_KHONG_CO_TRONG_VUNG</code></a>.</p>
 </div></details>
 
 <details class="ep" id="ep-zone-preview">
-<summary><span class="m post">POST</span><span class="path">/rounds/{round}/zones/{zone}/close/preview</span><span class="live">Đang chạy</span><span class="what">Xem trước khi chốt: vùng sẽ sinh mấy phiếu, mỗi phiếu ai xác nhận, bao nhiêu món. Chưa ghi gì.</span></summary>
+<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/close-preview</span><span class="what"><b>API này làm gì:</b> Xem trước các phiếu xác nhận sẽ sinh khi chốt vùng.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>, và là người đang kiểm vùng</dd>
 <dt>Body</dt><dd><code>{}</code></dd></dl>
-<p>Món được gom theo <b>người xác nhận chuyên môn</b>. Phiếu có <code>confirmerStaffCode = null</code> chứa các món chưa có người phụ trách; trên bản đang chạy, <b>không ai xác nhận được</b> phiếu này. Vùng trống thì <code>tickets: []</code>.</p>
-<pre><code>POST …/stocktake/rounds/DKK0000999/zones/VUNG01/close/preview
+<p>Tài sản được gom theo <b>người xác nhận chuyên môn</b>. Phiếu có <code>confirmerStaffCode = null</code> gồm các tài sản chưa có người phụ trách: không ai bấm xác nhận được, hệ thống sẽ tự xác nhận khi đóng đợt. Vùng trống thì <code>tickets: []</code>. Chưa ghi gì.</p>
+<pre><code>POST …/asset-stocktake/rounds/DKK0000999/zones/VUNG01/close-preview
 {}
 
 {"data":{"roundCode":"DKK0000999","zoneCode":"VUNG01",
   "tickets":[{"confirmerStaffCode":"000998","confirmerStaffName":"Trần Thị B","itemCount":2}]},
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> các lỗi cổng như API thêm món; không tra được người xác nhận trả <code>code 30</code>.</p>
+<p><b>Lỗi:</b> các lỗi cổng như API thêm tài sản; không tra được người xác nhận trả <code>code 30</code>.</p>
 </div></details>
 
 <details class="ep" id="ep-zone-close">
-<summary><span class="m post">POST</span><span class="path">/rounds/{round}/zones/{zone}/close</span><span class="live">Đang chạy</span><span class="what">Chốt vùng: vùng chuyển CLOSED, mỗi người xác nhận nhận một phiếu vùng. Sau khi chốt, mọi thao tác ghi trên vùng trả VUNG_DA_CHOT.</span></summary>
+<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/close</span><span class="what"><b>API này làm gì:</b> Chốt vùng: kết thúc kiểm vùng, sinh phiếu xác nhận cho từng người xác nhận.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>, và là người đang kiểm vùng</dd>
 <dt>Body</dt><dd><code>{}</code></dd></dl>
-<pre><code>POST …/stocktake/rounds/DKK0000999/zones/VUNG01/close
+<p>Vùng chuyển <code>CLOSED</code>. Sau khi chốt, mọi thao tác ghi trên vùng trả <a href="#e-VUNG_DA_CHOT"><code>VUNG_DA_CHOT</code></a>.</p>
+<pre><code>POST …/asset-stocktake/rounds/DKK0000999/zones/VUNG01/close
 {}
 
 {"data":{"roundCode":"DKK0000999","zoneCode":"VUNG01","status":"CLOSED",
   "closedAt":"2026-01-05T03:00:00.345678Z",
   "tickets":[{"code":"KKV0000999","confirmerStaffCode":"000998","confirmerStaffName":"Trần Thị B","itemCount":2}]},
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> các lỗi cổng như API thêm món, cộng <a href="#e-VUNG_THAY_DOI_KHI_CHOT"><code>VUNG_THAY_DOI_KHI_CHOT</code></a> (món đổi trong lúc chốt: xem trước lại rồi chốt); <code>code 30</code> (không tra được người xác nhận); <code>code 22 / 30 / 10</code> khi sinh mã phiếu lỗi (lỗi hệ thống, cho người dùng thử lại).</p>
+<p><b>Lỗi:</b> các lỗi cổng như API thêm tài sản, cộng <a href="#e-VUNG_THAY_DOI_KHI_CHOT"><code>VUNG_THAY_DOI_KHI_CHOT</code></a> (tài sản đổi trong lúc chốt: xem trước lại rồi chốt); <code>code 30</code> (không tra được người xác nhận); <code>code 22 / 30 / 10</code> khi sinh mã phiếu lỗi (lỗi hệ thống, cho người dùng thử lại).</p>
 </div></details>
 
 <h3 id="man-tim">3.5 Tìm tài sản</h3>
 <details class="ep" id="ep-search">
-<summary><span class="m get">GET</span><span class="path">/rounds/{round}/assets/search?q=&amp;zone=</span><span class="live">Đang chạy</span><span class="what">Tìm tài sản theo mã hoặc mô tả, tối đa 20 dòng. Cho biết Chung / Riêng, người giữ, vùng trên sổ, vùng đang chứa món trong các đợt mở.</span></summary>
+<summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}/items/search?q=&amp;zone=</span><span class="what"><b>API này làm gì:</b> Tìm tài sản để thêm vào vùng, kèm vùng đang chứa nó.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>; đợt phải đang mở</dd>
-<dt>Query</dt><dd><code>q</code>: từ khoá; trả các tài sản có mã <b>chứa</b> hoặc mô tả <b>chứa</b> <code>q</code>; <code>q</code> rỗng thì trả <code>[]</code>. <code>zone</code> (tuỳ chọn): vùng đang kiểm, dùng để tính <code>inThisZone</code>.</dd></dl>
-<p>Tìm trên <b>toàn bộ tài sản</b> (không lọc theo công ty), bỏ tài sản đã xoá, xếp theo mã, lấy tối đa <b>20</b> dòng.</p>
-<h4>Response <code>data</code>: mảng</h4>
-<p><code>code</code>, <code>description</code>, <code>usageScope</code>, <code>companyCode</code>, <code>staffCode</code>, <code>staffName</code>, <code>stationZoneCode</code> (vùng trên sổ), <code>inThisZone</code> (đã có trong vùng đang kiểm), <code>openZones[]</code> (<code>{roundCode, zoneCode, zoneName}</code>: các vùng đang chứa món này trong mọi đợt đang mở).</p>
-<pre><code>GET …/stocktake/rounds/DKK0000999/assets/search?q=TS00000&amp;zone=VUNG01
+<dt>Query</dt><dd><code>q</code>: từ khoá; trả tài sản có mã <b>chứa</b> hoặc mô tả <b>chứa</b> <code>q</code>; <code>q</code> rỗng thì trả <code>[]</code>. <code>zone</code> (tuỳ chọn): vùng đang kiểm, dùng để tính <code>inThisZone</code>.</dd></dl>
+<p>Tìm trên <b>toàn bộ tài sản</b> (không lọc theo công ty), bỏ tài sản đã xoá, xếp theo mã, tối đa <b>20</b> dòng.</p>
+<p><b>Response <code>data</code></b>: mảng gồm <code>code</code>, <code>description</code>, <code>usageScope</code>, <code>companyCode</code>, <code>staffCode</code>, <code>staffName</code>, <code>stationZoneCode</code> (vùng trên sổ), <code>inThisZone</code>, <code>openZones[]</code> (<code>{roundCode, zoneCode, zoneName}</code>: các vùng đang chứa tài sản này trong mọi đợt đang mở).</p>
+<pre><code>GET …/asset-stocktake/rounds/DKK0000999/items/search?q=TS00000&amp;zone=VUNG01
 
 {"data":[{"code":"TS000002","description":"Bàn họp","usageScope":1,"companyCode":"CT01",
   "staffCode":null,"staffName":null,"stationZoneCode":"VUNG01","inThisZone":false,"openZones":[]}],
@@ -528,43 +566,41 @@ POST …/stocktake/rounds/DKK0000999/zones/VUNG01/items
 </div></details>
 
 <h3 id="man-anh">3.6 Ảnh</h3>
-<div class="danger"><b>Tải ảnh là JSON base64, không phải multipart.</b> Ghi chú cũ trong tài liệu việc ghi "multipart", nhưng mã chỉ nhận body JSON <code>{"files":[{"fileName","contentBase64"}]}</code>.</div>
-<p>Quy trình gồm ba bước. (1) Tải ảnh lên, nhận <code>id</code>. (2) Gửi các <code>id</code> đó trong <code>photoIds</code> của <code>items/update</code> (vùng hoặc NV). (3) Ảnh chỉ được giữ chính thức sau khi đã gắn vào món.</p>
+<div class="danger"><b>Tải ảnh là JSON base64, không phải multipart:</b> body <code>{"files":[{"fileName","contentBase64"}]}</code>.</div>
+<p>Quy trình: (1) tải ảnh lên, nhận <code>id</code>; (2) gửi các <code>id</code> trong <code>photoIds</code> của <code>items/update</code> (vùng hoặc NV); (3) ảnh chỉ được giữ chính thức sau khi gắn vào tài sản.</p>
 <details class="ep" id="ep-photos">
-<summary><span class="m post">POST</span><span class="path">/rounds/{round}/photos</span><span class="live">Đang chạy</span><span class="what">Tải một hoặc nhiều ảnh lên đợt, nhận id để gắn vào món.</span></summary>
+<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/photos/upload</span><span class="what"><b>API này làm gì:</b> Tải ảnh tài sản lúc kiểm (dùng cho món Hỏng / ghi chú).</span></summary>
 <div class="body">
-<dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>; đợt phải đang mở. Không gắn với vùng / NV, không cần đang giữ vùng.</dd>
+<dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>; đợt phải đang mở. Không cần đang giữ vùng / NV.</dd>
 <dt>Body</dt><dd><code>files[]</code>: <code>{ fileName, contentBase64 }</code>. Luật tệp: <a href="#v-photos">bảng validate</a>.</dd></dl>
-<h4>Response <code>data</code>: mảng ảnh</h4>
-<p><code>id</code> (<b>dùng cho <code>photoIds</code></b>), <code>fileId</code> (dùng để xem ảnh), <code>fileName</code>, <code>fileExt</code> (có dấu chấm, vd <code>.jpg</code>).</p>
-<pre><code>POST …/stocktake/rounds/DKK0000999/photos
+<p><b>Response <code>data</code></b>: mảng ảnh gồm <code>id</code> (<b>dùng cho <code>photoIds</code></b>), <code>fileId</code> (dùng để xem ảnh), <code>fileName</code>, <code>fileExt</code> (có dấu chấm, vd <code>.jpg</code>).</p>
+<pre><code>POST …/asset-stocktake/rounds/DKK0000999/photos/upload
 {"files":[{"fileName":"anh1.jpg","contentBase64":"/9j/4AAQSkZJRg..."}]}
 
 {"data":[{"id":"00000000-0000-7000-8000-000000000001","fileId":"00000000-0000-7000-8000-0000000000f1",
   "fileName":"anh1","fileExt":".jpg"}],
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>; lỗi tệp trả <code>code 20</code> không subCode (câu cụ thể ở <a href="#loi-chung">lỗi chung</a>); máy chủ lưu trữ lỗi trả <code>code 10</code>.</p>
+<p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>; lỗi tệp trả <code>code 20</code> không subCode (<a href="#loi-chung">lỗi chung</a>); máy chủ lưu trữ lỗi trả <code>code 10</code>.</p>
 </div></details>
 <details class="ep" id="ep-photo-view">
-<summary><span class="m get">GET</span><span class="path">{BASE_URL}/api/v1/asset-management/asset-item/files/assets/{fileId}</span><span class="live">Đang chạy</span><span class="what">Xem ảnh: trả nội dung tệp (byte), không bọc ApiResult. Đây là API của module tài sản, không nằm dưới /stocktake.</span></summary>
+<summary><span class="m get">GET</span><span class="path">{BASE_URL}/api/v1/asset-management/asset-item/files/assets/{fileId}</span><span class="what"><b>API này làm gì:</b> Xem ảnh đã tải (trả byte, không bọc ApiResult). API của module tài sản, không thuộc nhóm kiểm kê và không đổi tên.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd>Đăng nhập</dd><dt>Path</dt><dd><code>fileId</code> lấy từ <code>photos[].fileId</code> (không phải <code>id</code>)</dd></dl>
-<p>Trả byte với kiểu hiển thị trực tiếp. Không có tệp thì trả HTTP 404.</p>
+<p>Không có tệp thì trả HTTP 404.</p>
 </div></details>
 
 
 <h3 id="man-kiem-nv">3.7 Kiểm theo NV</h3>
-<p>Kiểm đồ Riêng của từng NV. Trình tự: <b>mở NV</b> (BE chụp danh sách đồ Riêng của NV lúc này), rồi ghi Có / Không thấy cho từng món (quét mã hoặc ghi tay), cuối cùng <b>gửi</b>. Khi gửi, BE sinh phiếu NV và chính NV đó là người xác nhận.</p>
-<div class="flow">staffs?status= ──▶ staffs/{staff}/open ──▶ scan (mã → Có) / items/update (Có · Không thấy) ──▶ submit ──▶ phiếu KKN chờ NV xác nhận</div>
+<p>Kiểm đồ Riêng của từng NV: <b>nhận NV</b> (BE lập danh sách đồ Riêng lúc này) → ghi Có / Không thấy từng tài sản (quét mã hoặc ghi tay) → <b>gửi</b>. Gửi xong BE sinh phiếu cá nhân, người xác nhận là chính NV đó. Tiền tố <code>…/staffs/{staffCode}</code> = <code>/rounds/{roundCode}/staffs/{staffCode}</code>.</p>
+<div class="flow">staffs?status= ──▶ claim ──▶ items/scan (mã → Có) / items/update (Có · Không thấy) ──▶ submit ──▶ phiếu KKN chờ NV xác nhận</div>
 
 <details class="ep" id="ep-staffs">
-<summary><span class="m get">GET</span><span class="path">/rounds/{round}/staffs?status=</span><span class="live">Đang chạy</span><span class="what">Các NV có đồ Riêng trong đợt: trạng thái, số đồ, đã ghi bao nhiêu. Đợt đã đóng vẫn đọc được.</span></summary>
+<summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}/staffs?status=</span><span class="what"><b>API này làm gì:</b> Danh sách NV có đồ Riêng trong đợt và tiến độ kiểm từng NV.</span></summary>
 <div class="body">
-<dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake/read</code> hoặc <code>asset-stocktake-check/read</code></dd>
+<dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake/read</code> hoặc <code>asset-stocktake-check/read</code>. Đợt đã đóng vẫn đọc được.</dd>
 <dt>Query</dt><dd><code>status</code> (tuỳ chọn): <code>PENDING</code> · <code>IN_PROGRESS</code> · <code>AWAITING_CONFIRM</code> · <code>CONFIRMED</code>, không phân biệt hoa thường. Giá trị khác trả <code>code 20</code>.</dd></dl>
-<h4>Response <code>data</code>: mảng, xếp theo mã NV</h4>
-<p><code>staffCode</code>, <code>staffName</code>, <code>privateItemCount</code> (số đồ Riêng chụp lúc lập đợt), <code>recordedCount</code> (số món đã ghi kết quả), <code>notFoundCount</code>, <code>status</code>, <code>checkerStaffCode</code>, <code>checkerStaffName</code>, <code>checkedAt</code> (lúc gửi), <code>confirmedAt</code>, <code>ticketCode</code> (null khi chưa gửi).</p>
-<pre><code>GET …/stocktake/rounds/DKK0000999/staffs?status=PENDING
+<p><b>Response <code>data</code></b>: mảng xếp theo mã NV, gồm <code>staffCode</code>, <code>staffName</code>, <code>privateItemCount</code> (số đồ Riêng chụp lúc bắt đầu đợt), <code>recordedCount</code> (đã ghi kết quả), <code>notFoundCount</code>, <code>status</code>, <code>checkerStaffCode</code>, <code>checkerStaffName</code>, <code>checkedAt</code> (lúc gửi), <code>confirmedAt</code>, <code>ticketCode</code> (null khi chưa gửi).</p>
+<pre><code>GET …/asset-stocktake/rounds/DKK0000999/staffs?status=PENDING
 
 {"data":[{"staffCode":"000998","staffName":"Trần Thị B","privateItemCount":2,"recordedCount":0,"notFoundCount":0,
   "status":"PENDING","checkerStaffCode":null,"checkerStaffName":null,"checkedAt":null,"confirmedAt":null,"ticketCode":null}],
@@ -572,36 +608,35 @@ POST …/stocktake/rounds/DKK0000999/zones/VUNG01/items
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>; <code>status</code> lạ trả <code>code 20</code>.</p>
 </div></details>
 
-<details class="ep" id="ep-staff-open">
-<summary><span class="m post">POST</span><span class="path">/rounds/{round}/staffs/{staff}/open</span><span class="live">Đang chạy</span><span class="what">Nhận NV để kiểm. Lần mở đầu tiên, BE tạo danh sách món từ đồ Riêng hiện tại của NV.</span></summary>
+<details class="ep" id="ep-staff-claim">
+<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/staffs/{staffCode}/claim</span><span class="what"><b>API này làm gì:</b> Nhận một NV về mình để kiểm đồ Riêng (lập danh sách tài sản của NV); <code>takeOver</code> để giành.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>. <code>takeOver</code> chỉ có tác dụng với hành chính.</dd>
-<dt>Path</dt><dd><code>staff</code>: mã NV được kiểm (có thể là chính mình)</dd>
+<dt>Path</dt><dd><code>staffCode</code>: mã NV được kiểm (có thể là chính mình)</dd>
 <dt>Body</dt><dd><code>takeOver</code> bool, mặc định <code>false</code></dd></dl>
-<ul><li>NV <code>PENDING</code>: nhận NV (chuyển <code>IN_PROGRESS</code>), và <b>tạo danh sách món một lần</b> từ đồ Riêng hiện tại của NV thuộc công ty của đợt. Vì vậy số món có thể khác <code>privateItemCount</code>.</li>
-<li>NV tôi đang kiểm: mở tiếp, không ghi gì. NV người khác đang kiểm: trả <a href="#e-NHAN_VIEN_DANG_CO_NGUOI_KIEM"><code>NHAN_VIEN_DANG_CO_NGUOI_KIEM</code></a>, trừ khi <code>takeOver</code> và là hành chính.</li>
-<li>NV có thể tự mở để kiểm chính đồ Riêng của mình; BE không chặn.</li></ul>
-<p><b>Response <code>data</code></b>: một dòng NV, cùng dạng phần tử của <code>GET staffs</code>.</p>
-<pre><code>POST …/stocktake/rounds/DKK0000999/staffs/000998/open
+<ul><li>NV <code>PENDING</code>: nhận NV (chuyển <code>IN_PROGRESS</code>) và <b>lập danh sách tài sản một lần</b> từ đồ Riêng hiện tại của NV thuộc công ty của đợt. Số tài sản có thể khác <code>privateItemCount</code>.</li>
+<li>NV tôi đang kiểm: làm tiếp, không ghi gì. NV người khác đang kiểm: trả <a href="#e-NHAN_VIEN_DANG_CO_NGUOI_KIEM"><code>NHAN_VIEN_DANG_CO_NGUOI_KIEM</code></a>, trừ khi <code>takeOver</code> và là hành chính.</li>
+<li>NV tự nhận để kiểm đồ Riêng của mình được; BE không chặn.</li></ul>
+<p><b>Response <code>data</code></b>: một dòng NV, cùng dạng phần tử của <code>…/staffs</code>.</p>
+<pre><code>POST …/asset-stocktake/rounds/DKK0000999/staffs/000998/claim
 {"takeOver":false}
 
 {"data":{"staffCode":"000998","staffName":"Trần Thị B","privateItemCount":2,"recordedCount":0,"notFoundCount":0,
   "status":"IN_PROGRESS","checkerStaffCode":"000999","checkerStaffName":"Nguyễn Văn A",
   "checkedAt":null,"confirmedAt":null,"ticketCode":null},
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>, <a href="#e-NHAN_VIEN_KHONG_THUOC_DOT"><code>NHAN_VIEN_KHONG_THUOC_DOT</code></a>, <a href="#e-NHAN_VIEN_DA_GUI"><code>NHAN_VIEN_DA_GUI</code></a>, <a href="#e-NHAN_VIEN_DANG_CO_NGUOI_KIEM"><code>NHAN_VIEN_DANG_CO_NGUOI_KIEM</code></a>; tạo danh sách món lỗi trả <code>code 10</code> (thử lại).</p>
+<p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>, <a href="#e-NHAN_VIEN_KHONG_THUOC_DOT"><code>NHAN_VIEN_KHONG_THUOC_DOT</code></a>, <a href="#e-NHAN_VIEN_DA_GUI"><code>NHAN_VIEN_DA_GUI</code></a>, <a href="#e-NHAN_VIEN_DANG_CO_NGUOI_KIEM"><code>NHAN_VIEN_DANG_CO_NGUOI_KIEM</code></a>; lập danh sách lỗi trả <code>code 10</code> (thử lại).</p>
 </div></details>
 
 <details class="ep" id="ep-staff-items">
-<summary><span class="m get">GET</span><span class="path">/rounds/{round}/staffs/{staff}/items</span><span class="live">Đang chạy</span><span class="what">Đồ của NV trong đợt. NV chưa mở thì trả bản xem trước (chưa lưu).</span></summary>
+<summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}/staffs/{staffCode}/items</span><span class="what"><b>API này làm gì:</b> Danh sách đồ Riêng của NV trong đợt và kết quả từng món.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake/read</code> hoặc <code>asset-stocktake-check/read</code></dd></dl>
-<ul><li>Đã mở: các món của NV trong đợt, xếp theo mã.</li>
-<li>Chưa mở và đợt đang mở: <b>xem trước</b> đồ Riêng hiện tại, <code>result = null</code>, chưa ghi gì.</li>
-<li>Chưa mở mà đợt đã đóng: <code>[]</code>.</li></ul>
-<h4>Món của NV (dùng chung cho items / update / scan / my/private-items)</h4>
-<p><code>itemCode</code>, <code>description</code> (mô tả hiện tại), <code>groupCode</code>, <code>result</code> (<code>FOUND</code> / <code>NOT_FOUND</code> / null), <code>condition</code> (null khi chưa kiểm hoặc Không thấy), <code>needsRelabel</code>, <code>note</code>, <code>photos[]</code>.</p>
-<pre><code>GET …/stocktake/rounds/DKK0000999/staffs/000998/items
+<ul><li>Đã nhận: danh sách tài sản của NV trong đợt, xếp theo mã.</li>
+<li>Chưa nhận và đợt đang mở: <b>xem trước</b> đồ Riêng hiện tại, <code>result = null</code>, chưa ghi gì. Chưa nhận mà đợt đã đóng: <code>[]</code>.</li></ul>
+<h4>Tài sản của NV (dùng chung cho items / update / scan / me/private-items)</h4>
+<p><code>itemCode</code>, <code>description</code> (mô tả hiện tại), <code>groupCode</code>, <code>result</code> (<code>FOUND</code> / <code>NOT_FOUND</code> / null), <code>condition</code> (null khi chưa kiểm hoặc Không thấy), <code>needsRelabel</code>, <code>note</code>, <code>photos[]</code> (<code>{id, fileId, fileName, fileExt}</code>).</p>
+<pre><code>GET …/asset-stocktake/rounds/DKK0000999/staffs/000998/items
 
 {"data":[
   {"itemCode":"TS000001","description":"Màn hình","groupCode":"NHOM01","result":null,"condition":null,
@@ -612,14 +647,31 @@ POST …/stocktake/rounds/DKK0000999/zones/VUNG01/items
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-NHAN_VIEN_KHONG_THUOC_DOT"><code>NHAN_VIEN_KHONG_THUOC_DOT</code></a>.</p>
 </div></details>
 
+<details class="ep" id="ep-staff-scan">
+<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/staffs/{staffCode}/items/scan</span><span class="what"><b>API này làm gì:</b> Quét mã một tài sản của NV: đánh dấu Tìm thấy.</span></summary>
+<div class="body">
+<dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>, và là người đang kiểm NV</dd>
+<dt>Body</dt><dd><code>code</code> (bắt buộc, ≤ 64). <b>Tên trường là <code>code</code>, không phải <code>itemCode</code>.</b></dd></dl>
+<ul><li>Tài sản chưa có kết quả: ghi <code>FOUND</code> + <code>condition = 1</code> (Tốt, đang dùng).</li>
+<li>Đã có kết quả, <b>kể cả Không thấy</b>: không đổi gì, trả nguyên trạng với <code>code 0</code>. Muốn đổi sang Có thì gọi <code>items/update</code>.</li></ul>
+<pre><code>POST …/asset-stocktake/rounds/DKK0000999/staffs/000998/items/scan
+{"code":"TS000001"}
+
+{"data":{"itemCode":"TS000001","description":"Màn hình","groupCode":"NHOM01","result":"FOUND","condition":1,
+  "needsRelabel":false,"note":null,"photos":[]},
+ "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
+<p><b>Lỗi:</b> các lỗi cổng như API ghi kết quả bên dưới, cộng <a href="#e-KHONG_TIM_THAY_MA"><code>KHONG_TIM_THAY_MA</code></a>, <a href="#e-KHONG_PHAI_DO_RIENG_CUA_NV"><code>KHONG_PHAI_DO_RIENG_CUA_NV</code></a>.</p>
+</div></details>
+
 <details class="ep" id="ep-staff-update">
-<summary><span class="m post">POST</span><span class="path">/rounds/{round}/staffs/{staff}/items/update</span><span class="live">Đang chạy</span><span class="what">Ghi Có / Không thấy cho một món, kèm tình trạng, tem, ghi chú, ảnh. Ghi lại nhiều lần được trước khi gửi.</span></summary>
+<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/staffs/{staffCode}/items/update</span><span class="what"><b>API này làm gì:</b> Sửa kết quả / tình trạng / ghi chú / ảnh một tài sản của NV.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>, và là người đang kiểm NV</dd>
 <dt>Body</dt><dd><code>itemCode</code> · <code>result</code> · <code>condition</code> (bắt buộc khi FOUND) · <code>needsRelabel</code> · <code>note</code> · <code>photoIds</code>. Chi tiết: <a href="#v-staff-update">bảng validate</a>.</dd></dl>
-<ul><li><code>NOT_FOUND</code>: BE ghi <code>condition = null</code>, <b>gỡ hết ảnh</b> và bỏ qua <code>photoIds</code>.</li>
-<li><code>needsRelabel</code>, <code>note</code> bị ghi đè mỗi lần gửi. <code>photoIds</code> theo cùng luật như vùng (null giữ, <code>[]</code> gỡ hết).</li></ul>
-<pre><code>POST …/stocktake/rounds/DKK0000999/staffs/000998/items/update
+<ul><li><code>NOT_FOUND</code>: BE ghi <code>condition = null</code>, <b>gỡ hết ảnh</b>, bỏ qua <code>photoIds</code>.</li>
+<li><code>needsRelabel</code>, <code>note</code> bị ghi đè mỗi lần gửi. <code>photoIds</code> theo cùng luật như vùng (null giữ, <code>[]</code> gỡ hết). Ghi lại nhiều lần được trước khi gửi.</li></ul>
+<p><b>Response <code>data</code></b>: tài sản của NV sau khi lưu; <code>photos[]</code> gồm <code>id</code>, <code>fileId</code>, <code>fileName</code>, <code>fileExt</code>.</p>
+<pre><code>POST …/asset-stocktake/rounds/DKK0000999/staffs/000998/items/update
 {"itemCode":"TS000002","result":"NOT_FOUND","needsRelabel":false,"note":"Không thấy ở bàn"}
 
 {"data":{"itemCode":"TS000002","description":"Điện thoại bàn","groupCode":"NHOM02","result":"NOT_FOUND",
@@ -631,28 +683,12 @@ Ví dụ ghi Có, Tốt không dùng:
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>, <a href="#e-NHAN_VIEN_KHONG_THUOC_DOT"><code>NHAN_VIEN_KHONG_THUOC_DOT</code></a>, <a href="#e-NHAN_VIEN_CHUA_MO"><code>NHAN_VIEN_CHUA_MO</code></a>, <a href="#e-NHAN_VIEN_DA_GUI"><code>NHAN_VIEN_DA_GUI</code></a>, <a href="#e-NHAN_VIEN_DANG_CO_NGUOI_KIEM"><code>NHAN_VIEN_DANG_CO_NGUOI_KIEM</code></a>, <a href="#e-KET_QUA_KHONG_HOP_LE"><code>KET_QUA_KHONG_HOP_LE</code></a>, <a href="#e-TINH_TRANG_KHONG_HOP_LE"><code>TINH_TRANG_KHONG_HOP_LE</code></a>, <a href="#e-MON_KHONG_THUOC_NHAN_VIEN"><code>MON_KHONG_THUOC_NHAN_VIEN</code></a>, <a href="#e-ANH_KHONG_HOP_LE"><code>ANH_KHONG_HOP_LE</code></a>, <a href="#e-HONG_CAN_ANH"><code>HONG_CAN_ANH</code></a>; ghi chú quá 1024 ký tự trả <code>code 20</code>.</p>
 </div></details>
 
-<details class="ep" id="ep-staff-scan">
-<summary><span class="m post">POST</span><span class="path">/rounds/{round}/staffs/{staff}/scan</span><span class="live">Đang chạy</span><span class="what">Quét mã tài sản: món chưa ghi thì ghi Có, tình trạng Tốt đang dùng. Báo lỗi nếu mã không phải đồ Riêng của NV này.</span></summary>
-<div class="body">
-<dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>, và là người đang kiểm NV</dd>
-<dt>Body</dt><dd><code>code</code> (bắt buộc, ≤ 64). <b>Tên trường là <code>code</code>, không phải <code>itemCode</code>.</b></dd></dl>
-<ul><li>Món chưa có kết quả: ghi <code>FOUND</code> + <code>condition = 1</code>.</li>
-<li>Món đã có kết quả, <b>kể cả Không thấy</b>: không đổi gì, trả nguyên trạng với <code>code 0</code>. Muốn đổi Không thấy sang Có thì gọi <code>items/update</code>.</li></ul>
-<pre><code>POST …/stocktake/rounds/DKK0000999/staffs/000998/scan
-{"code":"TS000001"}
-
-{"data":{"itemCode":"TS000001","description":"Màn hình","groupCode":"NHOM01","result":"FOUND","condition":1,
-  "needsRelabel":false,"note":null,"photos":[]},
- "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> các lỗi cổng như API ghi món NV, cộng <a href="#e-KHONG_TIM_THAY_MA"><code>KHONG_TIM_THAY_MA</code></a>, <a href="#e-KHONG_PHAI_DO_RIENG_CUA_NV"><code>KHONG_PHAI_DO_RIENG_CUA_NV</code></a>.</p>
-</div></details>
-
 <details class="ep" id="ep-staff-submit">
-<summary><span class="m post">POST</span><span class="path">/rounds/{round}/staffs/{staff}/submit</span><span class="live">Đang chạy</span><span class="what">Gửi kết quả kiểm NV. Mọi món phải có kết quả. BE sinh phiếu NV, người xác nhận là chính NV đó.</span></summary>
+<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/staffs/{staffCode}/submit</span><span class="what"><b>API này làm gì:</b> Gửi kết quả kiểm NV: sinh phiếu cá nhân cho chính NV xác nhận.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd><code>asset-stocktake-check/read</code>, và là người đang kiểm NV</dd><dt>Body</dt><dd><code>{}</code></dd></dl>
-<p>NV chuyển <code>AWAITING_CONFIRM</code>. Sau khi gửi, mọi thao tác ghi trên NV trả <a href="#e-NHAN_VIEN_DA_GUI"><code>NHAN_VIEN_DA_GUI</code></a>.</p>
-<pre><code>POST …/stocktake/rounds/DKK0000999/staffs/000998/submit
+<p>Mọi tài sản phải có kết quả. NV chuyển <code>AWAITING_CONFIRM</code>; sau đó mọi thao tác ghi trên NV trả <a href="#e-NHAN_VIEN_DA_GUI"><code>NHAN_VIEN_DA_GUI</code></a>.</p>
+<pre><code>POST …/asset-stocktake/rounds/DKK0000999/staffs/000998/submit
 {}
 
 {"data":{"roundCode":"DKK0000999","staffCode":"000998","staffName":"Trần Thị B","status":"AWAITING_CONFIRM",
@@ -660,20 +696,18 @@ Ví dụ ghi Có, Tốt không dùng:
  "code":0,"subCode":null,"message":"Success","errors":[]}
 
 {"data":null,"code":10,"subCode":"NHAN_VIEN_CHUA_KIEM_HET",
- "message":"Nhân viên 000998 còn 1 món chưa kiểm; ghi hết rồi mới gửi phiếu.","errors":[]}</code></pre>
-<p class="meta"><span class="soon">Sắp có</span> câu đổi "món" thành "tài sản"; <code>subCode</code> giữ nguyên.</p>
-<p><b>Lỗi:</b> các lỗi cổng như API ghi món NV, cộng <a href="#e-NHAN_VIEN_CHUA_KIEM_HET"><code>NHAN_VIEN_CHUA_KIEM_HET</code></a>; <code>code 22 / 30 / 10</code> khi sinh mã phiếu lỗi.</p>
+ "message":"Nhân viên 000998 còn 1 tài sản chưa kiểm; ghi hết rồi mới gửi phiếu.","errors":[]}</code></pre>
+<p><b>Lỗi:</b> các lỗi cổng như API ghi kết quả, cộng <a href="#e-NHAN_VIEN_CHUA_KIEM_HET"><code>NHAN_VIEN_CHUA_KIEM_HET</code></a>; <code>code 22 / 30 / 10</code> khi sinh mã phiếu lỗi.</p>
 </div></details>
 
 <h3 id="man-do-rieng">3.8 Đồ Riêng của tôi</h3>
-<details class="ep" id="ep-my-private">
-<summary><span class="m get">GET</span><span class="path">/my/private-items?round=</span><span class="live">Đang chạy</span><span class="what">Chỉ đọc. Đồ Riêng của người đang đăng nhập, theo một đợt hoặc hiện tại.</span></summary>
+<details class="ep" id="ep-me-private">
+<summary><span class="m get">GET</span><span class="path">/me/private-items?round=</span><span class="what"><b>API này làm gì:</b> Đồ Riêng của tôi (hiện tại hoặc trong một đợt).</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd>Đăng nhập. Mã NV luôn là người gọi; app không truyền mã NV.</dd>
-<dt>Query</dt><dd><code>round</code> (tuỳ chọn). Không truyền: đồ Riêng hiện tại của tôi ở mọi công ty (<code>result</code> null). Có truyền: món của tôi trong đợt đó.</dd></dl>
-<h4>Response <code>data</code></h4>
-<p><code>roundCode</code> (null khi không truyền <code>round</code>), <code>items[]</code> (dạng <a href="#ep-staff-items">món của NV</a>), <code>rounds[]</code>: mọi đợt có tôi trong danh sách NV (cả đợt mở lẫn đã đóng), gồm <code>roundCode</code>, <code>roundName</code>, <code>companyCode</code>, <code>roundStatus</code>, <code>staffStatus</code>, <code>ticketCode</code>, <code>ticketStatus</code>.</p>
-<pre><code>GET …/stocktake/my/private-items?round=DKK0000999
+<dt>Query</dt><dd><code>round</code> (tuỳ chọn, tên tham số giữ nguyên). Không truyền: đồ Riêng hiện tại của tôi ở mọi công ty (<code>result</code> null). Có truyền: tài sản của tôi trong đợt đó.</dd></dl>
+<p><b>Response <code>data</code></b>: <code>roundCode</code> (null khi không truyền <code>round</code>), <code>items[]</code> (dạng <a href="#ep-staff-items">tài sản của NV</a>), <code>rounds[]</code>: mọi đợt có tôi trong danh sách NV (mở lẫn đã đóng), gồm <code>roundCode</code>, <code>roundName</code>, <code>companyCode</code>, <code>roundStatus</code>, <code>staffStatus</code>, <code>ticketCode</code>, <code>ticketStatus</code>.</p>
+<pre><code>GET …/asset-stocktake/me/private-items?round=DKK0000999
 
 {"data":{"roundCode":"DKK0000999",
   "items":[{"itemCode":"TS000001","description":"Màn hình","groupCode":"NHOM01","result":"FOUND","condition":1,
@@ -684,68 +718,71 @@ Ví dụ ghi Có, Tốt không dùng:
 <p><b>Lỗi</b> (khi có <code>round</code>): <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-NHAN_VIEN_KHONG_THUOC_DOT"><code>NHAN_VIEN_KHONG_THUOC_DOT</code></a> (tôi không có đồ Riêng trong đợt).</p>
 </div></details>
 
-<h3 id="man-phieu">3.9 Phiếu chờ tôi xác nhận</h3>
-<p>Một màn cho cả phiếu vùng (<code>ZONE</code>) và phiếu NV (<code>STAFF</code>), cùng một nút xác nhận. Xác nhận phiếu không ghi gì vào tài sản.</p>
-<details class="ep" id="ep-my-tickets">
-<summary><span class="m get">GET</span><span class="path">/my/tickets</span><span class="live">Đang chạy</span><span class="what">Các phiếu đang chờ tôi xác nhận, xếp theo mã.</span></summary>
+<h3 id="man-phieu">3.9 Phiếu giao tôi xác nhận</h3>
+<p>Một màn cho cả phiếu vùng (<code>ZONE</code>) và phiếu cá nhân (<code>STAFF</code>), một nút xác nhận. Xác nhận phiếu không ghi gì vào tài sản.</p>
+<details class="ep" id="ep-me-tickets">
+<summary><span class="m get">GET</span><span class="path">/me/assigned-tickets?status=&amp;type=</span><span class="what"><b>API này làm gì:</b> Phiếu giao cho tôi xác nhận (chờ / đã xác nhận).</span></summary>
 <div class="body">
-<dl class="kv"><dt>Quyền</dt><dd>Đăng nhập</dd><dt>Tham số</dt><dd>Không có (bản đang chạy)</dd></dl>
-<p><b>Response <code>data</code></b>: mảng gồm <code>code</code>, <code>roundCode</code>, <code>roundName</code>, <code>roundStatus</code>, <code>type</code>, <code>zoneCode</code>, <code>zoneName</code> (null với phiếu NV), <code>itemCount</code>, <code>createdAt</code>.</p>
-<pre><code>GET …/stocktake/my/tickets
+<dl class="kv"><dt>Quyền</dt><dd>Đăng nhập</dd>
+<dt>Query</dt><dd><code>status</code> (tuỳ chọn): <code>PENDING</code> (mặc định khi bỏ trống) · <code>CONFIRMED</code> · <code>ALL</code>. <code>type</code> (tuỳ chọn): <code>ZONE</code> · <code>STAFF</code>. Giá trị khác trả <code>code 20</code>.</dd></dl>
+<ul><li>Không truyền tham số: chỉ phiếu đang chờ, xếp theo mã. Có <code>CONFIRMED</code> / <code>ALL</code>: phiếu chờ trước, sau đó mới nhất trước.</li>
+<li><b>Khi không truyền <code>status</code> lẫn <code>type</code></b>, BE không tra tên: <code>staffName</code> và <code>confirmedByStaffName</code> là null. Cần tên thì truyền <code>status</code> tường minh.</li></ul>
+<p><b>Response <code>data</code></b>: mảng gồm <code>code</code>, <code>roundCode</code>, <code>roundName</code>, <code>roundStatus</code>, <code>type</code>, <code>zoneCode</code>, <code>zoneName</code> (null với phiếu cá nhân), <code>itemCount</code>, <code>createdAt</code>, <code>status</code>, <code>staffCode</code>, <code>staffName</code> (phiếu cá nhân: NV được kiểm), <code>confirmedAt</code>, <code>confirmedByStaffCode</code>, <code>confirmedByStaffName</code>, <code>confirmSource</code> (<code>USER</code> / <code>SYSTEM</code> / null).</p>
+<pre><code>GET …/asset-stocktake/me/assigned-tickets
 
 {"data":[{"code":"KKN0000999","roundCode":"DKK0000999","roundName":"Kiểm kê cuối năm","roundStatus":"OPEN",
-  "type":"STAFF","zoneCode":null,"zoneName":null,"itemCount":2,"createdAt":"2026-01-06T02:00:00.456789"}],
+  "type":"STAFF","zoneCode":null,"zoneName":null,"itemCount":2,"createdAt":"2026-01-06T02:00:00.456789",
+  "status":"PENDING","staffCode":"000998","staffName":null,"confirmedAt":null,
+  "confirmedByStaffCode":null,"confirmedByStaffName":null,"confirmSource":null}],
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<div class="soon-block"><span class="soon">Sắp có (lượt góp ý 1)</span>
-<ul><li>Thêm tham số tuỳ chọn <code>status</code> (<code>PENDING</code> mặc định, <code>CONFIRMED</code>, <code>ALL</code>) và <code>type</code> (<code>ZONE</code> / <code>STAFF</code>). <b>Không truyền thì nhận đúng như bản đang chạy.</b> Giá trị sai trả <code>code 20</code>.</li>
-<li>Mỗi phần tử thêm <code>status</code>, <code>staffCode</code>, <code>staffName</code>, <code>confirmedAt</code>, <code>confirmedByStaffCode</code>, <code>confirmedByStaffName</code>, <code>confirmSource</code>.</li>
-<li>Với <code>CONFIRMED</code> / <code>ALL</code>: phiếu chờ đứng trước, sau đó phiếu mới nhất trước.</li></ul></div>
+<p><b>Lỗi:</b> <code>status</code> / <code>type</code> lạ trả <code>code 20</code>.</p>
 </div></details>
 
 <details class="ep" id="ep-ticket">
-<summary><span class="m get">GET</span><span class="path">/tickets/{code}</span><span class="live">Đang chạy</span><span class="what">Chi tiết một phiếu kèm danh sách món.</span></summary>
+<summary><span class="m get">GET</span><span class="path">/tickets/{ticketCode}</span><span class="what"><b>API này làm gì:</b> Chi tiết một phiếu xác nhận và các tài sản trong phiếu.</span></summary>
 <div class="body">
 <dl class="kv"><dt>Quyền</dt><dd>Đăng nhập. Xem được khi là người xác nhận của phiếu, hoặc có <code>asset-stocktake/read</code>, hoặc là hành chính.</dd></dl>
-<h4>Response <code>data</code></h4>
-<p><code>code</code>, <code>roundCode</code>, <code>roundName</code>, <code>roundStatus</code>, <code>type</code>, <code>zoneCode</code>, <code>zoneName</code>, <code>staffCode</code> và <code>staffName</code> (phiếu NV là NV được kiểm; phiếu vùng là null), <code>confirmerStaffCode</code>, <code>confirmerStaffName</code>, <code>status</code>, <code>confirmedAt</code>, <code>confirmedByStaffCode</code>, <code>confirmedByStaffName</code>, <code>items[]</code>.</p>
-<p>Mỗi món: <code>itemCode</code>, <code>description</code>, <code>itemGroupCode</code>, <code>result</code> (phiếu NV: FOUND / NOT_FOUND; phiếu vùng: null), <code>condition</code> (null khi món NV Không thấy), <code>needsRelabel</code>, <code>note</code>, <code>itemCompanyCode</code>, <code>itemUsageScope</code>, <code>itemStaffCode</code>, <code>addedByStaffCode</code> và <code>addedAt</code> (null ở phiếu NV), <code>warnings</code> (chỉ món vùng), <code>photos</code>.</p>
-<pre><code>GET …/stocktake/tickets/KKN0000999
+<p><b>Response <code>data</code></b>: <code>code</code>, <code>roundCode</code>, <code>roundName</code>, <code>roundStatus</code>, <code>type</code>, <code>zoneCode</code>, <code>zoneName</code>, <code>staffCode</code> và <code>staffName</code> (phiếu cá nhân là NV được kiểm; phiếu vùng là null), <code>confirmerStaffCode</code>, <code>confirmerStaffName</code>, <code>status</code>, <code>confirmedAt</code>, <code>confirmedByStaffCode</code>, <code>confirmedByStaffName</code>, <code>confirmSource</code>, <code>items[]</code>.</p>
+<p>Mỗi tài sản: <code>itemCode</code>, <code>description</code>, <code>itemGroupCode</code>, <code>result</code> (phiếu cá nhân: FOUND / NOT_FOUND; phiếu vùng: null), <code>condition</code> (null khi Không thấy), <code>needsRelabel</code>, <code>note</code>, <code>itemCompanyCode</code>, <code>itemUsageScope</code>, <code>itemStaffCode</code>, <code>addedByStaffCode</code> và <code>addedAt</code> (null ở phiếu cá nhân), <code>warnings</code> (chỉ phiếu vùng), <code>photos</code>.</p>
+<pre><code>GET …/asset-stocktake/tickets/KKN0000999
 
 {"data":{"code":"KKN0000999","roundCode":"DKK0000999","roundName":"Kiểm kê cuối năm","roundStatus":"OPEN",
   "type":"STAFF","zoneCode":null,"zoneName":null,"staffCode":"000998","staffName":"Trần Thị B",
   "confirmerStaffCode":"000998","confirmerStaffName":"Trần Thị B","status":"PENDING",
-  "confirmedAt":null,"confirmedByStaffCode":null,"confirmedByStaffName":null,
+  "confirmedAt":null,"confirmedByStaffCode":null,"confirmedByStaffName":null,"confirmSource":null,
   "items":[{"itemCode":"TS000001","description":"Màn hình","itemGroupCode":"NHOM01","result":"FOUND","condition":1,
    "needsRelabel":false,"note":null,"itemCompanyCode":"CT01","itemUsageScope":0,"itemStaffCode":"000998",
    "addedByStaffCode":null,"addedAt":null,"warnings":[],"photos":[]}]},
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> không có phiếu, <b>hoặc không được xem</b>, đều trả <code>code 11</code> không subCode ("Không tìm thấy phiếu kiểm kê: …").</p>
-<div class="soon-block"><span class="soon">Sắp có</span> DTO phiếu thêm <code>confirmSource</code> (<code>USER</code> / <code>SYSTEM</code> / null).</div>
 </div></details>
 
 <details class="ep" id="ep-confirm">
-<summary><span class="m post">POST</span><span class="path">/tickets/{code}/confirm</span><span class="live">Đang chạy</span><span class="what">Xác nhận phiếu. Với phiếu NV, NV cũng chuyển sang CONFIRMED. Đợt đã đóng vẫn xác nhận được.</span></summary>
+<summary><span class="m post">POST</span><span class="path">/tickets/{ticketCode}/confirm</span><span class="what"><b>API này làm gì:</b> Người được giao xác nhận phiếu.</span></summary>
 <div class="body">
-<dl class="kv"><dt>Quyền</dt><dd>Đăng nhập, và <b>chỉ người xác nhận của phiếu</b>. Phiếu chưa có người xác nhận thì không ai xác nhận được, kể cả hành chính.</dd><dt>Body</dt><dd><code>{}</code></dd></dl>
-<pre><code>POST …/stocktake/tickets/KKN0000999/confirm
+<dl class="kv"><dt>Quyền</dt><dd>Đăng nhập, và <b>chỉ người xác nhận của phiếu</b>. Phiếu chưa có người xác nhận thì không ai bấm xác nhận được, kể cả hành chính.</dd><dt>Body</dt><dd><code>{}</code></dd></dl>
+<ul><li>Phiếu chuyển <code>CONFIRMED</code>, <code>confirmSource = USER</code>. Phiếu cá nhân: NV cũng chuyển <code>CONFIRMED</code>. Đợt đã đóng vẫn xác nhận được (nếu phiếu còn chờ).</li>
+<li>Khi hành chính đóng đợt, mọi phiếu còn chờ được hệ thống tự xác nhận (<code>confirmSource = SYSTEM</code>, <code>confirmedByStaffCode = null</code>). Bấm xác nhận sau đó nhận <a href="#e-PHIEU_DA_XAC_NHAN"><code>PHIEU_DA_XAC_NHAN</code></a>.</li></ul>
+<pre><code>POST …/asset-stocktake/tickets/KKN0000999/confirm
 {}
 
 {"data":{"code":"KKN0000999","status":"CONFIRMED","confirmedAt":"2026-01-06T03:00:00.5678912Z",
   "confirmedByStaffCode":"000998","confirmedByStaffName":"Trần Thị B"},
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> không có phiếu trả <code>code 11</code>; <a href="#e-KHONG_PHAI_NGUOI_XAC_NHAN"><code>KHONG_PHAI_NGUOI_XAC_NHAN</code></a>, <a href="#e-PHIEU_DA_XAC_NHAN"><code>PHIEU_DA_XAC_NHAN</code></a>, <a href="#e-NHAN_VIEN_KHONG_CHO_XAC_NHAN"><code>NHAN_VIEN_KHONG_CHO_XAC_NHAN</code></a>; hai người bấm cùng lúc mà không rõ lý do thua thì trả <code>code 10</code> "Không xác nhận được phiếu, hãy thử lại."</p>
-<div class="soon-block"><span class="soon">Sắp có</span> Xác nhận tay ghi <code>confirmSource = USER</code>. Khi hành chính đóng đợt, mọi phiếu còn chờ được hệ thống tự xác nhận với <code>confirmSource = SYSTEM</code> và <code>confirmedByStaffCode = null</code>; phiếu NV kèm theo NV chuyển <code>CONFIRMED</code>. Sau đó người dùng bấm xác nhận sẽ nhận <a href="#e-PHIEU_DA_XAC_NHAN"><code>PHIEU_DA_XAC_NHAN</code></a>.</div>
+<p><b>Lỗi:</b> không có phiếu trả <code>code 11</code>; <a href="#e-KHONG_PHAI_NGUOI_XAC_NHAN"><code>KHONG_PHAI_NGUOI_XAC_NHAN</code></a>, <a href="#e-PHIEU_DA_XAC_NHAN"><code>PHIEU_DA_XAC_NHAN</code></a>, <a href="#e-NHAN_VIEN_KHONG_CHO_XAC_NHAN"><code>NHAN_VIEN_KHONG_CHO_XAC_NHAN</code></a>; hai người bấm cùng lúc mà không rõ lý do thua thì <code>code 10</code> "Không xác nhận được phiếu, hãy thử lại."</p>
 </div></details>
 
 <h3 id="man-khac">3.10 API khác</h3>
 <details class="ep" id="ep-lock">
-<summary><span class="m get">GET</span><span class="path">/lock</span><span class="live">Đang chạy</span><span class="what">Tuỳ chọn cho app: các đợt đang mở (đang khoá tài sản).</span></summary>
+<summary><span class="m get">GET</span><span class="path">/lock-status</span><span class="what"><b>API này làm gì:</b> Xem hiện có đợt nào đang mở (đang khoá tài sản) để hiện biểu ngữ.</span></summary>
 <div class="body">
-<dl class="kv"><dt>Quyền</dt><dd>Đăng nhập</dd></dl>
-<pre><code>{"data":{"rounds":[{"code":"DKK0000999","companyCode":"CT01"}]},"code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p>Khi có đợt mở ở bất kỳ công ty nào, các API <b>sửa tài sản</b> và <b>phiếu điều chuyển</b> (không thuộc kiểm kê) trả <a href="#e-DANG_KIEM_KE"><code>DANG_KIEM_KE</code></a>.</p>
+<dl class="kv"><dt>Quyền</dt><dd>Đăng nhập. Tuỳ chọn cho app.</dd></dl>
+<pre><code>GET …/asset-stocktake/lock-status
+
+{"data":{"rounds":[{"code":"DKK0000999","companyCode":"CT01"}]},"code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
+<p>Khi có đợt <code>OPEN</code> ở bất kỳ công ty nào, các API <b>sửa tài sản</b> và <b>phiếu điều chuyển</b> (không thuộc kiểm kê) trả <a href="#e-DANG_KIEM_KE"><code>DANG_KIEM_KE</code></a>.</p>
 </div></details>
-<p><b>Chỉ web dùng</b> (app không cần gọi): <code>GET rounds/{code}/tickets</code>, <code>POST rounds/create</code>, <code>POST rounds/close</code>, <code>GET reports/overview</code>, <code>reports/warnings</code>, <code>reports/unzoned-shared</code>, <code>reports/conditions</code>. <span class="soon">Sắp có</span> <code>POST rounds/start</code>, <code>rounds/update</code>, <code>rounds/cancel</code>, <code>GET reports/unconfirmed</code>.</p>
+<p><b>Chỉ web dùng</b> (app không cần gọi): <code>GET rounds/{roundCode}/tickets</code>, <code>POST rounds/create</code>, <code>rounds/update</code>, <code>rounds/{roundCode}/start</code>, <code>rounds/{roundCode}/cancel</code>, <code>rounds/{roundCode}/close</code>, <code>GET reports/overview</code>, <code>reports/warning-items</code>, <code>reports/items-by-condition</code>, <code>reports/shared-items-without-zone</code>, <code>reports/unconfirmed-assignees</code>.</p>
 
 
 <h2 id="validate">4. Validate</h2>
@@ -754,135 +791,138 @@ Ví dụ ghi Có, Tốt không dùng:
 <li><b>Validator</b>, chạy trước: chặn request sai định dạng, trả <b>HTTP 400</b>, <code>code 21</code>, chi tiết trong <code>errors[]</code>. Chỉ áp cho các trường ghi "validator" trong bảng dưới.</li>
 <li><b>Nghiệp vụ</b>, chạy trong service: trả <b>HTTP 200</b> với <code>code</code> khác 0, thường kèm <code>subCode</code>.</li>
 </ol>
-<p>Ở tầng nghiệp vụ, thứ tự kiểm của mọi API ghi là: có mã NV người gọi → đợt có → đợt đang mở → vùng / NV thuộc đợt → trạng thái vùng / NV → đúng người đang kiểm → tham số → ghi. BE trả <b>lỗi đầu tiên gặp được</b> và không ghi gì trước khi qua hết các bước.</p>
+<p>Thứ tự kiểm của mọi API ghi: có mã NV người gọi → đợt có → đợt đang mở → vùng / NV thuộc đợt → trạng thái vùng / NV → đúng người đang kiểm → tham số → ghi. BE trả <b>lỗi đầu tiên gặp được</b> và không ghi gì trước khi qua hết các bước.</p>
 
 <h3 id="validate-truong">4.1 Bảng trường theo request</h3>
-<p>Chú thích: <b>BB</b> là bắt buộc. "trim" là BE cắt khoảng trắng hai đầu. Hai tiền tố viết tắt: <code>…/zones/{zone}</code> = <code>/rounds/{round}/zones/{zone}</code> và <code>…/staffs/{staff}</code> = <code>/rounds/{round}/staffs/{staff}</code>.</p>
+<p>Chú thích: <b>BB</b> là bắt buộc. "trim" là BE cắt khoảng trắng hai đầu. <code>…/zones/{zoneCode}</code> = <code>/rounds/{roundCode}/zones/{zoneCode}</code>; <code>…/staffs/{staffCode}</code> = <code>/rounds/{roundCode}/staffs/{staffCode}</code>.</p>
 
-<h4 id="v-zone-open">POST …/zones/{zone}/open và POST …/staffs/{staff}/open</h4>
+<h4 id="v-claim">POST …/zones/{zoneCode}/claim và POST …/staffs/{staffCode}/claim</h4>
 <div class="tbl"><table><thead><tr><th>Trường</th><th>BB</th><th>Kiểu</th><th>Luật</th><th>Sai thì</th></tr></thead><tbody>
 <tr><td><code>takeOver</code></td><td>không</td><td>bool</td><td>Mặc định <code>false</code>. Chỉ có tác dụng với hành chính; người khác gửi <code>true</code> thì cờ bị bỏ qua</td><td>Vùng / NV của người khác: <a href="#e-VUNG_DANG_CO_NGUOI_KIEM"><code>VUNG_DANG_CO_NGUOI_KIEM</code></a> / <a href="#e-NHAN_VIEN_DANG_CO_NGUOI_KIEM"><code>NHAN_VIEN_DANG_CO_NGUOI_KIEM</code></a></td></tr>
 </tbody></table></div>
 
-<h4 id="v-zone-add">POST …/zones/{zone}/items (thêm món)</h4>
+<h4 id="v-zone-create">POST …/zones/{zoneCode}/items/create</h4>
 <div class="tbl"><table><thead><tr><th>Trường</th><th>BB</th><th>Kiểu</th><th>Luật</th><th>Sai thì</th></tr></thead><tbody>
 <tr><td><code>itemCode</code></td><td>có</td><td>chuỗi</td><td>Validator: không rỗng, ≤ 64 ký tự. BE trim, so không phân biệt hoa thường; bỏ qua tài sản đã xoá</td><td>Rỗng / dài quá: HTTP 400 ("itemCode không được để trống"). Không có tài sản: <a href="#e-KHONG_TIM_THAY_MA"><code>KHONG_TIM_THAY_MA</code></a></td></tr>
 <tr><td><code>confirmWarnings</code></td><td>không</td><td>bool</td><td>Mặc định <code>false</code>. Xem <a href="#luat-canh-bao">luật cảnh báo</a></td><td>—</td></tr>
 </tbody></table></div>
 
-<h4 id="v-zone-update">POST …/zones/{zone}/items/update (sửa món vùng)</h4>
+<h4 id="v-zone-update">POST …/zones/{zoneCode}/items/update</h4>
 <div class="tbl"><table><thead><tr><th>Trường</th><th>BB</th><th>Kiểu</th><th>Luật</th><th>Sai thì</th></tr></thead><tbody>
-<tr><td><code>itemCode</code></td><td>có</td><td>chuỗi</td><td>Validator: không rỗng, ≤ 64. Phải là món đang có trong vùng</td><td>HTTP 400; không có trong vùng: <a href="#e-MON_KHONG_CO_TRONG_VUNG"><code>MON_KHONG_CO_TRONG_VUNG</code></a></td></tr>
+<tr><td><code>itemCode</code></td><td>có</td><td>chuỗi</td><td>Validator: không rỗng, ≤ 64. Phải là tài sản đang có trong vùng</td><td>HTTP 400; không có trong vùng: <a href="#e-MON_KHONG_CO_TRONG_VUNG"><code>MON_KHONG_CO_TRONG_VUNG</code></a></td></tr>
 <tr><td><code>condition</code></td><td>có</td><td>số</td><td>Validator: không null. Chỉ nhận <code>0</code>, <code>1</code>, <code>2</code>, <code>4</code></td><td>null: HTTP 400 ("condition không được để trống"). Ngoài 4 giá trị: <a href="#e-TINH_TRANG_KHONG_HOP_LE"><code>TINH_TRANG_KHONG_HOP_LE</code></a></td></tr>
-<tr><td><code>needsRelabel</code></td><td>không</td><td>bool</td><td>Không gửi thì là <code>false</code>, và giá trị này <b>ghi đè</b> giá trị cũ</td><td>—</td></tr>
-<tr><td><code>note</code></td><td>không</td><td>chuỗi</td><td>Trim; rỗng thì thành null; tối đa <b>1024</b> ký tự. Ghi đè giá trị cũ</td><td>Dài quá: <code>code 20</code> "Ghi chú tối đa 1024 ký tự."</td></tr>
-<tr><td><code>photoIds</code></td><td>không</td><td>mảng chuỗi</td><td>Tập ảnh cuối cùng của món: null giữ nguyên · <code>[]</code> gỡ hết · danh sách là đúng tập đó. BE bỏ phần tử rỗng, trim, bỏ trùng. Mỗi id phải là ảnh <b>của đợt này</b>, chưa xoá, chưa gắn món khác (ảnh do ai tải lên cũng được)</td><td><a href="#e-ANH_KHONG_HOP_LE"><code>ANH_KHONG_HOP_LE</code></a></td></tr>
-<tr><td colspan="4"><b>Luật kết hợp:</b> <code>condition = 0</code> (Hỏng) thì tập ảnh cuối cùng phải có ≥ 1 ảnh. Gửi <code>photoIds: []</code> cùng Hỏng sẽ bị từ chối, kể cả khi món đang có ảnh.</td><td><a href="#e-HONG_CAN_ANH"><code>HONG_CAN_ANH</code></a></td></tr>
+<tr><td><code>needsRelabel</code></td><td>không</td><td>bool</td><td>Không gửi thì là <code>false</code>, và <b>ghi đè</b> giá trị cũ</td><td>—</td></tr>
+<tr><td><code>note</code></td><td>không</td><td>chuỗi</td><td>Trim; rỗng thì thành null; tối đa <b>1024</b> ký tự. Ghi đè</td><td>Dài quá: <code>code 20</code> "Ghi chú tối đa 1024 ký tự."</td></tr>
+<tr><td><code>photoIds</code></td><td>không</td><td>mảng chuỗi</td><td>Tập ảnh cuối cùng của tài sản: null giữ nguyên · <code>[]</code> gỡ hết · danh sách là đúng tập đó. BE bỏ phần tử rỗng, trim, bỏ trùng. Mỗi id phải là ảnh <b>của đợt này</b>, chưa xoá, chưa gắn tài sản khác (ảnh do ai tải lên cũng được)</td><td><a href="#e-ANH_KHONG_HOP_LE"><code>ANH_KHONG_HOP_LE</code></a></td></tr>
+<tr><td colspan="4"><b>Luật kết hợp:</b> <code>condition = 0</code> (Hỏng) thì tập ảnh cuối cùng phải có ≥ 1 ảnh. Gửi <code>photoIds: []</code> cùng Hỏng bị từ chối, kể cả khi tài sản đang có ảnh.</td><td><a href="#e-HONG_CAN_ANH"><code>HONG_CAN_ANH</code></a></td></tr>
 </tbody></table></div>
 
-<h4 id="v-zone-remove">POST …/zones/{zone}/items/remove</h4>
+<h4 id="v-zone-delete">POST …/zones/{zoneCode}/items/delete</h4>
 <div class="tbl"><table><thead><tr><th>Trường</th><th>BB</th><th>Kiểu</th><th>Luật</th><th>Sai thì</th></tr></thead><tbody>
-<tr><td><code>itemCode</code></td><td>có</td><td>chuỗi</td><td>Validator: không rỗng, ≤ 64. Phải là món đang có trong vùng</td><td>HTTP 400; <a href="#e-MON_KHONG_CO_TRONG_VUNG"><code>MON_KHONG_CO_TRONG_VUNG</code></a></td></tr>
+<tr><td><code>itemCode</code></td><td>có</td><td>chuỗi</td><td>Validator: không rỗng, ≤ 64. Phải là tài sản đang có trong vùng</td><td>HTTP 400; <a href="#e-MON_KHONG_CO_TRONG_VUNG"><code>MON_KHONG_CO_TRONG_VUNG</code></a></td></tr>
 </tbody></table></div>
 
-<h4 id="v-photos">POST /rounds/{round}/photos</h4>
+<h4 id="v-photos">POST /rounds/{roundCode}/photos/upload</h4>
 <div class="tbl"><table><thead><tr><th>Trường</th><th>BB</th><th>Kiểu</th><th>Luật</th><th>Sai thì (đều là <code>code 20</code>, không subCode)</th></tr></thead><tbody>
 <tr><td><code>files</code></td><td>có</td><td>mảng</td><td>≥ 1 tệp. Mã không giới hạn số tệp mỗi lần; giới hạn kích thước body của máy chủ thì <i>chưa xác minh</i>, nên gửi từng ít ảnh một</td><td>"Chưa chọn tệp nào."</td></tr>
-<tr><td><code>files[].fileName</code></td><td>có</td><td>chuỗi</td><td>Đuôi tệp phải thuộc: <code>.jpg .jpeg .jfif .png .gif .webp .heic .heif</code>, và cả <code>.pdf .xls .xlsx .doc .docx .txt .csv</code> (mã nhận cả tệp không phải ảnh; app chỉ nên gửi ảnh)</td><td>"Tệp thiếu tên hoặc nội dung." · "Không nhận tệp [tên]. Đuôi cho phép: …"</td></tr>
-<tr><td><code>files[].contentBase64</code></td><td>có</td><td>chuỗi base64</td><td>Base64 hợp lệ, không có tiền tố <code>data:</code> (<i>chưa xác minh</i> có tự bỏ tiền tố hay không). Sau giải mã: không rỗng, ≤ <b>20 MB</b> mỗi tệp</td><td>"Nội dung tệp [tên] không phải base64 hợp lệ." · "Tệp [tên] rỗng." · "Tệp [tên] vượt quá 20MB."</td></tr>
-<tr><td colspan="4">BE kiểm cả lô trước, một tệp sai thì cả lô không tải lên. Đợt phải đang mở.</td><td><a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a></td></tr>
+<tr><td><code>files[].fileName</code></td><td>có</td><td>chuỗi</td><td>Đuôi tệp thuộc: <code>.jpg .jpeg .jfif .png .gif .webp .heic .heif</code>, và cả <code>.pdf .xls .xlsx .doc .docx .txt .csv</code> (mã nhận cả tệp không phải ảnh; app chỉ nên gửi ảnh)</td><td>"Tệp thiếu tên hoặc nội dung." · "Không nhận tệp [tên]. Đuôi cho phép: …"</td></tr>
+<tr><td><code>files[].contentBase64</code></td><td>có</td><td>chuỗi base64</td><td>Base64 hợp lệ, không có tiền tố <code>data:</code> (<i>chưa xác minh</i> có tự bỏ tiền tố không). Sau giải mã: không rỗng, ≤ <b>20 MB</b> mỗi tệp</td><td>"Nội dung tệp [tên] không phải base64 hợp lệ." · "Tệp [tên] rỗng." · "Tệp [tên] vượt quá 20MB."</td></tr>
+<tr><td colspan="4">BE kiểm cả lô trước; một tệp sai thì cả lô không tải lên. Đợt phải đang mở.</td><td><a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a></td></tr>
 </tbody></table></div>
 
-<h4 id="v-search">GET /rounds/{round}/assets/search</h4>
+<h4 id="v-search">GET /rounds/{roundCode}/items/search</h4>
 <div class="tbl"><table><thead><tr><th>Trường</th><th>BB</th><th>Kiểu</th><th>Luật</th><th>Sai thì</th></tr></thead><tbody>
 <tr><td><code>q</code></td><td>không</td><td>chuỗi</td><td>Rỗng thì trả <code>[]</code>. Khớp khi mã hoặc mô tả <b>chứa</b> <code>q</code>. Tối đa 20 dòng</td><td>—</td></tr>
 <tr><td><code>zone</code></td><td>không</td><td>chuỗi</td><td>Chỉ dùng để tính <code>inThisZone</code></td><td>—</td></tr>
 </tbody></table></div>
 
-<h4 id="v-staffs">GET /rounds/{round}/staffs</h4>
+<h4 id="v-staffs">GET /rounds/{roundCode}/staffs</h4>
 <div class="tbl"><table><thead><tr><th>Trường</th><th>BB</th><th>Kiểu</th><th>Luật</th><th>Sai thì</th></tr></thead><tbody>
-<tr><td><code>status</code></td><td>không</td><td>chuỗi</td><td><code>PENDING</code> · <code>IN_PROGRESS</code> · <code>AWAITING_CONFIRM</code> · <code>CONFIRMED</code>, không phân biệt hoa thường; rỗng là lấy tất cả</td><td><code>code 20</code> "status phải là một trong: …"</td></tr>
+<tr><td><code>status</code></td><td>không</td><td>chuỗi</td><td><code>PENDING</code> · <code>IN_PROGRESS</code> · <code>AWAITING_CONFIRM</code> · <code>CONFIRMED</code>, không phân biệt hoa thường; rỗng là tất cả</td><td><code>code 20</code> "status phải là một trong: …"</td></tr>
 </tbody></table></div>
 
-<h4 id="v-staff-update">POST …/staffs/{staff}/items/update (ghi món NV)</h4>
+<h4 id="v-staff-update">POST …/staffs/{staffCode}/items/update</h4>
 <div class="tbl"><table><thead><tr><th>Trường</th><th>BB</th><th>Kiểu</th><th>Luật</th><th>Sai thì</th></tr></thead><tbody>
-<tr><td><code>itemCode</code></td><td>có</td><td>chuỗi</td><td>Validator: không rỗng, ≤ 64. Phải thuộc danh sách món của NV trong đợt</td><td>HTTP 400; <a href="#e-MON_KHONG_THUOC_NHAN_VIEN"><code>MON_KHONG_THUOC_NHAN_VIEN</code></a></td></tr>
+<tr><td><code>itemCode</code></td><td>có</td><td>chuỗi</td><td>Validator: không rỗng, ≤ 64. Phải thuộc danh sách tài sản của NV trong đợt</td><td>HTTP 400; <a href="#e-MON_KHONG_THUOC_NHAN_VIEN"><code>MON_KHONG_THUOC_NHAN_VIEN</code></a></td></tr>
 <tr><td><code>result</code></td><td>có</td><td>chuỗi</td><td><code>FOUND</code> hoặc <code>NOT_FOUND</code> (trim, không phân biệt hoa thường). Thiếu (null) cũng tính là sai</td><td><a href="#e-KET_QUA_KHONG_HOP_LE"><code>KET_QUA_KHONG_HOP_LE</code></a></td></tr>
 <tr><td><code>condition</code></td><td>khi FOUND</td><td>số</td><td>FOUND: bắt buộc, thuộc {0, 1, 2, 4}. NOT_FOUND: bỏ qua, BE ghi null</td><td><a href="#e-TINH_TRANG_KHONG_HOP_LE"><code>TINH_TRANG_KHONG_HOP_LE</code></a></td></tr>
 <tr><td><code>needsRelabel</code></td><td>không</td><td>bool</td><td>Không gửi thì là false; ghi đè</td><td>—</td></tr>
-<tr><td><code>note</code></td><td>không</td><td>chuỗi</td><td>Trim; rỗng thì thành null; ≤ 1024; ghi đè</td><td><code>code 20</code> "Ghi chú tối đa 1024 ký tự."</td></tr>
-<tr><td><code>photoIds</code></td><td>không</td><td>mảng chuỗi</td><td>Như món vùng. NOT_FOUND thì BE bỏ qua và gỡ hết ảnh</td><td><a href="#e-ANH_KHONG_HOP_LE"><code>ANH_KHONG_HOP_LE</code></a></td></tr>
+<tr><td><code>note</code></td><td>không</td><td>chuỗi</td><td>Trim; rỗng thì null; ≤ 1024; ghi đè</td><td><code>code 20</code> "Ghi chú tối đa 1024 ký tự."</td></tr>
+<tr><td><code>photoIds</code></td><td>không</td><td>mảng chuỗi</td><td>Như tài sản vùng. NOT_FOUND thì BE bỏ qua và gỡ hết ảnh</td><td><a href="#e-ANH_KHONG_HOP_LE"><code>ANH_KHONG_HOP_LE</code></a></td></tr>
 <tr><td colspan="4"><b>Luật kết hợp:</b> FOUND + <code>condition = 0</code> thì phải có ≥ 1 ảnh</td><td><a href="#e-HONG_CAN_ANH"><code>HONG_CAN_ANH</code></a></td></tr>
 </tbody></table></div>
 
-<h4 id="v-staff-scan">POST …/staffs/{staff}/scan</h4>
+<h4 id="v-staff-scan">POST …/staffs/{staffCode}/items/scan</h4>
 <div class="tbl"><table><thead><tr><th>Trường</th><th>BB</th><th>Kiểu</th><th>Luật</th><th>Sai thì</th></tr></thead><tbody>
-<tr><td><code>code</code></td><td>có</td><td>chuỗi</td><td>Validator: không rỗng, ≤ 64. Trim, không phân biệt hoa thường. Tài sản phải có thật <b>và</b> nằm trong danh sách món của NV (chụp lúc mở NV)</td><td>HTTP 400; <a href="#e-KHONG_TIM_THAY_MA"><code>KHONG_TIM_THAY_MA</code></a>; <a href="#e-KHONG_PHAI_DO_RIENG_CUA_NV"><code>KHONG_PHAI_DO_RIENG_CUA_NV</code></a></td></tr>
+<tr><td><code>code</code></td><td>có</td><td>chuỗi</td><td>Validator: không rỗng, ≤ 64. Trim, không phân biệt hoa thường. Tài sản phải có thật <b>và</b> nằm trong danh sách tài sản của NV (lập lúc nhận NV)</td><td>HTTP 400; <a href="#e-KHONG_TIM_THAY_MA"><code>KHONG_TIM_THAY_MA</code></a>; <a href="#e-KHONG_PHAI_DO_RIENG_CUA_NV"><code>KHONG_PHAI_DO_RIENG_CUA_NV</code></a></td></tr>
+</tbody></table></div>
+
+<h4 id="v-me-tickets">GET /me/assigned-tickets</h4>
+<div class="tbl"><table><thead><tr><th>Trường</th><th>BB</th><th>Kiểu</th><th>Luật</th><th>Sai thì</th></tr></thead><tbody>
+<tr><td><code>status</code></td><td>không</td><td>chuỗi</td><td><code>PENDING</code> (mặc định) · <code>CONFIRMED</code> · <code>ALL</code></td><td><code>code 20</code> "status phải là PENDING, CONFIRMED hoặc ALL."</td></tr>
+<tr><td><code>type</code></td><td>không</td><td>chuỗi</td><td><code>ZONE</code> · <code>STAFF</code></td><td><code>code 20</code> "type phải là ZONE hoặc STAFF."</td></tr>
 </tbody></table></div>
 
 <h4 id="v-empty">Không có body riêng</h4>
-<p><code>close/preview</code>, <code>close</code>, <code>submit</code>, <code>tickets/{code}/confirm</code>: gửi <code>{}</code>. <code>GET my/private-items</code>: <code>round</code> tuỳ chọn. <span class="soon">Sắp có</span> <code>GET my/tickets</code>: <code>status</code> ∈ {<code>PENDING</code>, <code>CONFIRMED</code>, <code>ALL</code>}, <code>type</code> ∈ {<code>ZONE</code>, <code>STAFF</code>}; sai thì <code>code 20</code>.</p>
+<p><code>close-preview</code>, <code>close</code>, <code>submit</code>, <code>tickets/{ticketCode}/confirm</code>: gửi <code>{}</code>. <code>GET me/private-items</code>: <code>round</code> tuỳ chọn.</p>
 
 <h3 id="validate-luat">4.2 Luật nghiệp vụ</h3>
 <div class="tbl"><table><thead><tr><th>Luật</th><th>Điều kiện chính xác</th><th>subCode</th><th>Câu gợi ý app hiện</th></tr></thead><tbody>
-<tr><td><b>Hỏng bắt buộc ≥ 1 ảnh</b></td><td><code>condition = 0</code> mà tập ảnh cuối cùng rỗng. Món NV chỉ xét khi <code>FOUND</code></td><td><a href="#e-HONG_CAN_ANH"><code>HONG_CAN_ANH</code></a></td><td>Tài sản Hỏng cần ít nhất một ảnh.</td></tr>
-<tr><td><b>Ảnh phải thuộc đợt</b></td><td>Id ảnh không phải ảnh (chưa xoá) của đợt này, hoặc đã gắn món khác</td><td><a href="#e-ANH_KHONG_HOP_LE"><code>ANH_KHONG_HOP_LE</code></a></td><td>Ảnh không dùng được, hãy chụp lại.</td></tr>
-<tr><td><b>Mã không phải đồ Riêng của NV</b></td><td>Tài sản có thật nhưng không có trong danh sách món của NV. Danh sách này tạo <b>một lần lúc mở NV</b>, từ đồ Riêng của NV thuộc công ty của đợt (đang dùng, chưa thanh lý / mất). Tài sản giao cho NV sau lúc mở cũng bị từ chối</td><td><a href="#e-KHONG_PHAI_DO_RIENG_CUA_NV"><code>KHONG_PHAI_DO_RIENG_CUA_NV</code></a></td><td>Tài sản {mã} không phải đồ Riêng của nhân viên này.</td></tr>
-<tr><td><b>Vùng của người khác</b></td><td>Vùng <code>IN_PROGRESS</code> mà người kiểm không phải người gọi (cả khi bị hành chính nhận lại); hoặc ghi lên vùng còn <code>PENDING</code> (chưa mở)</td><td><a href="#e-VUNG_DANG_CO_NGUOI_KIEM"><code>VUNG_DANG_CO_NGUOI_KIEM</code></a></td><td>Vùng đang do {tên} kiểm. / Hãy mở vùng trước.</td></tr>
-<tr><td><b>NV của người khác</b></td><td>Như trên, áp cho NV</td><td><a href="#e-NHAN_VIEN_DANG_CO_NGUOI_KIEM"><code>NHAN_VIEN_DANG_CO_NGUOI_KIEM</code></a> / <a href="#e-NHAN_VIEN_CHUA_MO"><code>NHAN_VIEN_CHUA_MO</code></a></td><td>Nhân viên này đang được {tên} kiểm. / Mở nhân viên trước.</td></tr>
-<tr><td><b>Đợt đã đóng</b></td><td>Đợt không còn <code>OPEN</code>. Áp cho mọi thao tác đi kiểm, kể cả tìm tài sản và tải ảnh. Các API đọc vẫn chạy</td><td><a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a></td><td>Đợt kiểm kê này không còn mở, không ghi thêm được.</td></tr>
-<tr><td><b>Vùng đã chốt</b></td><td>Vùng <code>CLOSED</code>: không thêm, sửa, bỏ món hay chốt lại được</td><td><a href="#e-VUNG_DA_CHOT"><code>VUNG_DA_CHOT</code></a></td><td>Vùng đã chốt, không sửa được nữa.</td></tr>
-<tr><td><b>Chưa kiểm hết thì không gửi</b></td><td>Còn ≥ 1 món của NV có <code>result = null</code></td><td><a href="#e-NHAN_VIEN_CHUA_KIEM_HET"><code>NHAN_VIEN_CHUA_KIEM_HET</code></a></td><td>Còn {n} tài sản chưa kiểm. Ghi hết rồi gửi.</td></tr>
-<tr><td><b>Đã gửi thì không sửa</b></td><td>NV đã <code>AWAITING_CONFIRM</code> hoặc <code>CONFIRMED</code></td><td><a href="#e-NHAN_VIEN_DA_GUI"><code>NHAN_VIEN_DA_GUI</code></a></td><td>Đã gửi phiếu, không sửa được nữa.</td></tr>
-<tr><td><b>Quét lại không ghi đè</b></td><td>Món đã có kết quả (kể cả Không thấy) thì quét không đổi gì, vẫn <code>code 0</code></td><td>—</td><td>Muốn đổi sang Có: dùng nút sửa (<code>items/update</code>).</td></tr>
-<tr><td><b>Ai được xác nhận phiếu</b></td><td>Chỉ người có mã NV trùng người xác nhận của phiếu, và phiếu còn <code>PENDING</code>. Phiếu NV: người xác nhận là chính NV chủ đồ, nên NV (kể cả hành chính) tự xác nhận phiếu của mình được</td><td><a href="#e-KHONG_PHAI_NGUOI_XAC_NHAN"><code>KHONG_PHAI_NGUOI_XAC_NHAN</code></a> / <a href="#e-PHIEU_DA_XAC_NHAN"><code>PHIEU_DA_XAC_NHAN</code></a></td><td>Bạn không phải người xác nhận phiếu này. / Phiếu đã được xác nhận.</td></tr>
-<tr><td><b>Hai người cùng thao tác</b></td><td>Mọi đổi trạng thái là cập nhật có điều kiện, nên chỉ một bên thắng. Bên thua nhận đúng mã của trạng thái mới. Câu lỗi khi đó có thể kèm đuôi "; không có thay đổi nào được ghi"</td><td>theo trạng thái</td><td>Tải lại màn, rồi hiện câu của BE.</td></tr>
-<tr><td><b>Gọi lặp an toàn</b></td><td>Mở lại vùng / NV của mình: OK. Thêm lại món đã có: <code>skipped</code>. Quét lại: trả hiện trạng. Gửi lại: <a href="#e-NHAN_VIEN_DA_GUI"><code>NHAN_VIEN_DA_GUI</code></a>. Xác nhận lại: <a href="#e-PHIEU_DA_XAC_NHAN"><code>PHIEU_DA_XAC_NHAN</code></a></td><td>—</td><td>App có thể thử lại khi mất mạng.</td></tr>
+<tr><td><b>Hỏng bắt buộc ≥ 1 ảnh</b></td><td><code>condition = 0</code> mà tập ảnh cuối cùng rỗng. Tài sản của NV chỉ xét khi <code>FOUND</code></td><td><a href="#e-HONG_CAN_ANH"><code>HONG_CAN_ANH</code></a></td><td>Tài sản Hỏng cần ít nhất một ảnh.</td></tr>
+<tr><td><b>Ảnh phải thuộc đợt</b></td><td>Id ảnh không phải ảnh (chưa xoá) của đợt này, hoặc đã gắn tài sản khác</td><td><a href="#e-ANH_KHONG_HOP_LE"><code>ANH_KHONG_HOP_LE</code></a></td><td>Ảnh không dùng được, hãy chụp lại.</td></tr>
+<tr><td><b>Mã không phải đồ Riêng của NV</b></td><td>Tài sản có thật nhưng không có trong danh sách tài sản của NV. Danh sách lập <b>một lần lúc nhận NV</b>, từ đồ Riêng của NV thuộc công ty của đợt (đang dùng, chưa thanh lý / mất). Tài sản giao cho NV sau lúc nhận cũng bị từ chối</td><td><a href="#e-KHONG_PHAI_DO_RIENG_CUA_NV"><code>KHONG_PHAI_DO_RIENG_CUA_NV</code></a></td><td>Tài sản {mã} không phải đồ Riêng của nhân viên này.</td></tr>
+<tr><td><b>Vùng của người khác</b></td><td>Vùng <code>IN_PROGRESS</code> mà người kiểm không phải người gọi (kể cả khi bị hành chính giành); hoặc ghi lên vùng còn <code>PENDING</code> (chưa nhận)</td><td><a href="#e-VUNG_DANG_CO_NGUOI_KIEM"><code>VUNG_DANG_CO_NGUOI_KIEM</code></a></td><td>Vùng đang do {tên} kiểm. / Hãy nhận vùng trước.</td></tr>
+<tr><td><b>NV của người khác</b></td><td>Như trên, áp cho NV</td><td><a href="#e-NHAN_VIEN_DANG_CO_NGUOI_KIEM"><code>NHAN_VIEN_DANG_CO_NGUOI_KIEM</code></a> / <a href="#e-NHAN_VIEN_CHUA_MO"><code>NHAN_VIEN_CHUA_MO</code></a></td><td>Nhân viên này đang được {tên} kiểm. / Nhận nhân viên trước.</td></tr>
+<tr><td><b>Đợt không mở</b></td><td>Đợt không ở <code>OPEN</code> (đã đóng, chờ bắt đầu hoặc đã huỷ). Áp cho mọi thao tác đi kiểm, kể cả tìm tài sản và tải ảnh. Các API đọc vẫn chạy</td><td><a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a></td><td>Theo <code>status</code> của đợt: Đợt chưa bắt đầu / đã huỷ / đã đóng, không ghi được.</td></tr>
+<tr><td><b>Vùng đã chốt</b></td><td>Vùng <code>CLOSED</code>: không thêm, sửa, bỏ tài sản hay chốt lại được</td><td><a href="#e-VUNG_DA_CHOT"><code>VUNG_DA_CHOT</code></a></td><td>Vùng đã chốt, không sửa được nữa.</td></tr>
+<tr><td><b>Chưa kiểm hết thì không gửi</b></td><td>Còn ≥ 1 tài sản của NV có <code>result = null</code></td><td><a href="#e-NHAN_VIEN_CHUA_KIEM_HET"><code>NHAN_VIEN_CHUA_KIEM_HET</code></a></td><td>Còn {n} tài sản chưa kiểm. Ghi hết rồi gửi.</td></tr>
+<tr><td><b>Đã gửi thì không sửa</b></td><td>NV đã <code>AWAITING_CONFIRM</code> hoặc <code>CONFIRMED</code></td><td><a href="#e-NHAN_VIEN_DA_GUI"><code>NHAN_VIEN_DA_GUI</code></a></td><td>Đã gửi, không sửa được nữa.</td></tr>
+<tr><td><b>Quét lại không ghi đè</b></td><td>Tài sản đã có kết quả (kể cả Không thấy) thì quét không đổi gì, vẫn <code>code 0</code></td><td>—</td><td>Muốn đổi sang Có: dùng nút sửa (<code>items/update</code>).</td></tr>
+<tr><td><b>Ai được xác nhận phiếu</b></td><td>Chỉ người có mã NV trùng người xác nhận của phiếu, và phiếu còn <code>PENDING</code>. Phiếu cá nhân: người xác nhận là chính NV chủ đồ, nên NV (kể cả hành chính) tự xác nhận phiếu của mình</td><td><a href="#e-KHONG_PHAI_NGUOI_XAC_NHAN"><code>KHONG_PHAI_NGUOI_XAC_NHAN</code></a> / <a href="#e-PHIEU_DA_XAC_NHAN"><code>PHIEU_DA_XAC_NHAN</code></a></td><td>Bạn không phải người xác nhận phiếu này. / Phiếu đã được xác nhận.</td></tr>
+<tr><td><b>Hai người cùng thao tác</b></td><td>Mọi đổi trạng thái là cập nhật có điều kiện, chỉ một bên thắng. Bên thua nhận đúng mã của trạng thái mới; câu lỗi có thể kèm đuôi "; không có thay đổi nào được ghi"</td><td>theo trạng thái</td><td>Tải lại màn, rồi hiện câu của BE.</td></tr>
+<tr><td><b>Gọi lặp an toàn</b></td><td>Nhận lại vùng / NV của mình: OK. Thêm lại tài sản đã có: <code>skipped</code>. Quét lại: trả hiện trạng. Gửi lại: <a href="#e-NHAN_VIEN_DA_GUI"><code>NHAN_VIEN_DA_GUI</code></a>. Xác nhận lại: <a href="#e-PHIEU_DA_XAC_NHAN"><code>PHIEU_DA_XAC_NHAN</code></a></td><td>—</td><td>App có thể thử lại khi mất mạng.</td></tr>
 </tbody></table></div>
 
-<h4 id="luat-canh-bao">Ba cảnh báo khi thêm món vào vùng, và cờ confirmWarnings</h4>
+<h4 id="luat-canh-bao">Ba cảnh báo khi thêm tài sản vào vùng, và cờ confirmWarnings</h4>
 <div class="tbl"><table><thead><tr><th><code>type</code></th><th>Điều kiện</th><th><code>detail</code> (mẫu)</th></tr></thead><tbody>
 <tr><td><code>PRIVATE</code></td><td>Tài sản là đồ Riêng (<code>usageScope = 0</code>)</td><td>"Đồ riêng của 000998 - Trần Thị B." · "Đồ riêng, chưa có người giữ."</td></tr>
-<tr><td><code>OTHER_COMPANY</code></td><td>Công ty của tài sản khác công ty của đợt</td><td>"Món thuộc công ty CT02, đợt kiểm của CT01."</td></tr>
-<tr><td><code>OTHER_ZONE</code></td><td>Món đang nằm trong một vùng khác của <b>bất kỳ đợt đang mở nào</b> (kể cả đợt công ty khác)</td><td>"Món đã có trong vùng VUNG02 (Kho tầng 2) của đợt DKK0000999."</td></tr>
+<tr><td><code>OTHER_COMPANY</code></td><td>Công ty của tài sản khác công ty của đợt</td><td>"Tài sản thuộc công ty CT02, đợt kiểm của CT01."</td></tr>
+<tr><td><code>OTHER_ZONE</code></td><td>Tài sản đang nằm trong một vùng khác của <b>bất kỳ đợt đang mở nào</b> (kể cả đợt công ty khác)</td><td>"Tài sản đã có trong vùng VUNG02 (Kho tầng 2) của đợt DKK0000999."</td></tr>
 </tbody></table></div>
-<p class="meta"><span class="soon">Sắp có</span> <code>detail</code> đổi chữ "Món" thành "Tài sản" ("Tài sản thuộc công ty …", "Tài sản đã có trong vùng …"); <code>type</code> giữ nguyên.</p>
 <ol>
-<li>Món <b>đã có</b> trong vùng: trả <code>skipped: true</code>, không xét cảnh báo, bất kể cờ.</li>
-<li>Có cảnh báo và <code>confirmWarnings = false</code> (hoặc không gửi): trả danh sách <code>warnings</code>, <code>added: false</code>, <b>không ghi gì</b>. App hiện các cảnh báo (thứ tự PRIVATE, OTHER_COMPANY, OTHER_ZONE) và hỏi người dùng.</li>
-<li>Người dùng đồng ý: gọi lại với <code>confirmWarnings = true</code>. BE ghi món, và ghi vết từng cảnh báo (người, giờ). Trả <code>added: true</code>.</li>
+<li>Tài sản <b>đã có</b> trong vùng: trả <code>skipped: true</code>, không xét cảnh báo, bất kể cờ.</li>
+<li>Có cảnh báo và <code>confirmWarnings = false</code> (hoặc không gửi): trả danh sách <code>warnings</code>, <code>added: false</code>, <b>không ghi gì</b>. App hiện cảnh báo (thứ tự PRIVATE, OTHER_COMPANY, OTHER_ZONE) và hỏi người dùng.</li>
+<li>Người dùng đồng ý: gọi lại <code>items/create</code> với <code>confirmWarnings = true</code>. BE ghi tài sản và ghi vết từng cảnh báo (người, giờ). Trả <code>added: true</code>.</li>
 <li>Không có cảnh báo: ghi ngay ở lần gọi đầu.</li>
 </ol>
 
 <h2 id="ma-loi">5. Bảng mã lỗi</h2>
 <p>Lỗi nghiệp vụ trả HTTP 200. App rẽ nhánh theo <code>subCode</code>, <b>không so chuỗi <code>message</code></b>. Gặp <code>subCode</code> lạ thì hiện nguyên <code>message</code> (câu tiếng Việt hiển thị được). Phần <code>{…}</code> do BE điền.</p>
-<div class="soon-block"><span class="soon">Sắp có</span> Các câu <code>message</code> của BE đổi chữ "món" thành "tài sản" (vd "Món {mã} không có trong vùng {vùng}." thành "Tài sản {mã} không có trong vùng {vùng}."). Áp cho mọi câu có chữ "món" trong bảng dưới và trong <code>detail</code> của cảnh báo. <b><code>subCode</code> giữ nguyên.</b></div>
 <div class="tbl"><table><thead><tr><th>subCode</th><th>code</th><th>Nghĩa</th><th>message của BE (mẫu)</th><th>Câu gợi ý app hiện</th></tr></thead><tbody>
 <tr id="e-KHONG_TIM_THAY_DOT"><td><code>KHONG_TIM_THAY_DOT</code></td><td>11</td><td>Mã đợt sai hoặc đợt đã xoá</td><td>Không tìm thấy đợt kiểm kê: {mã}</td><td>Không tìm thấy đợt kiểm kê. Kéo để tải lại.</td></tr>
-<tr id="e-DOT_DA_DONG"><td><code>DOT_DA_DONG</code></td><td>10</td><td>Đợt không còn mở, mọi thao tác đi kiểm bị chặn. <span class="soon">Sắp có</span> cũng trả cho đợt chờ hoặc đã huỷ, với câu theo trạng thái</td><td>Đợt {mã} đã đóng. · <span class="soon">Sắp có</span> Đợt {mã} chưa bắt đầu kiểm. / Đợt {mã} đã huỷ.</td><td>Đợt kiểm kê này không còn mở, không ghi thêm được.</td></tr>
+<tr id="e-DOT_DA_DONG"><td><code>DOT_DA_DONG</code></td><td>10</td><td>Đợt không ở <code>OPEN</code>, mọi thao tác đi kiểm bị chặn. Câu theo trạng thái thật của đợt</td><td>Đợt {mã} đã đóng. / Đợt {mã} chưa bắt đầu kiểm. / Đợt {mã} đã huỷ.</td><td>Dùng message, hoặc hiện theo <code>status</code> của đợt.</td></tr>
 <tr id="e-VUNG_KHONG_THUOC_DOT"><td><code>VUNG_KHONG_THUOC_DOT</code></td><td>11</td><td>Vùng không có trong đợt</td><td>Vùng {vùng} không thuộc đợt {đợt}.</td><td>Vùng này không thuộc đợt kiểm kê.</td></tr>
 <tr id="e-VUNG_DA_CHOT"><td><code>VUNG_DA_CHOT</code></td><td>10</td><td>Vùng đã chốt</td><td>Vùng {vùng} đã chốt.</td><td>Vùng đã chốt, không sửa được nữa.</td></tr>
-<tr id="e-VUNG_DANG_CO_NGUOI_KIEM"><td><code>VUNG_DANG_CO_NGUOI_KIEM</code></td><td>10</td><td>Vùng do người khác giữ; hoặc ghi lên vùng chưa mở; hoặc nhận vùng không thành</td><td>Vùng {vùng} đang do {mã NV} kiểm. / Vùng {vùng} chưa được mở kiểm, hãy mở vùng trước. / Không nhận được vùng {vùng}, thử mở lại.</td><td>Vùng đang do người khác kiểm. (Câu "chưa mở": gọi open rồi thử lại.)</td></tr>
-<tr id="e-VUNG_THAY_DOI_KHI_CHOT"><td><code>VUNG_THAY_DOI_KHI_CHOT</code></td><td>10</td><td>Món của vùng đổi trong lúc chốt, vùng chưa chốt</td><td>Vùng {vùng} vừa thay đổi trong lúc chốt — xem trước lại rồi chốt; vùng chưa chốt.</td><td>Vùng vừa thay đổi. Xem trước lại rồi chốt.</td></tr>
+<tr id="e-VUNG_DANG_CO_NGUOI_KIEM"><td><code>VUNG_DANG_CO_NGUOI_KIEM</code></td><td>10</td><td>Vùng do người khác giữ; hoặc ghi lên vùng chưa nhận; hoặc nhận vùng không thành</td><td>Vùng {vùng} đang do {mã NV} kiểm. / Vùng {vùng} chưa được mở kiểm, hãy mở vùng trước. / Không nhận được vùng {vùng}, thử mở lại.</td><td>Vùng đang do người khác kiểm. (Câu "chưa được mở kiểm": gọi <code>claim</code> rồi thử lại.)</td></tr>
+<tr id="e-VUNG_THAY_DOI_KHI_CHOT"><td><code>VUNG_THAY_DOI_KHI_CHOT</code></td><td>10</td><td>Tài sản của vùng đổi trong lúc chốt; vùng chưa chốt</td><td>Vùng {vùng} vừa thay đổi trong lúc chốt — xem trước lại rồi chốt; vùng chưa chốt.</td><td>Vùng vừa thay đổi. Xem trước lại rồi chốt.</td></tr>
 <tr id="e-KHONG_TIM_THAY_MA"><td><code>KHONG_TIM_THAY_MA</code></td><td>11</td><td>Không có tài sản mang mã này</td><td>Không tìm thấy tài sản mã: {mã}</td><td>Không tìm thấy tài sản mã {mã}. Kiểm tra lại tem.</td></tr>
-<tr id="e-MON_KHONG_CO_TRONG_VUNG"><td><code>MON_KHONG_CO_TRONG_VUNG</code></td><td>11</td><td>Sửa hoặc bỏ món chưa có trong vùng</td><td>Món {mã} không có trong vùng {vùng}.</td><td>Tài sản không có trong vùng. Tải lại danh sách.</td></tr>
+<tr id="e-MON_KHONG_CO_TRONG_VUNG"><td><code>MON_KHONG_CO_TRONG_VUNG</code></td><td>11</td><td>Sửa hoặc bỏ tài sản chưa có trong vùng</td><td>Tài sản {mã} không có trong vùng {vùng}.</td><td>Tài sản không có trong vùng. Tải lại danh sách.</td></tr>
 <tr id="e-TINH_TRANG_KHONG_HOP_LE"><td><code>TINH_TRANG_KHONG_HOP_LE</code></td><td>20</td><td><code>condition</code> ngoài {0, 1, 2, 4}, hoặc thiếu khi FOUND</td><td>Tình trạng phải là 0 (Hỏng), 1, 2 hoặc 4.</td><td>Chọn tình trạng.</td></tr>
-<tr id="e-HONG_CAN_ANH"><td><code>HONG_CAN_ANH</code></td><td>20</td><td>Hỏng mà không có ảnh</td><td>Món Hỏng bắt buộc có ít nhất một ảnh.</td><td>Tài sản Hỏng cần ít nhất một ảnh.</td></tr>
-<tr id="e-ANH_KHONG_HOP_LE"><td><code>ANH_KHONG_HOP_LE</code></td><td>20</td><td>Id ảnh không thuộc đợt hoặc đã gắn món khác</td><td>Ảnh {id} không hợp lệ: không thuộc đợt {đợt} hoặc đã gắn món khác.</td><td>Ảnh không dùng được, hãy chụp lại.</td></tr>
+<tr id="e-HONG_CAN_ANH"><td><code>HONG_CAN_ANH</code></td><td>20</td><td>Hỏng mà không có ảnh</td><td>Tài sản Hỏng bắt buộc có ít nhất một ảnh.</td><td>Tài sản Hỏng cần ít nhất một ảnh.</td></tr>
+<tr id="e-ANH_KHONG_HOP_LE"><td><code>ANH_KHONG_HOP_LE</code></td><td>20</td><td>Id ảnh không thuộc đợt hoặc đã gắn tài sản khác</td><td>Ảnh {id} không hợp lệ: không thuộc đợt {đợt} hoặc đã gắn tài sản khác.</td><td>Ảnh không dùng được, hãy chụp lại.</td></tr>
 <tr id="e-NHAN_VIEN_KHONG_THUOC_DOT"><td><code>NHAN_VIEN_KHONG_THUOC_DOT</code></td><td>11</td><td>NV không có trong danh sách NV của đợt</td><td>Nhân viên {mã} không có trong đợt {đợt}.</td><td>Nhân viên này không có đồ Riêng trong đợt.</td></tr>
 <tr id="e-NHAN_VIEN_DANG_CO_NGUOI_KIEM"><td><code>NHAN_VIEN_DANG_CO_NGUOI_KIEM</code></td><td>10</td><td>NV do người khác giữ, hoặc nhận NV không thành</td><td>Nhân viên {mã} đang do {mã NV} kiểm. / Không nhận được nhân viên {mã}, thử mở lại.</td><td>Nhân viên này đang được người khác kiểm.</td></tr>
-<tr id="e-NHAN_VIEN_DA_GUI"><td><code>NHAN_VIEN_DA_GUI</code></td><td>10</td><td>NV đã gửi phiếu</td><td>Nhân viên {mã} đã gửi phiếu kiểm kê.</td><td>Đã gửi phiếu, không sửa được nữa.</td></tr>
-<tr id="e-NHAN_VIEN_CHUA_MO"><td><code>NHAN_VIEN_CHUA_MO</code></td><td>10</td><td>Ghi lên NV chưa mở</td><td>Nhân viên {mã} chưa được mở kiểm, hãy mở trước.</td><td>(App gọi open rồi thử lại.)</td></tr>
-<tr id="e-NHAN_VIEN_CHUA_KIEM_HET"><td><code>NHAN_VIEN_CHUA_KIEM_HET</code></td><td>10</td><td>Còn món chưa có kết quả</td><td>Nhân viên {mã} còn {n} món chưa kiểm; ghi hết rồi mới gửi phiếu.</td><td>Còn {n} tài sản chưa kiểm. Ghi hết rồi gửi.</td></tr>
-<tr id="e-KHONG_PHAI_DO_RIENG_CUA_NV"><td><code>KHONG_PHAI_DO_RIENG_CUA_NV</code></td><td>10</td><td>Mã quét không thuộc danh sách món của NV</td><td>Tài sản {mã} không phải đồ Riêng của nhân viên {mã NV} trong đợt {đợt}.</td><td>Tài sản {mã} không phải đồ Riêng của nhân viên này.</td></tr>
+<tr id="e-NHAN_VIEN_DA_GUI"><td><code>NHAN_VIEN_DA_GUI</code></td><td>10</td><td>NV đã gửi</td><td>Nhân viên {mã} đã gửi phiếu kiểm kê.</td><td>Đã gửi, không sửa được nữa.</td></tr>
+<tr id="e-NHAN_VIEN_CHUA_MO"><td><code>NHAN_VIEN_CHUA_MO</code></td><td>10</td><td>Ghi lên NV chưa nhận</td><td>Nhân viên {mã} chưa được mở kiểm, hãy mở trước.</td><td>(App gọi <code>claim</code> rồi thử lại.)</td></tr>
+<tr id="e-NHAN_VIEN_CHUA_KIEM_HET"><td><code>NHAN_VIEN_CHUA_KIEM_HET</code></td><td>10</td><td>Còn tài sản chưa có kết quả</td><td>Nhân viên {mã} còn {n} tài sản chưa kiểm; ghi hết rồi mới gửi phiếu.</td><td>Còn {n} tài sản chưa kiểm. Ghi hết rồi gửi.</td></tr>
+<tr id="e-KHONG_PHAI_DO_RIENG_CUA_NV"><td><code>KHONG_PHAI_DO_RIENG_CUA_NV</code></td><td>10</td><td>Mã quét không thuộc danh sách tài sản của NV</td><td>Tài sản {mã} không phải đồ Riêng của nhân viên {mã NV} trong đợt {đợt}.</td><td>Tài sản {mã} không phải đồ Riêng của nhân viên này.</td></tr>
 <tr id="e-KET_QUA_KHONG_HOP_LE"><td><code>KET_QUA_KHONG_HOP_LE</code></td><td>20</td><td><code>result</code> không phải FOUND / NOT_FOUND</td><td>Kết quả phải là FOUND hoặc NOT_FOUND.</td><td>Chọn Có hoặc Không thấy.</td></tr>
-<tr id="e-MON_KHONG_THUOC_NHAN_VIEN"><td><code>MON_KHONG_THUOC_NHAN_VIEN</code></td><td>11</td><td><code>itemCode</code> không thuộc danh sách món của NV</td><td>Món {mã} không thuộc nhân viên {mã NV} trong đợt {đợt}.</td><td>Tài sản không thuộc danh sách của nhân viên này.</td></tr>
+<tr id="e-MON_KHONG_THUOC_NHAN_VIEN"><td><code>MON_KHONG_THUOC_NHAN_VIEN</code></td><td>11</td><td><code>itemCode</code> không thuộc danh sách tài sản của NV</td><td>Tài sản {mã} không thuộc nhân viên {mã NV} trong đợt {đợt}.</td><td>Tài sản không thuộc danh sách của nhân viên này.</td></tr>
 <tr id="e-KHONG_PHAI_NGUOI_XAC_NHAN"><td><code>KHONG_PHAI_NGUOI_XAC_NHAN</code></td><td>10</td><td>Người gọi không phải người xác nhận (kể cả phiếu chưa có người xác nhận)</td><td>Bạn không phải người xác nhận phiếu {mã}.</td><td>Bạn không phải người xác nhận phiếu này.</td></tr>
-<tr id="e-PHIEU_DA_XAC_NHAN"><td><code>PHIEU_DA_XAC_NHAN</code></td><td>10</td><td>Phiếu đã xác nhận</td><td>Phiếu {mã} đã được xác nhận.</td><td>Phiếu đã được xác nhận. (Làm mới danh sách.)</td></tr>
-<tr id="e-NHAN_VIEN_KHONG_CHO_XAC_NHAN"><td><code>NHAN_VIEN_KHONG_CHO_XAC_NHAN</code></td><td>10</td><td>Xác nhận phiếu NV mà NV không ở trạng thái chờ (dữ liệu lệch), chưa xác nhận</td><td>Nhân viên {mã} của đợt {đợt} không ở trạng thái chờ xác nhận; phiếu {mã} chưa được xác nhận.</td><td>Chưa xác nhận được phiếu. Báo hành chính.</td></tr>
-<tr id="e-DANG_KIEM_KE"><td><code>DANG_KIEM_KE</code></td><td>10</td><td>Không do API kiểm kê trả. Các API sửa tài sản và phiếu điều chuyển bị khoá khi có đợt mở. <code>errors[]</code> liệt kê các đợt</td><td>Đang có đợt kiểm kê mở nên chưa thực hiện được thao tác này: …</td><td>Đang có đợt kiểm kê, tạm thời chưa sửa hoặc điều chuyển tài sản được.</td></tr>
-<tr><td colspan="5"><b>Chỉ web gặp</b> (app không gọi các API này): <code>DOT_CON_DO</code> (đóng đợt khi còn vùng / NV dở; kèm <code>data</code>), <code>CONG_TY_DA_CO_DOT_MO</code>, <code>MA_DOT_TRUNG</code>, <code>VUNG_TRONG_DOT_MO</code> (danh mục vùng).</td></tr>
-<tr><td colspan="5"><span class="soon">Sắp có (lượt góp ý 1)</span> chỉ web: <code>DOT_TRUNG_NGAY</code> (10, khoảng ngày trùng đợt khác), <code>NGAY_DOT_KHONG_HOP_LE</code> (20), <code>DOT_KHONG_O_TRANG_THAI_CHO</code> (10, bắt đầu / sửa / huỷ đợt không ở trạng thái chờ), <code>DOT_CHUA_BAT_DAU</code> (10, đóng đợt chờ hoặc đã huỷ). <code>CONG_TY_DA_CO_DOT_MO</code> chuyển sang lúc bấm "Bắt đầu kiểm".</td></tr>
+<tr id="e-PHIEU_DA_XAC_NHAN"><td><code>PHIEU_DA_XAC_NHAN</code></td><td>10</td><td>Phiếu đã xác nhận (bởi người dùng hoặc hệ thống khi đóng đợt)</td><td>Phiếu {mã} đã được xác nhận.</td><td>Phiếu đã được xác nhận. (Làm mới danh sách.)</td></tr>
+<tr id="e-NHAN_VIEN_KHONG_CHO_XAC_NHAN"><td><code>NHAN_VIEN_KHONG_CHO_XAC_NHAN</code></td><td>10</td><td>Xác nhận phiếu cá nhân mà NV không ở trạng thái chờ (dữ liệu lệch)</td><td>Nhân viên {mã} của đợt {đợt} không ở trạng thái chờ xác nhận; phiếu {mã} chưa được xác nhận.</td><td>Chưa xác nhận được phiếu. Báo hành chính.</td></tr>
+<tr id="e-DANG_KIEM_KE"><td><code>DANG_KIEM_KE</code></td><td>10</td><td>Không do API kiểm kê trả: API sửa tài sản và phiếu điều chuyển bị khoá khi có đợt mở. <code>errors[]</code> liệt kê các đợt</td><td>Đang có đợt kiểm kê mở nên chưa thực hiện được thao tác này: …</td><td>Đang có đợt kiểm kê, tạm thời chưa sửa hoặc điều chuyển tài sản được.</td></tr>
+<tr><td colspan="5"><b>Chỉ web gặp</b> (app không gọi các API này): <code>DOT_CON_DO</code> (đóng đợt khi còn dở mà không ép), <code>CONG_TY_DA_CO_DOT_MO</code> (bắt đầu đợt khi công ty đã có đợt mở), <code>DOT_TRUNG_NGAY</code> (khoảng ngày trùng đợt khác), <code>NGAY_DOT_KHONG_HOP_LE</code>, <code>DOT_KHONG_O_TRANG_THAI_CHO</code> (bắt đầu / sửa / huỷ đợt không ở trạng thái chờ), <code>DOT_CHUA_BAT_DAU</code> (đóng đợt chờ hoặc đã huỷ), <code>MA_DOT_TRUNG</code>, <code>VUNG_TRONG_DOT_MO</code> (danh mục vùng).</td></tr>
 </tbody></table></div>
 
 <h3 id="loi-chung">Lỗi không có subCode</h3>
@@ -890,95 +930,91 @@ Ví dụ ghi Có, Tốt không dùng:
 <tr><td>HTTP 401 · <code>"401"</code></td><td>Chưa đăng nhập</td><td>Không xác định được người dùng</td><td>Phiên đăng nhập hết hạn. Đăng nhập lại.</td></tr>
 <tr><td>HTTP 403 · <code>"403"</code></td><td>Tài khoản … chưa được cấp quyền …</td><td>Thiếu quyền</td><td>Bạn chưa được cấp quyền kiểm kê.</td></tr>
 <tr><td>HTTP 503 · <code>"503"</code></td><td>Không kiểm tra được quyền …</td><td>Không hỏi được dịch vụ quyền</td><td>Hệ thống đang bận, thử lại sau.</td></tr>
-<tr><td>HTTP 400 · 21</td><td>One or more validation errors occurred (+ <code>errors[]</code>)</td><td>Sai định dạng (validator)</td><td>Lỗi lập trình phía app; ghi log, hiện câu trong <code>errors[0].message</code>.</td></tr>
+<tr><td>HTTP 400 · 21</td><td>One or more validation errors occurred (+ <code>errors[]</code>)</td><td>Sai định dạng (validator)</td><td>Lỗi lập trình phía app; ghi log, hiện <code>errors[0].message</code>.</td></tr>
 <tr><td>20</td><td>Tài khoản chưa gắn mã nhân viên nên không …</td><td>Tài khoản chưa gắn mã NV</td><td>Tài khoản chưa gắn mã nhân viên. Liên hệ hành chính.</td></tr>
 <tr><td>20</td><td>Ghi chú tối đa 1024 ký tự.</td><td>Ghi chú dài quá</td><td>Dùng message.</td></tr>
 <tr><td>20</td><td>Chưa chọn tệp nào. / Tệp thiếu tên hoặc nội dung. / Không nhận tệp [tên]… / … không phải base64 hợp lệ. / Tệp [tên] rỗng. / Tệp [tên] vượt quá 20MB.</td><td>Tải ảnh sai</td><td>Dùng message.</td></tr>
-<tr><td>20</td><td>status phải là một trong: … / status phải là PENDING hoặc CONFIRMED.</td><td>Tham số lọc sai</td><td>Lỗi lập trình phía app.</td></tr>
+<tr><td>20</td><td>status phải là … / type phải là ZONE hoặc STAFF.</td><td>Tham số lọc sai</td><td>Lỗi lập trình phía app.</td></tr>
 <tr><td>11</td><td>Không tìm thấy phiếu kiểm kê: {mã}</td><td>Không có phiếu, hoặc không được xem</td><td>Không tìm thấy phiếu.</td></tr>
-<tr><td>10</td><td>Không ghi được món … hãy thử lại. / Không tạo được danh sách món của nhân viên … / Không xác nhận được phiếu, hãy thử lại.</td><td>Lỗi ghi hoặc thua khi hai người cùng thao tác</td><td>Chưa lưu được. Thử lại.</td></tr>
-<tr><td>30</td><td>Không tra được người xác nhận chuyên môn …</td><td>Xem trước chốt / chốt vùng</td><td>Chưa tra được người xác nhận. Thử lại sau.</td></tr>
-<tr><td>22 / 30 / 10</td><td>(câu của bộ sinh mã phiếu)</td><td>Chốt vùng / gửi phiếu NV khi hệ thống sinh mã lỗi</td><td>Hệ thống chưa sẵn sàng. Thử lại sau hoặc báo quản trị.</td></tr>
+<tr><td>10</td><td>Không ghi được tài sản … hãy thử lại. / Không tạo được danh sách tài sản của nhân viên … / Không xác nhận được phiếu, hãy thử lại.</td><td>Lỗi ghi hoặc thua khi hai người cùng thao tác</td><td>Chưa lưu được. Thử lại.</td></tr>
+<tr><td>30</td><td>Không tra được người xác nhận chuyên môn của các tài sản trong vùng …</td><td>Xem trước chốt / chốt vùng</td><td>Chưa tra được người xác nhận. Thử lại sau.</td></tr>
+<tr><td>22 / 30 / 10</td><td>(câu của bộ sinh mã phiếu)</td><td>Chốt vùng / gửi kết quả NV khi hệ thống sinh mã lỗi</td><td>Hệ thống chưa sẵn sàng. Thử lại sau hoặc báo quản trị.</td></tr>
 <tr><td>HTTP 500 · 1</td><td>An error occurred processing your request</td><td>Lỗi chưa bắt</td><td>Có lỗi, thử lại sau.</td></tr>
 </tbody></table></div>
 
 
 <h2 id="trang-thai">6. Sơ đồ trạng thái</h2>
-<p>Khung viền nét đứt màu vàng là trạng thái <span class="soon">Sắp có</span>.</p>
 
 <h3>Đợt</h3>
-<div class="state-row"><span class="st soonst">WAITING</span><span class="arrow">─ rounds/start (web) ─▶</span><span class="st">OPEN</span><span class="arrow">─ rounds/close (web) ─▶</span><span class="st">CLOSED</span></div>
-<div class="state-row"><span class="st soonst">WAITING</span><span class="arrow">─ rounds/cancel (web) ─▶</span><span class="st soonst">CANCELLED</span></div>
+<div class="state-row"><span class="st">WAITING</span><span class="arrow">─ rounds/{roundCode}/start (web) ─▶</span><span class="st">OPEN</span><span class="arrow">─ rounds/{roundCode}/close (web) ─▶</span><span class="st">CLOSED</span></div>
+<div class="state-row"><span class="st">WAITING</span><span class="arrow">─ rounds/{roundCode}/cancel (web) ─▶</span><span class="st">CANCELLED</span></div>
 <ul>
-<li><span class="live">Đang chạy</span> Tạo đợt (web) thì đợt <b>mở ngay</b> (<code>OPEN</code>), và BE chụp danh sách vùng và danh sách NV có đồ Riêng. Mỗi công ty chỉ có một đợt mở. Đóng đợt <b>không</b> đổi trạng thái vùng / NV / phiếu; vùng và NV còn dở thì giữ nguyên, nhưng không ghi được nữa.</li>
-<li><span class="soon">Sắp có</span> Tạo đợt thì đợt ở <code>WAITING</code>, có ngày dự kiến, và chưa chụp vùng / NV. Bấm "Bắt đầu kiểm" thì chuyển <code>OPEN</code> và mới chụp. Đợt chờ có thể sửa hoặc huỷ (<code>CANCELLED</code>). Đợt chờ và đợt đã huỷ không khoá tài sản và không hiện ở <code>my/tasks</code> (nhưng có trong <code>GET rounds</code> khi không lọc <code>status</code>). Khi đóng đợt, mọi phiếu còn chờ được hệ thống tự xác nhận (<code>confirmSource = SYSTEM</code>).</li>
-<li>Khi có đợt <code>OPEN</code> ở bất kỳ công ty nào, việc sửa tài sản và phiếu điều chuyển bị khoá (<code>DANG_KIEM_KE</code>).</li>
+<li>Lập đợt (web): đợt ở <code>WAITING</code>, có ngày dự kiến, <b>chưa</b> chụp vùng / NV. Đợt chờ sửa được tên, ngày, ghi chú, hoặc huỷ.</li>
+<li>Bắt đầu kiểm: đợt chuyển <code>OPEN</code>, BE chụp danh sách vùng và NV có đồ Riêng; mỗi công ty chỉ một đợt mở. Khi có đợt <code>OPEN</code> ở bất kỳ công ty nào, sửa tài sản và phiếu điều chuyển bị khoá (<code>DANG_KIEM_KE</code>).</li>
+<li>Đóng đợt: đợt chuyển <code>CLOSED</code>; <b>mọi phiếu còn chờ được hệ thống tự xác nhận</b> (<code>confirmSource = SYSTEM</code>), NV có phiếu đó chuyển <code>CONFIRMED</code>. Vùng / NV còn dở giữ nguyên trạng thái, nhưng không ghi được nữa.</li>
+<li>Đợt <code>WAITING</code> / <code>CANCELLED</code> không khoá tài sản, không có ở <code>me/tasks</code>; có trong <code>rounds/search</code> khi không lọc <code>status</code>. Đi kiểm trên đợt không <code>OPEN</code> trả <code>DOT_DA_DONG</code>.</li>
 </ul>
 
 <h3>Vùng trong đợt</h3>
-<div class="state-row"><span class="st">PENDING</span><span class="arrow">─ zones/{zone}/open ─▶</span><span class="st">IN_PROGRESS</span><span class="arrow">─ zones/{zone}/close ─▶</span><span class="st">CLOSED</span></div>
+<div class="state-row"><span class="st">PENDING</span><span class="arrow">─ zones/{zoneCode}/claim ─▶</span><span class="st">IN_PROGRESS</span><span class="arrow">─ zones/{zoneCode}/close ─▶</span><span class="st">CLOSED</span></div>
 <ul>
-<li><code>IN_PROGRESS</code> → <code>IN_PROGRESS</code>: người kiểm mở lại (không ghi gì); hoặc hành chính <code>takeOver</code> (đổi người kiểm).</li>
-<li>Chốt vùng sinh 0..n phiếu vùng <code>PENDING</code>. Không có đường đi ra khỏi <code>CLOSED</code>.</li>
+<li><code>IN_PROGRESS</code> → <code>IN_PROGRESS</code>: người kiểm nhận lại (không ghi gì); hoặc hành chính <code>takeOver</code> (đổi người kiểm).</li>
+<li>Chốt vùng sinh 0..n phiếu vùng <code>PENDING</code>. Không có đường ra khỏi <code>CLOSED</code>.</li>
 </ul>
 
 <h3>NV trong đợt</h3>
-<div class="state-row"><span class="st">PENDING</span><span class="arrow">─ staffs/{staff}/open ─▶</span><span class="st">IN_PROGRESS</span><span class="arrow">─ submit ─▶</span><span class="st">AWAITING_CONFIRM</span><span class="arrow">─ tickets/{code}/confirm ─▶</span><span class="st">CONFIRMED</span></div>
+<div class="state-row"><span class="st">PENDING</span><span class="arrow">─ staffs/{staffCode}/claim ─▶</span><span class="st">IN_PROGRESS</span><span class="arrow">─ submit ─▶</span><span class="st">AWAITING_CONFIRM</span><span class="arrow">─ tickets/{ticketCode}/confirm hoặc đóng đợt ─▶</span><span class="st">CONFIRMED</span></div>
 <ul>
-<li>Mở NV thì tạo danh sách món (<code>result = null</code>). Gửi thì sinh phiếu NV <code>PENDING</code>, người xác nhận là chính NV đó.</li>
-<li><span class="soon">Sắp có</span> Đóng đợt: NV đang <code>AWAITING_CONFIRM</code> được tự chuyển <code>CONFIRMED</code>, cùng lúc với phiếu của NV đó.</li>
+<li>Nhận NV thì lập danh sách tài sản (<code>result = null</code>). Gửi thì sinh phiếu cá nhân <code>PENDING</code>, người xác nhận là chính NV đó.</li>
 </ul>
 
-<h3>Món của NV (result)</h3>
-<div class="flow">null ─ scan ─▶ FOUND (condition 1)
+<h3>Tài sản của NV (result)</h3>
+<div class="flow">null ─ items/scan ─▶ FOUND (condition 1)
 null | FOUND | NOT_FOUND ─ items/update result=FOUND ─▶ FOUND
 null | FOUND | NOT_FOUND ─ items/update result=NOT_FOUND ─▶ NOT_FOUND (condition null, gỡ ảnh)
-FOUND | NOT_FOUND ─ scan ─▶ không đổi
+FOUND | NOT_FOUND ─ items/scan ─▶ không đổi
 (không có đường quay về null)</div>
 
 <h3>Phiếu</h3>
-<div class="state-row"><span class="st">PENDING</span><span class="arrow">─ tickets/{code}/confirm (người xác nhận) ─▶</span><span class="st">CONFIRMED</span></div>
+<div class="state-row"><span class="st">PENDING</span><span class="arrow">─ tickets/{ticketCode}/confirm (USER) · đóng đợt (SYSTEM) ─▶</span><span class="st">CONFIRMED</span></div>
 <ul>
-<li>Phiếu vùng (<code>ZONE</code>, <code>KKV…</code>) sinh khi chốt vùng; người xác nhận là người phụ trách chuyên môn của món, hoặc null. Phiếu NV (<code>STAFF</code>, <code>KKN…</code>) sinh khi gửi NV.</li>
-<li><span class="live">Đang chạy</span> Phiếu có người xác nhận null thì ở <code>PENDING</code> mãi. Đợt đã đóng vẫn xác nhận được.</li>
-<li><span class="soon">Sắp có</span> Thêm <code>confirmSource</code>: xác nhận tay ghi <code>USER</code>; đóng đợt thì mọi phiếu còn chờ (kể cả phiếu có người xác nhận null) chuyển <code>CONFIRMED</code> với <code>SYSTEM</code> và <code>confirmedByStaffCode = null</code>. Phiếu người dùng vừa xác nhận tay không bị ghi đè.</li>
+<li>Phiếu vùng (<code>ZONE</code>, <code>KKV…</code>) sinh khi chốt vùng; người xác nhận là người phụ trách chuyên môn của tài sản, hoặc null. Phiếu cá nhân (<code>STAFF</code>, <code>KKN…</code>) sinh khi gửi kết quả NV.</li>
+<li>Người xác nhận bấm: <code>confirmSource = USER</code>. Đóng đợt: mọi phiếu còn chờ (kể cả phiếu có người xác nhận null) chuyển <code>CONFIRMED</code> với <code>SYSTEM</code> và <code>confirmedByStaffCode = null</code>; phiếu người dùng vừa xác nhận không bị ghi đè. Đợt đã đóng mà phiếu còn chờ thì vẫn xác nhận được.</li>
 </ul>
 
 <h3>Ảnh</h3>
-<div class="flow">photos ─▶ đã tải, chưa gắn ─ items/update có photoId ─▶ đã gắn
-đã gắn ─ (gỡ khỏi photoIds | bỏ món | NOT_FOUND) ─▶ đã tải, chưa gắn
+<div class="flow">photos/upload ─▶ đã tải, chưa gắn ─ items/update có photoId ─▶ đã gắn
+đã gắn ─ (gỡ khỏi photoIds | items/delete | NOT_FOUND) ─▶ đã tải, chưa gắn
 (API kiểm kê không xoá ảnh)</div>
 
 <h2 id="thu-dev">7. Thử trên dev</h2>
 <ul>
-<li>Phần <span class="live">Đang chạy</span> thử được trên môi trường dev khi bản backend tương ứng <b>đã deploy lên dev</b>. Phần <span class="soon">Sắp có</span> chỉ thử được sau khi nhánh góp ý được merge và deploy. Hỏi đầu mối backend xem dev đang chạy bản nào trước khi thử.</li>
-<li><b>Hẹn giờ trước khi thử.</b> Đợt kiểm kê đang mở sẽ <b>khoá sửa tài sản và phiếu điều chuyển trên toàn bộ dev</b> (mọi công ty). Mở đợt thử thì báo đầu mối lúc mở và lúc đóng, để không chặn người khác.</li>
-<li>Cần tài khoản dev có quyền <code>asset-stocktake-check/read</code> và đã gắn mã nhân viên. Muốn thử <code>takeOver</code> thì cần thêm quyền hành chính.</li>
+<li>Route mới chỉ chạy khi bản backend đổi tên <b>đã deploy lên dev</b>. BE và web deploy cùng lúc; route cũ trả 404. Hỏi đầu mối backend xem dev đang chạy bản nào trước khi thử.</li>
+<li><b>Hẹn giờ trước khi thử.</b> Đợt kiểm kê đang mở <b>khoá sửa tài sản và phiếu điều chuyển trên toàn bộ dev</b> (mọi công ty). Bắt đầu một đợt thử thì báo đầu mối lúc bắt đầu và lúc đóng.</li>
+<li>Cần tài khoản dev có quyền <code>asset-stocktake-check/read</code> và đã gắn mã nhân viên; thử <code>takeOver</code> thì cần thêm quyền hành chính.</li>
 <li>Dữ liệu tạo khi thử nên đặt tên dễ nhận ra (vd tên đợt bắt đầu bằng <code>ZZ-TEST</code>).</li>
-<li>Khuyến nghị app: ghi log <code>code</code>, <code>subCode</code>, <code>message</code> của mọi lỗi, để đối chiếu với bảng mã lỗi.</li>
+<li>Khuyến nghị app: ghi log <code>code</code>, <code>subCode</code>, <code>message</code> của mọi lỗi để đối chiếu bảng mã lỗi.</li>
 </ul>
 
 <h2 id="lich-su">8. Ngày viết, căn cứ, lịch sử</h2>
 <dl class="kv">
-<dt>Ngày viết</dt><dd>22/11/2026</dd>
-<dt>Căn cứ</dt><dd>Mã nguồn backend nhánh <code>main</code>, commit <code>1d1f087b</code>, đọc trực tiếp endpoint, validator, service, DTO và hằng mã lỗi. Đối chiếu tên trường JSON và mã lỗi với hai bộ request / response chạy thật trên dev (kiểm vùng 21/11, kiểm theo NV 22/11).</dd>
-<dt>Sắp có</dt><dd>Nhánh góp ý lượt 1 (đã qua review cuối, chưa merge), đọc ở commit <code>e44c287a</code>.</dd>
+<dt>Cập nhật</dt><dd>22/11/2026</dd>
+<dt>Căn cứ</dt><dd>Mã nguồn backend, nhánh đổi tên route, commit <code>20564089</code> (dựng trên <code>main</code> <code>07385536</code>): endpoint, hằng route, validator, service, DTO, mã lỗi. Đối chiếu tên trường và mã lỗi với bộ request / response chạy thật trên dev theo route mới (30 cặp, 22/11). Khi nhánh đổi tên merge, căn cứ chuyển sang commit <code>main</code> tương ứng.</dd>
 </dl>
 <div class="tbl"><table><thead><tr><th>Ngày</th><th>Thay đổi</th></tr></thead><tbody>
-<tr><td>22/11/2026 (lần 2)</td><td>Bỏ phần giới thiệu xác thực, thay bằng một câu (xác thực dùng chung hệ thống); rút gọn các đoạn dẫn. Sắp có: <code>DOT_DA_DONG</code> trên đợt chờ / đã huỷ có câu riêng ("chưa bắt đầu kiểm", "đã huỷ"); <code>GET rounds</code> không lọc thì trả cả đợt chờ / đã huỷ; câu thông báo đổi "món" thành "tài sản", <code>subCode</code> giữ nguyên. Đọc nhánh góp ý ở <code>e44c287a</code>.</td></tr>
-<tr><td>22/11/2026</td><td>Bản đầu: 23 API kiểm kê app dùng (cộng API xem ảnh và API <code>lock</code> tuỳ chọn), validate, 23 mã lỗi app gặp + lỗi chung, sơ đồ trạng thái, phần sắp có của lượt góp ý 1.</td></tr>
+<tr><td>22/11/2026 (lần 3)</td><td><b>Đổi tên route</b>: base <code>/asset-stocktake</code>, tham số <code>{roundCode}</code>/<code>{zoneCode}</code>/<code>{staffCode}</code>/<code>{ticketCode}</code>, 35 route theo bảng <a href="#doi-ten">cũ → mới</a>; route cũ trả 404. Mỗi API thêm câu "API này làm gì". Góp ý lượt 1 đã merge, chuyển thành nội dung chính thức: đợt <code>WAITING</code>/<code>CANCELLED</code>, ngày dự kiến, <code>confirmSource</code>, tự xác nhận khi đóng đợt, tham số <code>status</code>/<code>type</code> của <code>me/assigned-tickets</code>, số liệu mới ở chi tiết đợt; câu thông báo dùng "tài sản" thay "món".</td></tr>
+<tr><td>22/11/2026 (lần 2)</td><td>Bỏ phần giới thiệu xác thực, thay bằng một câu (xác thực dùng chung hệ thống); rút gọn các đoạn dẫn; cập nhật phần sắp có của góp ý lượt 1.</td></tr>
+<tr><td>22/11/2026</td><td>Bản đầu: 23 API kiểm kê app dùng (cộng API xem ảnh và API khoá tuỳ chọn), validate, mã lỗi, sơ đồ trạng thái.</td></tr>
 </tbody></table></div>
-<p class="meta">Đổi hợp đồng gần nhất (đã có trên <code>main</code>): ở <code>GET tickets/{code}</code>, món có thêm trường <code>result</code>; <code>condition</code>, <code>addedByStaffCode</code>, <code>addedAt</code> chỉ null ở phiếu NV. Không đổi tên hay bỏ trường nào.</p>
 
 <h2 id="chua-xac-minh">Phụ lục: chưa xác minh</h2>
 <ul>
 <li><b>Dạng phản hồi lỗi validator</b> (HTTP 400, <code>code 21</code>, nội dung <code>errors[].code</code>): đọc từ thư viện, chưa chạy thử.</li>
-<li><b>Giới hạn kích thước body</b> khi gửi nhiều ảnh base64 trong một request; tiền tố <code>data:image/…;base64,</code> có được chấp nhận không. Khuyến nghị: gửi chuỗi base64 thuần, mỗi lần ít ảnh.</li>
-<li><code>traceId</code> / <code>correlationId</code> có xuất hiện trong phản hồi không: hai bộ mẫu chạy thật không có.</li>
+<li><b>Giới hạn kích thước body</b> khi gửi nhiều ảnh base64 một lần; tiền tố <code>data:image/…;base64,</code> có được nhận không. Khuyến nghị: gửi base64 thuần, mỗi lần ít ảnh.</li>
+<li><code>traceId</code> / <code>correlationId</code> có xuất hiện trong phản hồi không: bộ mẫu chạy thật không có.</li>
 <li>POST không gửi body (thay vì <code>{}</code>) có chạy không.</li>
 <li>Khối <code>pager</code> của báo cáo web: tên trường chưa có mẫu chạy thật.</li>
-<li>Cách hệ thống chọn người xác nhận cho phiếu vùng (người phụ trách chuyên môn theo nhóm và công ty của món): đã biết kết quả, chưa mô tả chi tiết luật tra.</li>
-<li>Toàn bộ phần <span class="soon">Sắp có</span>: đọc ở nhánh chưa merge, có thể còn đổi.</li>
+<li>Cách hệ thống chọn người xác nhận cho phiếu vùng (người phụ trách chuyên môn theo nhóm và công ty của tài sản): đã biết kết quả, chưa mô tả chi tiết luật tra.</li>
 </ul>
 <footer>Tài liệu nội bộ dự án kiểm kê CCDC. Dữ liệu trong ví dụ đều là dữ liệu giả.</footer>
 
