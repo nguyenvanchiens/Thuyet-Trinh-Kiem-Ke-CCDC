@@ -109,7 +109,6 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 <ol>
   <li><a href="#tong-quan">1. Tổng quan</a>
     <ol>
-      <li><a href="#xac-thuc">Xác thực</a></li>
       <li><a href="#gui-request">Cách gửi request</a></li>
       <li><a href="#phong-bi">Phong bì ApiResult</a></li>
       <li><a href="#kieu-du-lieu">Kiểu dữ liệu, ngày giờ</a></li>
@@ -147,8 +146,8 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 </nav>
 <main>
 <h1>API kiểm kê CCDC cho app mobile</h1>
-<p class="lead">Danh sách API bên BE hỗ trợ cho app kiểm kê, kèm cách gửi request, dữ liệu trả về, cách validate và mã lỗi. Tài liệu đọc từ mã nguồn backend, không suy đoán. Chỗ nào chưa kiểm được thì ghi "chưa xác minh".</p>
-<p class="meta">Viết ngày 22/11/2026 · Căn cứ: nhánh <code>main</code> của backend, commit <code>1d1f087b</code> · Phần "Sắp có" đọc ở nhánh góp ý lượt 1, commit <code>0d309d94</code> (chưa merge).</p>
+<p class="lead">Các API BE hỗ trợ app kiểm kê: request, response, validate, mã lỗi. Viết theo mã nguồn backend; chỗ chưa kiểm được ghi "chưa xác minh".</p>
+<p class="meta">Viết ngày 22/11/2026 · Căn cứ: nhánh <code>main</code> của backend, commit <code>1d1f087b</code> · Phần "Sắp có" đọc ở nhánh góp ý lượt 1, commit <code>e44c287a</code> (chưa merge).</p>
 <div class="note">
   <p><span class="live">Đang chạy</span> là API đã có trên <code>main</code>. <span class="soon">Sắp có (lượt góp ý 1)</span> là phần đang làm, chưa merge, có thể còn đổi. Phần sắp có <b>chỉ thêm</b> trường và tham số tuỳ chọn, không đổi tên hay bỏ trường nào. App làm theo phần đang chạy vẫn dùng tiếp được.</p>
   <p style="margin:0">Mọi dữ liệu trong ví dụ là <b>dữ liệu giả</b>: NV <code>000999</code> "Nguyễn Văn A", NV <code>000998</code> "Trần Thị B", tài sản <code>TS000001</code>, vùng <code>VUNG01</code>, đợt <code>DKK0000999</code>, công ty <code>CT01</code>.</p>
@@ -159,21 +158,15 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
   <dt>Base path</dt><dd><code>{BASE_URL}/api/v1/asset-management/stocktake</code>. Mọi đường dẫn bên dưới tính tiếp từ đây.</dd>
   <dt>Động từ</dt><dd>Chỉ có <code>GET</code> và <code>POST</code>, không có PUT/PATCH/DELETE. Sửa và bỏ đều là <code>POST …/update</code>, <code>POST …/remove</code>.</dd>
   <dt>Tham số path</dt><dd><code>{round}</code> là mã đợt, <code>{zone}</code> là mã vùng, <code>{staff}</code> là mã NV được kiểm, <code>{code}</code> là mã đợt hoặc mã phiếu. BE tự cắt khoảng trắng hai đầu và so <b>không phân biệt hoa thường</b>.</dd>
+  <dt>Xác thực</dt><dd>Xác thực dùng chung hệ thống; mã nhân viên của người gọi lấy từ phiên đăng nhập.</dd>
 </dl>
-
-<h3 id="xac-thuc">Xác thực</h3>
-<ul>
-  <li>Gửi header <code>Authorization: Bearer &lt;access_token&gt;</code>. Token do hệ thống đăng nhập chung cấp. <b>Cách xin token</b> (client, scope, luồng đăng nhập) không thuộc API này: <i>chưa xác minh</i>, hỏi đội phụ trách đăng nhập.</li>
-  <li><b>Mã NV của người thao tác lấy từ token</b>, ở claim <code>sub_ref_number</code>. Không API nào nhận mã NV người thao tác từ app. Token thiếu claim này thì mọi thao tác ghi, các API <code>my/*</code> và xác nhận phiếu đều trả <code>code 20</code> kèm câu "Tài khoản chưa gắn mã nhân viên…".</li>
-  <li>Quyền được nhớ đệm khoảng <b>60 giây</b>. Vừa cấp hoặc thu quyền thì có thể phải chờ tới một phút mới có hiệu lực.</li>
-</ul>
 
 <h3 id="gui-request">Cách gửi request</h3>
 <ul>
   <li><b>GET:</b> tham số đặt ở path và query string. <b>Không gửi <code>Content-Type</code> và không gửi body.</b> GET mà kèm <code>Content-Type: application/json</code> với body rỗng sẽ bị <b>HTTP 400</b>.</li>
   <li><b>POST:</b> body JSON, header <code>Content-Type: application/json</code>. Tham số path (<code>round</code>, <code>zone</code>, <code>staff</code>, <code>code</code>) lấy từ URL, không cần đưa vào body.</li>
-  <li>POST chỉ có tham số path (<code>close/preview</code>, <code>close</code>, <code>submit</code>, <code>confirm</code>): gửi body <code>{}</code>. Mẫu chạy thật dùng <code>{}</code> và chạy đúng. Gửi không body thì <i>chưa xác minh</i>.</li>
-  <li>Trường không gửi trong body thì nhận giá trị mặc định: bool là <code>false</code>, chuỗi / số / mảng tuỳ chọn là <code>null</code>.</li>
+  <li>POST chỉ có tham số path (<code>close/preview</code>, <code>close</code>, <code>submit</code>, <code>confirm</code>): gửi body <code>{}</code>.</li>
+  <li>Trường không gửi: bool là <code>false</code>, chuỗi / số / mảng tuỳ chọn là <code>null</code>.</li>
 </ul>
 
 <h3 id="phong-bi">Phong bì trả về (ApiResult)</h3>
@@ -205,7 +198,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
   <li><b>Thiếu quyền</b> (cổng quyền chạy trước API): HTTP <b>401 / 403 / 503</b>. Thân chỉ có hai khoá, và <code>code</code> là <b>chuỗi</b>:
 <pre><code>HTTP 403
 {"code":"403","message":"Tài khoản … chưa được cấp quyền …"}</code></pre>
-  401 = chưa xác định được người dùng ("Chưa đăng nhập"). 403 = thiếu quyền. 503 = không hỏi được dịch vụ quyền. Request <b>không có token</b> bị chặn sớm hơn ở tầng xác thực; thân lỗi ở tầng đó <i>chưa xác minh</i>.</li>
+  401 = chưa đăng nhập. 403 = thiếu quyền. 503 = không hỏi được dịch vụ quyền.</li>
   <li id="loi-validator"><b>Lỗi validator</b> (sai định dạng, bị chặn trước khi vào nghiệp vụ): HTTP <b>400</b>, <code>code = 21</code>, <code>subCode = null</code>, không có <code>data</code>, chi tiết nằm trong <code>errors</code>. Dạng này đọc từ thư viện, <i>chưa chạy thử</i>:
 <pre><code>HTTP 400
 {"code":21,"subCode":null,"message":"One or more validation errors occurred",
@@ -246,6 +239,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 </tbody></table></div>
 
 <h2 id="quyen">2. Quyền</h2>
+<p>Quyền được nhớ đệm khoảng 60 giây: vừa cấp hoặc thu quyền thì có thể chờ tới một phút mới có hiệu lực.</p>
 <div class="tbl"><table>
 <thead><tr><th>Quyền</th><th>Ý nghĩa</th></tr></thead>
 <tbody>
@@ -270,7 +264,7 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 
 
 <h2 id="man-app">3. Theo từng màn app</h2>
-<p>Mỗi API ghi method + path, quyền, tham số, ví dụ request / response và các mã lỗi có thể gặp. Ngoài các mã ghi riêng, API nào cũng có thể trả lỗi chung: thiếu quyền (401/403/503), validator (400) nếu API có validator, và <code>code 20</code> khi token chưa gắn mã NV (API ghi và API <code>my/*</code>). Bấm vào từng API để mở chi tiết.</p>
+<p>Bấm vào từng API để xem quyền, tham số, ví dụ và mã lỗi. Ngoài mã ghi riêng, API nào cũng có thể trả lỗi chung: thiếu quyền (401/403/503), validator (400), <code>code 20</code> khi tài khoản chưa gắn mã NV.</p>
 <div class="screens">
   <a href="#man-dau"><b>Màn đầu</b><span>my/tasks</span></a>
   <a href="#man-dot"><b>Đợt</b><span>rounds, rounds/{code}</span></a>
@@ -296,7 +290,6 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 <li><code>pendingTicketCount</code>: số phiếu đang chờ tôi xác nhận. Đếm cùng điều kiện với <code>my/tickets</code>.</li>
 </ul>
 <pre><code>GET {BASE_URL}/api/v1/asset-management/stocktake/my/tasks
-Authorization: Bearer &lt;token&gt;
 
 {"data":{"checkRounds":[{"code":"DKK0000999","name":"Kiểm kê cuối năm","companyCode":"CT01",
    "zonesTotal":6,"zonesClosed":1,"staffTotal":40,"staffSubmitted":3}],
@@ -322,7 +315,10 @@ Authorization: Bearer &lt;token&gt;
   "closedAt":null,"closedByStaffCode":null,"closedByStaffName":null,"closedWithPending":false}],
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> chỉ có lỗi chung.</p>
-<div class="soon-block"><span class="soon">Sắp có</span> Thêm <code>plannedStartDate</code>, <code>plannedEndDate</code> (dạng <code>yyyy-MM-dd</code>) vào DTO đợt. <code>status</code> có thêm <code>WAITING</code>, <code>CANCELLED</code>. Đợt chờ hoặc đã huỷ không đi kiểm được: mở vùng / NV, tìm tài sản, tải ảnh trên các đợt này đều trả <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a> với câu "đã đóng". App nên dựa vào <code>status</code> của đợt để hiện "Chưa bắt đầu" / "Đã huỷ" thay cho câu đó.</div>
+<div class="soon-block"><span class="soon">Sắp có</span>
+<ul><li>DTO đợt thêm <code>plannedStartDate</code>, <code>plannedEndDate</code> (dạng <code>yyyy-MM-dd</code>). <code>status</code> có thêm <code>WAITING</code> (chờ bắt đầu), <code>CANCELLED</code> (đã huỷ).</li>
+<li><b>Không truyền <code>status</code> thì trả cả đợt <code>WAITING</code> và <code>CANCELLED</code>.</b> App chỉ cần đợt đang mở thì truyền <code>status=OPEN</code> hoặc tự lọc. <code>my/tasks</code> vẫn chỉ trả đợt <code>OPEN</code>.</li>
+<li>Đi kiểm trên đợt chờ hoặc đã huỷ (mở vùng / NV, tìm tài sản, tải ảnh…) vẫn trả mã <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>, nhưng câu theo trạng thái thật: "Đợt … chưa bắt đầu kiểm." hoặc "Đợt … đã huỷ." (đợt đóng thật vẫn là "Đợt … đã đóng."). App nên dựa vào <code>status</code> của đợt.</li></ul></div>
 </div></details>
 
 <details class="ep" id="ep-round">
@@ -469,6 +465,7 @@ POST …/stocktake/rounds/DKK0000999/zones/VUNG01/items
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> các lỗi cổng như API thêm món, cộng <a href="#e-TINH_TRANG_KHONG_HOP_LE"><code>TINH_TRANG_KHONG_HOP_LE</code></a>, <a href="#e-MON_KHONG_CO_TRONG_VUNG"><code>MON_KHONG_CO_TRONG_VUNG</code></a>, <a href="#e-ANH_KHONG_HOP_LE"><code>ANH_KHONG_HOP_LE</code></a>, <a href="#e-HONG_CAN_ANH"><code>HONG_CAN_ANH</code></a>; ghi chú dài hơn 1024 ký tự trả <code>code 20</code> không subCode.</p>
 <pre><code>{"data":null,"code":20,"subCode":"HONG_CAN_ANH","message":"Món Hỏng bắt buộc có ít nhất một ảnh.","errors":[]}</code></pre>
+<p class="meta"><span class="soon">Sắp có</span> câu đổi thành "Tài sản Hỏng bắt buộc có ít nhất một ảnh."; <code>subCode</code> giữ nguyên.</p>
 </div></details>
 
 <details class="ep" id="ep-zone-remove">
@@ -664,6 +661,7 @@ Ví dụ ghi Có, Tốt không dùng:
 
 {"data":null,"code":10,"subCode":"NHAN_VIEN_CHUA_KIEM_HET",
  "message":"Nhân viên 000998 còn 1 món chưa kiểm; ghi hết rồi mới gửi phiếu.","errors":[]}</code></pre>
+<p class="meta"><span class="soon">Sắp có</span> câu đổi "món" thành "tài sản"; <code>subCode</code> giữ nguyên.</p>
 <p><b>Lỗi:</b> các lỗi cổng như API ghi món NV, cộng <a href="#e-NHAN_VIEN_CHUA_KIEM_HET"><code>NHAN_VIEN_CHUA_KIEM_HET</code></a>; <code>code 22 / 30 / 10</code> khi sinh mã phiếu lỗi.</p>
 </div></details>
 
@@ -848,6 +846,7 @@ Ví dụ ghi Có, Tốt không dùng:
 <tr><td><code>OTHER_COMPANY</code></td><td>Công ty của tài sản khác công ty của đợt</td><td>"Món thuộc công ty CT02, đợt kiểm của CT01."</td></tr>
 <tr><td><code>OTHER_ZONE</code></td><td>Món đang nằm trong một vùng khác của <b>bất kỳ đợt đang mở nào</b> (kể cả đợt công ty khác)</td><td>"Món đã có trong vùng VUNG02 (Kho tầng 2) của đợt DKK0000999."</td></tr>
 </tbody></table></div>
+<p class="meta"><span class="soon">Sắp có</span> <code>detail</code> đổi chữ "Món" thành "Tài sản" ("Tài sản thuộc công ty …", "Tài sản đã có trong vùng …"); <code>type</code> giữ nguyên.</p>
 <ol>
 <li>Món <b>đã có</b> trong vùng: trả <code>skipped: true</code>, không xét cảnh báo, bất kể cờ.</li>
 <li>Có cảnh báo và <code>confirmWarnings = false</code> (hoặc không gửi): trả danh sách <code>warnings</code>, <code>added: false</code>, <b>không ghi gì</b>. App hiện các cảnh báo (thứ tự PRIVATE, OTHER_COMPANY, OTHER_ZONE) và hỏi người dùng.</li>
@@ -856,10 +855,11 @@ Ví dụ ghi Có, Tốt không dùng:
 </ol>
 
 <h2 id="ma-loi">5. Bảng mã lỗi</h2>
-<p>Lỗi nghiệp vụ trả HTTP 200. App nên rẽ nhánh theo <code>subCode</code>. Gặp <code>subCode</code> lạ (bản BE mới hơn app) thì hiện nguyên <code>message</code>: câu này đã là tiếng Việt và hiển thị được. Câu gợi ý là đề xuất cho app; cột "message của BE" là mẫu, phần <code>{…}</code> do BE điền.</p>
+<p>Lỗi nghiệp vụ trả HTTP 200. App rẽ nhánh theo <code>subCode</code>, <b>không so chuỗi <code>message</code></b>. Gặp <code>subCode</code> lạ thì hiện nguyên <code>message</code> (câu tiếng Việt hiển thị được). Phần <code>{…}</code> do BE điền.</p>
+<div class="soon-block"><span class="soon">Sắp có</span> Các câu <code>message</code> của BE đổi chữ "món" thành "tài sản" (vd "Món {mã} không có trong vùng {vùng}." thành "Tài sản {mã} không có trong vùng {vùng}."). Áp cho mọi câu có chữ "món" trong bảng dưới và trong <code>detail</code> của cảnh báo. <b><code>subCode</code> giữ nguyên.</b></div>
 <div class="tbl"><table><thead><tr><th>subCode</th><th>code</th><th>Nghĩa</th><th>message của BE (mẫu)</th><th>Câu gợi ý app hiện</th></tr></thead><tbody>
 <tr id="e-KHONG_TIM_THAY_DOT"><td><code>KHONG_TIM_THAY_DOT</code></td><td>11</td><td>Mã đợt sai hoặc đợt đã xoá</td><td>Không tìm thấy đợt kiểm kê: {mã}</td><td>Không tìm thấy đợt kiểm kê. Kéo để tải lại.</td></tr>
-<tr id="e-DOT_DA_DONG"><td><code>DOT_DA_DONG</code></td><td>10</td><td>Đợt không còn mở, mọi thao tác đi kiểm bị chặn. <span class="soon">Sắp có</span> cũng trả cho đợt chờ hoặc đã huỷ</td><td>Đợt {mã} đã đóng.</td><td>Đợt kiểm kê này không còn mở, không ghi thêm được.</td></tr>
+<tr id="e-DOT_DA_DONG"><td><code>DOT_DA_DONG</code></td><td>10</td><td>Đợt không còn mở, mọi thao tác đi kiểm bị chặn. <span class="soon">Sắp có</span> cũng trả cho đợt chờ hoặc đã huỷ, với câu theo trạng thái</td><td>Đợt {mã} đã đóng. · <span class="soon">Sắp có</span> Đợt {mã} chưa bắt đầu kiểm. / Đợt {mã} đã huỷ.</td><td>Đợt kiểm kê này không còn mở, không ghi thêm được.</td></tr>
 <tr id="e-VUNG_KHONG_THUOC_DOT"><td><code>VUNG_KHONG_THUOC_DOT</code></td><td>11</td><td>Vùng không có trong đợt</td><td>Vùng {vùng} không thuộc đợt {đợt}.</td><td>Vùng này không thuộc đợt kiểm kê.</td></tr>
 <tr id="e-VUNG_DA_CHOT"><td><code>VUNG_DA_CHOT</code></td><td>10</td><td>Vùng đã chốt</td><td>Vùng {vùng} đã chốt.</td><td>Vùng đã chốt, không sửa được nữa.</td></tr>
 <tr id="e-VUNG_DANG_CO_NGUOI_KIEM"><td><code>VUNG_DANG_CO_NGUOI_KIEM</code></td><td>10</td><td>Vùng do người khác giữ; hoặc ghi lên vùng chưa mở; hoặc nhận vùng không thành</td><td>Vùng {vùng} đang do {mã NV} kiểm. / Vùng {vùng} chưa được mở kiểm, hãy mở vùng trước. / Không nhận được vùng {vùng}, thử mở lại.</td><td>Vùng đang do người khác kiểm. (Câu "chưa mở": gọi open rồi thử lại.)</td></tr>
@@ -891,7 +891,7 @@ Ví dụ ghi Có, Tốt không dùng:
 <tr><td>HTTP 403 · <code>"403"</code></td><td>Tài khoản … chưa được cấp quyền …</td><td>Thiếu quyền</td><td>Bạn chưa được cấp quyền kiểm kê.</td></tr>
 <tr><td>HTTP 503 · <code>"503"</code></td><td>Không kiểm tra được quyền …</td><td>Không hỏi được dịch vụ quyền</td><td>Hệ thống đang bận, thử lại sau.</td></tr>
 <tr><td>HTTP 400 · 21</td><td>One or more validation errors occurred (+ <code>errors[]</code>)</td><td>Sai định dạng (validator)</td><td>Lỗi lập trình phía app; ghi log, hiện câu trong <code>errors[0].message</code>.</td></tr>
-<tr><td>20</td><td>Tài khoản chưa gắn mã nhân viên nên không …</td><td>Token không có mã NV</td><td>Tài khoản chưa gắn mã nhân viên. Liên hệ hành chính.</td></tr>
+<tr><td>20</td><td>Tài khoản chưa gắn mã nhân viên nên không …</td><td>Tài khoản chưa gắn mã NV</td><td>Tài khoản chưa gắn mã nhân viên. Liên hệ hành chính.</td></tr>
 <tr><td>20</td><td>Ghi chú tối đa 1024 ký tự.</td><td>Ghi chú dài quá</td><td>Dùng message.</td></tr>
 <tr><td>20</td><td>Chưa chọn tệp nào. / Tệp thiếu tên hoặc nội dung. / Không nhận tệp [tên]… / … không phải base64 hợp lệ. / Tệp [tên] rỗng. / Tệp [tên] vượt quá 20MB.</td><td>Tải ảnh sai</td><td>Dùng message.</td></tr>
 <tr><td>20</td><td>status phải là một trong: … / status phải là PENDING hoặc CONFIRMED.</td><td>Tham số lọc sai</td><td>Lỗi lập trình phía app.</td></tr>
@@ -911,7 +911,7 @@ Ví dụ ghi Có, Tốt không dùng:
 <div class="state-row"><span class="st soonst">WAITING</span><span class="arrow">─ rounds/cancel (web) ─▶</span><span class="st soonst">CANCELLED</span></div>
 <ul>
 <li><span class="live">Đang chạy</span> Tạo đợt (web) thì đợt <b>mở ngay</b> (<code>OPEN</code>), và BE chụp danh sách vùng và danh sách NV có đồ Riêng. Mỗi công ty chỉ có một đợt mở. Đóng đợt <b>không</b> đổi trạng thái vùng / NV / phiếu; vùng và NV còn dở thì giữ nguyên, nhưng không ghi được nữa.</li>
-<li><span class="soon">Sắp có</span> Tạo đợt thì đợt ở <code>WAITING</code>, có ngày dự kiến, và chưa chụp vùng / NV. Bấm "Bắt đầu kiểm" thì chuyển <code>OPEN</code> và mới chụp. Đợt chờ có thể sửa hoặc huỷ (<code>CANCELLED</code>). Đợt chờ và đợt đã huỷ không khoá tài sản và không hiện trên app. Khi đóng đợt, mọi phiếu còn chờ được hệ thống tự xác nhận (<code>confirmSource = SYSTEM</code>).</li>
+<li><span class="soon">Sắp có</span> Tạo đợt thì đợt ở <code>WAITING</code>, có ngày dự kiến, và chưa chụp vùng / NV. Bấm "Bắt đầu kiểm" thì chuyển <code>OPEN</code> và mới chụp. Đợt chờ có thể sửa hoặc huỷ (<code>CANCELLED</code>). Đợt chờ và đợt đã huỷ không khoá tài sản và không hiện ở <code>my/tasks</code> (nhưng có trong <code>GET rounds</code> khi không lọc <code>status</code>). Khi đóng đợt, mọi phiếu còn chờ được hệ thống tự xác nhận (<code>confirmSource = SYSTEM</code>).</li>
 <li>Khi có đợt <code>OPEN</code> ở bất kỳ công ty nào, việc sửa tài sản và phiếu điều chuyển bị khoá (<code>DANG_KIEM_KE</code>).</li>
 </ul>
 
@@ -953,7 +953,7 @@ FOUND | NOT_FOUND ─ scan ─▶ không đổi
 <ul>
 <li>Phần <span class="live">Đang chạy</span> thử được trên môi trường dev khi bản backend tương ứng <b>đã deploy lên dev</b>. Phần <span class="soon">Sắp có</span> chỉ thử được sau khi nhánh góp ý được merge và deploy. Hỏi đầu mối backend xem dev đang chạy bản nào trước khi thử.</li>
 <li><b>Hẹn giờ trước khi thử.</b> Đợt kiểm kê đang mở sẽ <b>khoá sửa tài sản và phiếu điều chuyển trên toàn bộ dev</b> (mọi công ty). Mở đợt thử thì báo đầu mối lúc mở và lúc đóng, để không chặn người khác.</li>
-<li>Cần tài khoản dev có quyền <code>asset-stocktake-check/read</code>, và token có mã NV (claim <code>sub_ref_number</code>). Muốn thử <code>takeOver</code> thì cần thêm quyền hành chính.</li>
+<li>Cần tài khoản dev có quyền <code>asset-stocktake-check/read</code> và đã gắn mã nhân viên. Muốn thử <code>takeOver</code> thì cần thêm quyền hành chính.</li>
 <li>Dữ liệu tạo khi thử nên đặt tên dễ nhận ra (vd tên đợt bắt đầu bằng <code>ZZ-TEST</code>).</li>
 <li>Khuyến nghị app: ghi log <code>code</code>, <code>subCode</code>, <code>message</code> của mọi lỗi, để đối chiếu với bảng mã lỗi.</li>
 </ul>
@@ -962,18 +962,17 @@ FOUND | NOT_FOUND ─ scan ─▶ không đổi
 <dl class="kv">
 <dt>Ngày viết</dt><dd>22/11/2026</dd>
 <dt>Căn cứ</dt><dd>Mã nguồn backend nhánh <code>main</code>, commit <code>1d1f087b</code>, đọc trực tiếp endpoint, validator, service, DTO và hằng mã lỗi. Đối chiếu tên trường JSON và mã lỗi với hai bộ request / response chạy thật trên dev (kiểm vùng 21/11, kiểm theo NV 22/11).</dd>
-<dt>Sắp có</dt><dd>Nhánh góp ý lượt 1, đọc ở commit <code>0d309d94</code>. Nhánh này chưa merge và còn đang có commit mới.</dd>
+<dt>Sắp có</dt><dd>Nhánh góp ý lượt 1 (đã qua review cuối, chưa merge), đọc ở commit <code>e44c287a</code>.</dd>
 </dl>
 <div class="tbl"><table><thead><tr><th>Ngày</th><th>Thay đổi</th></tr></thead><tbody>
+<tr><td>22/11/2026 (lần 2)</td><td>Bỏ phần giới thiệu xác thực, thay bằng một câu (xác thực dùng chung hệ thống); rút gọn các đoạn dẫn. Sắp có: <code>DOT_DA_DONG</code> trên đợt chờ / đã huỷ có câu riêng ("chưa bắt đầu kiểm", "đã huỷ"); <code>GET rounds</code> không lọc thì trả cả đợt chờ / đã huỷ; câu thông báo đổi "món" thành "tài sản", <code>subCode</code> giữ nguyên. Đọc nhánh góp ý ở <code>e44c287a</code>.</td></tr>
 <tr><td>22/11/2026</td><td>Bản đầu: 23 API kiểm kê app dùng (cộng API xem ảnh và API <code>lock</code> tuỳ chọn), validate, 23 mã lỗi app gặp + lỗi chung, sơ đồ trạng thái, phần sắp có của lượt góp ý 1.</td></tr>
 </tbody></table></div>
 <p class="meta">Đổi hợp đồng gần nhất (đã có trên <code>main</code>): ở <code>GET tickets/{code}</code>, món có thêm trường <code>result</code>; <code>condition</code>, <code>addedByStaffCode</code>, <code>addedAt</code> chỉ null ở phiếu NV. Không đổi tên hay bỏ trường nào.</p>
 
 <h2 id="chua-xac-minh">Phụ lục: chưa xác minh</h2>
 <ul>
-<li><b>Cách app xin token</b> (client, scope, luồng đăng nhập), và token của app có mang claim <code>sub_ref_number</code> hay không. Không có thì mọi thao tác ghi trả <code>code 20</code>.</li>
 <li><b>Dạng phản hồi lỗi validator</b> (HTTP 400, <code>code 21</code>, nội dung <code>errors[].code</code>): đọc từ thư viện, chưa chạy thử.</li>
-<li><b>Thân lỗi khi thiếu token</b> ở tầng xác thực (trước cổng quyền): chưa chạy thử.</li>
 <li><b>Giới hạn kích thước body</b> khi gửi nhiều ảnh base64 trong một request; tiền tố <code>data:image/…;base64,</code> có được chấp nhận không. Khuyến nghị: gửi chuỗi base64 thuần, mỗi lần ít ảnh.</li>
 <li><code>traceId</code> / <code>correlationId</code> có xuất hiện trong phản hồi không: hai bộ mẫu chạy thật không có.</li>
 <li>POST không gửi body (thay vì <code>{}</code>) có chạy không.</li>
