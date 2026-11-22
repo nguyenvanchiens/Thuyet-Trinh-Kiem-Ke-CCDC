@@ -95,6 +95,35 @@ td code{white-space:nowrap}
 .screens a{display:block;border:1px solid var(--rule);border-radius:10px;padding:10px 12px;text-decoration:none;color:var(--ink);background:var(--sheet-2)}
 .screens a b{display:block} .screens a span{font-size:13px;color:var(--muted)}
 footer{margin-top:40px;font-size:13px;color:var(--muted)}
+.menu-h{margin-top:34px;padding:6px 12px;border-radius:8px;background:var(--stamp-soft);color:var(--stamp)}
+.screen-h{margin-top:22px}
+.from{border-left:3px solid var(--stamp);padding:6px 10px;background:var(--stamp-soft);border-radius:0 6px 6px 0}
+
+/* sơ đồ gọi API */
+.flowmap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:8px 0 18px;border:1px solid var(--rule);border-radius:10px;background:var(--sheet-2);padding:8px}
+.fm{display:block;height:auto;margin:0 auto}
+.fm-desk{width:100%;min-width:760px;max-width:890px}
+.fm-mob{display:none;width:100%;max-width:360px}
+@media (max-width: 720px){ .fm-desk{display:none} .fm-mob{display:block} .flowmap{padding:4px} }
+.fm text{font-family:"Be Vietnam Pro","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;font-size:12.5px}
+.fm .fm-title{fill:var(--ink);font-weight:700;font-size:13.5px}
+.fm .fm-api{fill:var(--blue);font-family:ui-monospace,Consolas,Menlo,monospace;font-size:12px}
+.fm .fm-m{font-weight:700}
+.fm .fm-txt{fill:var(--muted);font-size:12px}
+.fm .fm-lbl{fill:var(--ink);font-size:12px;font-style:italic}
+.fm .fm-head{fill:var(--stamp);font-weight:800;font-size:14px}
+.fm .fm-notetxt{fill:var(--ink);font-size:12px}
+.fm-desk text{font-size:13.5px} .fm-desk .fm-api{font-size:13px} .fm-desk .fm-txt,.fm-desk .fm-lbl,.fm-desk .fm-notetxt{font-size:13px} .fm-desk .fm-title{font-size:14.5px}
+.fm-mob text{font-size:13px} .fm-mob .fm-api,.fm-mob .fm-txt,.fm-mob .fm-lbl,.fm-mob .fm-notetxt{font-size:12.5px} .fm-mob .fm-title{font-size:14px}
+.fm-box{fill:var(--sheet);stroke:var(--ink);stroke-width:1.2}
+.fm-start{stroke:var(--stamp);stroke-width:2.4}
+.fm-arrow{fill:none;stroke:var(--muted);stroke-width:1.5}
+.fm-ahead{fill:var(--muted)}
+.fm-note{fill:var(--amber-soft);stroke:var(--amber)}
+.fm-from{fill:none;stroke:var(--muted);stroke-dasharray:4 3}
+.fm-menu{fill:var(--stamp-soft);stroke:var(--stamp);stroke-width:1.6}
+.fm .fm-menutxt{fill:var(--stamp);font-weight:800;font-size:14px}
+.fm a:hover text,.fm a:focus text{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -107,30 +136,27 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 
 <nav class="toc" id="toc" aria-label="Mục lục">
 <ol>
-  <li><a href="#ghi-chu">Ghi chú chung</a></li>
+  <li><a href="#so-do">Sơ đồ gọi API</a></li>
   <li><a href="#man-app">Các màn app</a>
     <ol>
-      <li><a href="#man-dau">Màn đầu</a></li>
-      <li><a href="#man-dot">Đợt</a></li>
-      <li><a href="#man-theo-vung">Theo vùng</a></li>
-      <li><a href="#man-kiem-vung">Kiểm vùng</a></li>
-      <li><a href="#man-tim">Tìm tài sản</a></li>
-      <li><a href="#man-anh">Ảnh</a></li>
-      <li><a href="#man-kiem-nv">Kiểm theo NV</a></li>
-      <li><a href="#man-do-rieng">Đồ Riêng của tôi</a></li>
-      <li><a href="#man-phieu">Phiếu giao tôi xác nhận</a></li>
+      <li><a href="#menu-kiem-ke">Menu Kiểm kê</a></li>
+      <li><a href="#man-kiem-vung">· Kiểm theo vùng</a></li>
+      <li><a href="#man-kiem-nv">· Kiểm theo cá nhân</a></li>
+      <li><a href="#menu-phieu">Menu Phiếu cần xác nhận</a></li>
+      <li><a href="#menu-do-rieng">Menu Đồ Riêng của tôi</a></li>
     </ol>
   </li>
   <li><a href="#ma-loi">Mã lỗi</a></li>
   <li><a href="#trang-thai">Trạng thái</a></li>
+  <li><a href="#api-tuy-chon">API tuỳ chọn</a></li>
 </ol>
 </nav>
 <main>
 <h1>API kiểm kê CCDC cho app mobile</h1>
-<p class="lead">Mỗi màn app gọi API nào, theo thứ tự thao tác.</p>
+<p class="lead">Vào màn nào thì gọi API của màn đó. Ba menu độc lập: Kiểm kê, Phiếu cần xác nhận, Đồ Riêng của tôi.</p>
 
-<h2 id="ghi-chu">Ghi chú chung</h2>
-<div class="note">
+<div class="note" id="ghi-chu">
+<p style="margin:0 0 4px"><b>Ghi chú chung</b></p>
 <ul style="margin:0">
 <li>Base path: <code>{BASE_URL}/api/v1/asset-management/asset-stocktake</code>. GET không gửi <code>Content-Type</code>; POST gửi body JSON (không có tham số thì gửi <code>{}</code>).</li>
 <li>Kết quả trả về dạng <code>{ code, subCode, message, data }</code>: <code>code = 0</code> là thành công; lỗi thì xem <code>subCode</code> (<a href="#ma-loi">bảng mã lỗi</a>).</li>
@@ -141,50 +167,23 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 <p class="meta">Dữ liệu trong ví dụ là dữ liệu giả.</p>
 
 
+<h2 id="so-do">Sơ đồ gọi API</h2>
+<p>Ba menu độc lập; vào màn nào thì gọi API của màn đó. Mỗi ô là một màn, trong ô là API màn đó gọi; chữ trên mũi tên là thao tác của người dùng. Bấm tên API để xem chi tiết. <code>…</code> là phần đường dẫn của đợt / vùng / NV / phiếu đang mở.</p>
+<div class="flowmap"><svg class="fm fm-desk" viewBox="0 0 890 768" width="890" height="768" role="group" aria-label="Sơ đồ gọi API theo menu và màn app"><defs><marker id="fm-ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="fm-ahead" d="M0,0 L10,5 L0,10 z"/></marker></defs><rect class="fm-menu" x="10" y="10" width="425" height="34" rx="17"/><text class="fm-menutxt" x="222.5" y="32" text-anchor="middle">Menu Kiểm kê</text><rect class="fm-box" x="60" y="84" width="325" height="56" rx="9"/><text class="fm-title" x="70" y="108">Danh sách đợt</text><a href="#ep-rounds"><text class="fm-api" x="70" y="129"><tspan class="fm-m">GET</tspan> rounds/search?status=OPEN</text></a><path class="fm-arrow" d="M222.5,44 L222.5,84" marker-end="url(#fm-ah)"/><text class="fm-lbl" x="230.5" y="68">bấm menu</text><rect class="fm-box" x="60" y="186" width="325" height="92" rx="9"/><text class="fm-title" x="70" y="210">Chi tiết đợt</text><a href="#ep-round"><text class="fm-api" x="70" y="231"><tspan class="fm-m">GET</tspan> rounds/{roundCode}</text></a><text class="fm-txt" x="70" y="249">nút: Kiểm theo vùng</text><text class="fm-txt" x="70" y="267">nút: Kiểm theo cá nhân</text><path class="fm-arrow" d="M222.5,140 L222.5,186" marker-end="url(#fm-ah)"/><text class="fm-lbl" x="230.5" y="167">bấm đợt</text><rect class="fm-menu" x="450" y="10" width="205" height="34" rx="17"/><text class="fm-menutxt" x="552.5" y="32" text-anchor="middle">Menu Phiếu cần xác nhận</text><rect class="fm-menu" x="670" y="10" width="205" height="34" rx="17"/><text class="fm-menutxt" x="772.5" y="32" text-anchor="middle">Menu Đồ Riêng của tôi</text><rect class="fm-box" x="10" y="334" width="205" height="56" rx="9"/><text class="fm-title" x="20" y="358">Danh sách vùng</text><a href="#ep-zones"><text class="fm-api" x="20" y="379"><tspan class="fm-m">GET</tspan> …/zones</text></a><path class="fm-arrow" d="M100,278 C100,306 112.5,306 112.5,334" marker-end="url(#fm-ah)"/><text class="fm-lbl" x="120.5" y="322">Kiểm theo vùng</text><rect class="fm-box" x="10" y="436" width="205" height="200" rx="9"/><text class="fm-title" x="20" y="460">Kiểm vùng</text><a href="#ep-zone-claim"><text class="fm-api" x="20" y="481"><tspan class="fm-m">POST</tspan> …/claim</text></a><a href="#ep-zone-items"><text class="fm-api" x="20" y="499"><tspan class="fm-m">GET</tspan> …/items</text></a><a href="#ep-search"><text class="fm-api" x="20" y="517"><tspan class="fm-txt">Thêm: </tspan><tspan class="fm-m">GET</tspan> …/items/search</text></a><a href="#ep-zone-create"><text class="fm-api" x="20" y="535"><tspan class="fm-txt">→ </tspan><tspan class="fm-m">POST</tspan> …/items/create</text></a><text class="fm-txt" x="20" y="553">  cảnh báo → gửi lại kèm</text><text class="fm-txt" x="20" y="571">  confirmWarnings = true</text><a href="#ep-photos"><text class="fm-api" x="20" y="589"><tspan class="fm-txt">Sửa: </tspan><tspan class="fm-m">POST</tspan> photos/upload</text></a><a href="#ep-zone-update"><text class="fm-api" x="20" y="607"><tspan class="fm-txt">→ </tspan><tspan class="fm-m">POST</tspan> …/items/update</text></a><a href="#ep-zone-delete"><text class="fm-api" x="20" y="625"><tspan class="fm-txt">Bỏ: </tspan><tspan class="fm-m">POST</tspan> …/items/delete</text></a><path class="fm-arrow" d="M112.5,390 L112.5,436" marker-end="url(#fm-ah)"/><text class="fm-lbl" x="120.5" y="417">bấm vùng</text><rect class="fm-box" x="10" y="682" width="205" height="74" rx="9"/><text class="fm-title" x="20" y="706">Chốt vùng</text><a href="#ep-zone-preview"><text class="fm-api" x="20" y="727"><tspan class="fm-m">POST</tspan> …/close-preview</text></a><a href="#ep-zone-close"><text class="fm-api" x="20" y="745"><tspan class="fm-txt">→ </tspan><tspan class="fm-m">POST</tspan> …/close</text></a><path class="fm-arrow" d="M112.5,636 L112.5,682" marker-end="url(#fm-ah)"/><text class="fm-lbl" x="120.5" y="663">bấm Chốt vùng</text><rect class="fm-box" x="230" y="334" width="205" height="56" rx="9"/><text class="fm-title" x="240" y="358">Danh sách NV</text><a href="#ep-staffs"><text class="fm-api" x="240" y="379"><tspan class="fm-m">GET</tspan> …/staffs</text></a><path class="fm-arrow" d="M345,278 C345,306 332.5,306 332.5,334" marker-end="url(#fm-ah)"/><text class="fm-lbl" x="340.5" y="322">Kiểm theo cá nhân</text><rect class="fm-box" x="230" y="436" width="205" height="128" rx="9"/><text class="fm-title" x="240" y="460">Kiểm NV</text><a href="#ep-staff-claim"><text class="fm-api" x="240" y="481"><tspan class="fm-m">POST</tspan> …/claim</text></a><a href="#ep-staff-items"><text class="fm-api" x="240" y="499"><tspan class="fm-m">GET</tspan> …/items</text></a><a href="#ep-staff-scan"><text class="fm-api" x="240" y="517"><tspan class="fm-txt">Quét: </tspan><tspan class="fm-m">POST</tspan> …/items/scan</text></a><a href="#ep-photos"><text class="fm-api" x="240" y="535"><tspan class="fm-txt">Sửa: </tspan><tspan class="fm-m">POST</tspan> photos/upload</text></a><a href="#ep-staff-update"><text class="fm-api" x="240" y="553"><tspan class="fm-txt">→ </tspan><tspan class="fm-m">POST</tspan> …/items/update</text></a><path class="fm-arrow" d="M332.5,390 L332.5,436" marker-end="url(#fm-ah)"/><text class="fm-lbl" x="340.5" y="417">bấm NV</text><rect class="fm-box" x="230" y="610" width="205" height="56" rx="9"/><text class="fm-title" x="240" y="634">Gửi kết quả</text><a href="#ep-staff-submit"><text class="fm-api" x="240" y="655"><tspan class="fm-m">POST</tspan> …/submit</text></a><path class="fm-arrow" d="M332.5,564 L332.5,610" marker-end="url(#fm-ah)"/><text class="fm-lbl" x="340.5" y="591">bấm Gửi</text><rect class="fm-box" x="450" y="84" width="205" height="56" rx="9"/><text class="fm-title" x="460" y="108">Danh sách phiếu</text><a href="#ep-me-tickets"><text class="fm-api" x="460" y="129"><tspan class="fm-m">GET</tspan> me/assigned-tickets</text></a><path class="fm-arrow" d="M552.5,44 L552.5,84" marker-end="url(#fm-ah)"/><text class="fm-lbl" x="560.5" y="68">bấm menu</text><rect class="fm-box" x="450" y="186" width="205" height="56" rx="9"/><text class="fm-title" x="460" y="210">Chi tiết phiếu</text><a href="#ep-ticket"><text class="fm-api" x="460" y="231"><tspan class="fm-m">GET</tspan> tickets/{ticketCode}</text></a><path class="fm-arrow" d="M552.5,140 L552.5,186" marker-end="url(#fm-ah)"/><text class="fm-lbl" x="560.5" y="167">bấm phiếu</text><rect class="fm-box" x="450" y="288" width="205" height="56" rx="9"/><text class="fm-title" x="460" y="312">Xác nhận</text><a href="#ep-confirm"><text class="fm-api" x="460" y="333"><tspan class="fm-m">POST</tspan> …/confirm</text></a><path class="fm-arrow" d="M552.5,242 L552.5,288" marker-end="url(#fm-ah)"/><text class="fm-lbl" x="560.5" y="269">bấm Xác nhận</text><rect class="fm-box" x="670" y="84" width="205" height="56" rx="9"/><text class="fm-title" x="680" y="108">Đồ Riêng của tôi</text><a href="#ep-me-private"><text class="fm-api" x="680" y="129"><tspan class="fm-m">GET</tspan> me/private-items</text></a><path class="fm-arrow" d="M772.5,44 L772.5,84" marker-end="url(#fm-ah)"/><text class="fm-lbl" x="780.5" y="68">bấm menu</text><rect class="fm-note" x="670" y="174" width="205" height="222" rx="8"/><text class="fm-notetxt" x="680" y="196">Menu Kiểm kê chỉ hiện với</text><text class="fm-notetxt" x="680" y="213">người có quyền đi kiểm; thiếu</text><text class="fm-notetxt" x="680" y="230">quyền đó thì claim / ghi</text><text class="fm-notetxt" x="680" y="247">báo 403.</text><text class="fm-notetxt" x="680" y="281">Vùng / NV người khác đang</text><text class="fm-notetxt" x="680" y="298">kiểm thì claim báo lỗi; chỉ</text><text class="fm-notetxt" x="680" y="315">hành chính giành được</text><text class="fm-notetxt" x="680" y="332">(takeOver = true).</text><text class="fm-notetxt" x="680" y="366">Ảnh: photos/upload trước,</text><text class="fm-notetxt" x="680" y="383">rồi gửi id trong items/update.</text></svg><svg class="fm fm-mob" viewBox="0 0 360 1960" width="360" height="1960" role="group" aria-label="Sơ đồ gọi API theo menu và màn app (màn hẹp)"><defs><marker id="fm-ah-m" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="fm-ah-mead" d="M0,0 L10,5 L0,10 z"/></marker></defs><rect class="fm-menu" x="12" y="8" width="336" height="34" rx="17"/><text class="fm-menutxt" x="180" y="30" text-anchor="middle">Menu Kiểm kê</text><path class="fm-arrow" d="M180,42 L180,86" marker-end="url(#fm-ah-m)"/><text class="fm-lbl" x="188" y="68">bấm menu</text><rect class="fm-box" x="12" y="86" width="336" height="56" rx="9"/><text class="fm-title" x="22" y="110">Danh sách đợt</text><a href="#ep-rounds"><text class="fm-api" x="22" y="131"><tspan class="fm-m">GET</tspan> rounds/search?status=OPEN</text></a><path class="fm-arrow" d="M180,142 L180,186" marker-end="url(#fm-ah-m)"/><text class="fm-lbl" x="188" y="168">bấm đợt</text><rect class="fm-box" x="12" y="186" width="336" height="92" rx="9"/><text class="fm-title" x="22" y="210">Chi tiết đợt</text><a href="#ep-round"><text class="fm-api" x="22" y="231"><tspan class="fm-m">GET</tspan> rounds/{roundCode}</text></a><text class="fm-txt" x="22" y="249">nút: Kiểm theo vùng</text><text class="fm-txt" x="22" y="267">nút: Kiểm theo cá nhân</text><path class="fm-arrow" d="M180,278 L180,322" marker-end="url(#fm-ah-m)"/><text class="fm-lbl" x="188" y="304">Kiểm theo vùng</text><rect class="fm-box" x="12" y="322" width="336" height="56" rx="9"/><text class="fm-title" x="22" y="346">Danh sách vùng</text><a href="#ep-zones"><text class="fm-api" x="22" y="367"><tspan class="fm-m">GET</tspan> …/zones</text></a><path class="fm-arrow" d="M180,378 L180,422" marker-end="url(#fm-ah-m)"/><text class="fm-lbl" x="188" y="404">bấm vùng</text><rect class="fm-box" x="12" y="422" width="336" height="200" rx="9"/><text class="fm-title" x="22" y="446">Kiểm vùng</text><a href="#ep-zone-claim"><text class="fm-api" x="22" y="467"><tspan class="fm-m">POST</tspan> …/claim</text></a><a href="#ep-zone-items"><text class="fm-api" x="22" y="485"><tspan class="fm-m">GET</tspan> …/items</text></a><a href="#ep-search"><text class="fm-api" x="22" y="503"><tspan class="fm-txt">Thêm: </tspan><tspan class="fm-m">GET</tspan> …/items/search</text></a><a href="#ep-zone-create"><text class="fm-api" x="22" y="521"><tspan class="fm-txt">→ </tspan><tspan class="fm-m">POST</tspan> …/items/create</text></a><text class="fm-txt" x="22" y="539">  cảnh báo → gửi lại kèm</text><text class="fm-txt" x="22" y="557">  confirmWarnings = true</text><a href="#ep-photos"><text class="fm-api" x="22" y="575"><tspan class="fm-txt">Sửa: </tspan><tspan class="fm-m">POST</tspan> photos/upload</text></a><a href="#ep-zone-update"><text class="fm-api" x="22" y="593"><tspan class="fm-txt">→ </tspan><tspan class="fm-m">POST</tspan> …/items/update</text></a><a href="#ep-zone-delete"><text class="fm-api" x="22" y="611"><tspan class="fm-txt">Bỏ: </tspan><tspan class="fm-m">POST</tspan> …/items/delete</text></a><path class="fm-arrow" d="M180,622 L180,666" marker-end="url(#fm-ah-m)"/><text class="fm-lbl" x="188" y="648">bấm Chốt vùng</text><rect class="fm-box" x="12" y="666" width="336" height="74" rx="9"/><text class="fm-title" x="22" y="690">Chốt vùng</text><a href="#ep-zone-preview"><text class="fm-api" x="22" y="711"><tspan class="fm-m">POST</tspan> …/close-preview</text></a><a href="#ep-zone-close"><text class="fm-api" x="22" y="729"><tspan class="fm-txt">→ </tspan><tspan class="fm-m">POST</tspan> …/close</text></a><rect class="fm-from" x="72" y="770" width="216" height="28" rx="14"/><text class="fm-txt" x="180" y="789" text-anchor="middle">← từ Chi tiết đợt</text><path class="fm-arrow" d="M180,798 L180,842" marker-end="url(#fm-ah-m)"/><text class="fm-lbl" x="188" y="824">Kiểm theo cá nhân</text><rect class="fm-box" x="12" y="842" width="336" height="56" rx="9"/><text class="fm-title" x="22" y="866">Danh sách NV</text><a href="#ep-staffs"><text class="fm-api" x="22" y="887"><tspan class="fm-m">GET</tspan> …/staffs</text></a><path class="fm-arrow" d="M180,898 L180,942" marker-end="url(#fm-ah-m)"/><text class="fm-lbl" x="188" y="924">bấm NV</text><rect class="fm-box" x="12" y="942" width="336" height="128" rx="9"/><text class="fm-title" x="22" y="966">Kiểm NV</text><a href="#ep-staff-claim"><text class="fm-api" x="22" y="987"><tspan class="fm-m">POST</tspan> …/claim</text></a><a href="#ep-staff-items"><text class="fm-api" x="22" y="1005"><tspan class="fm-m">GET</tspan> …/items</text></a><a href="#ep-staff-scan"><text class="fm-api" x="22" y="1023"><tspan class="fm-txt">Quét: </tspan><tspan class="fm-m">POST</tspan> …/items/scan</text></a><a href="#ep-photos"><text class="fm-api" x="22" y="1041"><tspan class="fm-txt">Sửa: </tspan><tspan class="fm-m">POST</tspan> photos/upload</text></a><a href="#ep-staff-update"><text class="fm-api" x="22" y="1059"><tspan class="fm-txt">→ </tspan><tspan class="fm-m">POST</tspan> …/items/update</text></a><path class="fm-arrow" d="M180,1070 L180,1114" marker-end="url(#fm-ah-m)"/><text class="fm-lbl" x="188" y="1096">bấm Gửi</text><rect class="fm-box" x="12" y="1114" width="336" height="56" rx="9"/><text class="fm-title" x="22" y="1138">Gửi kết quả</text><a href="#ep-staff-submit"><text class="fm-api" x="22" y="1159"><tspan class="fm-m">POST</tspan> …/submit</text></a><rect class="fm-menu" x="12" y="1200" width="336" height="34" rx="17"/><text class="fm-menutxt" x="180" y="1222" text-anchor="middle">Menu Phiếu cần xác nhận</text><path class="fm-arrow" d="M180,1234 L180,1278" marker-end="url(#fm-ah-m)"/><text class="fm-lbl" x="188" y="1260">bấm menu</text><rect class="fm-box" x="12" y="1278" width="336" height="56" rx="9"/><text class="fm-title" x="22" y="1302">Danh sách phiếu</text><a href="#ep-me-tickets"><text class="fm-api" x="22" y="1323"><tspan class="fm-m">GET</tspan> me/assigned-tickets</text></a><path class="fm-arrow" d="M180,1334 L180,1378" marker-end="url(#fm-ah-m)"/><text class="fm-lbl" x="188" y="1360">bấm phiếu</text><rect class="fm-box" x="12" y="1378" width="336" height="56" rx="9"/><text class="fm-title" x="22" y="1402">Chi tiết phiếu</text><a href="#ep-ticket"><text class="fm-api" x="22" y="1423"><tspan class="fm-m">GET</tspan> tickets/{ticketCode}</text></a><path class="fm-arrow" d="M180,1434 L180,1478" marker-end="url(#fm-ah-m)"/><text class="fm-lbl" x="188" y="1460">bấm Xác nhận</text><rect class="fm-box" x="12" y="1478" width="336" height="56" rx="9"/><text class="fm-title" x="22" y="1502">Xác nhận</text><a href="#ep-confirm"><text class="fm-api" x="22" y="1523"><tspan class="fm-m">POST</tspan> …/confirm</text></a><rect class="fm-menu" x="12" y="1564" width="336" height="34" rx="17"/><text class="fm-menutxt" x="180" y="1586" text-anchor="middle">Menu Đồ Riêng của tôi</text><path class="fm-arrow" d="M180,1598 L180,1642" marker-end="url(#fm-ah-m)"/><text class="fm-lbl" x="188" y="1624">bấm menu</text><rect class="fm-box" x="12" y="1642" width="336" height="56" rx="9"/><text class="fm-title" x="22" y="1666">Đồ Riêng của tôi</text><a href="#ep-me-private"><text class="fm-api" x="22" y="1687"><tspan class="fm-m">GET</tspan> me/private-items</text></a><rect class="fm-note" x="12" y="1728" width="336" height="222" rx="8"/><text class="fm-notetxt" x="22" y="1750">Menu Kiểm kê chỉ hiện với</text><text class="fm-notetxt" x="22" y="1767">người có quyền đi kiểm; thiếu</text><text class="fm-notetxt" x="22" y="1784">quyền đó thì claim / ghi</text><text class="fm-notetxt" x="22" y="1801">báo 403.</text><text class="fm-notetxt" x="22" y="1835">Vùng / NV người khác đang</text><text class="fm-notetxt" x="22" y="1852">kiểm thì claim báo lỗi; chỉ</text><text class="fm-notetxt" x="22" y="1869">hành chính giành được</text><text class="fm-notetxt" x="22" y="1886">(takeOver = true).</text><text class="fm-notetxt" x="22" y="1920">Ảnh: photos/upload trước,</text><text class="fm-notetxt" x="22" y="1937">rồi gửi id trong items/update.</text></svg></div>
+
+
 <h2 id="man-app">Các màn app</h2>
-<p>Bấm vào từng API để mở chi tiết. Đường dẫn tính tiếp từ base path.</p>
-<div class="screens">
-  <a href="#man-dau"><b>Màn đầu</b><span>me/tasks</span></a>
-  <a href="#man-dot"><b>Đợt</b><span>rounds/search, rounds/{roundCode}</span></a>
-  <a href="#man-theo-vung"><b>Theo vùng</b><span>rounds/{roundCode}/zones</span></a>
-  <a href="#man-kiem-vung"><b>Kiểm vùng</b><span>claim → items → close</span></a>
-  <a href="#man-tim"><b>Tìm tài sản</b><span>items/search</span></a>
-  <a href="#man-anh"><b>Ảnh</b><span>photos/upload</span></a>
-  <a href="#man-kiem-nv"><b>Kiểm theo NV</b><span>staffs → claim → scan → submit</span></a>
-  <a href="#man-do-rieng"><b>Đồ Riêng của tôi</b><span>me/private-items</span></a>
-  <a href="#man-phieu"><b>Phiếu giao tôi xác nhận</b><span>me/assigned-tickets → confirm</span></a>
-</div>
+<p>Theo đúng 3 menu trong <a href="#so-do">sơ đồ</a>; mỗi màn tự gọi API của mình. Bấm vào từng API để mở chi tiết. Đường dẫn tính tiếp từ base path.</p>
 
-<h3 id="man-dau">Màn đầu</h3>
-<details class="ep" id="ep-me-tasks">
-<summary><span class="m get">GET</span><span class="path">/me/tasks</span><span class="what"><b>API này làm gì:</b> Màn đầu app: đợt tôi đi kiểm được, đồ Riêng của tôi trong đợt mở, số phiếu chờ tôi.</span></summary>
-<div class="body">
-<p><b>Quyền:</b> đăng nhập. <code>checkRounds</code> chỉ có dữ liệu khi có quyền <code>asset-stocktake-check/read</code>.</p>
-<p><b>Tham số:</b> không có.</p>
-<p><b>Trả về:</b> <code>checkRounds[]</code> (các đợt đang mở: <code>code</code>, <code>name</code>, <code>companyCode</code>, <code>zonesTotal</code>, <code>zonesClosed</code>, <code>staffTotal</code>, <code>staffSubmitted</code>) · <code>myPrivate[]</code> (đợt đang mở có đồ Riêng của tôi: <code>roundCode</code>, <code>privateItemCount</code>, <code>status</code>, <code>ticketCode</code>) · <code>pendingTicketCount</code> (số phiếu chờ tôi xác nhận).</p>
-<pre><code>GET /me/tasks
+<h3 id="menu-kiem-ke" class="menu-h">Menu Kiểm kê</h3>
+<p class="meta">Chỉ hiện với người có quyền đi kiểm (<code>asset-stocktake-check/read</code>).</p>
 
-{"data":{"checkRounds":[{"code":"DKK0000999","name":"Kiểm kê cuối năm","companyCode":"CT01",
-   "zonesTotal":6,"zonesClosed":1,"staffTotal":40,"staffSubmitted":3}],
- "myPrivate":[{"roundCode":"DKK0000999","privateItemCount":2,"status":"PENDING","ticketCode":null}],
- "pendingTicketCount":1},
- "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> chỉ <a href="#loi-chung">lỗi chung</a>.</p>
-</div></details>
-
-<details class="ep" id="ep-lock">
-<summary><span class="m get">GET</span><span class="path">/lock-status</span><span class="what"><b>API này làm gì:</b> Xem hiện có đợt nào đang mở (đang khoá tài sản) để hiện biểu ngữ. Tuỳ chọn.</span></summary>
-<div class="body">
-<p><b>Quyền:</b> đăng nhập. <b>Tham số:</b> không có.</p>
-<pre><code>GET /lock-status
-
-{"data":{"rounds":[{"code":"DKK0000999","companyCode":"CT01"}]},"code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-</div></details>
-
-<h3 id="man-dot">Đợt</h3>
+<h4 id="man-ds-dot" class="screen-h">Danh sách đợt</h4>
+<p class="from"><b>Từ đâu tới:</b> Bấm menu Kiểm kê → gọi <code>rounds/search?status=OPEN</code>.</p>
 <details class="ep" id="ep-rounds">
 <summary><span class="m get">GET</span><span class="path">/rounds/search?status=&amp;companyCode=</span><span class="what"><b>API này làm gì:</b> Danh sách đợt kiểm kê, lọc theo trạng thái / công ty.</span></summary>
 <div class="body">
+<p>Màn <b>Danh sách đợt</b> của menu Kiểm kê gọi <code>rounds/search?status=OPEN</code>.</p>
 <p><b>Quyền:</b> <code>asset-stocktake/read</code> hoặc <code>asset-stocktake-check/read</code>.</p>
 <div class="tbl"><table><thead><tr><th>Tham số</th><th>BB</th><th>Giá trị</th></tr></thead><tbody>
 <tr><td><code>status</code></td><td>không</td><td><code>WAITING</code> (chờ bắt đầu) · <code>OPEN</code> (đang kiểm) · <code>CLOSED</code> · <code>CANCELLED</code>. <b>Bỏ trống thì trả mọi trạng thái</b>; app chỉ cần đợt đang kiểm thì truyền <code>OPEN</code></td></tr>
@@ -201,6 +200,8 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 <p><b>Lỗi:</b> chỉ <a href="#loi-chung">lỗi chung</a> (giá trị lọc lạ trả <code>[]</code>).</p>
 </div></details>
 
+<h4 id="man-dot" class="screen-h">Chi tiết đợt</h4>
+<p class="from"><b>Từ đâu tới:</b> Từ Danh sách đợt, bấm một đợt → gọi <code>rounds/{roundCode}</code>. Màn có hai nút: Kiểm theo vùng, Kiểm theo cá nhân.</p>
 <details class="ep" id="ep-round">
 <summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}</span><span class="what"><b>API này làm gì:</b> Chi tiết một đợt kèm tiến độ.</span></summary>
 <div class="body">
@@ -220,7 +221,9 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>.</p>
 </div></details>
 
-<h3 id="man-theo-vung">Theo vùng</h3>
+<h4 id="man-kiem-vung" class="screen-h">Kiểm theo vùng</h4>
+<p class="from"><b>Từ đâu tới:</b> Từ Chi tiết đợt, bấm "Kiểm theo vùng" → gọi <code>…/zones</code>; bấm một vùng → <code>claim</code> rồi <code>items</code>; thêm / sửa / bỏ tài sản; cuối cùng <code>close-preview</code> → <code>close</code>.</p>
+<p class="meta">Chỉ người đang kiểm vùng mới ghi được. <code>…/zones/{zoneCode}</code> là viết tắt của <code>/rounds/{roundCode}/zones/{zoneCode}</code>.</p>
 <details class="ep" id="ep-zones">
 <summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}/zones</span><span class="what"><b>API này làm gì:</b> Danh sách vùng của đợt và người đang kiểm.</span></summary>
 <div class="body">
@@ -234,11 +237,6 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>.</p>
 </div></details>
-
-<h3 id="man-kiem-vung">Kiểm vùng</h3>
-<div class="flow">claim → (items/search, photos/upload) → items/create → items/update → close-preview → close</div>
-<p>Chỉ người đang kiểm vùng mới ghi được. <code>…/zones/{zoneCode}</code> là viết tắt của <code>/rounds/{roundCode}/zones/{zoneCode}</code>.</p>
-
 <details class="ep" id="ep-zone-claim">
 <summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/claim</span><span class="what"><b>API này làm gì:</b> Nhận vùng về mình để kiểm (hoặc làm tiếp); <code>takeOver = true</code> để hành chính giành vùng người khác đang giữ.</span></summary>
 <div class="body">
@@ -256,7 +254,6 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>, <a href="#e-VUNG_KHONG_THUOC_DOT"><code>VUNG_KHONG_THUOC_DOT</code></a>, <a href="#e-VUNG_DA_CHOT"><code>VUNG_DA_CHOT</code></a>, <a href="#e-VUNG_DANG_CO_NGUOI_KIEM"><code>VUNG_DANG_CO_NGUOI_KIEM</code></a>.</p>
 </div></details>
-
 <details class="ep" id="ep-zone-items">
 <summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/items</span><span class="what"><b>API này làm gì:</b> Danh sách tài sản đã ghi trong vùng.</span></summary>
 <div class="body">
@@ -271,7 +268,22 @@ footer{margin-top:40px;font-size:13px;color:var(--muted)}
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-VUNG_KHONG_THUOC_DOT"><code>VUNG_KHONG_THUOC_DOT</code></a>.</p>
 </div></details>
+<details class="ep" id="ep-search">
+<summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}/items/search?q=&amp;zone=</span><span class="what"><b>API này làm gì:</b> Tìm tài sản để thêm vào vùng, kèm vùng đang chứa nó.</span></summary>
+<div class="body">
+<p><b>Quyền:</b> <code>asset-stocktake-check/read</code>; đợt phải đang mở.</p>
+<div class="tbl"><table><thead><tr><th>Tham số</th><th>BB</th><th>Luật</th></tr></thead><tbody>
+<tr><td><code>q</code></td><td>không</td><td>Mã hoặc mô tả <b>chứa</b> <code>q</code>. Rỗng thì trả <code>[]</code>. Tối đa 20 dòng</td></tr>
+<tr><td><code>zone</code></td><td>không</td><td>Vùng đang kiểm, để tính <code>inThisZone</code></td></tr>
+</tbody></table></div>
+<p><b>Trả về:</b> <code>code</code>, <code>description</code>, <code>usageScope</code> (0 Riêng · 1 Chung · 10 Kho), <code>staffCode</code>, <code>staffName</code>, <code>stationZoneCode</code> (vùng trên sổ), <code>inThisZone</code>, <code>openZones[]</code> (vùng đang chứa tài sản trong các đợt mở).</p>
+<pre><code>GET /rounds/DKK0000999/items/search?q=TS00000&amp;zone=VUNG01
 
+{"data":[{"code":"TS000002","description":"Bàn họp","usageScope":1,"companyCode":"CT01",
+  "staffCode":null,"staffName":null,"stationZoneCode":"VUNG01","inThisZone":false,"openZones":[]}],
+ "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
+<p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>.</p>
+</div></details>
 <details class="ep" id="ep-zone-create">
 <summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/items/create</span><span class="what"><b>API này làm gì:</b> Thêm một tài sản vào vùng (ghi tình trạng, cảnh báo nếu có).</span></summary>
 <div class="body">
@@ -311,7 +323,30 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>, <a href="#e-VUNG_KHONG_THUOC_DOT"><code>VUNG_KHONG_THUOC_DOT</code></a>, <a href="#e-VUNG_DA_CHOT"><code>VUNG_DA_CHOT</code></a>, <a href="#e-VUNG_DANG_CO_NGUOI_KIEM"><code>VUNG_DANG_CO_NGUOI_KIEM</code></a>, <a href="#e-KHONG_TIM_THAY_MA"><code>KHONG_TIM_THAY_MA</code></a>.</p>
 </div></details>
+<details class="ep" id="ep-photos">
+<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/photos/upload</span><span class="what"><b>API này làm gì:</b> Tải ảnh tài sản lúc kiểm (dùng cho món Hỏng / ghi chú).</span></summary>
+<div class="body">
+<p><b>Quyền:</b> <code>asset-stocktake-check/read</code>; đợt phải đang mở.</p>
+<div class="danger"><b>Body là JSON base64, không phải multipart.</b></div>
+<div class="tbl"><table><thead><tr><th>Body</th><th>BB</th><th>Luật</th></tr></thead><tbody>
+<tr><td><code>files[]</code></td><td>có</td><td>≥ 1 tệp. Một tệp sai thì cả lô không tải</td></tr>
+<tr><td><code>files[].fileName</code></td><td>có</td><td>Đuôi ảnh: <code>.jpg .jpeg .jfif .png .gif .webp .heic .heif</code></td></tr>
+<tr><td><code>files[].contentBase64</code></td><td>có</td><td>Base64 hợp lệ, không rỗng, ≤ 20 MB mỗi tệp</td></tr>
+</tbody></table></div>
+<p><b>Trả về:</b> mảng ảnh: <code>id</code> (<b>dùng cho <code>photoIds</code></b>), <code>fileId</code> (dùng để xem ảnh), <code>fileName</code>, <code>fileExt</code>.</p>
+<pre><code>POST /rounds/DKK0000999/photos/upload
+{"files":[{"fileName":"anh1.jpg","contentBase64":"/9j/4AAQSkZJRg..."}]}
 
+{"data":[{"id":"00000000-0000-7000-8000-000000000001","fileId":"00000000-0000-7000-8000-0000000000f1",
+  "fileName":"anh1","fileExt":".jpg"}],
+ "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
+<p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>; tệp sai trả <code>code 20</code> kèm câu cụ thể trong <code>message</code>.</p>
+</div></details>
+<details class="ep" id="ep-photo-view">
+<summary><span class="m get">GET</span><span class="path">{BASE_URL}/api/v1/asset-management/asset-item/files/assets/{fileId}</span><span class="what"><b>API này làm gì:</b> Xem ảnh đã tải (trả nội dung tệp). Không nằm dưới base path kiểm kê.</span></summary>
+<div class="body">
+<p><b>Quyền:</b> đăng nhập. <b>Tham số:</b> <code>fileId</code> lấy từ <code>photos[].fileId</code>. Không có tệp thì HTTP 404.</p>
+</div></details>
 <details class="ep" id="ep-zone-update">
 <summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/items/update</span><span class="what"><b>API này làm gì:</b> Sửa tình trạng / ghi chú / ảnh của tài sản trong vùng.</span></summary>
 <div class="body">
@@ -337,7 +372,6 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> như <code>items/create</code>, cộng <a href="#e-TINH_TRANG_KHONG_HOP_LE"><code>TINH_TRANG_KHONG_HOP_LE</code></a>, <a href="#e-MON_KHONG_CO_TRONG_VUNG"><code>MON_KHONG_CO_TRONG_VUNG</code></a>, <a href="#e-ANH_KHONG_HOP_LE"><code>ANH_KHONG_HOP_LE</code></a>, <a href="#e-HONG_CAN_ANH"><code>HONG_CAN_ANH</code></a>.</p>
 </div></details>
-
 <details class="ep" id="ep-zone-delete">
 <summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/items/delete</span><span class="what"><b>API này làm gì:</b> Bỏ một tài sản khỏi vùng.</span></summary>
 <div class="body">
@@ -351,7 +385,6 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
 {"code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> như <code>items/create</code>, cộng <a href="#e-MON_KHONG_CO_TRONG_VUNG"><code>MON_KHONG_CO_TRONG_VUNG</code></a>.</p>
 </div></details>
-
 <details class="ep" id="ep-zone-preview">
 <summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/close-preview</span><span class="what"><b>API này làm gì:</b> Xem trước các phiếu xác nhận sẽ sinh khi chốt vùng.</span></summary>
 <div class="body">
@@ -365,7 +398,6 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> như <code>items/create</code>.</p>
 </div></details>
-
 <details class="ep" id="ep-zone-close">
 <summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/zones/{zoneCode}/close</span><span class="what"><b>API này làm gì:</b> Chốt vùng: kết thúc kiểm vùng, sinh phiếu xác nhận cho từng người xác nhận.</span></summary>
 <div class="body">
@@ -381,56 +413,9 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
 <p><b>Lỗi:</b> như <code>items/create</code>, cộng <a href="#e-VUNG_THAY_DOI_KHI_CHOT"><code>VUNG_THAY_DOI_KHI_CHOT</code></a>.</p>
 </div></details>
 
-<h3 id="man-tim">Tìm tài sản</h3>
-<details class="ep" id="ep-search">
-<summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}/items/search?q=&amp;zone=</span><span class="what"><b>API này làm gì:</b> Tìm tài sản để thêm vào vùng, kèm vùng đang chứa nó.</span></summary>
-<div class="body">
-<p><b>Quyền:</b> <code>asset-stocktake-check/read</code>; đợt phải đang mở.</p>
-<div class="tbl"><table><thead><tr><th>Tham số</th><th>BB</th><th>Luật</th></tr></thead><tbody>
-<tr><td><code>q</code></td><td>không</td><td>Mã hoặc mô tả <b>chứa</b> <code>q</code>. Rỗng thì trả <code>[]</code>. Tối đa 20 dòng</td></tr>
-<tr><td><code>zone</code></td><td>không</td><td>Vùng đang kiểm, để tính <code>inThisZone</code></td></tr>
-</tbody></table></div>
-<p><b>Trả về:</b> <code>code</code>, <code>description</code>, <code>usageScope</code> (0 Riêng · 1 Chung · 10 Kho), <code>staffCode</code>, <code>staffName</code>, <code>stationZoneCode</code> (vùng trên sổ), <code>inThisZone</code>, <code>openZones[]</code> (vùng đang chứa tài sản trong các đợt mở).</p>
-<pre><code>GET /rounds/DKK0000999/items/search?q=TS00000&amp;zone=VUNG01
-
-{"data":[{"code":"TS000002","description":"Bàn họp","usageScope":1,"companyCode":"CT01",
-  "staffCode":null,"staffName":null,"stationZoneCode":"VUNG01","inThisZone":false,"openZones":[]}],
- "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>.</p>
-</div></details>
-
-<h3 id="man-anh">Ảnh</h3>
-<p>Tải ảnh lên, nhận <code>id</code>, rồi gửi các <code>id</code> trong <code>photoIds</code> của <code>items/update</code> (vùng hoặc NV).</p>
-<details class="ep" id="ep-photos">
-<summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/photos/upload</span><span class="what"><b>API này làm gì:</b> Tải ảnh tài sản lúc kiểm (dùng cho món Hỏng / ghi chú).</span></summary>
-<div class="body">
-<p><b>Quyền:</b> <code>asset-stocktake-check/read</code>; đợt phải đang mở.</p>
-<div class="danger"><b>Body là JSON base64, không phải multipart.</b></div>
-<div class="tbl"><table><thead><tr><th>Body</th><th>BB</th><th>Luật</th></tr></thead><tbody>
-<tr><td><code>files[]</code></td><td>có</td><td>≥ 1 tệp. Một tệp sai thì cả lô không tải</td></tr>
-<tr><td><code>files[].fileName</code></td><td>có</td><td>Đuôi ảnh: <code>.jpg .jpeg .jfif .png .gif .webp .heic .heif</code></td></tr>
-<tr><td><code>files[].contentBase64</code></td><td>có</td><td>Base64 hợp lệ, không rỗng, ≤ 20 MB mỗi tệp</td></tr>
-</tbody></table></div>
-<p><b>Trả về:</b> mảng ảnh: <code>id</code> (<b>dùng cho <code>photoIds</code></b>), <code>fileId</code> (dùng để xem ảnh), <code>fileName</code>, <code>fileExt</code>.</p>
-<pre><code>POST /rounds/DKK0000999/photos/upload
-{"files":[{"fileName":"anh1.jpg","contentBase64":"/9j/4AAQSkZJRg..."}]}
-
-{"data":[{"id":"00000000-0000-7000-8000-000000000001","fileId":"00000000-0000-7000-8000-0000000000f1",
-  "fileName":"anh1","fileExt":".jpg"}],
- "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>; tệp sai trả <code>code 20</code> kèm câu cụ thể trong <code>message</code>.</p>
-</div></details>
-<details class="ep" id="ep-photo-view">
-<summary><span class="m get">GET</span><span class="path">{BASE_URL}/api/v1/asset-management/asset-item/files/assets/{fileId}</span><span class="what"><b>API này làm gì:</b> Xem ảnh đã tải (trả nội dung tệp). Không nằm dưới base path kiểm kê.</span></summary>
-<div class="body">
-<p><b>Quyền:</b> đăng nhập. <b>Tham số:</b> <code>fileId</code> lấy từ <code>photos[].fileId</code>. Không có tệp thì HTTP 404.</p>
-</div></details>
-
-
-<h3 id="man-kiem-nv">Kiểm theo NV</h3>
-<div class="flow">staffs → claim → items (items/scan · items/update) → submit</div>
-<p>Chỉ người đang kiểm NV mới ghi được. <code>…/staffs/{staffCode}</code> là viết tắt của <code>/rounds/{roundCode}/staffs/{staffCode}</code>.</p>
-
+<h4 id="man-kiem-nv" class="screen-h">Kiểm theo cá nhân (NV)</h4>
+<p class="from"><b>Từ đâu tới:</b> Từ Chi tiết đợt, bấm "Kiểm theo cá nhân" → gọi <code>…/staffs</code>; bấm một NV → <code>claim</code> rồi <code>items</code>; quét hoặc ghi từng tài sản (ảnh: <a href="#ep-photos">photos/upload</a>); cuối cùng <code>submit</code>.</p>
+<p class="meta">Chỉ người đang kiểm NV mới ghi được. <code>…/staffs/{staffCode}</code> là viết tắt của <code>/rounds/{roundCode}/staffs/{staffCode}</code>.</p>
 <details class="ep" id="ep-staffs">
 <summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}/staffs?status=</span><span class="what"><b>API này làm gì:</b> Danh sách NV có đồ Riêng trong đợt và tiến độ kiểm từng NV.</span></summary>
 <div class="body">
@@ -446,7 +431,6 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>.</p>
 </div></details>
-
 <details class="ep" id="ep-staff-claim">
 <summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/staffs/{staffCode}/claim</span><span class="what"><b>API này làm gì:</b> Nhận một NV về mình để kiểm đồ Riêng (lập danh sách tài sản của NV); <code>takeOver</code> để giành.</span></summary>
 <div class="body">
@@ -464,7 +448,6 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>, <a href="#e-NHAN_VIEN_KHONG_THUOC_DOT"><code>NHAN_VIEN_KHONG_THUOC_DOT</code></a>, <a href="#e-NHAN_VIEN_DA_GUI"><code>NHAN_VIEN_DA_GUI</code></a>, <a href="#e-NHAN_VIEN_DANG_CO_NGUOI_KIEM"><code>NHAN_VIEN_DANG_CO_NGUOI_KIEM</code></a>.</p>
 </div></details>
-
 <details class="ep" id="ep-staff-items">
 <summary><span class="m get">GET</span><span class="path">/rounds/{roundCode}/staffs/{staffCode}/items</span><span class="what"><b>API này làm gì:</b> Danh sách đồ Riêng của NV trong đợt và kết quả từng món.</span></summary>
 <div class="body">
@@ -480,7 +463,6 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-NHAN_VIEN_KHONG_THUOC_DOT"><code>NHAN_VIEN_KHONG_THUOC_DOT</code></a>.</p>
 </div></details>
-
 <details class="ep" id="ep-staff-scan">
 <summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/staffs/{staffCode}/items/scan</span><span class="what"><b>API này làm gì:</b> Quét mã một tài sản của NV: đánh dấu Tìm thấy.</span></summary>
 <div class="body">
@@ -497,7 +479,6 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> như <code>items/update</code> bên dưới, cộng <a href="#e-KHONG_TIM_THAY_MA"><code>KHONG_TIM_THAY_MA</code></a>, <a href="#e-KHONG_PHAI_DO_RIENG_CUA_NV"><code>KHONG_PHAI_DO_RIENG_CUA_NV</code></a>.</p>
 </div></details>
-
 <details class="ep" id="ep-staff-update">
 <summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/staffs/{staffCode}/items/update</span><span class="what"><b>API này làm gì:</b> Sửa kết quả / tình trạng / ghi chú / ảnh một tài sản của NV.</span></summary>
 <div class="body">
@@ -520,7 +501,6 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
  "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
 <p><b>Lỗi:</b> <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-DOT_DA_DONG"><code>DOT_DA_DONG</code></a>, <a href="#e-NHAN_VIEN_KHONG_THUOC_DOT"><code>NHAN_VIEN_KHONG_THUOC_DOT</code></a>, <a href="#e-NHAN_VIEN_CHUA_MO"><code>NHAN_VIEN_CHUA_MO</code></a>, <a href="#e-NHAN_VIEN_DA_GUI"><code>NHAN_VIEN_DA_GUI</code></a>, <a href="#e-NHAN_VIEN_DANG_CO_NGUOI_KIEM"><code>NHAN_VIEN_DANG_CO_NGUOI_KIEM</code></a>, <a href="#e-KET_QUA_KHONG_HOP_LE"><code>KET_QUA_KHONG_HOP_LE</code></a>, <a href="#e-TINH_TRANG_KHONG_HOP_LE"><code>TINH_TRANG_KHONG_HOP_LE</code></a>, <a href="#e-MON_KHONG_THUOC_NHAN_VIEN"><code>MON_KHONG_THUOC_NHAN_VIEN</code></a>, <a href="#e-ANH_KHONG_HOP_LE"><code>ANH_KHONG_HOP_LE</code></a>, <a href="#e-HONG_CAN_ANH"><code>HONG_CAN_ANH</code></a>.</p>
 </div></details>
-
 <details class="ep" id="ep-staff-submit">
 <summary><span class="m post">POST</span><span class="path">/rounds/{roundCode}/staffs/{staffCode}/submit</span><span class="what"><b>API này làm gì:</b> Gửi kết quả kiểm NV: sinh phiếu cá nhân cho chính NV xác nhận.</span></summary>
 <div class="body">
@@ -535,7 +515,62 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
 <p><b>Lỗi:</b> như <code>items/update</code>, cộng <a href="#e-NHAN_VIEN_CHUA_KIEM_HET"><code>NHAN_VIEN_CHUA_KIEM_HET</code></a>.</p>
 </div></details>
 
-<h3 id="man-do-rieng">Đồ Riêng của tôi</h3>
+<h3 id="menu-phieu" class="menu-h">Menu Phiếu cần xác nhận</h3>
+
+<h4 id="man-phieu" class="screen-h">Phiếu cần xác nhận</h4>
+<p class="from"><b>Từ đâu tới:</b> Bấm menu Phiếu cần xác nhận → gọi <code>me/assigned-tickets</code>; bấm một phiếu → <code>tickets/{ticketCode}</code>; bấm Xác nhận → <code>tickets/{ticketCode}/confirm</code>.</p>
+<details class="ep" id="ep-me-tickets">
+<summary><span class="m get">GET</span><span class="path">/me/assigned-tickets?status=&amp;type=</span><span class="what"><b>API này làm gì:</b> Phiếu giao cho tôi xác nhận (chờ / đã xác nhận).</span></summary>
+<div class="body">
+<p><b>Quyền:</b> đăng nhập.</p>
+<div class="tbl"><table><thead><tr><th>Tham số</th><th>BB</th><th>Giá trị</th><th>Sai thì</th></tr></thead><tbody>
+<tr><td><code>status</code></td><td>không</td><td><code>PENDING</code> (mặc định) · <code>CONFIRMED</code> · <code>ALL</code></td><td><code>code 20</code></td></tr>
+<tr><td><code>type</code></td><td>không</td><td><code>ZONE</code> (phiếu vùng) · <code>STAFF</code> (phiếu cá nhân)</td><td><code>code 20</code></td></tr>
+</tbody></table></div>
+<p><b>Trả về:</b> <code>code</code>, <code>roundCode</code>, <code>roundName</code>, <code>type</code>, <code>zoneCode</code>/<code>zoneName</code> (phiếu vùng), <code>staffCode</code>/<code>staffName</code> (phiếu cá nhân), <code>itemCount</code>, <code>createdAt</code>, <code>status</code>, <code>confirmedAt</code>, người xác nhận, <code>confirmSource</code> (<code>USER</code> người bấm · <code>SYSTEM</code> hệ thống tự xác nhận khi đóng đợt). Không truyền tham số lọc thì các trường tên trả null.</p>
+<pre><code>GET /me/assigned-tickets
+
+{"data":[{"code":"KKN0000999","roundCode":"DKK0000999","roundName":"Kiểm kê cuối năm","roundStatus":"OPEN",
+  "type":"STAFF","zoneCode":null,"zoneName":null,"itemCount":2,"createdAt":"2026-01-06T02:00:00.456789",
+  "status":"PENDING","staffCode":"000998","staffName":null,"confirmedAt":null,
+  "confirmedByStaffCode":null,"confirmedByStaffName":null,"confirmSource":null}],
+ "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
+<p><b>Lỗi:</b> chỉ <a href="#loi-chung">lỗi chung</a>.</p>
+</div></details>
+<details class="ep" id="ep-ticket">
+<summary><span class="m get">GET</span><span class="path">/tickets/{ticketCode}</span><span class="what"><b>API này làm gì:</b> Chi tiết một phiếu xác nhận và các tài sản trong phiếu.</span></summary>
+<div class="body">
+<p><b>Quyền:</b> đăng nhập; là người xác nhận phiếu, hoặc có quyền xem kiểm kê.</p>
+<p><b>Trả về:</b> thông tin phiếu (như dòng ở trên, thêm <code>confirmerStaffCode</code>, <code>confirmerStaffName</code>) và <code>items[]</code>: <code>itemCode</code>, <code>description</code>, <code>result</code> (phiếu cá nhân), <code>condition</code>, <code>needsRelabel</code>, <code>note</code>, <code>warnings</code> (phiếu vùng), <code>photos</code>.</p>
+<pre><code>GET /tickets/KKN0000999
+
+{"data":{"code":"KKN0000999","roundCode":"DKK0000999","roundName":"Kiểm kê cuối năm","roundStatus":"OPEN",
+  "type":"STAFF","zoneCode":null,"zoneName":null,"staffCode":"000998","staffName":"Trần Thị B",
+  "confirmerStaffCode":"000998","confirmerStaffName":"Trần Thị B","status":"PENDING",
+  "confirmedAt":null,"confirmedByStaffCode":null,"confirmedByStaffName":null,"confirmSource":null,
+  "items":[{"itemCode":"TS000001","description":"Màn hình","itemGroupCode":"NHOM01","result":"FOUND","condition":1,
+   "needsRelabel":false,"note":null,"itemCompanyCode":"CT01","itemUsageScope":0,"itemStaffCode":"000998",
+   "addedByStaffCode":null,"addedAt":null,"warnings":[],"photos":[]}]},
+ "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
+<p><b>Lỗi:</b> không có phiếu hoặc không được xem: <code>code 11</code> "Không tìm thấy phiếu kiểm kê".</p>
+</div></details>
+<details class="ep" id="ep-confirm">
+<summary><span class="m post">POST</span><span class="path">/tickets/{ticketCode}/confirm</span><span class="what"><b>API này làm gì:</b> Người được giao xác nhận phiếu.</span></summary>
+<div class="body">
+<p><b>Quyền:</b> đăng nhập; chỉ người xác nhận của phiếu. <b>Body:</b> <code>{}</code>.</p>
+<pre><code>POST /tickets/KKN0000999/confirm
+{}
+
+{"data":{"code":"KKN0000999","status":"CONFIRMED","confirmedAt":"2026-01-06T03:00:00.5678912Z",
+  "confirmedByStaffCode":"000998","confirmedByStaffName":"Trần Thị B"},
+ "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
+<p><b>Lỗi:</b> <a href="#e-KHONG_PHAI_NGUOI_XAC_NHAN"><code>KHONG_PHAI_NGUOI_XAC_NHAN</code></a>, <a href="#e-PHIEU_DA_XAC_NHAN"><code>PHIEU_DA_XAC_NHAN</code></a>, <a href="#e-NHAN_VIEN_KHONG_CHO_XAC_NHAN"><code>NHAN_VIEN_KHONG_CHO_XAC_NHAN</code></a>; không có phiếu: <code>code 11</code>.</p>
+</div></details>
+
+<h3 id="menu-do-rieng" class="menu-h">Menu Đồ Riêng của tôi</h3>
+
+<h4 id="man-do-rieng" class="screen-h">Đồ Riêng của tôi</h4>
+<p class="from"><b>Từ đâu tới:</b> Bấm menu Đồ Riêng của tôi → gọi <code>me/private-items</code>.</p>
 <details class="ep" id="ep-me-private">
 <summary><span class="m get">GET</span><span class="path">/me/private-items?round=</span><span class="what"><b>API này làm gì:</b> Đồ Riêng của tôi (hiện tại hoặc trong một đợt).</span></summary>
 <div class="body">
@@ -555,57 +590,6 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
 <p><b>Lỗi</b> (khi có <code>round</code>): <a href="#e-KHONG_TIM_THAY_DOT"><code>KHONG_TIM_THAY_DOT</code></a>, <a href="#e-NHAN_VIEN_KHONG_THUOC_DOT"><code>NHAN_VIEN_KHONG_THUOC_DOT</code></a>.</p>
 </div></details>
 
-<h3 id="man-phieu">Phiếu giao tôi xác nhận</h3>
-<div class="flow">me/assigned-tickets → tickets/{ticketCode} → tickets/{ticketCode}/confirm</div>
-<details class="ep" id="ep-me-tickets">
-<summary><span class="m get">GET</span><span class="path">/me/assigned-tickets?status=&amp;type=</span><span class="what"><b>API này làm gì:</b> Phiếu giao cho tôi xác nhận (chờ / đã xác nhận).</span></summary>
-<div class="body">
-<p><b>Quyền:</b> đăng nhập.</p>
-<div class="tbl"><table><thead><tr><th>Tham số</th><th>BB</th><th>Giá trị</th><th>Sai thì</th></tr></thead><tbody>
-<tr><td><code>status</code></td><td>không</td><td><code>PENDING</code> (mặc định) · <code>CONFIRMED</code> · <code>ALL</code></td><td><code>code 20</code></td></tr>
-<tr><td><code>type</code></td><td>không</td><td><code>ZONE</code> (phiếu vùng) · <code>STAFF</code> (phiếu cá nhân)</td><td><code>code 20</code></td></tr>
-</tbody></table></div>
-<p><b>Trả về:</b> <code>code</code>, <code>roundCode</code>, <code>roundName</code>, <code>type</code>, <code>zoneCode</code>/<code>zoneName</code> (phiếu vùng), <code>staffCode</code>/<code>staffName</code> (phiếu cá nhân), <code>itemCount</code>, <code>createdAt</code>, <code>status</code>, <code>confirmedAt</code>, người xác nhận, <code>confirmSource</code> (<code>USER</code> người bấm · <code>SYSTEM</code> hệ thống tự xác nhận khi đóng đợt). Không truyền tham số lọc thì các trường tên trả null.</p>
-<pre><code>GET /me/assigned-tickets
-
-{"data":[{"code":"KKN0000999","roundCode":"DKK0000999","roundName":"Kiểm kê cuối năm","roundStatus":"OPEN",
-  "type":"STAFF","zoneCode":null,"zoneName":null,"itemCount":2,"createdAt":"2026-01-06T02:00:00.456789",
-  "status":"PENDING","staffCode":"000998","staffName":null,"confirmedAt":null,
-  "confirmedByStaffCode":null,"confirmedByStaffName":null,"confirmSource":null}],
- "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> chỉ <a href="#loi-chung">lỗi chung</a>.</p>
-</div></details>
-
-<details class="ep" id="ep-ticket">
-<summary><span class="m get">GET</span><span class="path">/tickets/{ticketCode}</span><span class="what"><b>API này làm gì:</b> Chi tiết một phiếu xác nhận và các tài sản trong phiếu.</span></summary>
-<div class="body">
-<p><b>Quyền:</b> đăng nhập; là người xác nhận phiếu, hoặc có quyền xem kiểm kê.</p>
-<p><b>Trả về:</b> thông tin phiếu (như dòng ở trên, thêm <code>confirmerStaffCode</code>, <code>confirmerStaffName</code>) và <code>items[]</code>: <code>itemCode</code>, <code>description</code>, <code>result</code> (phiếu cá nhân), <code>condition</code>, <code>needsRelabel</code>, <code>note</code>, <code>warnings</code> (phiếu vùng), <code>photos</code>.</p>
-<pre><code>GET /tickets/KKN0000999
-
-{"data":{"code":"KKN0000999","roundCode":"DKK0000999","roundName":"Kiểm kê cuối năm","roundStatus":"OPEN",
-  "type":"STAFF","zoneCode":null,"zoneName":null,"staffCode":"000998","staffName":"Trần Thị B",
-  "confirmerStaffCode":"000998","confirmerStaffName":"Trần Thị B","status":"PENDING",
-  "confirmedAt":null,"confirmedByStaffCode":null,"confirmedByStaffName":null,"confirmSource":null,
-  "items":[{"itemCode":"TS000001","description":"Màn hình","itemGroupCode":"NHOM01","result":"FOUND","condition":1,
-   "needsRelabel":false,"note":null,"itemCompanyCode":"CT01","itemUsageScope":0,"itemStaffCode":"000998",
-   "addedByStaffCode":null,"addedAt":null,"warnings":[],"photos":[]}]},
- "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> không có phiếu hoặc không được xem: <code>code 11</code> "Không tìm thấy phiếu kiểm kê".</p>
-</div></details>
-
-<details class="ep" id="ep-confirm">
-<summary><span class="m post">POST</span><span class="path">/tickets/{ticketCode}/confirm</span><span class="what"><b>API này làm gì:</b> Người được giao xác nhận phiếu.</span></summary>
-<div class="body">
-<p><b>Quyền:</b> đăng nhập; chỉ người xác nhận của phiếu. <b>Body:</b> <code>{}</code>.</p>
-<pre><code>POST /tickets/KKN0000999/confirm
-{}
-
-{"data":{"code":"KKN0000999","status":"CONFIRMED","confirmedAt":"2026-01-06T03:00:00.5678912Z",
-  "confirmedByStaffCode":"000998","confirmedByStaffName":"Trần Thị B"},
- "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
-<p><b>Lỗi:</b> <a href="#e-KHONG_PHAI_NGUOI_XAC_NHAN"><code>KHONG_PHAI_NGUOI_XAC_NHAN</code></a>, <a href="#e-PHIEU_DA_XAC_NHAN"><code>PHIEU_DA_XAC_NHAN</code></a>, <a href="#e-NHAN_VIEN_KHONG_CHO_XAC_NHAN"><code>NHAN_VIEN_KHONG_CHO_XAC_NHAN</code></a>; không có phiếu: <code>code 11</code>.</p>
-</div></details>
 
 
 <h2 id="ma-loi">Mã lỗi</h2>
@@ -661,6 +645,34 @@ POST /rounds/DKK0000999/zones/VUNG01/items/create
 <tr><td rowspan="2">Phiếu</td><td><code>PENDING</code></td><td>Chờ xác nhận</td></tr>
 <tr><td><code>CONFIRMED</code></td><td>Đã xác nhận (<code>confirmSource</code>: <code>USER</code> người bấm · <code>SYSTEM</code> hệ thống khi đóng đợt)</td></tr>
 </tbody></table></div>
+
+
+<h2 id="api-tuy-chon">API tuỳ chọn</h2>
+<p>Không nằm trong luồng 3 menu. App dùng nếu cần.</p>
+<details class="ep" id="ep-me-tasks">
+<summary><span class="m get">GET</span><span class="path">/me/tasks</span><span class="what"><b>API này làm gì:</b> Màn tổng hợp (tuỳ chọn): đợt tôi đi kiểm được, đồ Riêng của tôi trong đợt mở, số phiếu chờ tôi.</span></summary>
+<div class="body">
+<p><b>Tuỳ chọn.</b> Gom trong một lần gọi: các đợt đang mở (như <code>rounds/search?status=OPEN</code>), đồ Riêng của tôi trong đợt mở, số phiếu chờ tôi xác nhận. Dùng khi app muốn có màn tổng hợp.</p>
+<p><b>Quyền:</b> đăng nhập. <code>checkRounds</code> chỉ có dữ liệu khi có quyền <code>asset-stocktake-check/read</code>.</p>
+<p><b>Tham số:</b> không có.</p>
+<p><b>Trả về:</b> <code>checkRounds[]</code> (các đợt đang mở: <code>code</code>, <code>name</code>, <code>companyCode</code>, <code>zonesTotal</code>, <code>zonesClosed</code>, <code>staffTotal</code>, <code>staffSubmitted</code>) · <code>myPrivate[]</code> (đợt đang mở có đồ Riêng của tôi: <code>roundCode</code>, <code>privateItemCount</code>, <code>status</code>, <code>ticketCode</code>) · <code>pendingTicketCount</code> (số phiếu chờ tôi xác nhận).</p>
+<pre><code>GET /me/tasks
+
+{"data":{"checkRounds":[{"code":"DKK0000999","name":"Kiểm kê cuối năm","companyCode":"CT01",
+   "zonesTotal":6,"zonesClosed":1,"staffTotal":40,"staffSubmitted":3}],
+ "myPrivate":[{"roundCode":"DKK0000999","privateItemCount":2,"status":"PENDING","ticketCode":null}],
+ "pendingTicketCount":1},
+ "code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
+<p><b>Lỗi:</b> chỉ <a href="#loi-chung">lỗi chung</a>.</p>
+</div></details>
+<details class="ep" id="ep-lock">
+<summary><span class="m get">GET</span><span class="path">/lock-status</span><span class="what"><b>API này làm gì:</b> Xem hiện có đợt nào đang mở (đang khoá tài sản) để hiện biểu ngữ.</span></summary>
+<div class="body">
+<p><b>Quyền:</b> đăng nhập. <b>Tham số:</b> không có.</p>
+<pre><code>GET /lock-status
+
+{"data":{"rounds":[{"code":"DKK0000999","companyCode":"CT01"}]},"code":0,"subCode":null,"message":"Success","errors":[]}</code></pre>
+</div></details>
 <footer>22/11/2026: bản đầu · Căn cứ: backend main <code>b0930ce0</code>.</footer>
 
 
